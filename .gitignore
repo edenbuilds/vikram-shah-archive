@@ -1,0 +1,9 @@
+.firecrawl/
+work/
+node_modules/
+.DS_Store
+.env
+.env.local
+.vercel
+public/downloads/*.zip
+public/downloads/*-transcripts.zip

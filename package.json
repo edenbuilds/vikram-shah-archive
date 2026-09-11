@@ -1,0 +1,10 @@
+{
+  "name": "vikram-shah-archive",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 8080 --bind 0.0.0.0 --directory public",
+    "assemble": "python3 scripts/assemble.py",
+    "parse": "python3 scripts/firecrawl_parse.py",
+    "rasterize": "python3 scripts/rasterize.py"
+  }
+}
