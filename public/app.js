@@ -143,6 +143,31 @@ function shortLabel(text, n = 28) {
   return t.slice(0, n - 1).trimEnd() + "…";
 }
 
+function esc(text) {
+  return String(text == null ? "" : text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+const ICONS = {
+  folder:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L11.5 8H19a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>',
+  folderOpen:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L11.5 8H19a2 2 0 0 1 2 2v1H5.7a2 2 0 0 0-1.9 1.4L3 16Z"/><path d="m3 19 1.9-5.6A2 2 0 0 1 6.8 12H22l-2 7Z"/></svg>',
+  file:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>',
+  chevron:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+  page:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  section:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg>',
+  compass:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9Z"/></svg>',
+};
+
 function locationFromPath() {
   const p = path();
   const crumbs = [{ label: "Archive", href: "/", id: "root" }];
@@ -218,39 +243,40 @@ function fileTreeHtml(loc, query = "") {
   const q = query.trim().toLowerCase();
   const bundles = DATA.bundles || [];
   const all = docs();
-  return bundles
+  const branches = bundles
     .map((b) => {
       const kids = all.filter((d) => d.bundle === b.id);
-      const filtered = q
-        ? kids.filter((d) => `${d.title} ${d.kind} ${b.title}`.toLowerCase().includes(q))
+      const bundleHit = b.title.toLowerCase().includes(q);
+      const filtered = q && !bundleHit
+        ? kids.filter((d) => `${d.title} ${d.kind} ${d.folder || ""}`.toLowerCase().includes(q))
         : kids;
-      if (q && !filtered.length && !b.title.toLowerCase().includes(q)) return "";
-      const open = !q ? loc.bundleId === b.id || filtered.some((d) => d.id === loc.docId) : true;
+      if (q && !filtered.length && !bundleHit) return "";
+      const open = q ? true : loc.bundleId === b.id || kids.some((d) => d.id === loc.docId);
       const activeBundle = loc.bundleId === b.id;
-      return `<details class="ft-branch${activeBundle ? " here" : ""}" data-bundle="${b.id}" ${open ? "open" : ""}>
-        <summary class="ft-summary" role="treeitem" aria-expanded="${open ? "true" : "false"}">
-          <span class="ft-ico" aria-hidden="true">📁</span>
-          <span class="ft-label">${b.title}</span>
+      return `<details class="ft-branch${activeBundle ? " here" : ""}" data-bundle="${esc(b.id)}"${open ? " open" : ""}>
+        <summary class="ft-summary">
+          <span class="ft-chev" aria-hidden="true">${ICONS.chevron}</span>
+          <span class="ft-ico" aria-hidden="true">${ICONS.folder}</span>
+          <span class="ft-label">${esc(b.title)}</span>
           <span class="ft-meta">${filtered.length}</span>
         </summary>
-        <div class="ft-children" role="group">
+        <div class="ft-children">
           ${filtered
             .map((d) => {
               const here = loc.docId === d.id;
-              const leafOpen = here && (loc.kind === "doc" || loc.sectionId || loc.page || loc.kind === "transcript" || loc.kind === "sections" || loc.kind === "pages" || loc.kind === "doc-summary");
-              return `<div class="ft-doc${here ? " here" : ""}" data-doc="${d.id}">
-                <a class="ft-file" role="treeitem" href="/docs/${d.id}" aria-current="${here && loc.kind === "doc" ? "page" : "false"}">
-                  <span class="ft-ico" aria-hidden="true">📄</span>
-                  <span class="ft-label">${d.title}</span>
-                  <span class="ft-meta">${d.pages}p</span>
+              return `<div class="ft-doc${here ? " here" : ""}" data-doc="${esc(d.id)}">
+                <a class="ft-file" href="/docs/${esc(d.id)}"${here && loc.kind === "doc" ? ' aria-current="page"' : ""}>
+                  <span class="ft-ico" aria-hidden="true">${ICONS.file}</span>
+                  <span class="ft-label">${esc(d.title)}</span>
+                  <span class="ft-meta">${d.pages} pp.</span>
                 </a>
                 ${
-                  leafOpen
+                  here
                     ? `<div class="ft-leaves">
-                        <a class="${loc.kind === "transcript" ? "on" : ""}" href="/docs/${d.id}/transcript">Transcript</a>
-                        <a class="${loc.kind === "sections" || loc.kind === "section" ? "on" : ""}" href="/docs/${d.id}/sections">Sections</a>
-                        <a class="${loc.kind === "pages" || loc.kind === "page" ? "on" : ""}" href="/docs/${d.id}/pages">Scans</a>
-                        <a class="${loc.kind === "doc-summary" ? "on" : ""}" href="/docs/${d.id}/summary">Summary</a>
+                        <a class="${loc.kind === "transcript" ? "on" : ""}" href="/docs/${esc(d.id)}/transcript">Transcript</a>
+                        <a class="${loc.kind === "sections" || loc.kind === "section" ? "on" : ""}" href="/docs/${esc(d.id)}/sections">Sections</a>
+                        <a class="${loc.kind === "pages" || loc.kind === "page" ? "on" : ""}" href="/docs/${esc(d.id)}/pages">Scans</a>
+                        <a class="${loc.kind === "doc-summary" ? "on" : ""}" href="/docs/${esc(d.id)}/summary">Summary</a>
                       </div>`
                     : ""
                 }
@@ -261,51 +287,211 @@ function fileTreeHtml(loc, query = "") {
       </details>`;
     })
     .join("");
+  return branches || `<p class="ft-empty">No stage or paper matches that filter.</p>`;
+}
+
+function renderTree() {
+  const tree = document.getElementById("fileTree");
+  if (!tree || !DATA) return;
+  const input = document.getElementById("treeSearch");
+  tree.innerHTML = fileTreeHtml(locationFromPath(), (input && input.value) || "");
+  const here = tree.querySelector(".ft-doc.here") || tree.querySelector(".ft-branch.here");
+  if (here) here.scrollIntoView({ block: "center" });
 }
 
 function updateLocator() {
   const bar = document.getElementById("locator");
-  const tree = document.getElementById("fileTree");
-  if (!bar || !DATA) return;
+  if (!DATA) return;
   const loc = locationFromPath();
-  bar.hidden = false;
-  renderCrumbs(loc);
-  if (tree) {
-    const q = (document.getElementById("treeSearch") && document.getElementById("treeSearch").value) || "";
-    tree.innerHTML = fileTreeHtml(loc, q);
-    const here = tree.querySelector(".ft-doc.here, .ft-branch.here");
-    if (here) here.scrollIntoView({ block: "nearest" });
+  if (bar) {
+    bar.hidden = false;
+    renderCrumbs(loc);
   }
+  if (treeOpenRef.current) renderTree();
   document.title = `${loc.leaf} — Shah v. Trindade`;
 }
 
-function openTree() {
+const treeOpenRef = { current: false };
+
+function openTree(bundleId) {
   const sheet = document.getElementById("treeSheet");
   const btn = document.getElementById("treeToggle");
   if (!sheet) return;
+  closePalette();
+  treeOpenRef.current = true;
   sheet.hidden = false;
-  sheet.classList.add("open");
-  document.body.style.overflow = "hidden";
+  requestAnimationFrame(() => sheet.classList.add("open"));
+  document.body.classList.add("locked");
   if (btn) btn.setAttribute("aria-expanded", "true");
-  updateLocator();
-  const search = document.getElementById("treeSearch");
-  if (search && window.matchMedia("(min-width: 880px)").matches) search.focus();
+  renderTree();
+  if (bundleId) {
+    const branch = document.querySelector(`#fileTree .ft-branch[data-bundle="${bundleId}"]`);
+    if (branch) {
+      branch.open = true;
+      branch.scrollIntoView({ block: "center" });
+    }
+  }
 }
 
 function closeTree() {
   const sheet = document.getElementById("treeSheet");
   const btn = document.getElementById("treeToggle");
   if (!sheet) return;
+  treeOpenRef.current = false;
   sheet.classList.remove("open");
   sheet.hidden = true;
-  if (!menuOpenRef.current) document.body.style.overflow = "";
+  if (!menuOpenRef.current && !paletteOpenRef.current) document.body.classList.remove("locked");
   if (btn) btn.setAttribute("aria-expanded", "false");
 }
 
 function toggleTree() {
-  const sheet = document.getElementById("treeSheet");
-  if (!sheet || sheet.hidden) openTree();
-  else closeTree();
+  if (treeOpenRef.current) closeTree();
+  else openTree();
+}
+
+const paletteOpenRef = { current: false };
+let paletteItems = null;
+let paletteActive = 0;
+
+function buildPaletteIndex() {
+  if (paletteItems) return paletteItems;
+  const items = [
+    { icon: "compass", group: "Go to", label: "Overview", sub: "Cause title and figures", href: "/" },
+    { icon: "compass", group: "Go to", label: "Mindmap", sub: "Branches of the paper tree", href: "/map" },
+    { icon: "compass", group: "Go to", label: "Documents", sub: "All 141 papers", href: "/docs" },
+    { icon: "compass", group: "Go to", label: "Summary", sub: "Editorial map, not a finding", href: "/summary" },
+    { icon: "compass", group: "Go to", label: "Downloads", sub: "Markdown, Word, PDFs, scans", href: "/downloads" },
+  ];
+  const all = docs();
+  for (const b of DATA.bundles || []) {
+    const kids = all.filter((d) => d.bundle === b.id);
+    items.push({
+      icon: "folder",
+      group: "Stages",
+      label: b.title,
+      sub: `${kids.length} documents · ${b.pages} pages`,
+      bundle: b.id,
+      terms: b.note || "",
+    });
+  }
+  for (const d of all) {
+    items.push({
+      icon: "file",
+      group: "Papers",
+      label: d.title,
+      sub: `${d.bundleTitle} · ${d.kind} · ${d.pages} pp.`,
+      href: `/docs/${d.id}`,
+      terms: `${d.kind} ${d.folder || ""} ${d.note || ""}`,
+    });
+    for (const s of d.sections || []) {
+      if (!s.title || /^[>\-*#]/.test(s.title.trim())) continue;
+      items.push({
+        icon: "section",
+        group: "Sections",
+        label: s.title,
+        sub: `${shortLabel(d.title, 40)} · ${s.mark}`,
+        href: `/docs/${d.id}/sections/${s.id}`,
+        terms: s.short || "",
+      });
+    }
+  }
+  paletteItems = items.map((item) => ({
+    ...item,
+    haystack: `${item.label} ${item.sub} ${item.terms || ""}`.toLowerCase(),
+  }));
+  return paletteItems;
+}
+
+function paletteResults(query) {
+  const index = buildPaletteIndex();
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    return index.filter((item) => item.group === "Go to" || item.group === "Stages").slice(0, 20);
+  }
+  const words = q.split(/\s+/);
+  const hits = index.filter((item) => words.every((w) => item.haystack.includes(w)));
+  hits.sort((a, b) => a.label.toLowerCase().indexOf(q) - b.label.toLowerCase().indexOf(q));
+  return hits.slice(0, 40);
+}
+
+function renderPalette() {
+  const list = document.getElementById("paletteList");
+  const input = document.getElementById("paletteInput");
+  const count = document.getElementById("paletteCount");
+  if (!list) return;
+  const results = paletteResults(input ? input.value : "");
+  paletteActive = Math.min(paletteActive, Math.max(results.length - 1, 0));
+  if (count) {
+    count.textContent = results.length ? `${results.length} result${results.length === 1 ? "" : "s"}` : "No match";
+  }
+  if (!results.length) {
+    list.innerHTML = `<p class="cp-empty">Nothing in the papers matches that.</p>`;
+    return;
+  }
+  let lastGroup = "";
+  list.innerHTML = results
+    .map((item, i) => {
+      const head = item.group === lastGroup ? "" : `<p class="cp-group">${item.group}</p>`;
+      lastGroup = item.group;
+      return `${head}<button type="button" class="cp-item${i === paletteActive ? " active" : ""}" data-index="${i}" role="option" aria-selected="${i === paletteActive}">
+        <span class="cp-ico" aria-hidden="true">${ICONS[item.icon] || ICONS.file}</span>
+        <span class="cp-text">
+          <span class="cp-label">${esc(item.label)}</span>
+          <span class="cp-sub">${esc(item.sub)}</span>
+        </span>
+      </button>`;
+    })
+    .join("");
+  const active = list.querySelector(".cp-item.active");
+  if (active) active.scrollIntoView({ block: "nearest" });
+}
+
+function runPalette(index) {
+  const input = document.getElementById("paletteInput");
+  const results = paletteResults(input ? input.value : "");
+  const item = results[index];
+  if (!item) return;
+  closePalette();
+  if (item.bundle) {
+    openTree(item.bundle);
+    return;
+  }
+  if (item.href) go(item.href);
+}
+
+function openPalette() {
+  const box = document.getElementById("palette");
+  if (!box || !DATA) return;
+  closeTree();
+  closeMenu();
+  paletteOpenRef.current = true;
+  paletteActive = 0;
+  box.hidden = false;
+  requestAnimationFrame(() => box.classList.add("open"));
+  document.body.classList.add("locked");
+  const input = document.getElementById("paletteInput");
+  if (input) {
+    input.value = "";
+    input.focus();
+  }
+  renderPalette();
+}
+
+function closePalette() {
+  const box = document.getElementById("palette");
+  if (!box) return;
+  paletteOpenRef.current = false;
+  box.classList.remove("open");
+  box.hidden = true;
+  if (!menuOpenRef.current && !treeOpenRef.current) document.body.classList.remove("locked");
+}
+
+function movePalette(step) {
+  const input = document.getElementById("paletteInput");
+  const results = paletteResults(input ? input.value : "");
+  if (!results.length) return;
+  paletteActive = (paletteActive + step + results.length) % results.length;
+  renderPalette();
 }
 
 function leaf() {
@@ -607,6 +793,7 @@ async function render() {
   setActive();
   closeMenu();
   closeTree();
+  closePalette();
   const root = document.getElementById("main");
   if (!root) return;
   if (!DATA) {
@@ -771,10 +958,46 @@ document.addEventListener("click", (e) => {
     go(href);
   }
 });
+function isTypingTarget(el) {
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+}
+
 document.addEventListener("keydown", (e) => {
+  const key = (e.key || "").toLowerCase();
+
+  if ((e.metaKey || e.ctrlKey) && key === "k") {
+    e.preventDefault();
+    if (paletteOpenRef.current) closePalette();
+    else openPalette();
+    return;
+  }
+
+  if (key === "/" && !isTypingTarget(e.target) && !paletteOpenRef.current) {
+    e.preventDefault();
+    openPalette();
+    return;
+  }
+
   if (e.key === "Escape") {
     closeMenu();
     closeTree();
+    closePalette();
+    return;
+  }
+
+  if (!paletteOpenRef.current) return;
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    movePalette(1);
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    movePalette(-1);
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    runPalette(paletteActive);
   }
 });
 window.addEventListener("popstate", render);
@@ -805,7 +1028,7 @@ if (treeSheetBg) treeSheetBg.addEventListener("click", closeTree);
 const treeClose = document.getElementById("treeClose");
 if (treeClose) treeClose.addEventListener("click", closeTree);
 const treeSearch = document.getElementById("treeSearch");
-if (treeSearch) treeSearch.addEventListener("input", () => updateLocator());
+if (treeSearch) treeSearch.addEventListener("input", renderTree);
 const treeExpand = document.getElementById("treeExpand");
 if (treeExpand)
   treeExpand.addEventListener("click", () => {
@@ -816,6 +1039,31 @@ if (treeCollapse)
   treeCollapse.addEventListener("click", () => {
     document.querySelectorAll("#fileTree details.ft-branch").forEach((d) => { d.open = false; });
   });
+
+const searchBtn = document.getElementById("searchBtn");
+if (searchBtn)
+  searchBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    openPalette();
+  });
+const paletteBg = document.getElementById("paletteBg");
+if (paletteBg) paletteBg.addEventListener("click", closePalette);
+const paletteClose = document.getElementById("paletteClose");
+if (paletteClose) paletteClose.addEventListener("click", closePalette);
+const paletteInput = document.getElementById("paletteInput");
+if (paletteInput)
+  paletteInput.addEventListener("input", () => {
+    paletteActive = 0;
+    renderPalette();
+  });
+const paletteList = document.getElementById("paletteList");
+if (paletteList)
+  paletteList.addEventListener("click", (e) => {
+    const btn = e.target.closest(".cp-item");
+    if (btn) runPalette(Number(btn.dataset.index));
+  });
+
 closeMenu();
 closeTree();
+closePalette();
 render();
