@@ -2,9 +2,10 @@
 ## Handoff PRD & Forensic QA Report
 
 **Status:** Production  
-**URL:** https://vikram-shah-archive.vercel.app  
+**URLs:** https://case-archive.edenbuilds.me · https://vikram-shah-archive.vercel.app  
 **Repo:** https://github.com/edenbuilds/vikram-shah-archive  
 **Object storage:** Supabase project `mnsmfobozohejvnmnalw`, public bucket `archive`  
+**Productization PRD:** [`docs/PRODUCT-PRD.md`](./PRODUCT-PRD.md)  
 **Date:** 11 September 2026  
 
 ---
@@ -124,8 +125,11 @@ QA: every Download href must 200 with a non-empty body. Master ZIP must open and
 
 - Paper brief tokens (seal `#8b2e2e`, paper `#f4eee4`, Libre Baskerville + Source Sans 3)  
 - Landing: two CTAs only — Read transcript / Download Markdown & Word  
-- Filing tree with Act-aware stages; filter box; map table  
-- Mobile: menu closed on load; drawer; hamburger above scrim  
+- **Locator bar:** “Filing tree” + truncated crumbs (does not steal the brief; tree is a drawer, not a sticky popover over content)  
+- **Filing tree drawer:** Act stages → papers; SVG folder/file icons (no emoji); Expand / Collapse / filter; leaf links for Transcript / Sections / Scans / Summary  
+- **⌘K / Ctrl+K** command palette: Go to · Stages · Papers · Sections  
+- Mindmap of Act stages; overview still has the expandable Navigation tree  
+- Mobile: menu closed on load; drawer; hamburger above scrim; crumbs collapse on narrow screens  
 - 404 copy: “This leaf is not in the papers.”  
 - Voice: clerk of the papers; no “AI-powered legal assistant.”  
 
