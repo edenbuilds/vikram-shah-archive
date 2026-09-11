@@ -63,6 +63,37 @@
       </nav>
     </div>
   </div>
+  <div class="locator" id="locator" hidden>
+    <div class="wrap locator-inner">
+      <button type="button" class="tree-toggle" id="treeToggle" aria-expanded="false" aria-controls="fileTreePanel" title="Open filing tree">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/><path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2"/></svg>
+        <span class="tree-toggle-label">Tree</span>
+      </button>
+      <nav class="crumbs" id="crumbs" aria-label="You are here"></nav>
+    </div>
+  </div>
+  <div class="tree-sheet" id="treeSheet" hidden>
+    <button type="button" class="tree-sheet-bg" id="treeSheetBg" aria-label="Close filing tree"></button>
+    <aside class="tree-panel" id="fileTreePanel" role="dialog" aria-modal="true" aria-label="Filing tree">
+      <div class="tree-panel-head">
+        <div>
+          <p class="eyebrow">Filing tree</p>
+          <p class="tree-panel-title">Where you are</p>
+        </div>
+        <button type="button" class="menu" id="treeClose" aria-label="Close filing tree">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" x2="18" y1="6" y2="18"/><line x1="6" x2="18" y1="18" y2="6"/></svg>
+        </button>
+      </div>
+      <div class="tree-panel-tools">
+        <input class="search tree-search" id="treeSearch" placeholder="Filter stages or papers" autocomplete="off" />
+        <div class="tree-actions">
+          <button type="button" class="chip" id="treeExpand">Expand</button>
+          <button type="button" class="chip" id="treeCollapse">Collapse</button>
+        </div>
+      </div>
+      <div class="file-tree" id="fileTree" role="tree"></div>
+    </aside>
+  </div>
   <main id="main"></main>
   <footer>
     <div class="wrap">

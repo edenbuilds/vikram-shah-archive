@@ -137,6 +137,177 @@ function toggleMenu() {
   else openMenu();
 }
 
+function shortLabel(text, n = 28) {
+  const t = String(text || "").trim();
+  if (t.length <= n) return t;
+  return t.slice(0, n - 1).trimEnd() + "…";
+}
+
+function locationFromPath() {
+  const p = path();
+  const crumbs = [{ label: "Archive", href: "/", id: "root" }];
+  if (p === "/") return { crumbs: [...crumbs, { label: "Overview", href: "/", id: "home" }], kind: "home", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Overview" };
+  if (p === "/map") return { crumbs: [...crumbs, { label: "Mindmap", href: "/map", id: "map" }], kind: "map", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Mindmap" };
+  if (p === "/docs") return { crumbs: [...crumbs, { label: "Documents", href: "/docs", id: "docs" }], kind: "docs", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Documents" };
+  if (p === "/summary") return { crumbs: [...crumbs, { label: "Summary", href: "/summary", id: "summary" }], kind: "summary", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Summary" };
+  if (p === "/downloads") return { crumbs: [...crumbs, { label: "Downloads", href: "/downloads", id: "downloads" }], kind: "downloads", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Downloads" };
+
+  const m = p.match(/^\/docs\/([^/]+)(?:\/(.*))?$/);
+  if (!m) return { crumbs, kind: "unknown", bundleId: null, docId: null, sectionId: null, page: null, leaf: "Not found" };
+  const d = docById(m[1]);
+  if (!d) return { crumbs: [...crumbs, { label: "Documents", href: "/docs", id: "docs" }], kind: "missing", bundleId: null, docId: m[1], sectionId: null, page: null, leaf: "Missing paper" };
+
+  crumbs.push({ label: "Documents", href: "/docs", id: "docs" });
+  crumbs.push({ label: shortLabel(d.bundleTitle || "Stage", 22), href: `/docs#bundle-${d.bundle}`, id: `bundle:${d.bundle}` });
+  crumbs.push({ label: shortLabel(d.title, 26), href: `/docs/${d.id}`, id: `doc:${d.id}` });
+
+  const rest = m[2] || "";
+  if (!rest) return { crumbs, kind: "doc", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: d.title };
+  if (rest === "transcript") {
+    crumbs.push({ label: "Transcript", href: `/docs/${d.id}/transcript`, id: "transcript" });
+    return { crumbs, kind: "transcript", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: "Transcript" };
+  }
+  if (rest === "sections") {
+    crumbs.push({ label: "Sections", href: `/docs/${d.id}/sections`, id: "sections" });
+    return { crumbs, kind: "sections", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: "Sections" };
+  }
+  if (rest === "pages") {
+    crumbs.push({ label: "Scans", href: `/docs/${d.id}/pages`, id: "pages" });
+    return { crumbs, kind: "pages", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: "Scans" };
+  }
+  if (rest === "summary") {
+    crumbs.push({ label: "Summary", href: `/docs/${d.id}/summary`, id: "doc-summary" });
+    return { crumbs, kind: "doc-summary", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: "Summary" };
+  }
+  const pm = rest.match(/^pages\/(\d+)$/);
+  if (pm) {
+    crumbs.push({ label: "Scans", href: `/docs/${d.id}/pages`, id: "pages" });
+    crumbs.push({ label: `p. ${pm[1]}`, href: `/docs/${d.id}/pages/${pm[1]}`, id: `page:${pm[1]}` });
+    return { crumbs, kind: "page", bundleId: d.bundle, docId: d.id, sectionId: null, page: Number(pm[1]), leaf: `Page ${pm[1]}` };
+  }
+  const sm = rest.match(/^sections\/([^/]+)$/);
+  if (sm) {
+    const s = (d.sections || []).find((x) => x.id === sm[1]);
+    crumbs.push({ label: "Sections", href: `/docs/${d.id}/sections`, id: "sections" });
+    crumbs.push({ label: shortLabel(s ? s.title : sm[1], 24), href: `/docs/${d.id}/sections/${sm[1]}`, id: `section:${sm[1]}` });
+    return { crumbs, kind: "section", bundleId: d.bundle, docId: d.id, sectionId: sm[1], page: null, leaf: s ? s.title : sm[1] };
+  }
+  return { crumbs, kind: "doc", bundleId: d.bundle, docId: d.id, sectionId: null, page: null, leaf: d.title };
+}
+
+function renderCrumbs(loc) {
+  const el = document.getElementById("crumbs");
+  if (!el) return;
+  const mobile = window.matchMedia("(max-width: 720px)").matches;
+  let items = loc.crumbs;
+  if (mobile && items.length > 3) {
+    items = [items[0], { label: "…", href: null, id: "ellipsis" }, ...items.slice(-2)];
+  }
+  el.innerHTML = items
+    .map((c, i) => {
+      const last = i === items.length - 1;
+      if (!c.href || last) {
+        return `<span class="crumb current"${last ? ' aria-current="page"' : ""}>${c.label}</span>`;
+      }
+      return `<a class="crumb" href="${c.href}">${c.label}</a>`;
+    })
+    .join('<span class="crumb-sep" aria-hidden="true">/</span>');
+}
+
+function fileTreeHtml(loc, query = "") {
+  const q = query.trim().toLowerCase();
+  const bundles = DATA.bundles || [];
+  const all = docs();
+  return bundles
+    .map((b) => {
+      const kids = all.filter((d) => d.bundle === b.id);
+      const filtered = q
+        ? kids.filter((d) => `${d.title} ${d.kind} ${b.title}`.toLowerCase().includes(q))
+        : kids;
+      if (q && !filtered.length && !b.title.toLowerCase().includes(q)) return "";
+      const open = !q ? loc.bundleId === b.id || filtered.some((d) => d.id === loc.docId) : true;
+      const activeBundle = loc.bundleId === b.id;
+      return `<details class="ft-branch${activeBundle ? " here" : ""}" data-bundle="${b.id}" ${open ? "open" : ""}>
+        <summary class="ft-summary" role="treeitem" aria-expanded="${open ? "true" : "false"}">
+          <span class="ft-ico" aria-hidden="true">📁</span>
+          <span class="ft-label">${b.title}</span>
+          <span class="ft-meta">${filtered.length}</span>
+        </summary>
+        <div class="ft-children" role="group">
+          ${filtered
+            .map((d) => {
+              const here = loc.docId === d.id;
+              const leafOpen = here && (loc.kind === "doc" || loc.sectionId || loc.page || loc.kind === "transcript" || loc.kind === "sections" || loc.kind === "pages" || loc.kind === "doc-summary");
+              return `<div class="ft-doc${here ? " here" : ""}" data-doc="${d.id}">
+                <a class="ft-file" role="treeitem" href="/docs/${d.id}" aria-current="${here && loc.kind === "doc" ? "page" : "false"}">
+                  <span class="ft-ico" aria-hidden="true">📄</span>
+                  <span class="ft-label">${d.title}</span>
+                  <span class="ft-meta">${d.pages}p</span>
+                </a>
+                ${
+                  leafOpen
+                    ? `<div class="ft-leaves">
+                        <a class="${loc.kind === "transcript" ? "on" : ""}" href="/docs/${d.id}/transcript">Transcript</a>
+                        <a class="${loc.kind === "sections" || loc.kind === "section" ? "on" : ""}" href="/docs/${d.id}/sections">Sections</a>
+                        <a class="${loc.kind === "pages" || loc.kind === "page" ? "on" : ""}" href="/docs/${d.id}/pages">Scans</a>
+                        <a class="${loc.kind === "doc-summary" ? "on" : ""}" href="/docs/${d.id}/summary">Summary</a>
+                      </div>`
+                    : ""
+                }
+              </div>`;
+            })
+            .join("")}
+        </div>
+      </details>`;
+    })
+    .join("");
+}
+
+function updateLocator() {
+  const bar = document.getElementById("locator");
+  const tree = document.getElementById("fileTree");
+  if (!bar || !DATA) return;
+  const loc = locationFromPath();
+  bar.hidden = false;
+  renderCrumbs(loc);
+  if (tree) {
+    const q = (document.getElementById("treeSearch") && document.getElementById("treeSearch").value) || "";
+    tree.innerHTML = fileTreeHtml(loc, q);
+    const here = tree.querySelector(".ft-doc.here, .ft-branch.here");
+    if (here) here.scrollIntoView({ block: "nearest" });
+  }
+  document.title = `${loc.leaf} — Shah v. Trindade`;
+}
+
+function openTree() {
+  const sheet = document.getElementById("treeSheet");
+  const btn = document.getElementById("treeToggle");
+  if (!sheet) return;
+  sheet.hidden = false;
+  sheet.classList.add("open");
+  document.body.style.overflow = "hidden";
+  if (btn) btn.setAttribute("aria-expanded", "true");
+  updateLocator();
+  const search = document.getElementById("treeSearch");
+  if (search && window.matchMedia("(min-width: 880px)").matches) search.focus();
+}
+
+function closeTree() {
+  const sheet = document.getElementById("treeSheet");
+  const btn = document.getElementById("treeToggle");
+  if (!sheet) return;
+  sheet.classList.remove("open");
+  sheet.hidden = true;
+  if (!menuOpenRef.current) document.body.style.overflow = "";
+  if (btn) btn.setAttribute("aria-expanded", "false");
+}
+
+function toggleTree() {
+  const sheet = document.getElementById("treeSheet");
+  if (!sheet || sheet.hidden) openTree();
+  else closeTree();
+}
+
 function leaf() {
   return `<div class="page"><p class="eyebrow">Not found</p><h1>This leaf is not in the papers</h1><p><a class="btn btn-solid" href="/">Return to overview</a></p></div>`;
 }
@@ -435,6 +606,7 @@ async function render() {
   const p = path();
   setActive();
   closeMenu();
+  closeTree();
   const root = document.getElementById("main");
   if (!root) return;
   if (!DATA) {
@@ -445,6 +617,7 @@ async function render() {
       return;
     }
   }
+  updateLocator();
 
   if (p === "/") {
     root.innerHTML = overview();
@@ -594,15 +767,20 @@ document.addEventListener("click", (e) => {
   if (isAppHref(href) && !e.metaKey && !e.ctrlKey && !e.shiftKey && a.target !== "_blank") {
     e.preventDefault();
     closeMenu();
+    closeTree();
     go(href);
   }
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeMenu();
+  if (e.key === "Escape") {
+    closeMenu();
+    closeTree();
+  }
 });
 window.addEventListener("popstate", render);
 window.addEventListener("resize", () => {
   if (window.matchMedia("(min-width: 800px)").matches) closeMenu();
+  updateLocator();
 });
 const menuBtn = document.getElementById("menuBtn");
 if (menuBtn)
@@ -620,5 +798,24 @@ if (hdr)
     e.preventDefault();
     downloadUrl("/downloads/shah-v-trindade-archive.zip", "shah-v-trindade-archive.zip");
   });
+const treeToggle = document.getElementById("treeToggle");
+if (treeToggle) treeToggle.addEventListener("click", (e) => { e.preventDefault(); toggleTree(); });
+const treeSheetBg = document.getElementById("treeSheetBg");
+if (treeSheetBg) treeSheetBg.addEventListener("click", closeTree);
+const treeClose = document.getElementById("treeClose");
+if (treeClose) treeClose.addEventListener("click", closeTree);
+const treeSearch = document.getElementById("treeSearch");
+if (treeSearch) treeSearch.addEventListener("input", () => updateLocator());
+const treeExpand = document.getElementById("treeExpand");
+if (treeExpand)
+  treeExpand.addEventListener("click", () => {
+    document.querySelectorAll("#fileTree details.ft-branch").forEach((d) => { d.open = true; });
+  });
+const treeCollapse = document.getElementById("treeCollapse");
+if (treeCollapse)
+  treeCollapse.addEventListener("click", () => {
+    document.querySelectorAll("#fileTree details.ft-branch").forEach((d) => { d.open = false; });
+  });
 closeMenu();
+closeTree();
 render();

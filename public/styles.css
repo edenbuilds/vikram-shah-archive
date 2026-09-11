@@ -20,6 +20,8 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+  --nav-h: 4.5rem;
+  --loc-h: 2.5rem;
 }
 
 *,
@@ -958,4 +960,271 @@ a.chip {
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* —— Location crumbs + filing tree —— */
+.locator {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--safe-top));
+  z-index: 55;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--paper-deep) 88%, var(--white));
+  backdrop-filter: blur(8px);
+}
+.locator-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.5rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+.tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--seal);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.tree-toggle[aria-expanded="true"] {
+  background: var(--seal);
+  color: var(--paper);
+  border-color: var(--seal-deep);
+}
+.tree-toggle-label { display: none; }
+@media (min-width: 480px) {
+  .tree-toggle-label { display: inline; }
+}
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.crumb {
+  min-width: 0;
+  max-width: 42vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--muted);
+  padding: 0.2rem 0.25rem;
+  border-radius: 4px;
+}
+a.crumb:hover { color: var(--seal); background: color-mix(in oklab, var(--seal) 8%, transparent); }
+.crumb.current {
+  color: var(--ink);
+  font-weight: 600;
+  max-width: 55vw;
+}
+.crumb-sep {
+  color: var(--subtle);
+  flex-shrink: 0;
+  user-select: none;
+}
+@media (min-width: 880px) {
+  .crumb { max-width: 14rem; }
+  .crumb.current { max-width: 18rem; }
+}
+
+.tree-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: none;
+}
+.tree-sheet.open { display: block; }
+.tree-sheet-bg {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  background: color-mix(in oklab, var(--ink) 45%, transparent);
+}
+.tree-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(22rem, calc(100vw - 2rem));
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+.tree-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.tree-panel-title {
+  margin: 0.15rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+}
+.tree-panel-tools {
+  padding: 0.75rem 1rem 0.35rem;
+  display: grid;
+  gap: 0.55rem;
+  border-bottom: 1px solid var(--rule);
+}
+.tree-search { margin: 0; height: 2.5rem; min-height: 2.5rem; }
+.tree-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.file-tree {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.65rem 0.75rem 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+}
+.ft-branch {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--white);
+  overflow: hidden;
+}
+.ft-branch.here { border-color: color-mix(in oklab, var(--seal) 40%, var(--rule)); }
+.ft-summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem;
+}
+.ft-summary::-webkit-details-marker { display: none; }
+.ft-branch.here > .ft-summary {
+  background: color-mix(in oklab, var(--seal) 7%, var(--white));
+}
+.ft-ico { font-size: 0.9rem; line-height: 1; }
+.ft-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.ft-meta {
+  color: var(--subtle);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+.ft-children {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0 0.45rem 0.55rem;
+  border-top: 1px solid var(--rule);
+}
+.ft-doc.here .ft-file {
+  border-color: var(--seal);
+  background: color-mix(in oklab, var(--seal) 8%, var(--paper));
+}
+.ft-file {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.84rem;
+}
+.ft-file:hover { border-color: var(--rule); background: var(--paper); }
+.ft-leaves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0 0.55rem 0.45rem 1.8rem;
+}
+.ft-leaves a {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  background: var(--white);
+}
+.ft-leaves a.on,
+.ft-leaves a:hover {
+  color: var(--paper);
+  background: var(--seal);
+  border-color: var(--seal);
+}
+
+@media (max-width: 479px) {
+  .locator-inner { gap: 0.4rem; }
+  .crumb { max-width: 34vw; font-size: 0.78rem; }
+  .crumb.current { max-width: 48vw; }
+  .tree-panel { width: min(100vw, 100%); }
+}
+
+/* Desktop: filing tree as anchored popover under locator */
+@media (min-width: 880px) {
+  .tree-sheet {
+    inset: auto;
+    top: calc(var(--nav-h) + var(--safe-top) + var(--loc-h) + 0.35rem);
+    left: max(1rem, calc((100vw - var(--max)) / 2));
+    right: auto;
+    bottom: auto;
+    width: min(26rem, 42vw);
+    max-height: min(70vh, 640px);
+  }
+  .tree-sheet.open {
+    display: block;
+  }
+  .tree-sheet-bg {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+  }
+  .tree-panel {
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: min(70vh, 640px);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow), 0 22px 48px -28px color-mix(in oklab, var(--ink) 45%, transparent);
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .tree-panel-head {
+    padding: 0.7rem 0.9rem;
+  }
+  .tree-panel-title {
+    font-size: 0.98rem;
+  }
 }
