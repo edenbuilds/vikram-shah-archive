@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Flow of Funding/Statement of Funding and Expenses of Late Pascoal Trindade 2006-2013 .pdf  
 **SHA-256:** `08dde23b843b36f7ba5b9331009ae68b022973ade7f21c8bbe31ae4e6ef2b578`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Statement of Funding and Expenses of Late Pascoal Trindade 2006-2013  | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Statement of funding and expenses 2006 to 2013 from the account of Late Mr. Pascoal
 

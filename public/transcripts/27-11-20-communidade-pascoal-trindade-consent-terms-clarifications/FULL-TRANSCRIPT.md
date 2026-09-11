@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/27.11.20 Communidade to Pascoal Trindade (Consent Terms Clarifications).pdf  
 **SHA-256:** `6468575c6ab49f638808f5b495daa5da51843942f0020006c04e96b544b9e2cd`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 27.11.20 Communidade to Pascoal Trindade (Consent Terms Clarifications) | 1-2 |
 
 <!-- SECTION: full | PDF pages 1-2 -->
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ADV. PRONOY KAMAT
 

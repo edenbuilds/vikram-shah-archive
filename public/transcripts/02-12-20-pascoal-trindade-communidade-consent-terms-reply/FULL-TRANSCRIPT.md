@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/02.12.20 Pascoal Trindade to Communidade (Consent Terms Reply).pdf  
 **SHA-256:** `3837e82bbfeba9d24112f7b93ef7b05c524adbcc10adbcc687cf55e50983992d`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 02.12.20 Pascoal Trindade to Communidade (Consent Terms Reply) | 1-3 |
 
 <!-- SECTION: full | PDF pages 1-3 -->
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Wednesday, 2 December 2020
 

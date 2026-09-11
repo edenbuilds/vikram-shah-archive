@@ -4,7 +4,9 @@
 **Mark:** —  
 **PDF pages:** 1-6
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADV. N.N.P. SARDESAI AT

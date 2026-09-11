@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 29
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-25 | Pleading | भारतीय नोस-न्यायिक |
+| 1-25 | Pleading | > Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 26 | 2 | SCHEDULE-I ABOVE REFERRED TO |
 | 27 | 3 | SCHEDULE-III ABOVE REFERRED TO |
 | 28 | 4 | SCHEDULE-IV ABOVE REFERRED TO |
@@ -37,6 +37,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 भारतीय नोस-न्यायिक
 एक सौ लपये
@@ -76,5 +78,3 @@ Wankede Stadium, D Road, Churchgate, Mumbai 400020 hereinafter referred to as
 ---
 
 1. The image contains a series of lines with text that appears to be part of a document or a report. The text is too blurry and illegible to read accurately without additional context.
-
-2. To proceed, I will use OCR (Optical Character Recognition) to transcribe the visible text from the image. However, due to the poor quality of the image, it is not possible to accurately recognize all the text.

@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 33
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-4 | Pleading | IN THE HIGH COURT OF BOMBAY AT GOA |
+| 1-4 | Pleading | > Clerk note: continuous OCR for a 33-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 5 | 2 | ANNEXED HERETO AND MARKED AS ANNEXURE – 1 IS THE CERTIFIED COPY OF THE ORDER DATED |
 | 6 | 3 | ANNEXED HERETO AND MARKED AS ANNEXURE – 2 COLLY ARE THE COPIES OF THE SUIT PLAINT ALONG WITH THE APPLICATION UNDER OR |
 | 7 | 4 | ANNEXED HERETO AND MARKED AS ANNEXURE |
@@ -42,6 +42,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 33-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE HIGH COURT OF BOMBAY AT GOA
 PANAJI - GOA
@@ -81,5 +83,3 @@ Dona Paula, Taluka Tiswadi, Goa.
 ## Versus
 
 1. Comunidade of Bambolim,
-A body constituted and functioning under The Code of Comunidades
-1961, Represented therein by their duly elected Attorney, having their office at Bambolim Church road, P.O. GMC

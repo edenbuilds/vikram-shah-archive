@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 7
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 सेहुमी वापरली जागारी संख्यान्त करे / सामान्तरित: प्रयोग किए जाने वाले संख्यान्तरित / Generally Used Abbreviations
 
@@ -72,5 +74,3 @@ proc = समन्तरित सुसर्वी / सुसर्वी / 
 rd = अधिपद्धति सिमी / अधिपद्धति सिमी / Recurring Deposit
 
 ret/rtn = परततारित / वापरली / Return
-Rnd = पूर्णीकार्त / पूर्णीकार्त / Round of
-sb = बसते बक़ि / बसते बक़ि / Savings Bank

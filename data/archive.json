@@ -9,109 +9,110 @@
     "respondents13": "Mrs. Riva Trindade, Mrs. Albertina Trindade, and Respondent No. 3 as named in the papers",
     "respondent4": "Mr. Murlidhar Sadarangani",
     "slug": "shah-v-trindade",
-    "disclaimer": "This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.",
+    "disclaimer": "This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.",
     "kicker": "Arbitration archive",
     "docCount": 141,
-    "pageCount": 2084
+    "pageCount": 2084,
+    "lawNote": "Indian law context: appointment under s.11, jurisdiction under s.16, interim measures under s.17 of the Arbitration and Conciliation Act, 1996; related civil papers in SCS 52/2013/A (Communidade of Bambolim)."
   },
   "bundles": [
     {
-      "id": "three-new-applications",
-      "title": "Three applications (June\u2013July 2026)",
-      "note": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
-      "docs": 15,
-      "pages": 229
-    },
-    {
-      "id": "civil-suit",
-      "title": "Civil suit SCS 52/2013/A and companion papers",
-      "note": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
-      "docs": 24,
-      "pages": 427
-    },
-    {
-      "id": "extracted-bundle",
-      "title": "Extracted bundle (Respondent No. 4 replies)",
-      "note": "Replies of Murlidhar Sadarangani as extracted from the arbitral bundle.",
-      "docs": 2,
-      "pages": 16
-    },
-    {
-      "id": "financial-documents",
-      "title": "Financial documents",
-      "note": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
-      "docs": 24,
-      "pages": 135
-    },
-    {
-      "id": "hc-arbitration",
-      "title": "High Court papers on appointment of arbitrator",
-      "note": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
-      "docs": 7,
-      "pages": 74
-    },
-    {
-      "id": "important-documents",
-      "title": "Title, JVA, sanads, and other instruments",
-      "note": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
-      "docs": 12,
-      "pages": 207
-    },
-    {
-      "id": "letters-kuval",
-      "title": "Letters between Kuval Projects and PVM Associates",
-      "note": "JVA correspondence and notice of arbitration.",
-      "docs": 3,
-      "pages": 23
-    },
-    {
       "id": "list-of-dates",
-      "title": "List of dates",
-      "note": "Chronology as compiled for the arbitration.",
+      "title": "0. Chronology",
+      "note": "List of dates as compiled for the arbitration.",
       "docs": 1,
       "pages": 6
     },
     {
-      "id": "meetings-vs-riva",
-      "title": "Meetings and correspondence, Vikram Shah and Riva Trindade",
-      "note": "Lists of communications and meetings as compiled.",
-      "docs": 2,
-      "pages": 2
-    },
-    {
-      "id": "minutes",
-      "title": "Arbitral minutes of proceedings",
-      "note": "Tribunal minutes and applications to modify minutes.",
-      "docs": 30,
-      "pages": 89
-    },
-    {
-      "id": "original-owners-litigation",
-      "title": "Original owners' litigation",
-      "note": "Communidade suits, 1998 compromise, and 2012 High Court judgment.",
-      "docs": 3,
-      "pages": 153
+      "id": "hc-arbitration",
+      "title": "1. Appointment (A&C Act s.11)",
+      "note": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
+      "docs": 7,
+      "pages": 74
     },
     {
       "id": "soc-sod",
-      "title": "Statement of Claim and Statements of Defence",
-      "note": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "title": "2. Pleadings (SoC / SoD)",
+      "note": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "docs": 5,
       "pages": 466
     },
     {
       "id": "section-16",
-      "title": "Section 16 challenge",
-      "note": "Application under s.16, replies, written submissions, and dismissal order.",
+      "title": "3. Jurisdiction (A&C Act s.16)",
+      "note": "Challenge to jurisdiction, replies, and dismissal order.",
       "docs": 6,
       "pages": 63
     },
     {
       "id": "section-17",
-      "title": "Section 17 interim measures",
-      "note": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "title": "4. Interim measures (A&C Act s.17)",
+      "note": "Cross applications for interim reliefs and notes of arguments.",
       "docs": 7,
       "pages": 194
+    },
+    {
+      "id": "three-new-applications",
+      "title": "5. Later applications",
+      "note": "Leave, amendment, and production applications (June\u2013July 2026).",
+      "docs": 15,
+      "pages": 229
+    },
+    {
+      "id": "minutes",
+      "title": "6. Minutes of proceedings",
+      "note": "Tribunal minutes and applications to modify minutes.",
+      "docs": 30,
+      "pages": 89
+    },
+    {
+      "id": "important-documents",
+      "title": "7. Title & instruments",
+      "note": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
+      "docs": 12,
+      "pages": 207
+    },
+    {
+      "id": "financial-documents",
+      "title": "8. Financial papers",
+      "note": "Bank statements, funding, company filings, and tax papers as filed.",
+      "docs": 24,
+      "pages": 135
+    },
+    {
+      "id": "letters-kuval",
+      "title": "9. Correspondence (Kuval / PVM)",
+      "note": "JVA correspondence and notice of arbitration.",
+      "docs": 3,
+      "pages": 23
+    },
+    {
+      "id": "meetings-vs-riva",
+      "title": "10. Without-prejudice lists",
+      "note": "Meetings and correspondence lists, Vikram Shah and Riva Trindade.",
+      "docs": 2,
+      "pages": 2
+    },
+    {
+      "id": "civil-suit",
+      "title": "11. Civil suit SCS 52/2013/A",
+      "note": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
+      "docs": 24,
+      "pages": 427
+    },
+    {
+      "id": "original-owners-litigation",
+      "title": "12. Prior title litigation",
+      "note": "Communidade suits, 1998 compromise, and 2012 High Court judgment.",
+      "docs": 3,
+      "pages": 153
+    },
+    {
+      "id": "extracted-bundle",
+      "title": "13. Extracted R4 replies",
+      "note": "Replies of Murlidhar Sadarangani as extracted from the arbitral bundle.",
+      "docs": 2,
+      "pages": 16
     }
   ],
   "docs": [
@@ -125,8 +126,8 @@
       "bytes": 416574,
       "sha256": "9ea338bb54712a48bc10fdafda420f0ee9e8032f418ddbc2101f61dfcee810ec",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -155,8 +156,8 @@
       "bytes": 21327,
       "sha256": "8a28b68f6dbd67265bf06a2fa01197264f4318f0c0f0dbd471a7801f7c557be3",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -172,7 +173,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -185,8 +186,8 @@
       "bytes": 30696,
       "sha256": "cbff246da3abc8a0eabf846600b9d765d2ac3b3ee16cb1e2a970d1eaf4a9ea92",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -202,7 +203,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "3 pages as filed."
     },
     {
@@ -215,8 +216,8 @@
       "bytes": 122729,
       "sha256": "143c6fd0c0da9c1a73d832681309c1099a1b8e243c9b78e012948c1b63eb3c49",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -232,7 +233,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "13 pages as filed."
     },
     {
@@ -245,8 +246,8 @@
       "bytes": 474825,
       "sha256": "5ec52e2049767b3fe62ea5cc98444c6db7de71a5e6f9b1f4a0acb80e1dcf803a",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -262,7 +263,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "45 pages as filed."
     },
     {
@@ -275,8 +276,8 @@
       "bytes": 115132,
       "sha256": "3d9cfd82c75e71dd42be58b51bd4226dd67904ba96eca8bf977803150390ce62",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -305,8 +306,8 @@
       "bytes": 154173,
       "sha256": "abd95fd4ec9d3a4cc89fcfbb4178989bf989b5b08ec7b20d582cb47e4b230aa5",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -322,7 +323,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "23 pages as filed."
     },
     {
@@ -335,8 +336,8 @@
       "bytes": 105873,
       "sha256": "f49b8987072db3c58a3d6f5a30edffed26fa4cb6f7bd6f4a6b14afa4b22727d9",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -352,7 +353,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "9 pages as filed."
     },
     {
@@ -365,8 +366,8 @@
       "bytes": 5890359,
       "sha256": "df5f01e30b72aaf70897227faa5bdbd27f2407fef3bc1f8a2ea2cb1a0aa21d5f",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -382,7 +383,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "57 pages as filed."
     },
     {
@@ -395,8 +396,8 @@
       "bytes": 144529,
       "sha256": "20eb034010859d931d7217459ed7e4dde81da83ec629e04719741d2b33c290ff",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -425,8 +426,8 @@
       "bytes": 144781,
       "sha256": "b642c7332552d6d5f56657ece470613dac59846ef0c605add26ea208fa037296",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -455,8 +456,8 @@
       "bytes": 172621,
       "sha256": "bd3a5fda37d11e68fb4577780b1265b51d3c3e05400b4a65ca2f3a8e58bf8942",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -472,7 +473,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "10 pages as filed."
     },
     {
@@ -485,8 +486,8 @@
       "bytes": 3296214,
       "sha256": "b101dea165fee5bbe4797bc29ff4e1b5e5aa615b997f6e0e888f89aaa53747f9",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -515,8 +516,8 @@
       "bytes": 4551517,
       "sha256": "73f2a47a2308070e269fae568a9e88d9cbbe64feac2ca3d5f1da5a096199a045",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -545,8 +546,8 @@
       "bytes": 2554140,
       "sha256": "7df19cdce139b6a74339121c05f7b869a5ed5d4fcb08c4f33b720554024eac10",
       "bundle": "three-new-applications",
-      "bundleTitle": "Three applications (June\u2013July 2026)",
-      "bundleNote": "Leave, amendment, and production applications, replies, and the 29.07.26 order.",
+      "bundleTitle": "5. Later applications",
+      "bundleNote": "Leave, amendment, and production applications (June\u2013July 2026).",
       "folder": "3 New Applications",
       "sections": [
         {
@@ -575,15 +576,15 @@
       "bytes": 697547,
       "sha256": "c41416eade4db93ab0edfd1761ff9e143c78d5d35b853a3b20821b80c5a93a96",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
-          "id": "in-the-high-court-of-bombay-at-goa",
-          "file": "01-in-the-high-court-of-bombay-at-goa.md",
+          "id": "clerk-note-continuous-ocr-for-a-33-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-33-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "IN THE HIGH COURT OF BOMBAY AT GOA",
+          "title": "> Clerk note: continuous OCR for a 33-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-4 as split from the compilation.",
           "pages": "1-4",
           "pageStart": 1,
@@ -704,8 +705,8 @@
       "bytes": 473121,
       "sha256": "a8fc93c690082c4a21b66ff57e2f8765e0655bdcc904b4665db046f64655188c",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -734,8 +735,8 @@
       "bytes": 32617,
       "sha256": "d7a1ce9f4ff2187ba4a285de31029224a3f3c4fd378e5d2b3daee3e4c4e657ef",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -751,7 +752,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -764,8 +765,8 @@
       "bytes": 335730,
       "sha256": "903d0816fc1afc235499907aa8b0e74102b8ebbd63c698f2008cb2a31afcb2de",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -794,8 +795,8 @@
       "bytes": 64911,
       "sha256": "fbec6f21ef7672720ef915a74c60be8db14c8323781a7eae86847570d36ab57e",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -811,7 +812,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "4 pages as filed."
     },
     {
@@ -824,8 +825,8 @@
       "bytes": 37477,
       "sha256": "18a0adaf289c624419cf47bee26ebac4338a574e90ac4e379f896cf839138b0c",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -841,7 +842,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "4 pages as filed."
     },
     {
@@ -854,8 +855,8 @@
       "bytes": 453984,
       "sha256": "9c29a7744e1f1711774032c6ee1fe7db1f5def1e3c0b736e2c1cce3142cc2005",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -884,8 +885,8 @@
       "bytes": 268386,
       "sha256": "af104a53629e60bd01a1939e01d457bb78986fd669d37b3e9cf80afb436e15d5",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -914,8 +915,8 @@
       "bytes": 388235,
       "sha256": "11bfbdd868aead5da5b3d9144e5b943df87af8daffc1d10c56db3e06eafecf61",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -944,8 +945,8 @@
       "bytes": 385672,
       "sha256": "ff0122ccaa26f01f1db8d7dd82a01fa9567045c1fcb491bda3be2775d57c1572",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -974,8 +975,8 @@
       "bytes": 2846564,
       "sha256": "f1fb955c55adf04e2cde1975537c4b078df0efdfc31ede465335072a914be1bc",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -1004,8 +1005,8 @@
       "bytes": 35034,
       "sha256": "410e83ca2b8a085263bdf5178e5bf56e498bebe66424ecd16c4353c2c4ce114d",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -1021,7 +1022,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -1034,8 +1035,8 @@
       "bytes": 179125,
       "sha256": "3837e82bbfeba9d24112f7b93ef7b05c524adbcc10adbcc687cf55e50983992d",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1064,8 +1065,8 @@
       "bytes": 499789,
       "sha256": "d6ba901ea6a4e40cc05a45dd475c015285b875d34d36da662a4bb1cac2dfed0b",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1094,8 +1095,8 @@
       "bytes": 88578,
       "sha256": "76c7a37063a7541364aa232bbdc5c9e8060bc87cdd599cd2c325f107e0d0fd1e",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1111,7 +1112,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -1124,8 +1125,8 @@
       "bytes": 61109,
       "sha256": "e27fb7fdcab94e88b46f295f0cfdd56de01b3f875a09ed283f551d778625afdb",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1154,8 +1155,8 @@
       "bytes": 266770,
       "sha256": "ff23734f9cf3b720f1e5835f360a8ff2a67b48ec75bf542341a38ac937be86b6",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1184,8 +1185,8 @@
       "bytes": 59604,
       "sha256": "4c84071526b0deee9be81032f3ff1f27ffc16bdec63bbbf6237c756a45442897",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1214,8 +1215,8 @@
       "bytes": 151834,
       "sha256": "6468575c6ab49f638808f5b495daa5da51843942f0020006c04e96b544b9e2cd",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1244,8 +1245,8 @@
       "bytes": 128459,
       "sha256": "7768bee40bea2b42b91d1f55a6a32a7c0bafb326650bb307b9c60af3bdfd8ea9",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1274,8 +1275,8 @@
       "bytes": 710950,
       "sha256": "adeaffa01d29d109e31c5176aa064fcee121ff80fd5b8b2656e48b9f821ec6a8",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1304,8 +1305,8 @@
       "bytes": 616029,
       "sha256": "753a2d8fc13b79f241f456c178f18a4619c5a0419fc6a1ec9e897674858b857c",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit/Consent Terms",
       "sections": [
         {
@@ -1334,8 +1335,8 @@
       "bytes": 1972566,
       "sha256": "3702eca75f9447a513b428af045e9219aca3505781dc061b8e4133df73c7205d",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -1364,8 +1365,8 @@
       "bytes": 2039027,
       "sha256": "4cbbec2d3ca5a53cf9b00fde5e8c0e69f5c2a637b8e63a4c22b63ca7e8458a53",
       "bundle": "civil-suit",
-      "bundleTitle": "Civil suit SCS 52/2013/A and companion papers",
-      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term correspondence.",
+      "bundleTitle": "11. Civil suit SCS 52/2013/A",
+      "bundleNote": "Communidade of Bambolim v Pascoal Trindade & Ors., including consent-term papers.",
       "folder": "Civil Suit",
       "sections": [
         {
@@ -1394,7 +1395,7 @@
       "bytes": 147936,
       "sha256": "ec76c9235f4b3e8ca3fdf1119032d0f4bca7b5eb874ea65ef5f8484c81a8af12",
       "bundle": "extracted-bundle",
-      "bundleTitle": "Extracted bundle (Respondent No. 4 replies)",
+      "bundleTitle": "13. Extracted R4 replies",
       "bundleNote": "Replies of Murlidhar Sadarangani as extracted from the arbitral bundle.",
       "folder": "Extracted Bundle Documents",
       "sections": [
@@ -1411,7 +1412,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "9 pages as filed."
     },
     {
@@ -1424,7 +1425,7 @@
       "bytes": 132431,
       "sha256": "4e6707df3956a07c520dc5e0e9027c39964d3a329c8c6e1912eb6a0d2b1ddc20",
       "bundle": "extracted-bundle",
-      "bundleTitle": "Extracted bundle (Respondent No. 4 replies)",
+      "bundleTitle": "13. Extracted R4 replies",
       "bundleNote": "Replies of Murlidhar Sadarangani as extracted from the arbitral bundle.",
       "folder": "Extracted Bundle Documents",
       "sections": [
@@ -1441,7 +1442,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "7 pages as filed."
     },
     {
@@ -1454,8 +1455,8 @@
       "bytes": 41869,
       "sha256": "08dde23b843b36f7ba5b9331009ae68b022973ade7f21c8bbe31ae4e6ef2b578",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Flow of Funding",
       "sections": [
         {
@@ -1484,8 +1485,8 @@
       "bytes": 384600,
       "sha256": "ed59b154a49ce89dedcfefdfd8ed2026fff89135afa6da22de846629d380fece",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Kuval",
       "sections": [
         {
@@ -1514,8 +1515,8 @@
       "bytes": 305526,
       "sha256": "d4fd06e5c65f7d91f75305e6b8bf2bd32d8611a30cddbfb77d3c9054c560f829",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Kuval",
       "sections": [
         {
@@ -1544,8 +1545,8 @@
       "bytes": 384067,
       "sha256": "e3521f8a759ebc1a5f5ad9f7e4dbf92d7b6b652b3e0b4ff24fa21bfdff6ebfa1",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Kuval",
       "sections": [
         {
@@ -1574,8 +1575,8 @@
       "bytes": 304952,
       "sha256": "02465f50829c9f00a5a60c2010878ca659cdc6f0712d7fcfdbe3417642962ed7",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Kuval",
       "sections": [
         {
@@ -1604,8 +1605,8 @@
       "bytes": 29449,
       "sha256": "74d92b6960fc127e775c73a343d34f7631216847ab871cc01c53c527ea8f0776",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Loonkar",
       "sections": [
         {
@@ -1634,8 +1635,8 @@
       "bytes": 19770,
       "sha256": "d115d833b2f6bab0c5b04805cd6691bd5f0f83391ff198461cfc016afa108660",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Bank Statement",
       "sections": [
         {
@@ -1664,8 +1665,8 @@
       "bytes": 991900,
       "sha256": "1682b8eb9a1bd62fba685b0f2650b376d513af02d40d7811d9b5a69e5c732df5",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Bank Statement",
       "sections": [
         {
@@ -1694,8 +1695,8 @@
       "bytes": 3107182,
       "sha256": "bfddec016e7615febdc5a846e39891693417ec6abebf61ea15765439fb4bf128",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Bank Statement",
       "sections": [
         {
@@ -1724,8 +1725,8 @@
       "bytes": 26392,
       "sha256": "4fdbed3284d3c50ae7d2b362e3537cc6726b7e1257cf5d7e2f2146ecb9bfa273",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Bank Statement",
       "sections": [
         {
@@ -1741,7 +1742,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -1754,8 +1755,8 @@
       "bytes": 321489,
       "sha256": "ec37ab43c2666076724b851ae3b461b8fec7534e3b539bc1d59e07777014ce21",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Financial Statements of PVM",
       "sections": [
         {
@@ -1784,8 +1785,8 @@
       "bytes": 85315,
       "sha256": "0ca5d90d0407ba72ce901927f54a9339eaed9f6ef4f8d8eaf2cb87b850b86522",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Financial Statements of PVM",
       "sections": [
         {
@@ -1814,8 +1815,8 @@
       "bytes": 224579,
       "sha256": "6ae232333e0a62a5068516904a2d53897af81271325ca90052ecb61abbef0a89",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Financial Statements of PVM",
       "sections": [
         {
@@ -1844,8 +1845,8 @@
       "bytes": 152080,
       "sha256": "c3fc8e0514a6945f7d834effad6f2e29e38c0f976f4ee42df4f9937fdb46a5e3",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Financial Statements of PVM",
       "sections": [
         {
@@ -1874,8 +1875,8 @@
       "bytes": 231828,
       "sha256": "e834aa71341acdce41947db8bfa193b79f9324fcefa7e123359dd7a2fba47617",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Financial Statements of PVM",
       "sections": [
         {
@@ -1904,8 +1905,8 @@
       "bytes": 72572,
       "sha256": "26d30a0c8333deb72fc0f57006e747b31564e85e48c02a5911f96ee186f426be",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/PVM/Tax Advisory Note for PVM",
       "sections": [
         {
@@ -1934,8 +1935,8 @@
       "bytes": 276185,
       "sha256": "7b69d53c871327dc9f14d9366e46fe292e20ce3a839bd2ba1f1208b433fd47dd",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pascoal",
       "sections": [
         {
@@ -1964,8 +1965,8 @@
       "bytes": 83293,
       "sha256": "28f713dd3c72bfd1d0a4a9235edce91cb92bb49735f70a77a989d6312151b14b",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pascoal",
       "sections": [
         {
@@ -1994,8 +1995,8 @@
       "bytes": 52170,
       "sha256": "1a8d0b5c73a489a2659df8f56f9854d00fbe6871590bd144fabe4b86b21752d6",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pascoal",
       "sections": [
         {
@@ -2024,8 +2025,8 @@
       "bytes": 13817,
       "sha256": "86afb71099769d30da42343bcdea06d96f7e0ae34727ac29faab2fcfdce6d235",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pascoal",
       "sections": [
         {
@@ -2041,7 +2042,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -2054,8 +2055,8 @@
       "bytes": 182714,
       "sha256": "d56964e5da80325a2e0aabc99fb54abfa112f280ed7a675a080515fa244661a0",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pascoal",
       "sections": [
         {
@@ -2084,8 +2085,8 @@
       "bytes": 1174056,
       "sha256": "21fbf291ff54e7f65580cc636f98746ea61bb7beb775700d5320489c7bf0e7fe",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pravar",
       "sections": [
         {
@@ -2114,8 +2115,8 @@
       "bytes": 13371,
       "sha256": "03006df5fe3d845683a0530befb94e674856dd9a84d7ebc5119d0419b5f077ca",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Pravar",
       "sections": [
         {
@@ -2131,7 +2132,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -2144,8 +2145,8 @@
       "bytes": 41547,
       "sha256": "f5942e2dc7291eb44a12c8c4ed934b0856a8085a3f660f934d0a3d4d961b0326",
       "bundle": "financial-documents",
-      "bundleTitle": "Financial documents",
-      "bundleNote": "PVM, Pascoal, Pravar, Loonkar, Kuval, tax, and funding papers as filed or collected.",
+      "bundleTitle": "8. Financial papers",
+      "bundleNote": "Bank statements, funding, company filings, and tax papers as filed.",
       "folder": "Financial Documents/Tax on Property",
       "sections": [
         {
@@ -2174,8 +2175,8 @@
       "bytes": 34521,
       "sha256": "02250b0c96f28296a296098deb15aaba55c9c1b3129a0211e0f70987c72ad60a",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2191,7 +2192,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "3 pages as filed."
     },
     {
@@ -2204,25 +2205,58 @@
       "bytes": 438822,
       "sha256": "164b1677311635bcc449235457a9a16f59811c5ead971b4dcd1ef6006b10a74e",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
-          "id": "full",
-          "file": "01-full.md",
-          "numeral": "I",
-          "title": "26.06.24 Application for Appointment of Arbitrator under S.11(4), AAR No.13 of 2024",
-          "short": "27 pages as filed.",
-          "pages": "1-27",
+          "id": "page-1-of-27",
+          "file": "01-page-1-of-27.md",
+          "numeral": "1",
+          "title": "Page 1 of 27",
+          "short": "Pages 1-1 as split from the compilation.",
+          "pages": "1",
           "pageStart": 1,
+          "pageEnd": 1,
+          "mark": "Pleading"
+        },
+        {
+          "id": "annexure-a",
+          "file": "02-annexure-a.md",
+          "numeral": "2",
+          "title": "ANNEXURE A",
+          "short": "Pages 2-2 as split from the compilation.",
+          "pages": "2",
+          "pageStart": 2,
+          "pageEnd": 2,
+          "mark": "ANNEXURE A"
+        },
+        {
+          "id": "annexure-b",
+          "file": "03-annexure-b.md",
+          "numeral": "3",
+          "title": "ANNEXURE B",
+          "short": "Pages 3-3 as split from the compilation.",
+          "pages": "3",
+          "pageStart": 3,
+          "pageEnd": 3,
+          "mark": "ANNEXURE B"
+        },
+        {
+          "id": "annexure-c",
+          "file": "04-annexure-c.md",
+          "numeral": "4",
+          "title": "ANNEXURE C",
+          "short": "Pages 4-27 as split from the compilation.",
+          "pages": "4-27",
+          "pageStart": 4,
           "pageEnd": 27,
-          "mark": "\u2014"
+          "mark": "ANNEXURE C"
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
-      "note": "27 pages as filed."
+      "transcriptSource": "google-vision",
+      "note": "4 sections as split from the paper."
     },
     {
       "id": "30-07-24-registrar-s-forwarding-notice-enclosing-10-07",
@@ -2234,8 +2268,8 @@
       "bytes": 69441,
       "sha256": "e6b44611bf6fe389a7ae8c8bfe4e016cf1d0128f78e8e8de10b6698f44a4c710",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2251,7 +2285,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "5 pages as filed."
     },
     {
@@ -2264,8 +2298,8 @@
       "bytes": 456430,
       "sha256": "f4e172c1b2b26f55bf871636703aafa6dc71c578a1fcfc16f87f74ffa0e005cc",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2281,7 +2315,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "27 pages as filed."
     },
     {
@@ -2294,8 +2328,8 @@
       "bytes": 45562,
       "sha256": "e2809667a21a0742f3ae8183251501db2ad38b1ec4ecd5802e668b87a8b67c89",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2311,7 +2345,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "4 pages as filed."
     },
     {
@@ -2324,8 +2358,8 @@
       "bytes": 146322,
       "sha256": "a9488e68a43edda7185da8c8a9eec4c26a636c83b3b4c8e217a84f4aec12dfd6",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2354,8 +2388,8 @@
       "bytes": 1805402,
       "sha256": "07ef9ce4fcd3405f7651e9aada80c1b63724c90a4d14178d697bcf2d6366012a",
       "bundle": "hc-arbitration",
-      "bundleTitle": "High Court papers on appointment of arbitrator",
-      "bundleNote": "AAR No. 13 of 2024, High Court of Bombay at Goa.",
+      "bundleTitle": "1. Appointment (A&C Act s.11)",
+      "bundleNote": "High Court of Bombay at Goa \u2014 AAR No. 13 of 2024.",
       "folder": "HC Order wrt Arbitration",
       "sections": [
         {
@@ -2371,7 +2405,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "4 pages as filed."
     },
     {
@@ -2384,8 +2418,8 @@
       "bytes": 5096301,
       "sha256": "3c9754c027598a5060a21557bca9f0e1dd7344070a84d83b570b509205e52177",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2414,15 +2448,15 @@
       "bytes": 451158,
       "sha256": "2668109919af75efc23b5b57632fa8deef1deb2d9d5394df3e8f8fbf27e7a04f",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
-          "id": "section",
-          "file": "01-section.md",
+          "id": "clerk-note-continuous-ocr-for-a-29-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-29-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "\u092d\u093e\u0930\u0924\u0940\u092f \u0928\u094b\u0938-\u0928\u094d\u092f\u093e\u092f\u093f\u0915",
+          "title": "> Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-25 as split from the compilation.",
           "pages": "1-25",
           "pageStart": 1,
@@ -2488,8 +2522,8 @@
       "bytes": 411241,
       "sha256": "5cbbc2c9fbc474f8cbfa57ff1fd9a8a42b56801b280048dc27ac45ae01a4826e",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2518,8 +2552,8 @@
       "bytes": 4097587,
       "sha256": "e36c834aafd7dfc10a6dc3a595cdb3bcdb775e486409bf0a1176fa3c8ed768fa",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2535,7 +2569,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "16 pages as filed."
     },
     {
@@ -2548,8 +2582,8 @@
       "bytes": 270006,
       "sha256": "a59ff36054abd230051b22fdbb5c749ac88060871439bbef93c70a2424fe64f8",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2578,15 +2612,15 @@
       "bytes": 1220458,
       "sha256": "33427cf4684794498828e8f40121db3b126fc8f45278ba9dbceb6a9c55aa42f6",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
-          "id": "section",
-          "file": "01-section.md",
+          "id": "clerk-note-continuous-ocr-for-a-43-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-43-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "\u0906\u0938\u094d\u0924\u0940\u092f \u092a\u094b\u0930\u094d\u0936 \u0930\u0938\u093e\u092f\u093f\u0915",
+          "title": "> Clerk note: continuous OCR for a 43-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-24 as split from the compilation.",
           "pages": "1-24",
           "pageStart": 1,
@@ -2674,58 +2708,25 @@
       "bytes": 275131,
       "sha256": "8f562ad676499647ae95c5b4c55f99943efb3ff9800bd0df9fe96c259d2572b5",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
-          "id": "memorandum-of-understanding",
-          "file": "01-memorandum-of-understanding.md",
-          "numeral": "1",
-          "title": "MEMORANDUM OF UNDERSTANDING",
-          "short": "Pages 1-14 as split from the compilation.",
-          "pages": "1-14",
+          "id": "full",
+          "file": "01-full.md",
+          "numeral": "I",
+          "title": "MOU Pascoal Trinidade and Pravar Trade-Invest Pvt Ltd dt 15.12.06 (unsigned by Co-Ordinator)",
+          "short": "17 pages as filed.",
+          "pages": "1-17",
           "pageStart": 1,
-          "pageEnd": 14,
-          "mark": "Pleading"
-        },
-        {
-          "id": "schedule-i",
-          "file": "02-schedule-i.md",
-          "numeral": "2",
-          "title": "SCHEDULE - I",
-          "short": "Pages 15-15 as split from the compilation.",
-          "pages": "15",
-          "pageStart": 15,
-          "pageEnd": 15,
-          "mark": "2"
-        },
-        {
-          "id": "schedule-ii",
-          "file": "03-schedule-ii.md",
-          "numeral": "3",
-          "title": "SCHEDULE - II",
-          "short": "Pages 16-16 as split from the compilation.",
-          "pages": "16",
-          "pageStart": 16,
-          "pageEnd": 16,
-          "mark": "3"
-        },
-        {
-          "id": "schedule-iii",
-          "file": "04-schedule-iii.md",
-          "numeral": "4",
-          "title": "SCHEDULE - III",
-          "short": "Pages 17-17 as split from the compilation.",
-          "pages": "17",
-          "pageStart": 17,
           "pageEnd": 17,
-          "mark": "4"
+          "mark": "\u2014"
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
-      "note": "4 sections as split from the paper."
+      "transcriptSource": "google-vision",
+      "note": "17 pages as filed."
     },
     {
       "id": "mou-06-06-06-pravar-trade-invest-sumer-builders-annexure",
@@ -2737,8 +2738,8 @@
       "bytes": 1350377,
       "sha256": "a91a1bc3a4f4844a8f306f77dfa0cf70f2b11e0f93b1adae945910acd48508ec",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2767,8 +2768,8 @@
       "bytes": 2883815,
       "sha256": "7bf5ba089ce6c1893016f275c12d6f7f053d28a7d6fd2b65a344784ccc9b082e",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2797,15 +2798,15 @@
       "bytes": 805170,
       "sha256": "b987fb8dfaa88381f5847115339041399ab074d60aee461f32f4630cb65504cc",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
-          "id": "section",
-          "file": "01-section.md",
+          "id": "clerk-note-continuous-ocr-for-a-18-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-18-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "\u092d\u093e\u0930\u0924\u0940\u092f \u0917\u094c\u0930\u0935 \u0928\u094d\u092f\u093e\u092f\u093f\u0915",
+          "title": "> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-17 as split from the compilation.",
           "pages": "1-17",
           "pageStart": 1,
@@ -2860,8 +2861,8 @@
       "bytes": 1590471,
       "sha256": "50ccde01c3c6091094b5fef897f3bb22e5804403ab5281d9a8c44f3e7bee823b",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2890,8 +2891,8 @@
       "bytes": 335578,
       "sha256": "9aad71dcd296a3e999a3d58814dc9fe5c7af6a0295da485ed1050a8334b0042f",
       "bundle": "important-documents",
-      "bundleTitle": "Title, JVA, sanads, and other instruments",
-      "bundleNote": "Deeds, MOUs, JVA, Forms I & XIV, title opinion, vakalatnama.",
+      "bundleTitle": "7. Title & instruments",
+      "bundleNote": "Deeds, JVA/AoA, sanads, Forms I & XIV, title opinion, vakalatnama.",
       "folder": "Imp. Documents",
       "sections": [
         {
@@ -2907,7 +2908,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -2920,7 +2921,7 @@
       "bytes": 201117,
       "sha256": "45ab2f542919eb6f401064cc24661dd403abf7602d2dc1dc643d3f2894cd3bf3",
       "bundle": "letters-kuval",
-      "bundleTitle": "Letters between Kuval Projects and PVM Associates",
+      "bundleTitle": "9. Correspondence (Kuval / PVM)",
       "bundleNote": "JVA correspondence and notice of arbitration.",
       "folder": "Letters by Kuval",
       "sections": [
@@ -2937,7 +2938,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "13 pages as filed."
     },
     {
@@ -2950,7 +2951,7 @@
       "bytes": 102560,
       "sha256": "251920e2a06ab6a9ae7f5c50601b11b63b8e6c2383f89766b69b13592bf08639",
       "bundle": "letters-kuval",
-      "bundleTitle": "Letters between Kuval Projects and PVM Associates",
+      "bundleTitle": "9. Correspondence (Kuval / PVM)",
       "bundleNote": "JVA correspondence and notice of arbitration.",
       "folder": "Letters by Kuval",
       "sections": [
@@ -2967,7 +2968,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "9 pages as filed."
     },
     {
@@ -2980,7 +2981,7 @@
       "bytes": 47135,
       "sha256": "5ac7917046cf357eced8b8ff51377948fe1c7392e63b95f29c10b9f602405c0c",
       "bundle": "letters-kuval",
-      "bundleTitle": "Letters between Kuval Projects and PVM Associates",
+      "bundleTitle": "9. Correspondence (Kuval / PVM)",
       "bundleNote": "JVA correspondence and notice of arbitration.",
       "folder": "Letters by Kuval",
       "sections": [
@@ -3010,8 +3011,8 @@
       "bytes": 34422,
       "sha256": "4db0a2ef4786ca80858a1f9a1414219f2e38bfc1f1d3a2c451e920040fdf9e52",
       "bundle": "list-of-dates",
-      "bundleTitle": "List of dates",
-      "bundleNote": "Chronology as compiled for the arbitration.",
+      "bundleTitle": "0. Chronology",
+      "bundleNote": "List of dates as compiled for the arbitration.",
       "folder": "(root)",
       "sections": [
         {
@@ -3027,7 +3028,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "6 pages as filed."
     },
     {
@@ -3040,8 +3041,8 @@
       "bytes": 31661,
       "sha256": "2e0aa94e8f955a32436052696fd9795b7c1a5e77ac9c806679c7f3937c523dec",
       "bundle": "meetings-vs-riva",
-      "bundleTitle": "Meetings and correspondence, Vikram Shah and Riva Trindade",
-      "bundleNote": "Lists of communications and meetings as compiled.",
+      "bundleTitle": "10. Without-prejudice lists",
+      "bundleNote": "Meetings and correspondence lists, Vikram Shah and Riva Trindade.",
       "folder": "Meetings and Correspondence between VS and Riva",
       "sections": [
         {
@@ -3070,8 +3071,8 @@
       "bytes": 10916,
       "sha256": "c6eefac0104ef0e1539aff46017c00d49eba85a8be59f5771f8c7bd1bc092fcd",
       "bundle": "meetings-vs-riva",
-      "bundleTitle": "Meetings and correspondence, Vikram Shah and Riva Trindade",
-      "bundleNote": "Lists of communications and meetings as compiled.",
+      "bundleTitle": "10. Without-prejudice lists",
+      "bundleNote": "Meetings and correspondence lists, Vikram Shah and Riva Trindade.",
       "folder": "Meetings and Correspondence between VS and Riva",
       "sections": [
         {
@@ -3087,7 +3088,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "1 page as filed."
     },
     {
@@ -3100,7 +3101,7 @@
       "bytes": 179659,
       "sha256": "b891f301952f49f060dedae7f90168e23de8b4234a6d3eeaa4bc201589c517db",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3130,7 +3131,7 @@
       "bytes": 205687,
       "sha256": "84b958f31f006e7dd5fa49967d3ce82424d0365d29ea7fb9931fedd11d813d2f",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3147,7 +3148,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "10 pages as filed."
     },
     {
@@ -3160,7 +3161,7 @@
       "bytes": 4789639,
       "sha256": "b4583c538ecab3fec698068df075c73aacb0776957fe8a158c02613361b7ee49",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3177,7 +3178,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "10 pages as filed."
     },
     {
@@ -3190,7 +3191,7 @@
       "bytes": 119198,
       "sha256": "3af3638f976b22884ebb8d304fbb82cdaba296b6e4c8bc78b0ed3cb2ba756e27",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3220,7 +3221,7 @@
       "bytes": 309230,
       "sha256": "2b2d885a051ccf83128eefc5fd1b3a7d3c7246a6ec49da52dca1e2e1360bc852",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3237,7 +3238,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -3250,7 +3251,7 @@
       "bytes": 102696,
       "sha256": "40b92951b6a6a1871e4d847229f9ca71f570a0cbc67071e5af77a6fb47caf297",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3267,7 +3268,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3280,7 +3281,7 @@
       "bytes": 85496,
       "sha256": "ca2d201ea9b4cae3e254080923d8176168baf30dffbad4ab3fcf6ac035af4aa0",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3297,7 +3298,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3310,7 +3311,7 @@
       "bytes": 105075,
       "sha256": "13e335647c1807de2816fa183ef85d4ff3f070c39f535ad577387c492891e093",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3327,7 +3328,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3340,7 +3341,7 @@
       "bytes": 69374,
       "sha256": "a5a8bbec2973c107140610b9a3a82b9539ca443681780194de40fd9d6969a042",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3357,7 +3358,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3370,7 +3371,7 @@
       "bytes": 85594,
       "sha256": "5788bfdbb6ddb0098d80fb1f7342d9459175690cc5fe1e09b37b54fc253ee4cb",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3387,7 +3388,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3400,7 +3401,7 @@
       "bytes": 78911,
       "sha256": "22a8ee57c47fa1fb0a6d5b3fbd9c5706c7b83be13d88181a37fbdca3345e2057",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3417,7 +3418,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "1 page as filed."
     },
     {
@@ -3430,7 +3431,7 @@
       "bytes": 76848,
       "sha256": "f9d81f2dc381e832558565300f6a513b5f2f1b58c441db4a13943c26a415a559",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3447,7 +3448,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "3 pages as filed."
     },
     {
@@ -3460,7 +3461,7 @@
       "bytes": 84917,
       "sha256": "c620f9c69d1f0e65279ba4d24894259a07c0942c58464333f6b00066b162e040",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3477,7 +3478,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3490,7 +3491,7 @@
       "bytes": 446460,
       "sha256": "01149b7fa9eefc85d3b306f2b81798e6fddae01c62d0d15bec02204c1931da7e",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3507,7 +3508,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -3520,7 +3521,7 @@
       "bytes": 542265,
       "sha256": "48d2b756b176944e4a529de9a43fa4d35d54e23671728be9b0e12fb03f089bc9",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3537,7 +3538,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -3550,7 +3551,7 @@
       "bytes": 239772,
       "sha256": "d151d2df095c12030e936230687b6f5d333f6c1080a878ac94cf78d49be458f8",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3567,7 +3568,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3580,7 +3581,7 @@
       "bytes": 85040,
       "sha256": "ce523410214eab24bc807775e045199d7c763ad0ba26849a94686c1e92457f23",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3597,7 +3598,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3610,7 +3611,7 @@
       "bytes": 138754,
       "sha256": "00d663a5da431c0ff52a72bfbfd5f865189fa7c2bf5012ea62470e0b7e369b2b",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3640,7 +3641,7 @@
       "bytes": 405825,
       "sha256": "5e10a1144c52b9a1385f9a750d531c828403951cae139eeb6acf0c4df75d1824",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3670,7 +3671,7 @@
       "bytes": 87104,
       "sha256": "5de3a6e8cdfaf646025aae46abcd3362fcf16a3d88b0f139815849d319e82647",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3687,7 +3688,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3700,7 +3701,7 @@
       "bytes": 88534,
       "sha256": "7b3d1bc2a43dc06ac21ed149b6c85f183118f52a369eae50eaa0b83ce830f67a",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3717,7 +3718,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3730,7 +3731,7 @@
       "bytes": 73708,
       "sha256": "bd5c6ecfd4b3d4bac6975b8645eb1527f63b70e797ce481db887b0e11183d3ce",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3747,7 +3748,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "2 pages as filed."
     },
     {
@@ -3760,7 +3761,7 @@
       "bytes": 83247,
       "sha256": "b252b6c56cacae1721676beaeda3aa719291baa86dd81fe3cb45fa0957597aef",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3777,7 +3778,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3790,7 +3791,7 @@
       "bytes": 95035,
       "sha256": "b5a23f43bb88fb5cf03d78e26b3d03617679c5e7bd82da91aed3a01a97dd85fb",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3820,7 +3821,7 @@
       "bytes": 144886,
       "sha256": "96e46d5deef1274c813fcc98340a8f037fdd39c5db46f08739f6b9cc21a31f7c",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3837,7 +3838,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3850,7 +3851,7 @@
       "bytes": 85506,
       "sha256": "8829ef2bf1f69e734ff4a9c4164073f4498728efbda5c665a75a6514fd370f90",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3867,7 +3868,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3880,7 +3881,7 @@
       "bytes": 86822,
       "sha256": "403918bd2f64c4b63f07f2a3d9c94e2c4572ab85a4d9b9025770863f814795c3",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3897,7 +3898,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3910,7 +3911,7 @@
       "bytes": 107340,
       "sha256": "1b05bb2088516484f22c217bb9739180945f5dfb75c297f467017ff0754afd7c",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3927,7 +3928,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3940,7 +3941,7 @@
       "bytes": 87648,
       "sha256": "c2df4cf992d671e84b343b2f93f4b2b054ce70c424e59367cc8e61f133a377b1",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3957,7 +3958,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -3970,7 +3971,7 @@
       "bytes": 84919,
       "sha256": "6195ed21fb94b382bc0edca7f64f66fcecc24533dd9de50c33c8b649d2245927",
       "bundle": "minutes",
-      "bundleTitle": "Arbitral minutes of proceedings",
+      "bundleTitle": "6. Minutes of proceedings",
       "bundleNote": "Tribunal minutes and applications to modify minutes.",
       "folder": "Minutes",
       "sections": [
@@ -3987,7 +3988,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "2 pages as filed."
     },
     {
@@ -4000,7 +4001,7 @@
       "bytes": 1722145,
       "sha256": "82e9de1d638c321a6bc9a088536781c764610f700b318a3d4716f3decb7836a4",
       "bundle": "original-owners-litigation",
-      "bundleTitle": "Original owners' litigation",
+      "bundleTitle": "12. Prior title litigation",
       "bundleNote": "Communidade suits, 1998 compromise, and 2012 High Court judgment.",
       "folder": "Original Owners Litigation",
       "sections": [
@@ -4030,7 +4031,7 @@
       "bytes": 2846780,
       "sha256": "218ca8fbe6fd73e66d6bdc8d67d4afff6cb4e8bcc517805b7416523a32f4de46",
       "bundle": "original-owners-litigation",
-      "bundleTitle": "Original owners' litigation",
+      "bundleTitle": "12. Prior title litigation",
       "bundleNote": "Communidade suits, 1998 compromise, and 2012 High Court judgment.",
       "folder": "Original Owners Litigation",
       "sections": [
@@ -4060,7 +4061,7 @@
       "bytes": 1026461,
       "sha256": "cd831996a7e4267c49e9c566f91afa885260444a7b1430f169680498202be58f",
       "bundle": "original-owners-litigation",
-      "bundleTitle": "Original owners' litigation",
+      "bundleTitle": "12. Prior title litigation",
       "bundleNote": "Communidade suits, 1998 compromise, and 2012 High Court judgment.",
       "folder": "Original Owners Litigation",
       "sections": [
@@ -4090,8 +4091,8 @@
       "bytes": 132137,
       "sha256": "41468141e7cd7eabbc60d5bfb4927e0af185bc66b71efcc94a83a6a57ce55043",
       "bundle": "soc-sod",
-      "bundleTitle": "Statement of Claim and Statements of Defence",
-      "bundleNote": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "bundleTitle": "2. Pleadings (SoC / SoD)",
+      "bundleNote": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "folder": "SOC and SOD",
       "sections": [
         {
@@ -4107,7 +4108,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "7 pages as filed."
     },
     {
@@ -4120,15 +4121,15 @@
       "bytes": 20009460,
       "sha256": "a94448b8d99f04c6d130f064144d8e361bb9244cf3d67ba991bcce7f2058e8d7",
       "bundle": "soc-sod",
-      "bundleTitle": "Statement of Claim and Statements of Defence",
-      "bundleNote": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "bundleTitle": "2. Pleadings (SoC / SoD)",
+      "bundleNote": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "folder": "SOC and SOD",
       "sections": [
         {
-          "id": "amended-statement-of-defence",
-          "file": "01-amended-statement-of-defence.md",
+          "id": "clerk-note-continuous-ocr-for-a-110-page-paper-o",
+          "file": "01-clerk-note-continuous-ocr-for-a-110-page-paper-open-original.md",
           "numeral": "1",
-          "title": "AMENDED STATEMENT OF DEFENCE",
+          "title": "> Clerk note: continuous OCR for a 110-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-64 as split from the compilation.",
           "pages": "1-64",
           "pageStart": 1,
@@ -4183,8 +4184,8 @@
       "bytes": 147563,
       "sha256": "79d150a23cd2d82a937c076cd769b1f442961f4c1a0183e21c6d5c775476de01",
       "bundle": "soc-sod",
-      "bundleTitle": "Statement of Claim and Statements of Defence",
-      "bundleNote": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "bundleTitle": "2. Pleadings (SoC / SoD)",
+      "bundleNote": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "folder": "SOC and SOD",
       "sections": [
         {
@@ -4200,7 +4201,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "9 pages as filed."
     },
     {
@@ -4213,15 +4214,15 @@
       "bytes": 17879318,
       "sha256": "4ca92ab05bd05af54d135959650a3bacd1a302728e159343dd11518bcdbf09ab",
       "bundle": "soc-sod",
-      "bundleTitle": "Statement of Claim and Statements of Defence",
-      "bundleNote": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "bundleTitle": "2. Pleadings (SoC / SoD)",
+      "bundleNote": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "folder": "SOC and SOD",
       "sections": [
         {
-          "id": "before-the-hon-ble-sole-arbitrator",
-          "file": "01-before-the-hon-ble-sole-arbitrator.md",
+          "id": "clerk-note-continuous-ocr-for-a-282-page-paper-o",
+          "file": "01-clerk-note-continuous-ocr-for-a-282-page-paper-open-original.md",
           "numeral": "1",
-          "title": "BEFORE THE HON'BLE SOLE ARBITRATOR",
+          "title": "> Clerk note: continuous OCR for a 282-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-44 as split from the compilation.",
           "pages": "1-44",
           "pageStart": 1,
@@ -4485,8 +4486,8 @@
       "bytes": 24551020,
       "sha256": "75a289ef4e0f02449a2790e2120dac8bd2c831378541493216949f50723c0d78",
       "bundle": "soc-sod",
-      "bundleTitle": "Statement of Claim and Statements of Defence",
-      "bundleNote": "Operative arbitral pleadings, including Respondent No. 4 replies.",
+      "bundleTitle": "2. Pleadings (SoC / SoD)",
+      "bundleNote": "Statement of Claim and Statements of Defence before the Sole Arbitrator.",
       "folder": "SOC and SOD",
       "sections": [
         {
@@ -4515,8 +4516,8 @@
       "bytes": 131327,
       "sha256": "6ee470311084de2b6da7046af6eafea04592cca4466cb6db3db3e67b5779ea87",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4532,7 +4533,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "6 pages as filed."
     },
     {
@@ -4545,8 +4546,8 @@
       "bytes": 124649,
       "sha256": "43efee06ee1f3b1a584148b7e6fdfd76783bef068e7f0d9f79a9915adb561b82",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4562,7 +4563,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "10 pages as filed."
     },
     {
@@ -4575,8 +4576,8 @@
       "bytes": 158433,
       "sha256": "a31c3af2d128b29cad41ee51f61c692853e5c07a35f5532b303d818704cd6c5f",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4592,7 +4593,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "pdftotext",
       "note": "13 pages as filed."
     },
     {
@@ -4605,8 +4606,8 @@
       "bytes": 1638044,
       "sha256": "7f1bd00662bafdd435d1113cf49bbf59d8043afe510a0054e06c2b2bcf0c6f79",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4635,8 +4636,8 @@
       "bytes": 4278108,
       "sha256": "07160cc0d28a6e3f48a38318b0246feb7f3b4549daf7e4c902ce7bb1d61fa32c",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4652,7 +4653,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "18 pages as filed."
     },
     {
@@ -4665,8 +4666,8 @@
       "bytes": 3052720,
       "sha256": "359883d8e88825265d51849fbf76ecf130761d286132921f943fb3b7028d7bb4",
       "bundle": "section-16",
-      "bundleTitle": "Section 16 challenge",
-      "bundleNote": "Application under s.16, replies, written submissions, and dismissal order.",
+      "bundleTitle": "3. Jurisdiction (A&C Act s.16)",
+      "bundleNote": "Challenge to jurisdiction, replies, and dismissal order.",
       "folder": "Section 16",
       "sections": [
         {
@@ -4695,15 +4696,15 @@
       "bytes": 455594,
       "sha256": "ef3001414751d04af4f23c4d68d316e4a9232c4de7fc4c5183ed290793a4a028",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
-          "id": "before-the-hon-ble-sole-arbitrator-mr",
-          "file": "01-before-the-hon-ble-sole-arbitrator-mr.md",
+          "id": "clerk-note-continuous-ocr-for-a-23-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-23-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "BEFORE THE HON'BLE SOLE ARBITRATOR, MR.",
+          "title": "> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-23 as split from the compilation.",
           "pages": "1-23",
           "pageStart": 1,
@@ -4802,15 +4803,15 @@
       "bytes": 5583918,
       "sha256": "f5c11474bfc34d5965801fbcbe3186f9b9408b637d1aab0ff4a3031c85df2fd5",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
-          "id": "13-in-view-of-the-above-i-allow-application-date",
-          "file": "01-13-in-view-of-the-above-i-allow-application-dated-15-02-2025.md",
+          "id": "clerk-note-continuous-ocr-for-a-52-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-52-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "13. In view of the above, I allow application dated 15.02.2025 by modifying the minutes of proceedings dated 26.08.2024",
+          "title": "> Clerk note: continuous OCR for a 52-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-26 as split from the compilation.",
           "pages": "1-26",
           "pageStart": 1,
@@ -4865,15 +4866,15 @@
       "bytes": 7580128,
       "sha256": "c3a0830aa43676c0ac9e4841dc3ebd192aa04520f9044430a9e34871281c448e",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
-          "id": "before-the-hon-ble-sole-arbitrator-mr-nitin-n-n",
-          "file": "01-before-the-hon-ble-sole-arbitrator-mr-nitin-n-n.md",
+          "id": "clerk-note-continuous-ocr-for-a-50-page-paper-op",
+          "file": "01-clerk-note-continuous-ocr-for-a-50-page-paper-open-original-.md",
           "numeral": "1",
-          "title": "BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N.",
+          "title": "> Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed.",
           "short": "Pages 1-20 as split from the compilation.",
           "pages": "1-20",
           "pageStart": 1,
@@ -4928,8 +4929,8 @@
       "bytes": 325655,
       "sha256": "6efd92f19b63032a32efccaf3abeab5a7395e96e544bb820469332be9525fc35",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
@@ -4958,8 +4959,8 @@
       "bytes": 324793,
       "sha256": "e76a287791555b2dcf3b9f67a5127b4cd1f4c243f3fea6a73820c4e5321550be",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
@@ -4988,8 +4989,8 @@
       "bytes": 5360488,
       "sha256": "9eac13e496552623d716abf409447e223320b7063a3f2d85435a27c1324d8f2d",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
@@ -5018,15 +5019,15 @@
       "bytes": 464678,
       "sha256": "c77dec9a45f9f26983f65842b1f1168672b430468b1066df4f7a514559d91dfc",
       "bundle": "section-17",
-      "bundleTitle": "Section 17 interim measures",
-      "bundleNote": "Cross applications for interim reliefs, replies, and notes of arguments.",
+      "bundleTitle": "4. Interim measures (A&C Act s.17)",
+      "bundleNote": "Cross applications for interim reliefs and notes of arguments.",
       "folder": "Section 17",
       "sections": [
         {
-          "id": "before-the-hon-ble-sole-arbitrator-mr",
-          "file": "01-before-the-hon-ble-sole-arbitrator-mr.md",
+          "id": "page-1-of-24",
+          "file": "01-page-1-of-24.md",
           "numeral": "1",
-          "title": "BEFORE THE HON'BLE SOLE ARBITRATOR, MR.",
+          "title": "Page 1 of 24",
           "short": "Pages 1-23 as split from the compilation.",
           "pages": "1-23",
           "pageStart": 1,
@@ -5112,7 +5113,7 @@
         }
       ],
       "transcribed": true,
-      "transcriptSource": "firecrawl",
+      "transcriptSource": "google-vision",
       "note": "8 sections as split from the paper."
     }
   ],

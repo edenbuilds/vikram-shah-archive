@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Financial Statements of PVM/PVM Associates Financial Statements FY 2020-21.pdf  
 **SHA-256:** `0ca5d90d0407ba72ce901927f54a9339eaed9f6ef4f8d8eaf2cb87b850b86522`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Associates Financial Statements FY 2020-21 | 1-7 |
 
 <!-- SECTION: full | PDF pages 1-7 -->
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## PVM ASSOCIATES
 

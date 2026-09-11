@@ -21,6 +21,8 @@ ARCHIVE = json.loads(ARCHIVE_PATH.read_text())
 FC = ROOT / ".firecrawl"
 DL = ROOT / "public" / "downloads"
 TR = ROOT / "public" / "transcripts"
+GOOGLE_OCR = ROOT / "work" / "google_ocr"
+APPLE_OCR = ROOT / "work" / "ocr"
 SRC_PDF = Path("/Users/omkar/Downloads/Vikram Shah Documents")
 
 SEAL = RGBColor(0x8B, 0x2E, 0x2E)
@@ -48,6 +50,22 @@ def pdftotext_pages(pdf: Path, pages: int) -> list[str]:
         )
         out.append((r.stdout or "").replace("\x0c", "").strip())
     return out
+
+
+def page_ocr_texts(doc_id: str, pages: int) -> list[str] | None:
+    """Prefer Google Vision page files, then Apple Vision, when present for every page."""
+    for root in (GOOGLE_OCR, APPLE_OCR):
+        texts: list[str] = []
+        ok = True
+        for i in range(1, pages + 1):
+            p = root / doc_id / f"page-{i:03d}.txt"
+            if not p.exists():
+                ok = False
+                break
+            texts.append(p.read_text(encoding="utf-8", errors="replace").strip())
+        if ok and sum(len(t) for t in texts) > 40:
+            return texts
+    return None
 
 
 def tag_body(text: str) -> str:
@@ -414,22 +432,63 @@ Prayers remain in the pleadings that contain them. This summary does not add a r
 def assemble_doc(doc: dict) -> dict | None:
     fc = FC / f"{doc['id']}.md"
     pdf = DL / doc["file"]
+    pages_text = pdftotext_pages(pdf, doc["pages"])
+    text_chars = sum(len(p) for p in pages_text)
+    text_ok = text_chars > 200 * max(doc["pages"], 1) * 0.3
+    fc_body = ""
     if fc.exists() and fc.stat().st_size > 80:
-        body = fc.read_text(encoding="utf-8", errors="replace")
+        fc_body = fc.read_text(encoding="utf-8", errors="replace")
+    vision_pages = page_ocr_texts(doc["id"], doc["pages"])
+    vision_chars = sum(len(p) for p in vision_pages) if vision_pages else 0
+    # Prefer the denser faithful source. Page-keyed extracts win for legal navigation.
+    if vision_pages and vision_chars >= max(text_chars, len(fc_body) if fc_body else 0) * 0.85:
+        body = page_transcript(vision_pages, doc["pages"])
+        source = "google-vision" if (GOOGLE_OCR / doc["id"]).exists() else "apple-vision"
+    elif text_ok and (not fc_body or text_chars >= len(fc_body) * 0.9):
+        body = page_transcript(pages_text, doc["pages"])
+        source = "pdftotext"
+    elif fc_body:
+        body = fc_body
         source = "firecrawl"
+        # If Firecrawl returned a thin continuous blob, prefer page-keyed Vision/pdftotext.
+        if vision_pages and (len(fc_body) < doc["pages"] * 900 or not re.search(r"(?mi)^## Page\s+\d+", fc_body)):
+            if vision_chars >= len(fc_body) * 0.7 or len(fc_body) < doc["pages"] * 700:
+                body = page_transcript(vision_pages, doc["pages"])
+                source = "google-vision" if (GOOGLE_OCR / doc["id"]).exists() else "apple-vision"
+            else:
+                body = (
+                    fc_body.strip()
+                    + "\n\n---\n\n## Page-keyed extract (Vision OCR)\n\n"
+                    + page_transcript(vision_pages, doc["pages"])
+                )
+                source = "firecrawl+vision"
+        elif text_chars > 500 and len(fc_body) < doc["pages"] * 350:
+            body = (
+                fc_body.strip()
+                + "\n\n---\n\n## Page-keyed extract (pdftotext)\n\n"
+                + page_transcript(pages_text, doc["pages"])
+            )
+            source = "firecrawl+pdftotext"
+    elif text_ok:
+        body = page_transcript(pages_text, doc["pages"])
+        source = "pdftotext"
+    elif vision_pages:
+        body = page_transcript(vision_pages, doc["pages"])
+        source = "google-vision" if (GOOGLE_OCR / doc["id"]).exists() else "apple-vision"
     else:
-        pages_text = pdftotext_pages(pdf, doc["pages"])
-        text_chars = sum(len(p) for p in pages_text)
-        if text_chars > 200 * max(doc["pages"], 1) * 0.3:
-            body = page_transcript(pages_text, doc["pages"])
-            source = "pdftotext"
-        else:
-            return None
+        return None
     body = tag_body(body)
+    if source.startswith("firecrawl") and not re.search(r"(?mi)^## Page\s+\d+", body):
+        body = (
+            f"> Clerk note: continuous OCR for a {doc['pages']}-page paper. "
+            f"Open Original scans for page boundaries. Figures are as printed.\n\n"
+            + body
+        )
     sections = split_sections(doc["title"], body, doc["pages"])
-    # If pdftotext produced real per-page text and we only have one section, prefer page blocks
-    if source == "pdftotext":
-        sections[0]["body"] = body
+    # Page-keyed sources keep the page transcript as the single section body when unsplit.
+    if source in ("pdftotext", "google-vision", "apple-vision") or source.endswith("+vision"):
+        if len(sections) == 1:
+            sections[0]["body"] = body
 
     tdir = TR / doc["id"] / "sections"
     ddir = DL / doc["id"] / "sections"
@@ -502,7 +561,7 @@ def main() -> None:
     (TR / "CASE-SUMMARY.md").write_text(cs, encoding="utf-8")
     (DL / "CASE-SUMMARY.md").write_text(cs, encoding="utf-8")
 
-    # master zip of whatever is ready (without page JPEGs)
+    # master zip of transcripts only (no page JPEGs / no original PDFs — those stay on Supabase)
     master = DL / "shah-v-trindade-archive.zip"
     with zipfile.ZipFile(master, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(DL / "CASE-SUMMARY.md", "CASE-SUMMARY.md")
@@ -515,9 +574,6 @@ def main() -> None:
             docx = DL / f"{prefix}-FULL-TRANSCRIPT.docx"
             if docx.exists():
                 z.write(docx, f"{prefix}/FULL-TRANSCRIPT.docx")
-            pdf = DL / doc["file"]
-            if pdf.exists():
-                z.write(pdf, f"{prefix}/{doc['file']}")
             for s in doc["sections"]:
                 p = DL / f"{prefix}-{s['file']}"
                 if p.exists():

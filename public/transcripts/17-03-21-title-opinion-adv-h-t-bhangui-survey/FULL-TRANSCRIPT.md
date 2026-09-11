@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/17.03.21 Title Opinion, Adv. H.T. Bhangui (Survey 93-2, 93-3, 93-4).pdf  
 **SHA-256:** `3c9754c027598a5060a21557bca9f0e1dd7344070a84d83b570b509205e52177`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 17.03.21 Title Opinion, Adv. H.T. Bhangui (Survey 93-2, 93-3, 93-4) | 1-17 |
 
 <!-- SECTION: full | PDF pages 1-17 -->
+
+> Clerk note: continuous OCR for a 17-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 9. Records of Civil suit bearing number Special Civil Suit No.222/94/A filed by Commuidade of Hambolim against Maximo Mergulhau through his heita Mrs. Dionisio Dias e Mergulhau before the Civil Judge Senior Division Panaji.
 

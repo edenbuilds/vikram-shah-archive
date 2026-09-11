@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/06.08.21 Comunidade to Govt of Goa (Application for Compromise Permission).pdf  
 **SHA-256:** `d6ba901ea6a4e40cc05a45dd475c015285b875d34d36da662a4bb1cac2dfed0b`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 06.08.21 Comunidade to Govt of Goa (Application for Compromise Permission) | 1-16 |
 
 <!-- SECTION: full | PDF pages 1-16 -->
+
+> Clerk note: continuous OCR for a 16-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Date: 6/08/2021
 

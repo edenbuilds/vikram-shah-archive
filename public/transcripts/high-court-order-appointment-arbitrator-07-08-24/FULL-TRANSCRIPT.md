@@ -8,7 +8,7 @@
 **Source file:** HC Order wrt Arbitration/High Court Order (Appointment of Arbitrator) dt 07.08.24.pdf  
 **SHA-256:** `a9488e68a43edda7185da8c8a9eec4c26a636c83b3b4c8e217a84f4aec12dfd6`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | High Court Order (Appointment of Arbitrator) dt 07.08.24 | 1-4 |
 
 <!-- SECTION: full | PDF pages 1-4 -->
+
+> Clerk note: continuous OCR for a 4-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE HIGH COURT OF BOMBAY AT GOA
 APPLN. FOR APPOINTMENT OF ARBITRATOR NO.13 OF 2024

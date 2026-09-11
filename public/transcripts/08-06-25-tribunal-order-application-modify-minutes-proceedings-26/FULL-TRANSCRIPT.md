@@ -8,7 +8,7 @@
 **Source file:** Minutes/08.06.25 Tribunal Order on Application to Modify Minutes of Proceedings dt 26.08.24.pdf  
 **SHA-256:** `b891f301952f49f060dedae7f90168e23de8b4234a6d3eeaa4bc201589c517db`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 08.06.25 Tribunal Order on Application to Modify Minutes of Proceedings dt 26.08.24 | 1-10 |
 
 <!-- SECTION: full | PDF pages 1-10 -->
+
+> Clerk note: continuous OCR for a 10-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 # SR. ADV. NITIN N. N. P. SARDESSAI

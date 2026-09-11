@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 4
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 4-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE HIGH COURT OF BOMBAY AT GOA
 APPLN. FOR APPOINTMENT OF ARBITRATOR NO.13 OF 2024
@@ -72,5 +74,3 @@ c. A copy of this order be communicated to the learned sole Arbitrator by the Ad
 d. The learned sole Arbitrator is requested to forward his Statement of Disclosure under Section 11 (8) read with Section 12 (1) of the Arbitration Act to the Advocate for the Applicant so as to enable him to file the same in the Registry of this Court. The Registry of this Court shall retain the said Statement on the file of this Application and a copy of the same shall be furnished by the Advocate for the Applicant to the Advocate for the Respondents.
 
 e. The parties shall appear before the learned sole Arbitrator on such date and at such place as he nominates to obtain appropriate directions with regard to fixing a schedule for completing pleadings etc. The Arbitral
-
----

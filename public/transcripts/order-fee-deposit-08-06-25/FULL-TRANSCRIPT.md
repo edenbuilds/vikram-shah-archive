@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/Order (Fee Deposit) dt 08.06.25.pdf  
 **SHA-256:** `7bf5ba089ce6c1893016f275c12d6f7f053d28a7d6fd2b65a344784ccc9b082e`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Order (Fee Deposit) dt 08.06.25 | 1-6 |
 
 <!-- SECTION: full | PDF pages 1-6 -->
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI

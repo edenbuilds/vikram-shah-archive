@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 10
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF THE SOLE ARBITRATOR SENIOR ADV. NITIN SARDESSAI AT PA N A J I - GOA
+## Page 1 of 10
 
-IN THE MATTER OF:
+BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 
-VIKRAM SHAH
+     THE SOLE ARBITRATOR SENIOR ADV. NITIN SARDESSAI
 
-…Claimant
+                           AT PANAJI - GOA
 
-Versus
 
-RIVA TRINDADE & 3 Ors.
+     IN THE MATTER OF:
 
-…Respondent
+     VIKRAM SHAH                                            …Claimant
 
-APPEARANCES:
+                                     Versus
 
-**_Adv. Harshad Bhadbade_** *for the Claimant present via video conference.*
+     RIVA TRINDADE & 3 Ors.                                 …Respondent
 
-**_Adv. S. Desai_** *with* **_Adv. Jatin Ramaiya_** *and* **_Adv. Omkar Thakur_** *for the*
-*Respondent No. 1, 2 & 3.*
 
-**_Adv. E. Kotwal_** *present via  video conference with* **_Adv. Swati Kamat_**
-*present  physically for  Respondent  No.  4. Respondent  No.  4* **_Mr._**
-**_Sadarangani_** *present via video conference.*
 
-## th ORDER DATED 29 JULY, 2026
+     APPEARANCES:
 
-## ORDER DATED 29 th JULY, 2026
+     Adv. Harshad Bhadbade for the Claimant present via video conference.
 
-1. By this common Order I propose to decide 3 different applications as a
-common thread runs through all of them, they being interconnected. The
-said applications are (I) Application for amendment of the Statement of
-Defense filed by Respondent Nos. 1, 2 and 3 dated  12.06.2026; (II)
+     Adv. S. Desai with Adv. Jatin Ramaiya and Adv. Omkar Thakur for the
 
----
+     Respondent No. 1, 2 & 3.
 
-Application for production of Additional Documents filed by Respondent
-No. 2 dated 12.06.2026; (III) Application seeking leave to file Additional
-Reply filed by Respondent Nos.1, 2 and 3 dated 12.06.2026.
+     Adv. E. Kotwal present via video conference with Adv. Swati Kamat
 
+     present physically for Respondent No. 4. Respondent No. 4 Mr.
+
+     Sadarangani present via video conference.
+
+
+
+                       ORDER DATED 29th JULY, 2026
+
+1.   By this common Order I propose to decide 3 different applications as a
+
+     common thread runs through all of them, they being interconnected. The

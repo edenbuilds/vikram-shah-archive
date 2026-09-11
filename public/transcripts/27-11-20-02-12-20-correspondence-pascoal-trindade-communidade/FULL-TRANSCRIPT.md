@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/27.11.20-02.12.20 Correspondence, Pascoal Trindade-Communidade (Consent Terms).pdf  
 **SHA-256:** `7768bee40bea2b42b91d1f55a6a32a7c0bafb326650bb307b9c60af3bdfd8ea9`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 27.11.20-02.12.20 Correspondence, Pascoal Trindade-Communidade (Consent Terms) | 1-5 |
 
 <!-- SECTION: full | PDF pages 1-5 -->
+
+> Clerk note: continuous OCR for a 5-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ADV. PRONOY KAMAT
 

@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 6
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
@@ -63,4 +65,4 @@ Dated: 08th June, 2025.
 
 2. Accordingly, the Claimant and Respondent No. 4 have deposited an amount of Rs. 3,00,000/- on 09.09.2024 while Respondent No. 1, 2 and 3 have deposited an amount of Rs. 3,00,000/- on 06.09.2024 and another sum of Rs. 3,00,000/- on 15.10.2024.
 
-3. It is the case of the Respondent No. 1, 2 and 3 that it would be against the scheme of the act, in addition to it being unfair to them if the phrase "contesting parties" in the aforesaid minutes is interpreted to mean "parties to these proceedings" instead of the same being interpreted as "parties to the arbitration agreement". It is their case that a tripartite agreement was entered into by the Claimant, Shri. Pascol Trindade and Respondent No. 4. Shri. Pascol Trindade passed away on 17.01.2022. in terms of the said tripartite agreement, the expression "party of the first part" unless repugnant to its context or meaning thereof will include Pascol's wife, legal heirs, executors and administrators. The Respondents No. 1, 2 and 3 being wife and legal heirs of Late Shri. Pascol were joined as parties be
+3. It is the case of the Respondent No. 1, 2 and 3 that it would be against the scheme of the act, in addition to it being unfair to them if the phrase "contesting parties" in the aforesaid minutes is interpreted to mean "parties to these proceedings" instead of the same being interpreted as "parties to the arbitration agreement". It is their case that a tripartite agreement was entered into by the Claimant, Shri. Pascol Trindade and Respondent No. 4. Shri. Pascol Trindade passed away on 17.01.2022. in terms of the said tripartite agreement, the expression "party of the first part" unless repugnant to its context or meaning thereof will include Pascol's wife, legal heirs, executors and admin

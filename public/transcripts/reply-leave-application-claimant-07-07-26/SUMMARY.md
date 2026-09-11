@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 11
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI
 AT PANAJI, GOA
@@ -59,4 +61,4 @@ The Claimant above named most respectfully states and submits as under:-
 
 2. At the very outset, it is submitted that the Respondents have already filed their comprehensive Statement of Defence in the present arbitral proceedings and have also filed a detailed reply to the Claimant's application seeking interim measures under Section 17 of the Act. The said detailed reply was exhaustive and dealt with all the issues, contentions and grounds arising in the interim application. The Respondents had full and ample opportunity to place all relevant facts, documents and material on record at that stage. The present attempt to file yet another "additional reply" is nothing but an abuse of the process of law aimed at protracting the proceedings and frustrating the Claimant's legitimate right to have his urgent interim application decided expeditiously.
 
-3. The grounds urged in support of the present application, namely, alleged intentional suppression of documents by the Claimant and recent discovery of banking records, statement of accounts, deposition/Affidavit in Evidence filed before the Court of Civil Judge Senior Division at Panaji and other material, do not inspire any confidence and appear to be a clear afterthought contrived to justify the inordinate delay. No particulars whatsoever have been furnished as to (a) when and how these documents were allegedly suppressed by the Claimant; (b) the exact date and manner in which they came to the knowledge and possession of the Responde
+3. The grounds urged in support of the present application, namely, alleged intentional suppression of documents by the Claimant and recent discovery of banking records, statement of accounts, deposition/Affidavit in Evidence filed before the Court of Civil Judge Senior Division at Panaji and other material, do not inspire any confidence and appear to be a clear afterthought contrived to justify the inordinate delay. No particulars whatsoever have been furnished as to (a) when and how these documents were allegedly suppress

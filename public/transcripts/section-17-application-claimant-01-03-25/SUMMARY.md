@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 24
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-23 | Pleading | BEFORE THE HON'BLE SOLE ARBITRATOR, MR. |
+| 1-23 | Pleading | Page 1 of 24 |
 | 24 | ANNEXURE A | ANNEXURE A |
 | 25 | ANNEXURE B | ANNEXURE B |
 | 26 | ANNEXURE C | ANNEXURE C |
@@ -41,11 +41,14 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# BEFORE THE HON'BLE SOLE ARBITRATOR, MR.
+## Page 1 of 24
+
+Ianere
+furice
+as fited
+BEFORE THE HON'BLE SOLE ARBITRATOR, MR.
 NITIN N. SARDESSAI, SR. ADVOCATE, PANAJI GOA
-
-## IN THE MATTER OF
-
+IN THE MATTER OF
 Mr. Vikarm Shah
 son of late Chinubhai Manilal Shah,
 aged about 73 years, married,
@@ -54,30 +57,27 @@ resident of 28, Capri Building,
 9, Manav Mandir Road,
 Near Teen Batti Walkeshwar,
 Malabar Hill,
-Mumbai – Maharashtra,
+Mumbai Maharashtra,
 400 006.
-
+Versus
 ...Claimant
-
-## Versus
 
 ---
 
+## Page 2 of 24
+
 1. Mr. Riva Trindade
-Major of age, Resident of Palbrika Mansion,
+Major of age, Resident of
+Palbrika Mansion,
 NIO Circle,
 Dona Paula,
 Tiswadi, Goa - 403004;
-
 2. Mrs. Albertina Trindade
 Major of age,
 Resident of Palbrika Mansion,
 NIO Circle, Dona Paula,
 Tiswadi, Goa - 403004;
-
-3. Mrs. Karita Trindade
+3.
+Mrs. Karita Trindade
 Major of age,
 Resident of Palbrika Mansion,
-NIO Circle, Dona Paula,
-Tiswadi, Goa - 403004;
-

@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/06.10.16 Civil Revision Application, Pascoal Trindade v Comunidade of Bambolim.pdf  
 **SHA-256:** `a8fc93c690082c4a21b66ff57e2f8765e0655bdcc904b4665db046f64655188c`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 06.10.16 Civil Revision Application, Pascoal Trindade v Comunidade of Bambolim | 1-18 |
 
 <!-- SECTION: full | PDF pages 1-18 -->
+
+> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 .
 

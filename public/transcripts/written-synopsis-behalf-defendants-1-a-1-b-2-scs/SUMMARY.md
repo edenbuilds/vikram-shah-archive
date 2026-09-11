@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 88
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 88-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF THE CIVIL JUDGE SENIOR
 DIVISION ‘A’ COURT AT MERCES, GOA
@@ -66,4 +68,4 @@ proposals and relief clauses added thereafter, the Plaintiff has filed Written A
 
 a. In the absence of a contemporaneous challenge in the present suit to the principal document/instrument, and particularly in the background of the fact that the Consent Decree dated 12.11.1998 passed in Civil Suit No. 222/1994/B continues to remain in force, the present suit seeking declaration of ownership and/or declaration of title does not survive and/or is not maintainable. It is a matter of record that the Consent Decree dated 12.11.1998 passed in Civil Suit No. 222/1994/B has neither been set aside nor recalled and, therefore, its effect continues to bind both the Plaintiff and the Defendants. As such, the present suit is clearly barred in law.
 
-b. Owing to the findings qua delay and laches, the non-tenanted nature of the land and the rights of the parties, as rendered by the Hon’ble High Court of Bombay at Goa in its Judgment dated 29.03.2012, passed in Writ Petition Nos. 506/2009, 557/2009, 577/2009 and 657/2011 at Exhibit PW1/C-106, coupled with the findings in the Order dated 01.09.2011, as detai
+b. Owing to the findings qua delay and laches, the non-tenanted nature of the land and the rights of the parties, as rendered by the Hon’ble High Court of Bombay at Goa in its Judgment dated 29.03.2012, passed in Writ Petition Nos. 506/2009, 557

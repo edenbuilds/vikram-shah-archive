@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 10
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 10-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 ## PROCEEDINGS OF EXTRAORDINARY GENERAL BODY
 MEETING OF THE COMPONENTS OF COMUNIDADE DE
 BAMBOLIM
@@ -52,8 +54,4 @@ On the third day of the month of January of the year two thousand twenty-one (03
 
 properties survey no 89/3 and 90/1 of g.37975.00 sq.mts.executed in favour per the compromise decree dated 1994 which is challenged in Civil Suit No No 222/94 and S.C.S No 4/2014/A and
 
-4. To discuss and decide the expenses incurred individually by components in various writ petitions and Civil Suit No 66/2009 presently prevailing and reimbursement to them from the amount receivable by Comunidade towards settlement proposal if settled with due approval of components in general body meeting.
-
-Thereafter, at proper t following components were covering face masks etc. due t
-
-ne, date and place of t
+4. To discuss and decide the expenses incurred individually by components in various writ petitions and Civil Suit No 66/2009 presently prevailing and reimbursement to them from the amount receivable by Comunidade towards settlement proposal if settled with due approval of components in general body

@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/Notes of Arguments Claimant opposing Leave Application.pdf  
 **SHA-256:** `20eb034010859d931d7217459ed7e4dde81da83ec629e04719741d2b33c290ff`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Notes of Arguments Claimant opposing Leave Application | 1-6 |
 
 <!-- SECTION: full | PDF pages 1-6 -->
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI

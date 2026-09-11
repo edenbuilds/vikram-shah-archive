@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 1
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Statement of funding and expenses 2006 to 2013 from the account of Late Mr. Pascoal
 
@@ -64,6 +66,4 @@ Statement of funding and expenses 2006 to 2013 from the account of Late Mr. Pasc
 |  |  |  |  |  | 16-10-2012 | 1000000 |  | Architect Fees | 100000 |  |
 |  |  |  |  |  | 17-10-2012 | 1000000 |  | Sadekar - Environment consultant | 400000 |  |
 |  |  |  |  |  | 18-10-2012 | 950000 |  |  |  |  |
-|  |  |  |  |  | 20-10-2012 | 1000000 |  |  |  |  |
-|  |  |  |  |  | 07-11-2012 | 200000 |  |  |  |  |
-|  |  |  |  |  | 22-11-2012 | 115000
+|  |  |  |  |  | 20-10-2

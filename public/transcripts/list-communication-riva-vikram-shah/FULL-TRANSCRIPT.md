@@ -8,7 +8,7 @@
 **Source file:** Meetings and Correspondence between VS and Riva/List of Communication Riva to Vikram Shah.pdf  
 **SHA-256:** `2e0aa94e8f955a32436052696fd9795b7c1a5e77ac9c806679c7f3937c523dec`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | List of Communication Riva to Vikram Shah | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 |  | Date | Content | Remark |
 | --- | --- | --- | --- |

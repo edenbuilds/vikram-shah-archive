@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 110
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-64 | Pleading | AMENDED STATEMENT OF DEFENCE |
+| 1-64 | Pleading | > Clerk note: continuous OCR for a 110-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 65-109 | ANNEXURE R1 | ANNEXURE R1 B |
 | 110 | 3 | SCHEDULE – I |
 | 111 | 4 | SCHEDULE-2 |
@@ -36,6 +36,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 110-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # AMENDED STATEMENT OF DEFENCE
 
@@ -75,5 +77,3 @@ has been filed is with respect, frivolous in as much as the
 claimant has no legitimate and/or subsisting legal cause
 of action for want of any live and/or subsisting dispute
 which is capable of being arbitrated upon, in as much as
-the dispute with respect which has been referred to
-arbitration before this Hon’ble Tribunal with respect is

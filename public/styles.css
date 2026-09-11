@@ -126,11 +126,28 @@ footer{border-top:1px solid var(--rule);background:var(--paper-deep);padding:1.5
 .scan{margin:1.25rem 0 0;background:#fff;border:1px solid var(--rule);border-radius:12px;padding:.75rem}
 .scan img{width:100%;height:auto;display:block}
 .err{color:var(--seal)}
+
 .tree{display:grid;gap:.75rem}
 .bundle{border:1px solid var(--rule);background:#fff;border-radius:12px;overflow:hidden}
 .bundle summary{cursor:pointer;padding:1rem 1.15rem;font-family:var(--serif);list-style:none;display:flex;justify-content:space-between;gap:1rem;align-items:baseline}
 .bundle summary::-webkit-details-marker{display:none}
 .bundle .kids{padding:0 1rem 1rem;display:grid;gap:.5rem}
+
+.bundle-note{margin:.25rem 1.15rem 0;color:var(--muted);font-size:.9rem;line-height:1.45}
+.bundle[open] summary{border-bottom:1px solid var(--rule);margin-bottom:.5rem}
+.tree .bundle{margin-bottom:.75rem}
+@media(max-width:799px){
+  .page{padding:1.25rem 1rem 3rem}
+  .figures{grid-template-columns:1fr 1fr}
+  .grid-2{gap:1.25rem}
+  .doc-card h3{font-size:1rem}
+  .scan img{border-radius:8px}
+  .list a{padding:.9rem}
+}
+@media(max-width:420px){
+  .figures{grid-template-columns:1fr}
+  .title{font-size:.95rem}
+}
 .doc-card{display:block;padding:.85rem 1rem;border:1px solid var(--rule);border-radius:8px;background:var(--paper)}
 .doc-card h3{margin:.2rem 0 .35rem;font-size:1.05rem}
 .thumbs{display:flex;gap:.5rem;overflow:auto;padding:.25rem 0 1rem}

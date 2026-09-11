@@ -4,7 +4,7 @@
 **Mark:** ANNEXURE R1A  
 **PDF pages:** 23-32
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 ANNEXURE R1A
 

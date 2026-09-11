@@ -6,7 +6,7 @@
 **Kind:** correspondence  
 **Pages:** 9
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Regd A.D / By Courier
-
-Tuesday, 19 March 2024
+## Page 1 of 9
 
 To,
-
+KUVAL PROJECTS PVT. LTD.
+Ground Floor, Pastina Villa, Post Office NIO, Dona Paula, Goa -403004
+Regd A.D/ By Courier
+Tuesday, 19 March 2024
 1. Mrs. Albertina Trindade;
 2. Mr. Riva Anthony Trindade;
 3. Mrs. Karita Trindade.
 All residents of Palbrika Mansion,
 House No. 21/23/A, Near Rosary School,
 P.O. NIO, Dona Paula,
-Tiswadi, Goa – 403 004.
-
+Tiswadi, Goa 403 004.
 4. Mr. Virkam C. Shah
 5. Mr. Murlidhar Sadarangani
-
 Members of M/s. PVM Associates,
 Block B, Wankhede Stadium, D Road,
-Churchagate , Mumbai 400020
-
-## SUB:- REFERENCE IN TERMS OF CLAUSE 27 IN RESPECT OF DISPUTES ARISING UNDER JOINT VENTURE AGREEMENT
+Churchagate, Mumbai 400020
+SUB:- REFERENCE IN TERMS OF CLAUSE 27 IN RESPECT OF
+DISPUTES ARISING UNDER JOINT VENTURE AGREEMENT
 DATED 25.04.2014
-
-## NOTICE OF ARBITRATION
-
-I am addressing this notice on behalf of Kuval Projects Pvt. Ltd., a Company having its Registered Office at Ground Floor, Villa Pastina, Dona Paula, Goa – 403 004 with particular reference to – (i) Letter dated 17.10.2022 from Kuval Projects Pvt. Ltd.; and (ii) Joint Venture Agreement dated 25.04.2014, all of which are subject matter of this Notice and I have to address you as under:—
+NOTICE OF ARBITRATION
+I am addressing this notice on behalf of Kuval Projects Pvt. Ltd., a Company
+having its Registered Office at Ground Floor, Villa Pastina, Dona Paula,
+Goa 403 004 with particular reference to (i) Letter dated 17.10.2022
+from Kuval Projects Pvt. Ltd.; and (ii) Joint Venture Agreement dated
+25.04.2014, all of which are subject matter of this Notice and I have to
+address you as under:-
 
 ---
 
-.
+## Page 2 of 9
+
+[ILLEGIBLE]
 
 ---
 
-## WHEREAS:
-
-1. Kuval Projects Pvt. Ltd., is a reputed business entity engaged in the business of infrastructure and land development.
-
-2. That Late Mr. Pascoal Trindade and Mr. Ram Daryanani were close associates since 1990 for construction and development of a project “Aldeia-de-Goa” at Village Bambolim, Tiswadi Goa.
+## Page 3 of 9
 

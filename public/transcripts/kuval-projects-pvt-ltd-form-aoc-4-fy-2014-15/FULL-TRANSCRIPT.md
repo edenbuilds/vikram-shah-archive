@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Kuval/Kuval Projects Pvt Ltd - Form AOC-4, FY 2014-15.pdf  
 **SHA-256:** `ed59b154a49ce89dedcfefdfd8ed2026fff89135afa6da22de846629d380fece`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Kuval Projects Pvt Ltd - Form AOC-4, FY 2014-15 | 1-13 |
 
 <!-- SECTION: full | PDF pages 1-13 -->
+
+> Clerk note: continuous OCR for a 13-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## FORM NO. AOC-4
 

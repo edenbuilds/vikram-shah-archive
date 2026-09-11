@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 5
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 5-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 ## Note in respect of lands in Goa
 
 Certain individuals and companies came together to acquire land in Goa, develop it and market the same. For this purpose, they contributed funds either directly or through private limited companies to Mr. Pascoal. It may be noted that Mr. Pascoal is in the real estate business and has been conducting the business under various entities. One needs to verify whether any business activity is being done in his individual name or in the name of any proprietary concern.
@@ -56,4 +58,4 @@ The implications of this proposal are discussed below:
 
 ---
 
-specific provision, it appears that section 45(3) will prevail over section 50C for computing the capital gain. Refer Carlron Hotel (P) ltd. vs. ACIT. Also, the Supreme Court, in the context of a partner bringing his personal asset as capital contribution in a partnership firm, in the case of Sunil Siddharthbhai vs. CIT [1985] 156 ITR 509 (SC) has held that it is impossible to evaluate consideration in such a case. Considering this, it is not possible to evaluate whether the consideration received or accruing is less than s
+specific provision, it appears that section 45(3) will prevail over section 50C for computing the capital gain. Refer Carlron Hotel (P) ltd. vs. ACIT. Also, the Supreme Court, in the context of a partner bringing his personal asset as capital contribution in a partnership firm, in the case of Sunil Siddharthbhai vs. CIT [1985] 156 ITR 509 (SC) has held that it is impossible to evaluate consideration in such a c

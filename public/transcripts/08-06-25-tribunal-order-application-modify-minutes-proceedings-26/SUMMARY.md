@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 10
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 10-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 # SR. ADV. NITIN N. N. P. SARDESSAI
@@ -72,5 +74,3 @@ Dated: 08th June, 2025.
 6. 2023年1月1日，北京市朝阳区东城街道办事处向北门社区居民委员会提出申请，要求将东门社区居民委员会的办公场所迁至西侧。社区居民委员会同意，将东门社区居民委员会的办公场所迁至西侧。
 
 7. 2023年1月1日，北京市朝阳区东城街道办事处向北门社区居民委员会提出申请，要求将东门社区居民委员会的办公场所迁至西侧。社区居民委员会同意，将东门社区居民委员会的办公场所迁至西侧。
-
-8. 2023年1月1日，北京市朝阳区东城街道办事处向北门社区居民委员会提出申请，要求将东门社区居民委员会的办公场所迁至西侧。社区居民委员会同意，将东门社区居民委员会的办公场所迁至西侧。

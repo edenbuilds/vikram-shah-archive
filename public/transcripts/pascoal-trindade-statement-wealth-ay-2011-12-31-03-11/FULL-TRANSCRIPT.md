@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Pascoal/Pascoal Trindade Statement of Wealth AY 2011-12 dt 31.03.11.pdf  
 **SHA-256:** `1a8d0b5c73a489a2659df8f56f9854d00fbe6871590bd144fabe4b86b21752d6`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Pascoal Trindade Statement of Wealth AY 2011-12 dt 31.03.11 | 1-3 |
 
 <!-- SECTION: full | PDF pages 1-3 -->
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 NAME OF THE ASSESSEE : MR. PASCOAL TRINDADE,
 "PASTINA " DONA PAULA,

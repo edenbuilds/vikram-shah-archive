@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 11
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANJIM, GOA
@@ -72,5 +74,3 @@ Altinho, Panaji-Goa
 3. Mr. Raghurai Tamba,
 major in age, Businessman, r/o “Parimal”
 Altinho, Panaji-Goa
-
-4. Mr. Gonsalo G. Dias Sapeco,

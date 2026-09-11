@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 3
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
@@ -66,4 +68,4 @@ Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade, Mrs. Albertina Tr
 
 9. The pleadings exchanged between the parties above shall be filed before the Arbitrator on 25.01.2025. On the same date further schedule of Arbitration shall be decided.
 
-10. In terms of my Order dated 26.08.2024, all parties to this Arbitration were directed to deposit an amount of 3 lakhs in Arbitrators account. Till date Shri. Vikram Shah, Shri. Murlidhar Sadarangani and Shri. Riva Trindade have deposited their share. Adv. V. Braganza mentions that he misunderstood my Order d
+10. In terms of my Order dated 26.08.2024, all parties to this Arbitration were directed to deposit an amount of 3 lakhs in Arbitrators account. Till date Shri. Vikram Shah, Shri. Murlidhar Sadaran

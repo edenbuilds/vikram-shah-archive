@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/Reply to Production Application (Claimant) dt 07.07.26.pdf  
 **SHA-256:** `7df19cdce139b6a74339121c05f7b869a5ed5d4fcb08c4f33b720554024eac10`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Reply to Production Application (Claimant) dt 07.07.26 | 1-6 |
 
 <!-- SECTION: full | PDF pages 1-6 -->
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADV. N.N.P. SARDESAI AT

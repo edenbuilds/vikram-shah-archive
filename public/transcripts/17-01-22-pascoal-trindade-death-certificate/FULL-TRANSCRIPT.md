@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/17.01.22 Pascoal Trindade Death Certificate.pdf  
 **SHA-256:** `ff23734f9cf3b720f1e5835f360a8ff2a67b48ec75bf542341a38ac937be86b6`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 17.01.22 Pascoal Trindade Death Certificate | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Annexure 'B'
 

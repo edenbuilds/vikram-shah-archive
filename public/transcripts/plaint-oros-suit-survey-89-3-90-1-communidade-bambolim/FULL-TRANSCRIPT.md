@@ -8,7 +8,7 @@
 **Source file:** Original Owners Litigation/Plaint, Oros Suit (Survey 89-3, 90-1), Communidade of Bambolim v Dionisia Dias e Mergulhao and Ors dt 30.12.2013 (companion to SCS 52-2013-A, not the SCS 52-2013-A plaint itself).pdf  
 **SHA-256:** `218ca8fbe6fd73e66d6bdc8d67d4afff6cb4e8bcc517805b7416523a32f4de46`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Plaint, Oros Suit (Survey 89-3, 90-1), Communidade of Bambolim v Dionisia Dias e Mergulhao and Ors dt 30.12.2013 (companion to SCS 52-2013-A, not the SCS 52-2013-A plaint itself) | 1-69 |
 
 <!-- SECTION: full | PDF pages 1-69 -->
+
+> Clerk note: continuous OCR for a 69-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANJIM, GOA

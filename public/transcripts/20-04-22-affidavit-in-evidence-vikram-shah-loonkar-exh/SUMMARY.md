@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 23
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION:
 AT PANAJI – GOA
@@ -71,6 +73,4 @@ The property known as OHOR or OROS and "BAH FM FONDIEM" And "SAVELIGALF", bearin
 And bounded as under:-
 
 On the East : By plot surveyed under No.93/1
-
-On the West : By plots surveyed under Nos.93, 106, 107/1, 2, 3, 5 & 6.
 

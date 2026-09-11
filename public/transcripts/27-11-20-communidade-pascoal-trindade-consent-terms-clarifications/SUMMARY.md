@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 2
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ADV. PRONOY KAMAT
 
@@ -66,6 +68,4 @@ c. The letter dated 20/11/2020 is signed by you and it does not have signature o
 
 ---
 
-d. The settlement shall be only in respect of survey No. 93/2, 3 and 4 of village Bambolim and the Communidade will proceed with survey No. 89/3 and 90/1 unless it is settled by the parties involved in Special Civil Case 4/2014/A and other cases.
-
-e. The draft terms of settlement/consent term
+d. The settlement shall be only in respect of survey No. 93/2, 3 and 4 of village Bambolim and the Communidade will proceed with survey No. 89/3 and 90/1 unless it is settled by

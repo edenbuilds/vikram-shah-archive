@@ -2,15 +2,33 @@
   "rewrites": [
     {
       "source": "/pages/:path*",
-      "destination": "https://raw.githubusercontent.com/edenbuilds/vikram-shah-archive/main/public/pages/:path*"
+      "destination": "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive/pages/:path*"
     },
     {
       "source": "/downloads/:file.pdf",
-      "destination": "https://raw.githubusercontent.com/edenbuilds/vikram-shah-archive/main/public/downloads/:file.pdf"
+      "destination": "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive/downloads/:file.pdf"
     },
     {
-      "source": "/((?!downloads/|pages/|transcripts/|archive.json|styles.css|app.js|favicon.svg).*)",
+      "source": "/downloads/:file-transcripts.zip",
+      "destination": "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive/downloads/:file-transcripts.zip"
+    },
+    {
+      "source": "/((?!downloads/|pages/|transcripts/|archive.json|styles.css|app.js|favicon.svg|404.html).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/downloads/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/pages/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
     }
   ]
 }

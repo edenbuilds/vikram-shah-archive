@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/30.12.13 Application for Injunction, Oros Suit (Survey 89-3, 90-1).pdf  
 **SHA-256:** `ff0122ccaa26f01f1db8d7dd82a01fa9567045c1fcb491bda3be2775d57c1572`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 30.12.13 Application for Injunction, Oros Suit (Survey 89-3, 90-1) | 1-11 |
 
 <!-- SECTION: full | PDF pages 1-11 -->
+
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANJIM, GOA

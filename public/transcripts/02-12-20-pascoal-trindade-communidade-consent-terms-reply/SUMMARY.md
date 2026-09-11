@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 3
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Wednesday, 2 December 2020
 
@@ -65,4 +67,4 @@ b. My client is agreeable to allocate an unencumbered area of 5000 sq. mts. in S
 
 c. My client states that Mrs. Albertina Trindade is in full and complete knowledge of the ongoing effort for settlement. My client states that in terms of the Portuguese Civil Code applicable to Goans, he is the administrator of his wife’s estate. In any event of the matter, Mrs. Albertina Trindade will sign the Consent Terms for the satisfaction of the Communidade.
 
-d. My client states that the proposal extended by him is limited to the properties held by him i.e., Survey Nos. 93/2, 93/3 and 93/4, Bambolim, Goa. These properties are subject-matter of various litigations. My client is willing to share a list of the various cases and counter-cases that exist inter se my client and the Communidade, including but not limited to
+d. My client states that the proposal extended by him is limited to the properties held by him i.e., Survey Nos. 93/2, 93/3 and 93/4, Bambolim, Goa. These properties are subject-matter of various litigations. My client is willing to share a list of

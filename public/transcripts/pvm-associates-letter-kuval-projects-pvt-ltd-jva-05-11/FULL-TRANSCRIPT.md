@@ -8,7 +8,7 @@
 **Source file:** Letters by Kuval/PVM Associates Letter to Kuval Projects Pvt Ltd re JVA dt 05.11.22 (signed Vikram Shah).pdf  
 **SHA-256:** `5ac7917046cf357eced8b8ff51377948fe1c7392e63b95f29c10b9f602405c0c`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Associates Letter to Kuval Projects Pvt Ltd re JVA dt 05.11.22 (signed Vikram Shah) | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # M/S. PVM ASSOCIATES
 B-Block, Wankhede Stadium, Churchgate, Mumbai – 400020

@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 3
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 NAME OF THE ASSESSEE : MR. PASCOAL TRINDADE,
 "PASTINA " DONA PAULA,
@@ -72,5 +74,3 @@ Less : 30% for repairs 17,490
 
 d) Ella Survey No.130/1, 14,633 X 2,000 29,266,000
 
-e) Plots at Mapusa
-5320 Sq. Mts. X 450 2,394,000

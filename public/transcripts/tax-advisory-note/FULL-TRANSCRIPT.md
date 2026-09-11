@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Tax Advisory Note for PVM/Tax Advisory Note.pdf  
 **SHA-256:** `26d30a0c8333deb72fc0f57006e747b31564e85e48c02a5911f96ee186f426be`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Tax Advisory Note | 1-5 |
 
 <!-- SECTION: full | PDF pages 1-5 -->
+
+> Clerk note: continuous OCR for a 5-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## Note in respect of lands in Goa
 

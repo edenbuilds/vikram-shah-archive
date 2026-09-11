@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 13
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 13-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANAJI
@@ -71,6 +73,4 @@ I am relying on the copies of the Deed of Sale dated 25.4.2006 in respect of sur
 In addition to the above I am producing notarized copy of Sale Deed dated 25.4.2006 in respect of survey no. 93/3. same is taken on record after comparing with the original and marked as Exhibit C/147.
 
 I am producing notarized copy of Sale Deed dated 25.4.2006 in respect of survey no. 93/4. same is taken on record after comparing with the original and marked as Exhibit C/148.
-
-I am producing notarized copy of Sanad dated 16.12.2011 issued by Collector North Goa alongwith the plan in respect of survey no. 93/3. Same is taken on record after comparing with the original and marked as Exhibit C/149.
 

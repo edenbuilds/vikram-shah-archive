@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 23
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-23 | Pleading | BEFORE THE HON'BLE SOLE ARBITRATOR, MR. |
+| 1-23 | Pleading | > Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 24 | ANNEXURE A | ANNEXURE A |
 | 25 | ANNEXURE B | ANNEXURE B |
 | 26 | ANNEXURE C | ANNEXURE C |
@@ -40,6 +40,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR, MR.
 NITIN N. SARDESSAI, SR. ADVOCATE, PANAJI GOA
@@ -79,5 +81,3 @@ Tiswadi, Goa - 403004;
 Major of age,
 Resident of Palbrika Mansion,
 NIO Circle, Dona Paula,
-Tiswadi, Goa - 403004;
-

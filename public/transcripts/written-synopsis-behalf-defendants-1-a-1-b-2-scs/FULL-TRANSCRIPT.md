@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Written Synopsis on behalf of Defendants No 1(a) 1(b) and 2, SCS 52-2013-A dt 11.08.26.pdf  
 **SHA-256:** `4cbbec2d3ca5a53cf9b00fde5e8c0e69f5c2a637b8e63a4c22b63ca7e8458a53`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Written Synopsis on behalf of Defendants No 1(a) 1(b) and 2, SCS 52-2013-A dt 11.08.26 | 1-88 |
 
 <!-- SECTION: full | PDF pages 1-88 -->
+
+> Clerk note: continuous OCR for a 88-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF THE CIVIL JUDGE SENIOR
 DIVISION ‘A’ COURT AT MERCES, GOA

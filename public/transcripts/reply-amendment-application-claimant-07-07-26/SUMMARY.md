@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 7
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 
@@ -64,4 +66,4 @@ TO THE APPLICATION DATED 12.06.2026 FOR AMENDMENT OF STATEMENT OF DEFENSE FILED 
 
 4. That Section 23(3) of the Arbitration and Conciliation Act, 1996 expressly provides that a party may amend or supplement its claim or defence during the course of arbitral proceedings "unless the arbitral tribunal considers it inappropriate to allow the amendment or supplement having regard to the delay in making it." The Hon'ble Tribunal is vested with wide discretion to reject amendments where there is unjustified delay, lack of bona fides, or where the amendment would cause prejudice or protract the proceedings. The present case squarely falls within the mischief contemplated by the said provision.
 
-5. That there is no inexhaustible or absolute right to amend pleadings in arbitral proceedings. The permissibility of amendment is subject to scrutiny by the Tribunal, which may reject the same
+5. That there is no inexhaustible or absolute right to amend pleadings in arbi

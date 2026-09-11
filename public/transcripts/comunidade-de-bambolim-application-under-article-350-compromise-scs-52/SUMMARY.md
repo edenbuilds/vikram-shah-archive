@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 23
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 Sir,
 
 A) The Hon’ble President, Administrative Tribunal, Panaji Goa, vide order dated 8/10/2013 and 15/10/2013 in case number 4/2013/AT/ADM/PERM/COM/BAMBOLIM conveyed permission to file suit against Mr. Pascoal Trinidade and others in respect of properties surveyed under survey No. 93/2,93/3 and 93/4 of village Bambolim Tiswadi Taluka having area of 35,600.00 square meters, 26,825.00 square meters and 35,075.00 square meters respectively (total area of 97,500.00 square meters).
@@ -46,6 +48,4 @@ D) The defendants No. 1 and 2 in the said suit, namely Pascoal Trinidade and Alb
 
 ---
 
-No. 415/94/A. The said temporary injunction Application was dismissed by the Hon’ble Court vide Order dated 17th June 1996.
-
-3) That, thereafter the Special Civil S
+No. 415/94/A. The said temporary injunction Appl

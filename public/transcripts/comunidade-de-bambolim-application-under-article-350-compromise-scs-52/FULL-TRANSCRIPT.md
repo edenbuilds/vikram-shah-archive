@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/Comunidade de Bambolim Application under Article 350 to Compromise SCS 52-2013-A dt 09.01.23.pdf  
 **SHA-256:** `adeaffa01d29d109e31c5176aa064fcee121ff80fd5b8b2656e48b9f821ec6a8`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Comunidade de Bambolim Application under Article 350 to Compromise SCS 52-2013-A dt 09.01.23 | 1-23 |
 
 <!-- SECTION: full | PDF pages 1-23 -->
+
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Sir,
 

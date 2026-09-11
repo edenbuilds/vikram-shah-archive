@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Financial Statements of PVM/PVM Associates Financial Statements FY 2022-23.pdf  
 **SHA-256:** `c3fc8e0514a6945f7d834effad6f2e29e38c0f976f4ee42df4f9937fdb46a5e3`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Associates Financial Statements FY 2022-23 | 1-12 |
 
 <!-- SECTION: full | PDF pages 1-12 -->
+
+> Clerk note: continuous OCR for a 12-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # PVM ASSOCIATES
 

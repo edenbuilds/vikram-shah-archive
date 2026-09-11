@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/Notes of Arguments, Claimant, Opposing Application for Leave to File Additional Reply.pdf  
 **SHA-256:** `b642c7332552d6d5f56657ece470613dac59846ef0c605add26ea208fa037296`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Notes of Arguments, Claimant, Opposing Application for Leave to File Additional Reply | 1-6 |
 
 <!-- SECTION: full | PDF pages 1-6 -->
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI

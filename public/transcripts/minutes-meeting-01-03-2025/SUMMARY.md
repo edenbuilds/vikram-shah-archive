@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 3
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
 AT PANAJI – GOA
@@ -54,4 +56,4 @@ MINUTES OF PROCEEDINGS DATED 01.03.2025
 
 5. Adv. Raunaq Rao for Respondent No. 4, vide email dated 28.02.2025 received at 08.43 PM, on instructions from his client, adopted the submissions made by Adv. Noorani for the Claimant.
 
-6. In light of the above and in the interest of justice, time is granted as a last opportunity to Respondents No. 1, 2, 3 to file the reply / statement of defense on the next date of hearing I.c. 08.03.2025. Adv. Braganza/ Respondents No. 1, 2 & 3 are directed to serve an advanced copy of the reply / statement of defense to all concerned parties / advo
+6. In light of the above and in the interest of justice, time is granted as a last opportunity to Respondents No. 1, 2, 3 to file the reply / statement of defense on the next date of hearing I.c. 08.03.2025. Adv. Braganza/ Respondents No.

@@ -4,7 +4,7 @@
 **Mark:** 5  
 **PDF pages:** 8
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 ## ANNEXED HERETO AND MARKED AS ANNEXURE – 4 COLLY ARE THE COPIES OF THE COMPROMISE TERMS DATED 19.11.1998 AND THE CONSENT DECREE DATED 21.11.1998 DRAWN IN SPECIAL CIVIL SUIT NO. 222/1994/B
 

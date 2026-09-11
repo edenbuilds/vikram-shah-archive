@@ -8,14 +8,14 @@
 **Source file:** Civil Suit/04.2020 Appeal from Order (challenging 13.03.20 Injunction).pdf  
 **SHA-256:** `c41416eade4db93ab0edfd1761ff9e143c78d5d35b853a3b20821b80c5a93a96`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | IN THE HIGH COURT OF BOMBAY AT GOA | 1-4 |
+| 1 | > Clerk note: continuous OCR for a 33-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-4 |
 | 2 | ANNEXED HERETO AND MARKED AS ANNEXURE – 1 IS THE CERTIFIED COPY OF THE ORDER DATED | 5 |
 | 3 | ANNEXED HERETO AND MARKED AS ANNEXURE – 2 COLLY ARE THE COPIES OF THE SUIT PLAINT ALONG WITH THE APPLICATION UNDER OR | 6 |
 | 4 | ANNEXED HERETO AND MARKED AS ANNEXURE | 7 |
@@ -26,7 +26,9 @@
 | 9 | ANNEXED HERETO AND MARKED AS ANNEXURE | 14 |
 | 10 | ANNEXED HERETO AND MARKED AS ANNEXURE | 15-33 |
 
-<!-- SECTION: in-the-high-court-of-bombay-at-goa | PDF pages 1-4 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-33-page-paper-op | PDF pages 1-4 -->
+
+> Clerk note: continuous OCR for a 33-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE HIGH COURT OF BOMBAY AT GOA
 PANAJI - GOA

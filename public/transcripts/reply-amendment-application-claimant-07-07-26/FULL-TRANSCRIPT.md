@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/Reply to Amendment Application (Claimant) dt 07.07.26.pdf  
 **SHA-256:** `b101dea165fee5bbe4797bc29ff4e1b5e5aa615b997f6e0e888f89aaa53747f9`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Reply to Amendment Application (Claimant) dt 07.07.26 | 1-7 |
 
 <!-- SECTION: full | PDF pages 1-7 -->
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 

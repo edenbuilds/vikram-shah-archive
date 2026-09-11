@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Bank Statement/PVM Statement Annexure A (26.04.2014 to 06.11.2015).pdf  
 **SHA-256:** `1682b8eb9a1bd62fba685b0f2650b376d513af02d40d7811d9b5a69e5c732df5`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Statement Annexure A (26.04.2014 to 06.11.2015) | 1-2 |
 
 <!-- SECTION: full | PDF pages 1-2 -->
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Page No.1
 

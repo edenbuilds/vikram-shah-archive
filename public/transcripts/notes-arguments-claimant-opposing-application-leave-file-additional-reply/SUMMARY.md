@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 6
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI
@@ -71,4 +73,4 @@ REPLY FILED BY RESPONDENT NOS. 1, 2 AND 3
 
 ## C. POINT I: SCOPE OF SECTION 17 DOES NOT PERMIT A MERITS-BASED "ADDITIONAL REPLY"
 
-3. It is well settled that an application under Section 17 of the Act is required to be decided on a prima facie view, applying the well-known triple test of (i) a prima facie case, (ii) balance of convenience, and (iii) irreparable injury — the same test ap
+3. It is well settled that an application under Section 17 of the Act is required to be decided on a prima facie view, applying the well-known

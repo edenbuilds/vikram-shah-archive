@@ -8,7 +8,7 @@
 **Source file:** Minutes/Minutes of Meeting - 26.07.2025.pdf  
 **SHA-256:** `8829ef2bf1f69e734ff4a9c4164073f4498728efbda5c665a75a6514fd370f90`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -19,54 +19,74 @@
 
 <!-- SECTION: full | PDF pages 1-2 -->
 
-# BEFORE THE SOLE ARBITRATOR
+## Page 1 of 2
 
-# SR. ADV. NITIN N. N. P. SARDESSAI
+BEFORE THE SOLE ARBITRATOR
 
-**AT PANAJI – GOA**
+               SR. ADV. NITIN N. N. P. SARDESSAI
 
-VIKRAM SHAH
+                           AT PANAJI – GOA
 
-…CLAIMANT
+VIKRAM SHAH                                        …CLAIMANT
 
-VERSUS
+                               VERSUS
 
-RIVA TRINDADE AND 3 ORS
+RIVA TRINDADE AND 3 ORS                            …RESPONDENTS
 
-…RESPONDENTS
 
-# MINUTES OF PROCEEDINGS HELD ON 26<sup>th</sup> July 2025 AT
+     MINUTES OF PROCEEDINGS HELD ON 26th July 2025 AT
 
-<u>11.00 AM</u>
+                              11.00 AM
 
-**1.** Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
-Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
-Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
-Riva Trindade present in person. Respondent No. 4 Shri.
-Murlidhar Sadarangani present in person.
+1.     Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
 
-**2.** The parties before me state that time sought for settlement talks
-could not be fruitfully  utilized as there was  hospitalization of
-(Claimants  Representatives)  Hemavand  Namdarian’s  mother.
-They further state that they are  hopeful of going ahead with
-settlement talks.
+       Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
+
+       Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
+
+       Riva Trindade present in person. Respondent No. 4 Shri.
+
+       Murlidhar Sadarangani present in person.
+
+
+2.     The parties before me state that time sought for settlement talks
+
+       could not be fruitfully utilized as there was hospitalization of
+
+       (Claimants Representatives) Hemavand Namdarian’s mother.
+
+       They further state that they are hopeful of going ahead with
+
+       settlement talks.
 
 ---
 
-**3.** A request is made  by the Advocate for the  Claimant and the
-Advocate for Respondent 1, 2 and 3 that the matter be adjourned
-to a longer date.
+## Page 2 of 2
 
-**4.** In  view of the same and by consent of the Advocate for the
-Claimant, Respondent No. 1,2 & 3 and Respondent No. 4 Mr.
-Murlidhar Sadarangani the matter is adjourned to 05<sup>th</sup> September
-2025 at 11.00 am at the same venue and seat.
+3.   A request is made by the Advocate for the Claimant and the
 
-5. Stand Over to 05<sup>th</sup> September 2025 at 11.00 am at the same venue
-and seat.
+     Advocate for Respondent 1, 2 and 3 that the matter be adjourned
 
-**Place: Panaji – Goa.**
-**Date:26.07.2025**
+     to a longer date.
 
-**Sr. Adv. Nitin N. N. P. Sardessai**
-**Sole Arbitrator**
+
+4.   In view of the same and by consent of the Advocate for the
+
+     Claimant, Respondent No. 1,2 & 3 and Respondent No. 4 Mr.
+
+     Murlidhar Sadarangani the matter is adjourned to 05th September
+
+     2025 at 11.00 am at the same venue and seat.
+
+
+5.   Stand Over to 05th September 2025 at 11.00 am at the same venue
+
+     and seat.
+
+
+
+
+Place: Panaji – Goa.            Sr. Adv. Nitin N. N. P. Sardessai
+Date:26.07.2025                           Sole Arbitrator
+
+---

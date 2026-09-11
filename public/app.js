@@ -64,15 +64,20 @@ function docById(id) {
 }
 const SUPABASE_ASSET = "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive";
 const GITHUB_ASSET = "https://raw.githubusercontent.com/edenbuilds/vikram-shah-archive/main/public";
-function fileUrl(path) {
+function assetUrl(path) {
+  if (path.startsWith("/pages/") || /\.pdf$/i.test(path) || /-transcripts\.zip$/i.test(path)) {
+    return SUPABASE_ASSET + path;
+  }
   return path;
 }
+function fileUrl(path) {
+  return assetUrl(path);
+}
 function pageSrc(doc, n) {
-  return `/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
+  return assetUrl(`/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`);
 }
 function pageSrcFallback(doc, n) {
-  const leaf = `/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
-  return GITHUB_ASSET + leaf;
+  return `${GITHUB_ASSET}/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
 }
 function setActive() {
   const p = path();
@@ -142,7 +147,6 @@ function overview() {
   const bundles = DATA.bundles || [];
   const all = docs();
   const mapRows = all
-    .slice(0, 80)
     .map(
       (d) =>
         `<tr><td class="mark">${d.kind}</td><td><a href="/docs/${d.id}">${d.title}</a><div class="subtle">${d.bundleTitle} · ${d.pages} pp.</div></td><td>${d.pages}</td></tr>`
@@ -153,7 +157,8 @@ function overview() {
       <div>
         <p class="eyebrow">${c.forum}</p>
         <h1>${c.title}<span class="sub">${c.claimant}</span></h1>
-        <p class="lede">${c.docCount} documents, ${c.pageCount} pages. A stranger can read the typed transcript, flip the original scans, and take Markdown, Word, ZIP, and the source PDFs. ${c.disclaimer}</p>
+        <p class="lede">${c.docCount} documents, ${c.pageCount} pages, arranged in the order an Indian arbitration brief is usually read — appointment, pleadings, s.16 / s.17 applications, then title and money papers. ${c.disclaimer}</p>
+        <p class="muted" style="max-width:42rem">${c.lawNote || ""}</p>
         <div class="row">
           <a class="btn btn-solid" href="/docs">Read the transcript</a>
           <a class="btn btn-ghost" href="/downloads/shah-v-trindade-archive.zip" download="shah-v-trindade-archive.zip" data-dl="shah-v-trindade-archive.zip">Download Markdown &amp; Word</a>
@@ -180,21 +185,23 @@ function overview() {
       .join("")}</div>
     <div class="cards3" style="margin-top:2rem">
       <a class="card" href="/docs"><h3>Open all sections</h3><p class="muted">One card per PDF, grouped in the filing tree.</p></a>
-      <a class="card" href="/docs"><h3>Original scans</h3><p class="muted">Every page image, namespaced so two page 1s cannot collide.</p></a>
+      <a class="card" href="#tree"><h3>Filing tree</h3><p class="muted">Stages under the Arbitration &amp; Conciliation Act, 1996, then civil / Comunidade papers.</p></a>
       <a class="card" href="/summary"><h3>Editorial summary</h3><p class="muted">How the papers relate. Not a finding.</p></a>
     </div>
-    <h2>Navigation tree</h2>
-    <input class="search" id="docq" placeholder="Filter documents by title, folder, or kind" />
-    <div class="tree" id="tree">
+    <h2 id="tree">Navigation tree</h2>
+    <p class="lede">Stages follow Indian arbitral practice. Expand a stage, then open a paper. Each paper keeps its own transcript, scans, and downloads — nothing is merged into one blob.</p>
+    <input class="search" id="docq" placeholder="Filter by title, stage, kind, or Act section" />
+    <div class="tree" id="treeList">
       ${bundles
         .map((b) => {
           const kids = all.filter((d) => d.bundle === b.id);
-          return `<details class="bundle" open>
+          return `<details class="bundle" ${b.id === "list-of-dates" || b.id === "soc-sod" ? "open" : ""}>
             <summary><span>${b.title}</span><span class="subtle">${kids.length} documents · ${b.pages} pages</span></summary>
+            <p class="bundle-note">${b.note}</p>
             <div class="kids">${kids
               .map(
                 (d) =>
-                  `<a class="doc-card" data-filter="${(d.title + " " + d.kind + " " + d.folder).toLowerCase()}" href="/docs/${d.id}"><p class="mark">${d.kind} · ${d.pages} pp.</p><h3>${d.title}</h3><p class="muted">${d.note || d.bundleNote}</p></a>`
+                  `<a class="doc-card" data-filter="${(d.title + " " + d.kind + " " + d.folder + " " + b.title).toLowerCase()}" href="/docs/${d.id}"><p class="mark">${d.kind} · ${d.pages} pp.</p><h3>${d.title}</h3><p class="muted">${d.note || b.note}</p></a>`
               )
               .join("")}</div>
           </details>`;
@@ -297,9 +304,10 @@ function downloadsPage() {
   const all = docs();
   const packs = all
     .map((d) => {
-      const zip = `/downloads/${d.id}-transcripts.zip`;
+      const zip = assetUrl(`/downloads/${d.id}-transcripts.zip`);
+      const pdf = assetUrl(`/downloads/${d.file}`);
       return `<a href="${zip}" download="${d.id}-transcripts.zip" data-dl="${d.id}-transcripts.zip"><strong>${d.title}</strong> <span class="subtle">ZIP</span><div class="muted">Transcript, Word, summary, section files, original PDF</div></a>
-      <a href="${fileUrl("/downloads/" + d.file)}" download="${d.file}" data-dl="${d.file}"><strong>${d.title}</strong> <span class="subtle">PDF</span><div class="muted">Original scan as filed</div></a>
+      <a href="${pdf}" download="${d.file}" data-dl="${d.file}"><strong>${d.title}</strong> <span class="subtle">PDF</span><div class="muted">Original scan as filed</div></a>
       <a href="/downloads/${d.id}-FULL-TRANSCRIPT.md" download="${d.id}-FULL-TRANSCRIPT.md" data-dl="${d.id}-FULL-TRANSCRIPT.md"><strong>${d.title}</strong> <span class="subtle">Markdown</span><div class="muted">Full typed transcript</div></a>
       <a href="/downloads/${d.id}-FULL-TRANSCRIPT.docx" download="${d.id}-FULL-TRANSCRIPT.docx" data-dl="${d.id}-FULL-TRANSCRIPT.docx"><strong>${d.title}</strong> <span class="subtle">Word</span><div class="muted">A4 transcript</div></a>`;
     })
@@ -315,7 +323,7 @@ function downloadsPage() {
   return `<div class="page narrow">
     <p class="eyebrow">Deliverables</p>
     <h1>Downloads</h1>
-    <p class="lede">Real files. Master pack on top, then each document, then each section.</p>
+    <p class="lede">Real files. Master Markdown/Word pack on Vercel. Original PDFs, page scans, and per-document ZIPs from object storage. Filenames match the registry — no 404 stubs.</p>
     <div class="row" style="margin-bottom:1rem">
       <a class="btn btn-solid" href="/downloads/shah-v-trindade-archive.zip" download="shah-v-trindade-archive.zip" data-dl="shah-v-trindade-archive.zip">Download Markdown &amp; Word (.zip)</a>
       <a class="btn btn-ghost" href="/downloads/CASE-SUMMARY.md" download="CASE-SUMMARY.md" data-dl="CASE-SUMMARY.md">Case summary</a>

@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 14
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 14-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 # BEFORE THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI
 AT PANAJI, GOA
 
@@ -56,4 +58,4 @@ Continued...
 
 4. Development of one of the property viz survey no. 93/3 was undertaken under the JVA dated 25.04.2014 duly executed by Late Mr. Pascoal for himself and his wife by virtue of POA and the other two associates with Kuval Projects Pvt. Ltd. Construction progressed substantially until stalled by injunction in Special Civil Suit No. 52/2013/A filed by the Communidade of Bambolim.
 
-5. After the demise of Pascoal Trindade, the Claimant and other stakeholders repeatedly requested Respondents Nos. 1 to 3 to cooperate in defending the pending civil and revenue proceedings and executing consent terms for the settlement of pending special civil suit 52/2013/A initiated by Communidade of Bambolim. The Respondents failed and neglected to do s
+5. After the demise of Pascoal Trindade, the Claimant and other stakeholders repeatedly requested Respondents Nos. 1 to 3 to cooperate in defending the pending civil and revenue proceedings and executing consent terms for the settlement of pen

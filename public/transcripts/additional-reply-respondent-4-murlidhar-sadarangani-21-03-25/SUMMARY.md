@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 7
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-1. 2023年，全球主要经济体GDP同比增长率为多少？
-2. 2023年，中国经济增长速度是世界平均增速的多少倍？
-3. 2023年中国制造业增加值占GDP比重是多少？
-4. 2023年中国居民消费价格指数(CPI)同比变化幅度是多少？
-5. 2023年中国出口总额占GDP比重是多少？
-6. 2023年中国净出口额占GDP比重是多少？
-7. 2023年中国人均GDP增长速度是多少？
-8. 2023年中国人均GDP增长速度是世界平均增速的多少倍？
-9. 2023年中国人均GDP增长速度是世界平均增速的多少倍？
-10. 2023年中国人均GDP增长速度是世界平均增速的多少倍？
+## Page 1 of 7
+
+[ILLEGIBLE]
 
 ---
 
-# BEFORE THE HON'BLE SOLE ARBITRATOR
+## Page 2 of 7
 
+ا مامانم
+-1.
+15
+Additions
+BEFORE THE HON'BLE SOLE ARBITRATOR
 MR. NITIN N. SARDESSAI, SR. ADVOCATE
-
 AT PANAJI GOA
-
-IN THE MATTER OF: –
-
-Mr. Vikram Shah )
-son of late Chinubhai Manilal Shah,
+Reply
+ان
+Merli
+IN THE MATTER OF:-
+Mr. Vikram Shah
+son of late Chinubhai Manilal Shah, )
+)
 aged 74 years, married,
+')
 businessman, Indian National,
+)
 resident of 28, Capri Building,
+)
 9, Manav Mandir Road,
+)
 Near Teen Batti Walkeshwar,
+)
 Malabar Hill, Mumbai - 400 006.
-Maharashtra. ) ...Claimant
-
+)
+Maharashtra.
+)
+...Claimant
 Versus
-
-1. Mr. Riva Trindade )
-Major of age, Resident of )
-Palbrika Mansion, .)
-NIO Circle,
-Dona Paula,
-Tiswadi, Goa - 403004;
-
+1.
+Mr. Riva Trindade

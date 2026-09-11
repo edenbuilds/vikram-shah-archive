@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Bank Statement/PVM Associates Letter to HDFC Bank re New Account dt 06.05.14.pdf  
 **SHA-256:** `d115d833b2f6bab0c5b04805cd6691bd5f0f83391ff198461cfc016afa108660`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Associates Letter to HDFC Bank re New Account dt 06.05.14 | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # M/S. PVM ASSOCIATES
 Address: Ocean Park Residency, Opp N.I.O Colony, Dona Paula – Goa 403004

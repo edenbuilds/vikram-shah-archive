@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 24
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 24-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 # THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P.
@@ -65,4 +67,4 @@ Respondent Nos. 1, 2 and 3 state and submit as under:
 
 5. Recently, these Respondents have acquired records in the form of bank statements. The said statements reveal that the Claimant and Respondent No. 4 herein were refunded, returned and/or paid various amounts from the personal account of Late Pascoal Trindade. It is apparent from the said statements that the Claimant's entity, namely Pravar Trade Investment Pvt. Ltd., was paid an amount of Rs. 71,00,000/- (Rupees Seventy-One Lakh Only) on 03.05.2014, corresponding to the amount purportedly invested by the Claimant. The said statements further reveal that, apart from the aforesaid payment of Rs. 71,00,000/- (Rupees Seventy-One Lakh Only), various amounts were remitted to Pravar Trade Investment Pvt. Ltd., aggregating to a total sum of Rs. 1,09,00,180/- (Rupees One Crore Nine Lakh One Hundred and Eighty Only).
 
-6. Similarly, an amount of Rs. 68,50,000/- (Rupees Sixty-Eight Lakhs Fifty Thousand Only) was remitted to the account of Respondent No. 4 on 26.04.2014, corresponding to the amou
+6. Similarly, an amount of Rs. 68,50,000/- (Rupees Sixty-Eight

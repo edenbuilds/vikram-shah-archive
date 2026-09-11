@@ -6,7 +6,7 @@
 **Kind:** correspondence  
 **Pages:** 1
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 |  | Date | Content | Remark |
 | --- | --- | --- | --- |
 | 1 | 26/05/2022 | Address to adv. Wilbur menses and CC to Rajan Bhavnani for submission of certain documents as requested by Mr. Riva through him. | Not responded |
@@ -52,5 +54,4 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 | 14 | through mathias 24/08/2023 | Joe Details of old goa property | Not responded |
 | 15 | through mathias 30/08/2023 | Joe Details of pravar trade and shivam holiday home | Not responded |
 | 16 | through Mathias 1/9/2023 | Joe Draft of deed of admission - PVM Associates | Not responded |
-| 17 | 21/11/2024 | Letter from Nikhil D Naique adv. Representing riva address to VCS/VVS/Virai / Lalchandani / PBCPL / Prive reality instructing not to execute sale deed in respect of sale of plot no. 12 at ER. | Responded by party concerned |
-| 18 | 20/11/2023 | Letter from Shekhan Menses
+| 17 | 21/11/2024 | Letter from Nikhil D Naique adv. Representing riva address to VCS/VVS/Virai / Lalchandani / PBCPL / Prive reality instructing not to execute sale deed in re

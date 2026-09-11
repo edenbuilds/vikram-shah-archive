@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/Form I and XIV Certified Copies, Survey 93-2 93-3 93-4, in name of Pascoal Trindade dt 30.10.08 (Notarised 21.09.22).pdf  
 **SHA-256:** `a59ff36054abd230051b22fdbb5c749ac88060871439bbef93c70a2424fe64f8`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Form I and XIV Certified Copies, Survey 93-2 93-3 93-4, in name of Pascoal Trindade dt 30.10.08 (Notarised 21.09.22) | 1-3 |
 
 <!-- SECTION: full | PDF pages 1-3 -->
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # CERTIFIED TRUE COPY
 

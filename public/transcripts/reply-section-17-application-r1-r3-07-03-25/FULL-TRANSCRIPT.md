@@ -8,7 +8,7 @@
 **Source file:** Section 17/Reply to Section 17 Application (R1-R3) dt 07.03.25.pdf  
 **SHA-256:** `9eac13e496552623d716abf409447e223320b7063a3f2d85435a27c1324d8f2d`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Reply to Section 17 Application (R1-R3) dt 07.03.25 | 1-18 |
 
 <!-- SECTION: full | PDF pages 1-18 -->
+
+> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N.
 ## SARDESSAI AT PANAJI GOA

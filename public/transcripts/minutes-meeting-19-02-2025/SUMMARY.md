@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 5
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 5-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
@@ -62,8 +64,4 @@ Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade, Mrs. Albertina Tr
 
 7. The corrected proceeding sheet shall be emailed to the respective parties.
 
-8. Matter is fixed on 01st March 2025 at 07.30 PM for arguments on the prayer for receivership and application filed by Adv. V. Braganza dated 15.02.2025.
-
----
-
-9. Stand Over to 01.03.2025.
+8. Matter is fixed on 01st March 2025 at 07.30 PM for arguments on the pray

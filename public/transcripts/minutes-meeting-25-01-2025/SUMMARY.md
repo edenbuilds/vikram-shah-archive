@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 2
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
@@ -72,5 +74,3 @@ f. in the said Claim Statement.
 4. Shri. V. Pavithran states that he will file his reply/ written statement and serve advanced copies to all parties by the 15th of February 2025.
 
 5. Adv. Raunaq Rao states that he will prefer his reply/ written statement which will also include for application for interim reliefs and will serve the copies in advance to all the parties by 15th February 2025.
-
-6. The matter is fixed on 19th February 2025 at the same venue at 11.00 am for arguments on interim reliefs as mentioned above. In the event the claimant and/or Respondent No. 4 chooses to file a rejoinder/s to the reply as proposed to be filed by Respondents No. 1, 2 and 3, they undertake to inform the Tribunal and other parties by the 17th of February 2025.

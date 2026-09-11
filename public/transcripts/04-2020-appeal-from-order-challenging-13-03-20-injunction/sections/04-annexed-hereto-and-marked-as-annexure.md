@@ -4,7 +4,7 @@
 **Mark:** 4  
 **PDF pages:** 7
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 ## ANNEXED HERETO AND MARKED AS ANNEXURE
 - 3 IS THE COPY OF THE SUIT PLAINT IN SPECIAL CIVIL SUIT NO. 222/1994/B c. On 19.11.1998 the Respondent No. 2 came to be brought on record and on the same day compromise terms to compromise/ settle the dispute between the Respondent No. 1 (Plaintiffs therein) and the Respondent No. 2 (Defendant therein) came to be filed.

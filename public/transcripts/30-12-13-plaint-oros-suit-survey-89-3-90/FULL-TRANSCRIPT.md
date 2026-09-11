@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/30.12.13 Plaint, Oros Suit (Survey 89-3, 90-1) with Affidavit and Annexures.pdf  
 **SHA-256:** `f1fb955c55adf04e2cde1975537c4b078df0efdfc31ede465335072a914be1bc`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 30.12.13 Plaint, Oros Suit (Survey 89-3, 90-1) with Affidavit and Annexures | 1-69 |
 
 <!-- SECTION: full | PDF pages 1-69 -->
+
+> Clerk note: continuous OCR for a 69-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANJIM, GOA

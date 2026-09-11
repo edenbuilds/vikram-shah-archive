@@ -8,19 +8,21 @@
 **Source file:** Section 17/22.03.25 Application (Respondents 1-3) under Section 17 for Interim Reliefs, with Affidavit of Riva Trindade and Annexures.pdf  
 **SHA-256:** `f5c11474bfc34d5965801fbcbe3186f9b9408b637d1aab0ff4a3031c85df2fd5`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | 13. In view of the above, I allow application dated 15.02.2025 by modifying the minutes of proceedings dated 26.08.2024 | 1-26 |
+| 1 | > Clerk note: continuous OCR for a 52-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-26 |
 | 2 | FIRST SCHEDULE | 27-28 |
 | 3 | ANNEXURE R1A | 29-36 |
 | 4 | ANNEXURE RIE | 37-52 |
 
-<!-- SECTION: 13-in-view-of-the-above-i-allow-application-date | PDF pages 1-26 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-52-page-paper-op | PDF pages 1-26 -->
+
+> Clerk note: continuous OCR for a 52-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 13. In view of the above, I allow application dated 15.02.2025 by modifying the minutes of proceedings dated 26.08.2024 and direct that the initial deposit of cost and the fees pertaining to the arbitration proceedings shall be borne equally by parties to the arbitration agreement, i.e. Articles of Association dated 01.04.2013. it is made clear that each of the parties to the said tripartite agreement shall deposit an amount of Rs. 5 Lakhs. Respondents 1, 2 and 3 who have deposited Rs. 6 Lakhs in total, will be entitled to a refund of Rs. 1 lakh from the said initial deposit.
 

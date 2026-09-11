@@ -8,19 +8,21 @@
 **Source file:** Section 17/Application of Respondents 1-3 under Section 17 for Interim Reliefs with Annexures.pdf  
 **SHA-256:** `c3a0830aa43676c0ac9e4841dc3ebd192aa04520f9044430a9e34871281c448e`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N. | 1-20 |
+| 1 | > Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-20 |
 | 2 | FIRST SCHEDULE | 21-22 |
 | 3 | ANNEXURE R1A | 23-32 |
 | 4 | ANNEXURE RIE | 33-50 |
 
-<!-- SECTION: before-the-hon-ble-sole-arbitrator-mr-nitin-n-n | PDF pages 1-20 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-50-page-paper-op | PDF pages 1-20 -->
+
+> Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N.
 SARDESSAI AT PANAJI GOA

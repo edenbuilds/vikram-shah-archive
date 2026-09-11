@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 11
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 आस्तीय बैर द्वारा निर्णयिक
 रिक्षा सूत्रें Rs. 100
@@ -67,8 +69,4 @@ AND WHEREAS the parties hereto have agreed to join together for development of p
 
 AND WHEREAS the parties shall have equal shareholding, ie, 50,50 in the said "M/s LOONKAR DEVELOPERS PVT.LTD." and shall contribute the funds and carry out the activities jointly as envisaged hereunder.
 
-AND WHEREAS the Party of the First Part through its directors Mr Pasnoal Trinidade have executed with the owners the sale dead in respect of various plots of land bearing S.No.93/2, 93/3 and 93/4 within the limits of Village Panchayat Curca, Bambolim and Taluka Tiswadi, registration sub-districts of Ilhas, District of North Goa, totally adm.07500 sq.mtrs, or thereabout.
-
----
-
-AND WHEREAS the Party of the First Part have finalized the purchase of land bearing S.No.105/1 a
+AND WHEREAS the Party of the First Part through its directors Mr Pasnoal Trinidade have executed with the owners the sale dead in respect of various plots of land bearing S.No.93/2, 93/3 and 93/4 within the limits of Village Panchayat Curca, Bambolim and Taluka Tiswadi, registration sub-districts of Ilhas, District of North Goa, totally adm.07500 sq.mtrs, o

@@ -8,7 +8,7 @@
 **Source file:** Section 16/Reply to Section 16 Application (Claimant) dt 10.04.26.pdf  
 **SHA-256:** `7f1bd00662bafdd435d1113cf49bbf59d8043afe510a0054e06c2b2bcf0c6f79`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Reply to Section 16 Application (Claimant) dt 10.04.26 | 1-8 |
 
 <!-- SECTION: full | PDF pages 1-8 -->
+
+> Clerk note: continuous OCR for a 8-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 BEFORE THE HON'BLE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI

@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Loonkar/Loonkar Developers Confirmation Letter (Rs 3.676 Cr) dt 28.12.11.pdf  
 **SHA-256:** `74d92b6960fc127e775c73a343d34f7631216847ab871cc01c53c527ea8f0776`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Loonkar Developers Confirmation Letter (Rs 3.676 Cr) dt 28.12.11 | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 LDPL/2011
 

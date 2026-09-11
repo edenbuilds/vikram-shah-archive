@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Plaint, SCS 52-2013-A, Communidade of Bambolim v Pascoal Trindade and Ors dt 04.11.13 (as amended, with Verification dt 06.07.21).pdf  
 **SHA-256:** `3702eca75f9447a513b428af045e9219aca3505781dc061b8e4133df73c7205d`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Plaint, SCS 52-2013-A, Communidade of Bambolim v Pascoal Trindade and Ors dt 04.11.13 (as amended, with Verification dt 06.07.21) | 1-48 |
 
 <!-- SECTION: full | PDF pages 1-48 -->
+
+> Clerk note: continuous OCR for a 48-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION
 AT PANJIM GOA

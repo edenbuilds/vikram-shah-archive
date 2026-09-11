@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Pravar/Pravar Statement (04.04.2013 to 26.06.2013).pdf  
 **SHA-256:** `21fbf291ff54e7f65580cc636f98746ea61bb7beb775700d5320489c7bf0e7fe`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Pravar Statement (04.04.2013 to 26.06.2013) | 1-2 |
 
 <!-- SECTION: full | PDF pages 1-2 -->
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Thursday, Jan 16, 2014
 

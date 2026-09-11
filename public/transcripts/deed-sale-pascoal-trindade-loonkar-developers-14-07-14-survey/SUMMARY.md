@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 16
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 16-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 THIS DEED OF SALE is executed on this 14th day of the month of July, of the year 2014 at Panaji, and Registration Sub-District of Taluka Tiswadi, in the State of Goa.
 
 ---
@@ -48,4 +50,4 @@ I/S. LOONKAR DEVELOPERS PRIVATE LIMITED, a company duly incorporated under the C
 
 WHEREAS there exists a property known as "Paileen Fondition", "Savvi Galli" or "Ohor" admeasuring an extent of 35,600 sq. mts. of area, surveyed under Survey No. 93 Sub-Division No. 2, Village Bambolim and located within the limits of the Village Panchayat of Curca, Bambolim & Talaulim, Taluka Tiswadi, North Goa, which property is hereinafter referred to as "the said property", and is better described in terms of the Schedule hereunder written.
 
-AND WHEREAS Alexandre Rodrigues had title to the following properties mentioned below as per the records of the Communidade of Bambolim vide Certificate issued b
+AND WHEREAS Alexandre Rodrigues had title to

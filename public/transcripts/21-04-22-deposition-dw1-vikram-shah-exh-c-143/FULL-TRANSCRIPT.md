@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/21.04.22 Deposition of DW1 Vikram Shah (Exh C-143).pdf  
 **SHA-256:** `af104a53629e60bd01a1939e01d457bb78986fd669d37b3e9cf80afb436e15d5`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 21.04.22 Deposition of DW1 Vikram Shah (Exh C-143) | 1-13 |
 
 <!-- SECTION: full | PDF pages 1-13 -->
+
+> Clerk note: continuous OCR for a 13-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION,
 AT PANAJI

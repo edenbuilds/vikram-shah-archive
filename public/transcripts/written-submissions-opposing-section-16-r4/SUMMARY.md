@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 8
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 8-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 
@@ -72,5 +74,3 @@ The record of these proceedings clearly demonstrates that Respondent No. 2 has s
 | 26.08.2024 | Arbitral Tribunal gave notice of commencement of proceedings. |
 | 14.09.2024 | Respondents Nos.1-3 appeared through their advocate, proposed a global settlement,and it was unanimously decided that the seat and venue of the arbitration would be Panaji,Goa. |
 | 22.01.2025 | The Claimant filed his formal Statement of Claim. |
-| 25.01.2025 | Lawyers appearing for the parties(including Respondent Nos.1-3) Informed the Tribunal that settlement talks had failed and as such the parties had decided to carry on with the arbitration. |
-| 15.02.2025 | Advocate on behalf of Respondents 1-3 made an application to the Tribunal seeking a modification of the minutes of proceedings dated26.08.2024. |

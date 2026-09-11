@@ -8,14 +8,14 @@
 **Source file:** Section 17/01.03.25 Application under Section 17 for Interim Reliefs (Claimant), with Affidavit and Annexure Index.pdf  
 **SHA-256:** `ef3001414751d04af4f23c4d68d316e4a9232c4de7fc4c5183ed290793a4a028`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | BEFORE THE HON'BLE SOLE ARBITRATOR, MR. | 1-23 |
+| 1 | > Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-23 |
 | 2 | ANNEXURE A | 24 |
 | 3 | ANNEXURE B | 25 |
 | 4 | ANNEXURE C | 26 |
@@ -24,7 +24,9 @@
 | 7 | ANNEXURE F | 29 |
 | 8 | ANNEXURE G | 30 |
 
-<!-- SECTION: before-the-hon-ble-sole-arbitrator-mr | PDF pages 1-23 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-23-page-paper-op | PDF pages 1-23 -->
+
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR, MR.
 NITIN N. SARDESSAI, SR. ADVOCATE, PANAJI GOA

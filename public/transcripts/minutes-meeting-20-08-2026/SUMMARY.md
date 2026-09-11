@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 2
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,22 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## BEFORE THE SOLE ARBITRATOR
+## Page 1 of 2
 
-## SR. ADV. NITIN N. N. P. SARDESSAI
+BEFORE THE SOLE ARBITRATOR
 
-## AT PANAJI – GOA
+             SR. ADV. NITIN N. N. P. SARDESSAI
 
-VIKRAM SHAH …CLAIMANT VERSUS RIVA TRINDADE AND 3 ORS …RESPONDENTS
+                        AT PANAJI – GOA
 
-## <u>MINUTES OF PROCEEDINGS DATED 20<sup>th</sup> AUGUST 2026 AT</u>
+VIKRAM SHAH                                      …CLAIMANT
 
-## <u>05.30 PM</u>
+                                 VERSUS
 
-**1.** Adv. Jatin Ramaiyya present for Respondent No. 1, 2 & 3 via video conference. Advocates for the parties have expressed their in principle consent to an adjournment via email.
-**2.** As decided earlier, Respondent No. 1, 2 and 3 have paid as administrative fess ₹20,000/-towards the Tribunal secretarial expenses.
-**3.** In view of the above the matter is adjourned by consent to 11<sup>th</sup> September 2026 at 05.30 PM for completion of pleadings. Parties are free to complete the pleadings and exchange the same before the next date of hearing.
+RIVA TRINDADE AND 3 ORS                          …RESPONDENTS
 
-**4.** Tribunal to assemble on the 11<sup>th</sup> of September 2026 at 05.30 PM to decide the further date for arguments on Section 17 Applications.
-**5.** Stand Over to 11<sup>th</sup> September 2026 at 5.30 PM.
-## Place: Panaji – Goa. Sr. Adv. Nitin N. N. P. Sardessai Date:20.08.2026 Sole Arbitrator
+
+ MINUTES OF PROCEEDINGS DATED 20th AUGUST 2026 AT
+
+                             05.30 PM
+
+
+1.   Adv. Jatin Ramaiyya present for Respondent No. 1, 2 & 3 via video
+
+     conference. Advocates for the parties have expressed their in
+
+     principle consent to an adjournment via email.
+
+
+
+2.   As decided earlier, Respondent No. 1, 2 and 3 have paid as
+
+     administrative fess ₹20,000/- towards the Tribunal secretarial
+
+     expenses.
+
+
+3.   In view of the above the matter is adjourned by consent to 11th
+
+     September 2026 at 05.30 PM for completion of pleadings. Parties
+
+     are free to complete the pleadings and exchange the same before

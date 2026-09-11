@@ -8,7 +8,7 @@
 **Source file:** Original Owners Litigation/Compromise Terms and Decree dt 19-21.11.1998, Spl Civil Suit 222-94-A and 222-94-B, Communidade of Bambolim v Maximo Mergulhao.pdf  
 **SHA-256:** `82e9de1d638c321a6bc9a088536781c764610f700b318a3d4716f3decb7836a4`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Compromise Terms and Decree dt 19-21.11.1998, Spl Civil Suit 222-94-A and 222-94-B, Communidade of Bambolim v Maximo Mergulhao | 1-34 |
 
 <!-- SECTION: full | PDF pages 1-34 -->
+
+> Clerk note: continuous OCR for a 34-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION AT PANAJI GOA.
 

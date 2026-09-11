@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 27
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,10 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-27 | — | 26.06.24 Application for Appointment of Arbitrator under S.11(4), AAR No.13 of 2024 |
+| 1 | Pleading | Page 1 of 27 |
+| 2 | ANNEXURE A | ANNEXURE A |
+| 3 | ANNEXURE B | ANNEXURE B |
+| 4-27 | ANNEXURE C | ANNEXURE C |
 
 ## Requested reading / prayers
 
@@ -34,43 +37,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# IN THE HIGH COURT OF PORVORIM
+## Page 1 of 27
 
-# BOMBAY AT GOA GOA A.A.R. No. 13 of 2024
-
+Applie
+for
+Arbitrati
+IN THE HIGH COURT OF BOMBAY AT GOA
+PORVORIM-GOA
 Mr. Vikram Shah
-
-...Applicant
-
-v/s
-
 Mr. Riva Trindade & Ors.
-
-...Respondent
-
+v/s
 INDEX
-
-| SR.NO. | PARTICULARS | PAGE.NO. |
-| --- | --- | --- |
-| 1. | MEMO OF APPLICATION | 2-24 |
-| 2. | AFFIDAVIT | 25-26 |
-| 3. | ANNEXURE A
-ARTICLES OF ASSOCIATION | 27-43 |
+A.A.R. No. 13 of 2024
+...Applicant
+...Respondent
+SR.NO.
+PARTICULARS
+PAGE.NO.
+1.
+MEMO OF APPLICATION
+2-24
+2.
+AFFIDAVIT
+25-26
+3.
+ANNEXURE A
+27-43
+ARTICLES OF ASSOCIATION
 
 ---
 
-|  | DATED 01.04.2013 |  |
-| --- | --- | --- |
-| 4. | ANNEXURE B
-THE NOTICE OF ARBITRATION DATED
-28.02.2024 ALONG WITH PROOF OF SERVICE | 44-57 |
-| 5. | ANNEXURE C
-NOTICE DATED 25.04.2024 | 58-120 |
-| 6. | VAKALATNAMA | 121-122 |
+## Page 2 of 27
 
-Date:-26.06.2024
-
-Place:-Porvorim-Goa
-
-(Adv. for th
-
+DATED 01.04.2013
+4.
+THE
+5.
+6.
+ANNEXURE B
+44-57
+NOTICE

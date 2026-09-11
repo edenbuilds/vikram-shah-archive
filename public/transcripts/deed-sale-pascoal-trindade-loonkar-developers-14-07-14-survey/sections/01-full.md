@@ -4,7 +4,9 @@
 **Mark:** —  
 **PDF pages:** 1-16
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
+
+> Clerk note: continuous OCR for a 16-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 THIS DEED OF SALE is executed on this 14th day of the month of July, of the year 2014 at Panaji, and Registration Sub-District of Taluka Tiswadi, in the State of Goa.
 

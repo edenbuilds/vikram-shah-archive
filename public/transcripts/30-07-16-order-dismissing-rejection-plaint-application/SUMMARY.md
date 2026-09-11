@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 17
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 17-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF THE SENIOR CIVIL JUDGE, "A" COURT,
 PANAJI.
@@ -72,5 +74,3 @@ SCS.52/2013/A
 
 ---
 
-3. Mrs. Dionisia Dias e Mergulhao,
-w/o late Maximo Mergulao,

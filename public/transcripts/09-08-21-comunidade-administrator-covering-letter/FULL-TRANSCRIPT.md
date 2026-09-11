@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/09.08.21 Comunidade to Administrator (Covering Letter).pdf  
 **SHA-256:** `e27fb7fdcab94e88b46f295f0cfdd56de01b3f875a09ed283f551d778625afdb`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 09.08.21 Comunidade to Administrator (Covering Letter) | 1-2 |
 
 <!-- SECTION: full | PDF pages 1-2 -->
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Comunidade de Bambolim
 

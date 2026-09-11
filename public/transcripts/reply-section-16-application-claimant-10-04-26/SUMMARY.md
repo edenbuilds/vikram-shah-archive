@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 8
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 8-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 BEFORE THE HON'BLE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI
@@ -64,4 +66,4 @@ under.
 
 3. It is a matter of record that the Respondents Nos. 1, 2 and 3 had admittedly filed their Statement of Defence on 07/03/2025 without raising any objection as to the jurisdiction of this Hon'ble Tribunal on the grounds now sought to be urged in terms of the present Application. The present plea is raised for the first time at this belated stage and is clearly barred under Section 16(2) of the Act, which mandates that a plea that the Arbitral Tribunal lacks jurisdiction ought to be raised not later than the submission of the Statement of Defence. The law on this issue is no longer res integra.
 
-4. The Application filed by the Respondent Nos. 1 to 3, though styled as being filed by the Respondent No.2, is directly in teeth of the Judgment of the Hon'ble Supreme Court in M/s. Vidhyawati Construction Company v. Union of India reported (2025) 5 SCC 347, wherein it has categorically held that a jurisdictional objection not raised at the stage of filing of the Statement of Defence is deemed to have been waived and cannot be permitted to be raised at a belated stage.
+4. The Application filed by the Respondent Nos. 1 to 3, though styled as being filed by the Respondent No.2, is directly in teeth of the Judgment of the Hon'ble Supreme Court in M/s. Vidhyawati Construction Company v. Union of India reported (2025) 5 SCC 347, wherein it has categorically held that a jurisdictional objection not raised at the stage of filing

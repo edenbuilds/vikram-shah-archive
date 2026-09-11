@@ -8,19 +8,21 @@
 **Source file:** Imp. Documents/PVM Associates Articles of Association dt 01.04.13 (Certified Copy).pdf  
 **SHA-256:** `b987fb8dfaa88381f5847115339041399ab074d60aee461f32f4630cb65504cc`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | भारतीय गौरव न्यायिक | 1-17 |
+| 1 | > Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-17 |
 | 2 | (The SCHEDULE I PROPERTY hereinabove referred to) | 18 |
 | 3 | SCHEDULE-2 | 19 |
 | 4 | (The SCHEDULE II PROPERTY hereinabove referred to) | 20 |
 
-<!-- SECTION: section | PDF pages 1-17 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-18-page-paper-op | PDF pages 1-17 -->
+
+> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 भारतीय गौरव न्यायिक
 पचास

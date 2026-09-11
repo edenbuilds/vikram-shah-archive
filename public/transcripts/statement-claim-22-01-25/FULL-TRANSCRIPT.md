@@ -8,14 +8,14 @@
 **Source file:** SOC and SOD/Statement of Claim dt 22.01.25.pdf  
 **SHA-256:** `4ca92ab05bd05af54d135959650a3bacd1a302728e159343dd11518bcdbf09ab`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | BEFORE THE HON'BLE SOLE ARBITRATOR | 1-44 |
+| 1 | > Clerk note: continuous OCR for a 282-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-44 |
 | 2 | SCHEDULE-2 | 45-98 |
 | 3 | APPENDIX-C4 | 99-164 |
 | 4 | SCHEDULE-1 | 165 |
@@ -39,7 +39,9 @@
 | 22 | ANNEXURE F | 288 |
 | 23 | ANNEXURE G | 289 |
 
-<!-- SECTION: before-the-hon-ble-sole-arbitrator | PDF pages 1-44 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-282-page-paper-o | PDF pages 1-44 -->
+
+> Clerk note: continuous OCR for a 282-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR
 MR. NITIN N. SARDESSAI, SR. ADVOCATE

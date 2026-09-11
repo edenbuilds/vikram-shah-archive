@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 18
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-17 | Pleading | भारतीय गौरव न्यायिक |
+| 1-17 | Pleading | > Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 18 | 2 | (The SCHEDULE I PROPERTY hereinabove referred to) |
 | 19 | 3 | SCHEDULE-2 |
 | 20 | 4 | (The SCHEDULE II PROPERTY hereinabove referred to) |
@@ -36,6 +36,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 भारतीय गौरव न्यायिक
 पचास
@@ -75,5 +77,3 @@ the year Two Thousand Thirteen
 भारतीय नौरन्तिक
 पचास
 सपेंट
-FIFTY
-RUPEES

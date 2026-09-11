@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/Proceedings of EGM of Comunidade de Bambolim dt 03.01.21 (re Bambolim Survey 93-2,3,4 settlement and 89-3,90-1).pdf  
 **SHA-256:** `753a2d8fc13b79f241f456c178f18a4619c5a0419fc6a1ec9e897674858b857c`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Proceedings of EGM of Comunidade de Bambolim dt 03.01.21 (re Bambolim Survey 93-2,3,4 settlement and 89-3,90-1) | 1-10 |
 
 <!-- SECTION: full | PDF pages 1-10 -->
+
+> Clerk note: continuous OCR for a 10-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## PROCEEDINGS OF EXTRAORDINARY GENERAL BODY
 MEETING OF THE COMPONENTS OF COMUNIDADE DE

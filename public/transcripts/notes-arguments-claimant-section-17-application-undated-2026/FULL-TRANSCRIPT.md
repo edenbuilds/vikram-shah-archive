@@ -8,7 +8,7 @@
 **Source file:** Section 17/Notes of Arguments, Claimant, Section 17 Application (undated, 2026).pdf  
 **SHA-256:** `e76a287791555b2dcf3b9f67a5127b4cd1f4c243f3fea6a73820c4e5321550be`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Notes of Arguments, Claimant, Section 17 Application (undated, 2026) | 1-13 |
 
 <!-- SECTION: full | PDF pages 1-13 -->
+
+> Clerk note: continuous OCR for a 13-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI
 AT PANAJI, GOA

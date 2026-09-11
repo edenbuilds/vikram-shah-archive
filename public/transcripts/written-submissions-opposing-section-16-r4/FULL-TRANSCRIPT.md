@@ -8,7 +8,7 @@
 **Source file:** Section 16/Written Submissions opposing Section 16 (R4).pdf  
 **SHA-256:** `359883d8e88825265d51849fbf76ecf130761d286132921f943fb3b7028d7bb4`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Written Submissions opposing Section 16 (R4) | 1-8 |
 
 <!-- SECTION: full | PDF pages 1-8 -->
+
+> Clerk note: continuous OCR for a 8-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 

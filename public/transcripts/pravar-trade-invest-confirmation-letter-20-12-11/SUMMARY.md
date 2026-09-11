@@ -6,7 +6,7 @@
 **Kind:** correspondence  
 **Pages:** 1
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,13 +34,21 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## 20th December 2011
+## Page 1 of 1
 
-# TO WHOM IT MAY CONCERN
-
+Pravar Trade Invest Pvt. Ltd.
+Wankhede Stadium, Block B, D Road, Churchgate, Mumbai-400 020
+20th December 2011
+TO WHOM IT MAY CONCERN
 This is to certify that M/s. Pravar Trade Invest Pvt. Ltd.
-(PAN- AAHFP6424E) had advanced sum of Rs.71,00,000/- (Rupees Seventy One Lakhs Only) to Mr. Pascoal Trindade, of Dona Paula – Goa for the transaction of the Joint Venture Property Bearing Survey No.93/2, 93/3 and 93/4 situated at Bambolim, Taluka Tiswadi – Goa. The above amounts were remitted from our bank account to Goa by Cheques during the Financial Years 2006 to 2008. This confirmation is given to be produced before the Income Tax Officer, Panaji - Goa.
-
-For Pravar Trade Invest Pvt. Ltd.
-
+(PAN- AAHFP6424E) had advanced sum of Rs.71,00,000/- (Rupees
+Seventy One Lakhs Only) to Mr. Pascoal Trindade, of Dona Paula - Goa
+for the transaction of the Joint Venture Property Bearing Survey
+No.93/2, 93/3 and 93/4 situated at Bambolim, Taluka Tiswadi - Goa.
+The above amounts were remitted from our bank account to Goa by
+Cheques during the Financial Years 2006 to 2008. This confirmation is
+given to be produced before the Income Tax Officer, Panaji - Goa.
+For Pravar Trade-Invest Pvt. Ltd.
 Director
+
+---

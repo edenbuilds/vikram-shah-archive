@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/12.06.26 Application for Production of Additional Documents (Respondent No.2, Arbitral Tribunal).pdf  
 **SHA-256:** `3d9cfd82c75e71dd42be58b51bd4226dd67904ba96eca8bf977803150390ce62`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 12.06.26 Application for Production of Additional Documents (Respondent No.2, Arbitral Tribunal) | 1-7 |
 
 <!-- SECTION: full | PDF pages 1-7 -->
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADV. N.N.P.

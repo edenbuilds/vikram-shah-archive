@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/13.03.20 Injunction Order (Exh D-4).pdf  
 **SHA-256:** `903d0816fc1afc235499907aa8b0e74102b8ebbd63c698f2008cb2a31afcb2de`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 13.03.20 Injunction Order (Exh D-4) | 1-29 |
 
 <!-- SECTION: full | PDF pages 1-29 -->
+
+> Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## ORDER BELOW (Exbt. D-4)
 (Delivered on this the 13th day of the month of March, 2020)

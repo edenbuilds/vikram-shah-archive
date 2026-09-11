@@ -8,19 +8,21 @@
 **Source file:** SOC and SOD/Amended Statement of Defence (R1-R3) dt 24.08.26.pdf  
 **SHA-256:** `a94448b8d99f04c6d130f064144d8e361bb9244cf3d67ba991bcce7f2058e8d7`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | AMENDED STATEMENT OF DEFENCE | 1-64 |
+| 1 | > Clerk note: continuous OCR for a 110-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-64 |
 | 2 | ANNEXURE R1 B | 65-109 |
 | 3 | SCHEDULE – I | 110 |
 | 4 | SCHEDULE-2 | 111 |
 
-<!-- SECTION: amended-statement-of-defence | PDF pages 1-64 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-110-page-paper-o | PDF pages 1-64 -->
+
+> Clerk note: continuous OCR for a 110-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # AMENDED STATEMENT OF DEFENCE
 

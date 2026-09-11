@@ -8,7 +8,7 @@
 **Source file:** Original Owners Litigation/Writ Petitions 506, 557, 577 of 2009 and 657 of 2011 - HC Bombay at Goa Judgment dt 29.03.2012.pdf  
 **SHA-256:** `cd831996a7e4267c49e9c566f91afa885260444a7b1430f169680498202be58f`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Writ Petitions 506, 557, 577 of 2009 and 657 of 2011 - HC Bombay at Goa Judgment dt 29.03.2012 | 1-50 |
 
 <!-- SECTION: full | PDF pages 1-50 -->
+
+> Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE HIGH COURT OF BOMBAY AT GOA
 

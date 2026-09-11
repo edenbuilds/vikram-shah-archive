@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 6
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # PVM ASSOCIATES
 
@@ -71,6 +73,4 @@ FOR THE YEAR ENDED
 | Accreted Income and Tax Detail | Tax and Interest paid |  |  | 14 | 0 |
 | Accreted Income and Tax Detail | (+) Tax Payable (-) Refundable (13-14) |  |  | 15 | 0 |
 | Income Tax Return electronically transmitted on31-Jul-2024 15:22:27 from IP address115.96.56.56andverified byVIKRAM SHAHhaving PANAAJPS2978Non20-Aug-2024using paperITR-Verification Form/Electronic Verification CodeTG691KROWIgenerated throughAadhaar OTPmode |  |  |  |  |  |
-
-AACAP9411F052965360403107241492c8562d161651a088afb8f3a6bede1915b384
 

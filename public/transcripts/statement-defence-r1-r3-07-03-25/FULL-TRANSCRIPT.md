@@ -8,7 +8,7 @@
 **Source file:** SOC and SOD/Statement of Defence (R1-R3) dt 07.03.25.pdf  
 **SHA-256:** `75a289ef4e0f02449a2790e2120dac8bd2c831378541493216949f50723c0d78`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Statement of Defence (R1-R3) dt 07.03.25 | 1-58 |
 
 <!-- SECTION: full | PDF pages 1-58 -->
+
+> Clerk note: continuous OCR for a 58-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ---
 

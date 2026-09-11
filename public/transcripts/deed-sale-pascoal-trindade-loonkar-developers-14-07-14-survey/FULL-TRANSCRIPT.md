@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/Deed of Sale Pascoal Trindade to Loonkar Developers dt 14.07.14 (Survey 93-2) (Annexure to Statement of Claim).pdf  
 **SHA-256:** `5cbbc2c9fbc474f8cbfa57ff1fd9a8a42b56801b280048dc27ac45ae01a4826e`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Deed of Sale Pascoal Trindade to Loonkar Developers dt 14.07.14 (Survey 93-2) (Annexure to Statement of Claim) | 1-16 |
 
 <!-- SECTION: full | PDF pages 1-16 -->
+
+> Clerk note: continuous OCR for a 16-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 THIS DEED OF SALE is executed on this 14th day of the month of July, of the year 2014 at Panaji, and Registration Sub-District of Taluka Tiswadi, in the State of Goa.
 

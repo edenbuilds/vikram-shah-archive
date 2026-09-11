@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Pascoal/SBI Bank Statement, Pascoal & Albertina Trindade (2013-2017 entries).pdf  
 **SHA-256:** `d56964e5da80325a2e0aabc99fb54abfa112f280ed7a675a080515fa244661a0`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | SBI Bank Statement, Pascoal & Albertina Trindade (2013-2017 entries) | 1-6 |
 
 <!-- SECTION: full | PDF pages 1-6 -->
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 सेहमी वापरती जागारी संख्यात देण / सामान्यत: प्रयोग किए जाने वाले संख्यापद्धत / Generally Used Abbreviations
 

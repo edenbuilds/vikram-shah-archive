@@ -4,7 +4,9 @@
 **Mark:** —  
 **PDF pages:** 1-6
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 सेहमी वापरती जागारी संख्यात देण / सामान्यत: प्रयोग किए जाने वाले संख्यापद्धत / Generally Used Abbreviations
 

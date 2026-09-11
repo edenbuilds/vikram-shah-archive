@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/30.07.16 Order Dismissing Rejection of Plaint Application.pdf  
 **SHA-256:** `11bfbdd868aead5da5b3d9144e5b943df87af8daffc1d10c56db3e06eafecf61`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 30.07.16 Order Dismissing Rejection of Plaint Application | 1-17 |
 
 <!-- SECTION: full | PDF pages 1-17 -->
+
+> Clerk note: continuous OCR for a 17-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF THE SENIOR CIVIL JUDGE, "A" COURT,
 PANAJI.

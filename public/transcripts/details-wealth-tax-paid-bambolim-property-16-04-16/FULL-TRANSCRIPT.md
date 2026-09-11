@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Tax on Property/Details of Wealth Tax Paid on Bambolim Property dt 16.04.16.pdf  
 **SHA-256:** `f5942e2dc7291eb44a12c8c4ed934b0856a8085a3f660f934d0a3d4d961b0326`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Details of Wealth Tax Paid on Bambolim Property dt 16.04.16 | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 to be longs;
 

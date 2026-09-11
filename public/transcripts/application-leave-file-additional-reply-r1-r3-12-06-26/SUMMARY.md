@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 9
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI AT PANAJI, GOA
+## Page 1 of 9
+
+1
+
+
+
+BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
+  THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P.
+                    SARDESAI AT PANAJI, GOA
+
 
 In the matter of:
+VIKRAM SHAH                                   …Claimant
+             V/s.
+RIVA TRINDADE & 3 Ors.                        …Respondents
 
-**VIKRAM SHAH**
 
-…Claimant
+                          APPLICATION SEEKING LEAVE
+                          TO FILE ADDITIONAL REPLY.
 
-V/s.
-**RIVA TRINDADE & 3 Ors.**
 
-…Respondents
-
-## APPLICATION SEEKING LEAVE TO FILE ADDITIONAL REPLY.
-
-## MAY IT PLEASE THIS HON’BLE TRIBUNAL:
+MAY IT PLEASE THIS HON’BLE TRIBUNAL:
 
 The Respondent Nos. 1, 2 and 3 state and submit as under:
 
-1. Vide Order dated 07.08.2024, passed in Application for
-Appointment  of Arbitrator  No.  13/2024,  this Arbitral
-Tribunal was appointed to decide the dispute between the
-parties arising out of the Agreement styled as the Articles of
-Association, purportedly entered into between Mr. Pascoal
-Trindade, the Claimant, and Respondent No. 4 herein.
+ 1.   Vide Order dated 07.08.2024, passed in Application for
+
+      Appointment of Arbitrator No. 13/2024, this Arbitral
+
+      Tribunal was appointed to decide the dispute between the
+
+      parties arising out of the Agreement styled as the Articles of
+
+      Association, purportedly entered into between Mr. Pascoal
+
+      Trindade, the Claimant, and Respondent No. 4 herein.
 
 ---
 
-2. Pursuant to the Order dated 07.08.2024, passed in
-Application for Appointment of Arbitrator No. 13/2024 and
-upon the constitution of the present Arbitral Tribunal, the
-Claimant herein filed his Statement of Claim seeking reliefs
-more particularly stated at the prayer clause therein.
-
-3. The Respondents have filed their Statement of Defense in
-the present arbitral proceedings and have been contesting the
-claims raised by the Claimant. The Claimant herein had filed
-an application seeking interim measures and reliefs from this
-Tribunal, which has been objected to and disputed by these
-Respondents by filing a detailed reply.
+## Page 2 of 9

@@ -8,14 +8,14 @@
 **Source file:** Imp. Documents/JVA between PVM Associates and Kuval Projects Pvt Ltd dt 25.04.14 (Annexure G to Statement of Claim).pdf  
 **SHA-256:** `33427cf4684794498828e8f40121db3b126fc8f45278ba9dbceb6a9c55aa42f6`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | आस्तीय पोर्श रसायिक | 1-24 |
+| 1 | > Clerk note: continuous OCR for a 43-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-24 |
 | 2 | SCHEDULE-1 | 25 |
 | 3 | SCHEDULE-I | 26 |
 | 4 | SCHEDULE II | 27 |
@@ -23,7 +23,9 @@
 | 6 | ANNEXURE II | 30 |
 | 7 | SCHEDULE II | 31-43 |
 
-<!-- SECTION: section | PDF pages 1-24 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-43-page-paper-op | PDF pages 1-24 -->
+
+> Clerk note: continuous OCR for a 43-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 आस्तीय पोर्श रसायिक
 भारत INDIA

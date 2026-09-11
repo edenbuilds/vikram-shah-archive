@@ -4,7 +4,7 @@
 **Mark:** 3  
 **PDF pages:** 6
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 ## ANNEXED HERETO AND MARKED AS ANNEXURE – 2 COLLY ARE THE COPIES OF THE SUIT PLAINT ALONG WITH THE APPLICATION UNDER ORDER XXXIX RULES 1 AND 2 DATED 08.11.2013
 

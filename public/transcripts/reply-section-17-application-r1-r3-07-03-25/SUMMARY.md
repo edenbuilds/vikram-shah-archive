@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 18
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 18-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N.
 ## SARDESSAI AT PANAJI GOA
@@ -65,4 +67,4 @@ The Respondent Nos. 1, 2 and 3 above named most respectfully beg to state and su
 
 4. The Respondents No. 1, 2 and 3 state and submit that the contents of the Application under reply namely para 3, 4 and 5 corresponds to para 6 (k), 6(l) and 6 (m) respectively while the contents of para 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 and 20 corresponds to the contents para 6 (r), 6 (s), 6 (t), 6 (u), 6(v), 6(w), 6(x), 6(y), 6 (z), 6(aa), 6 (bb), 6(cc), 6 (dd), 6 (ee) and para 7 of the statement of claim and accordingly the Respondents No. 1, 2 and 3 crave leave to refer and rely on the contents on the statement of defence dealing with the said paras in the statement of claim as if the same have been set out in verbatim.
 
-5. The statement of claim which has been filed before this Hon'ble Tribunal is filed in purported pursuance of the invocation of the Arbitration Clause contained in Clause 35 of the Articles of Association dated 01-04-2013, in
+5. The statement of claim which has been filed before this Hon'ble Tribunal is filed in purported pursuance of

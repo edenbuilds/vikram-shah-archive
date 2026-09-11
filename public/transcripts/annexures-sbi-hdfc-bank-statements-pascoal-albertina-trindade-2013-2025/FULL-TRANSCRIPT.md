@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Pascoal/Annexures - SBI & HDFC Bank Statements, Pascoal & Albertina Trindade (2013-2025).pdf  
 **SHA-256:** `7b69d53c871327dc9f14d9366e46fe292e20ce3a839bd2ba1f1208b433fd47dd`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Annexures - SBI & HDFC Bank Statements, Pascoal & Albertina Trindade (2013-2025) | 1-7 |
 
 <!-- SECTION: full | PDF pages 1-7 -->
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 सेहुमी वापरली जागारी संख्यान्त करे / सामान्तरित: प्रयोग किए जाने वाले संख्यान्तरित / Generally Used Abbreviations
 

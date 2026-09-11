@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/Consent Terms/20.11.20 Settlement Proposal, Pascoal and Albertina Trindade to Communidade (with Arena Sketch).pdf  
 **SHA-256:** `4c84071526b0deee9be81032f3ff1f27ffc16bdec63bbbf6237c756a45442897`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 20.11.20 Settlement Proposal, Pascoal and Albertina Trindade to Communidade (with Arena Sketch) | 1-3 |
 
 <!-- SECTION: full | PDF pages 1-3 -->
+
+> Clerk note: continuous OCR for a 3-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## From
 1. Mr. Pascoal Trinidad and

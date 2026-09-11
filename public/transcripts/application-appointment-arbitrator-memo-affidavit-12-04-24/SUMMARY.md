@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 27
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## IN THE HIGH COURT OF BOMBAY AT GOA
+## Page 1 of 27
 
-# IN THE HIGH COURT OF BOMBAY AT GOA AT PORVORIM- GOA
-
-A.A.R. No.of2024
-
+IN THE HIGH COURT OF BOMBAY AT GOA
+AT PORVORIM - GOA
 Mr. Vikram Shah
-
-... Applicant
-
-Versus
-
 Mr. Riva Trindade & Ors.
-
+A.A.R. No.
+of 2024
+Applicant
+Versus
+INDEX
 ... Respondents
-
-| INDEX |  |  |
-| --- | --- | --- |
-| SR.
-NO. | PARTICULARS | PAGE |
-| 1. | Memo of Application | 1-21 |
-| 2. | Affidavit | 22 |
+SR.
+PARTICULARS
+PAGE
+NO.
+1.
+Memo of Application
+1-21
+2.
+Affidavit
+22
 
 ---
 
-| 3. | Annexure‘A’
+## Page 2 of 27
+
+1
+3.
+4.
+5.
+Annexure 'A'
 Articles of Association Dated
-01.04.2013 | - |
-| --- | --- | --- |
-| 4. | The Notice Of Arbitration Dated
-28.02.2024 With Proof Of Service | - |
-| 5. | Vakalatnama |  |
-
-Porvorim - Goa
-
+01.04.2013
+Annexure 'B'
+The Notice Of Arbitration Dated
+28.02.2024 With Proof Of Service
+Vakalatnama
+Porvorim Goa
 12.04.2024
-
-(Advocate for the Applicant)
-
----

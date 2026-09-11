@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/Reply to Leave Application (Claimant) dt 07.07.26.pdf  
 **SHA-256:** `73f2a47a2308070e269fae568a9e88d9cbbe64feac2ca3d5f1da5a096199a045`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Reply to Leave Application (Claimant) dt 07.07.26 | 1-11 |
 
 <!-- SECTION: full | PDF pages 1-11 -->
+
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P. SARDESAI

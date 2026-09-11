@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 9
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,14 +34,23 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# BEFORE THE HON'BLE SOLE ARBITRATOR
+## Page 1 of 9
 
+J
+7
+1
+-1-
+اله Reply
+Murli to
+claim
+BEFORE THE HON'BLE SOLE ARBITRATOR
 MR. NITIN N. SARDESSAI, SR. ADVOCATE
-
 AT PANAJI GOA
-
-IN THE MATTER OF:
-
+Statent
+"
+1
+971
+IN THE MATTER OF :-
 Mr. Vikram Shah
 son of late Chinubhai Manilal Shah,
 aged 74 years, married,
@@ -51,26 +60,17 @@ resident of 28, Capri Building,
 Near Teen Batti Walkeshwar,
 Malabar Hill, Mumbai - 400 006.
 Maharashtra.
-
 ...Claimant
+TANS
 
 ---
 
-## Versus
+## Page 2 of 9
 
-## 1. Mr. Riva Trindade
+1.
+Mr. Riva Trindade
 Major of age, Resident of
 Palbrika Mansion,
 NIO Circle,
 Dona Paula,
-Tiswadi, Goa - 403004;
-
-## 2. Mrs. Albertina Trindade
-Major of age,
-Resident of Palbrika Mansion,
-NIO Circle, Dona Paula,
-Tiswadi, Goa - 403004;
-
----
-
-## 3. Mrs. Karita Trindade
+Tiswadi, Goa 403004;

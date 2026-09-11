@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/MOU dt 06.06.06 Pravar Trade-Invest and Sumer Builders (Annexure to Statement of Claim).pdf  
 **SHA-256:** `a91a1bc3a4f4844a8f306f77dfa0cf70f2b11e0f93b1adae945910acd48508ec`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | MOU dt 06.06.06 Pravar Trade-Invest and Sumer Builders (Annexure to Statement of Claim) | 1-11 |
 
 <!-- SECTION: full | PDF pages 1-11 -->
+
+> Clerk note: continuous OCR for a 11-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 आस्तीय बैर द्वारा निर्णयिक
 रिक्षा सूत्रें Rs. 100

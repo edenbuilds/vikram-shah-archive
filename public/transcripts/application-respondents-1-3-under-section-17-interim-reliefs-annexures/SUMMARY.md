@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 50
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-20 | Pleading | BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N. |
+| 1-20 | Pleading | > Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 21-22 | 2 | FIRST SCHEDULE |
 | 23-32 | ANNEXURE R1A | ANNEXURE R1A |
 | 33-50 | ANNEXURE RIE | ANNEXURE RIE |
@@ -36,6 +36,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 50-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE HON'BLE SOLE ARBITRATOR MR. NITIN N. N.
 SARDESSAI AT PANAJI GOA
@@ -70,5 +72,3 @@ Respondent Nos. 1, 2, and 3); and the Respondent No. 4 so as to develop the prop
 3. In fact, Clause 28 and 29 of the Articles of Association dated 01-04-2013 expressly stipulate that legal heirs becoming members of the Association of Persons will inherit all the rights and liabilities of the deceased member and also the balance standing at the Capital and Current Accounts of the deceased member and also the share of profit and losses hitherto shared by the deceased member. And further that in the event of a member ceasing to be a member or in case of death of the member, his legal heirs shall be entitled to the balance standing at the Capital and Current Account as on such date, and that such amount due shall be paid without interest to the legal heirs of the deceased member within the expiration of the period of six months from the date of death.
 
 4. It is stated and submitted that, although the Claimant and late Pascoal Trindade formed various commercial entities pursuant to which various projects have been undertaken since the years 1990, subsequent to the death of Pascoal Trindade on 17-01-2022, the Respondent Nos. 1, 2, and 3 have not been given access to the status and/or affairs of the business, so as to ascertain and/or know their entitlement in the said commercial entities including that formed pursuant to the Articles of Association dated 01-04-2013.
-
-5. It is stated and submitted that subsequent to the death of late Pascoal Trindade on 17-01-2022, the Respondent

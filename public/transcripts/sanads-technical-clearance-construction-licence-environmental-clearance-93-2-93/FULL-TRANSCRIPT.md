@@ -8,7 +8,7 @@
 **Source file:** Imp. Documents/Sanads, Technical Clearance, Construction Licence and Environmental Clearance for 93-2, 93-3, 93-4 (Annexure to Statement of Claim).pdf  
 **SHA-256:** `50ccde01c3c6091094b5fef897f3bb22e5804403ab5281d9a8c44f3e7bee823b`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Sanads, Technical Clearance, Construction Licence and Environmental Clearance for 93-2, 93-3, 93-4 (Annexure to Statement of Claim) | 1-30 |
 
 <!-- SECTION: full | PDF pages 1-30 -->
+
+> Clerk note: continuous OCR for a 30-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 91N6104
 91N6103

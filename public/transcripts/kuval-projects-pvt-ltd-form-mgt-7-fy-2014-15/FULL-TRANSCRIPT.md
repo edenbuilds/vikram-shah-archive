@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Kuval/Kuval Projects Pvt Ltd - Form MGT-7, FY 2014-15.pdf  
 **SHA-256:** `d4fd06e5c65f7d91f75305e6b8bf2bd32d8611a30cddbfb77d3c9054c560f829`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Kuval Projects Pvt Ltd - Form MGT-7, FY 2014-15 | 1-14 |
 
 <!-- SECTION: full | PDF pages 1-14 -->
+
+> Clerk note: continuous OCR for a 14-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## FORM NO. MGT-7
 

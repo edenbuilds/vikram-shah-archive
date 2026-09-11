@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 29
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## ORDER BELOW (Exbt. D-4)
 (Delivered on this the 13th day of the month of March, 2020)
@@ -67,4 +69,4 @@ This order shall dispose off the Application for Temporary Injunction filed by t
 
 9. When transcribing text from images, it is important to maintain the original document structure and flow, including headings, paragraphs, and any other formatting elements that are present.
 
-10. For more accurate transcription, it would be best to use a high-resolution camera or a digital scanner to capture th
+10.

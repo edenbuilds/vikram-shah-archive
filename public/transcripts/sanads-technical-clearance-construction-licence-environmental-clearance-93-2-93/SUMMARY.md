@@ -6,7 +6,7 @@
 **Kind:** plan  
 **Pages:** 30
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 30-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 91N6104
 91N6103
 
@@ -58,4 +60,4 @@ Now, this is to certify that the permission to use for the said plots is hereby 
 
 4. Liability for rates - The applicants shall pay all taxes, rates and cesses levitable on the said land.
 
-5. Penalty clause - (a) if the applicants contravenes any of the foregoing conditions the Collector may, without prejudice to any other penalty to which the applicants may be liable under the provisions of the said Code continue the said plot in the occupation of the property,
+5. Penalty clause - (a) if the applicants contravenes any of the foregoing conditions the Collector may, without prejudice to any other penalty to which the appli

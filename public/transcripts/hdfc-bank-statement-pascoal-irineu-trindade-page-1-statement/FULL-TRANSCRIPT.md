@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/Pascoal/HDFC Bank Statement, Pascoal Irineu Trindade (page 1 of statement).pdf  
 **SHA-256:** `28f713dd3c72bfd1d0a4a9235edce91cb92bb49735f70a77a989d6312151b14b`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | HDFC Bank Statement, Pascoal Irineu Trindade (page 1 of statement) | 1 |
 
 <!-- SECTION: full | PDF pages 1 -->
+
+> Clerk note: continuous OCR for a 1-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## HDFC BANK
 

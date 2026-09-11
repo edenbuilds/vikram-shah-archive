@@ -8,7 +8,7 @@
 **Source file:** 3 New Applications/12.06.26 Additional Reply to Interim Measures Application (Respondents 1-3).pdf  
 **SHA-256:** `9ea338bb54712a48bc10fdafda420f0ee9e8032f418ddbc2101f61dfcee810ec`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 12.06.26 Additional Reply to Interim Measures Application (Respondents 1-3) | 1-24 |
 
 <!-- SECTION: full | PDF pages 1-24 -->
+
+> Clerk note: continuous OCR for a 24-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 # THE SOLE ARBITRATOR SENIOR ADVOCATE N.N.P.

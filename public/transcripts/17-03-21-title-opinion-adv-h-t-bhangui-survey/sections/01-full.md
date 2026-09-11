@@ -4,7 +4,9 @@
 **Mark:** —  
 **PDF pages:** 1-17
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
+
+> Clerk note: continuous OCR for a 17-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 9. Records of Civil suit bearing number Special Civil Suit No.222/94/A filed by Commuidade of Hambolim against Maximo Mergulhau through his heita Mrs. Dionisio Dias e Mergulhau before the Civil Judge Senior Division Panaji.
 

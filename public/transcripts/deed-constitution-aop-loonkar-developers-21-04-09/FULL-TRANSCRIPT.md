@@ -8,20 +8,22 @@
 **Source file:** Imp. Documents/Deed for Constitution of AOP Loonkar Developers dt 21.04.09.pdf  
 **SHA-256:** `2668109919af75efc23b5b57632fa8deef1deb2d9d5394df3e8f8fbf27e7a04f`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
 
 | No. | Section | PDF pages |
 | --- | --- | --- |
-| 1 | भारतीय नोस-न्यायिक | 1-25 |
+| 1 | > Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed. | 1-25 |
 | 2 | SCHEDULE-I ABOVE REFERRED TO | 26 |
 | 3 | SCHEDULE-III ABOVE REFERRED TO | 27 |
 | 4 | SCHEDULE-IV ABOVE REFERRED TO | 28 |
 | 5 | SCHEDULE-V ABOVE REFERRED TO | 29 |
 
-<!-- SECTION: section | PDF pages 1-25 -->
+<!-- SECTION: clerk-note-continuous-ocr-for-a-29-page-paper-op | PDF pages 1-25 -->
+
+> Clerk note: continuous OCR for a 29-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 भारतीय नोस-न्यायिक
 एक सौ लपये

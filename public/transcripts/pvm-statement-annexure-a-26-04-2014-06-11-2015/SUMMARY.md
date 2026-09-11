@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 2
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Page No.1
 
@@ -72,5 +74,3 @@ Branch Code : 2368
 | --- | --- | --- | --- | --- | --- | --- |
 | 26/04/14 | FT - CR - 5020003873522 - KUVAL | 0000000000000001 | 26/04/14 | 0.00 | 22,100,000.00 | 22,100,000 |
 | PROJECTS PRIVATE LIMITED |  |  |  |  |  |  |
-| 26/04/14 | FT - DR - 2368100003575 | 0000000000000001 | 26/04/14 | 14,000,000.00 | 0.00 | 8,100,000 |
-| 26/04/14 | CHQ PAID - TALEIGAO - G | 0000000000000002 | 26/04/14 | 20,000.00 | 0.00 | 8,080,000 |

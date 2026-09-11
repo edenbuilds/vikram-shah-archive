@@ -8,7 +8,7 @@
 **Source file:** Financial Documents/PVM/Bank Statement/PVM Statement Annexure C (26.04.2014 to 13.08.2023).pdf  
 **SHA-256:** `bfddec016e7615febdc5a846e39891693417ec6abebf61ea15765439fb4bf128`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | PVM Statement Annexure C (26.04.2014 to 13.08.2023) | 1-5 |
 
 <!-- SECTION: full | PDF pages 1-5 -->
+
+> Clerk note: continuous OCR for a 5-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 Page No :: 1
 

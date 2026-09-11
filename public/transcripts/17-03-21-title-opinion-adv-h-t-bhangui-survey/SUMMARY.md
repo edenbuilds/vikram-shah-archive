@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 17
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 17-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 9. Records of Civil suit bearing number Special Civil Suit No.222/94/A filed by Commuidade of Hambolim against Maximo Mergulhau through his heita Mrs. Dionisio Dias e Mergulhau before the Civil Judge Senior Division Panaji.
 
@@ -71,6 +73,4 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 25. Jail Boundary of "City" Suit Vol. CNV suit No.no/2009 pending adjudication on the Additional District Judge, North Gou Parau.
 
 ---
-
-26. Proceedings of Civil Salt vex. Special Civil sur. No.52/2017A pending adjudication before the Civil Judge Senior Division Punjab.
 

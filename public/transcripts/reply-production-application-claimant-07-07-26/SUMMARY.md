@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 6
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 6-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADV. N.N.P. SARDESAI AT
@@ -64,4 +66,4 @@ Respondent to delay the arbitral proceedings and to further complicate and protr
 
 3. It is most respectfully submitted that the office of the AOP is situated in Goa and all the original documents, including the original records and documents pertaining to the AOP, have always been in the exclusive possession, custody, and control of late Mr. Pascoal Trinidade since the very inception of the AOP and/or execution of the Articles of Association. There is therefore no question of the documents having been "brought to the attention and notice of the Respondent only recently" as falsely claimed in paragraph 4 and 10 of the Application. The said plea is wholly untenable and lacks bona fides.
 
-4. The documents sought to be produced, namely copies of the relevant extracts of the statement of account for the accounts held with the State Bank of India pertain to the accounts maintained by Late Mr. Pascoal Trindade and Respondent No. 2 herself. Being the account holders (or their legal heirs/representatives), the Respondents have always had ready access to, and have been in continuous possession of, the said bank statements and all related banking records since the date of the transactions. The same could and ought to have been produced at the earliest opportunity, i.e., along with the Statement o
+4. The documents sought to be produced, namely copies of the relevant extracts of the statement of account for the accounts held with the State Bank of India pertain to the accounts maintained by Late Mr. Pascoal Trindade and Respondent No. 2 herself. Being the account holders (or their legal heirs/representatives), the Respondents have always had ready access to, and have been in continuous possession of, the said bank statements and all related banking records since the date of the transac

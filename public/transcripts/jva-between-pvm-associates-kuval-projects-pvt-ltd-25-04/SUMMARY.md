@@ -6,7 +6,7 @@
 **Kind:** mixed  
 **Pages:** 43
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -26,7 +26,7 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 
 | Pages | Mark | Contents |
 | --- | --- | --- |
-| 1-24 | Pleading | आस्तीय पोर्श रसायिक |
+| 1-24 | Pleading | > Clerk note: continuous OCR for a 43-page paper. Open Original scans for page boundaries. Figures are as printed. |
 | 25 | 2 | SCHEDULE-1 |
 | 26 | 3 | SCHEDULE-I |
 | 27 | 4 | SCHEDULE II |
@@ -39,6 +39,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 43-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 आस्तीय पोर्श रसायिक
 भारत INDIA
@@ -78,5 +80,3 @@ Mr. PASCOAL TRINIDADE, aged 75 years, married businessman Indian National, son o
 24.30% a share in Agreement of Partnership namely M/s.PVM Associates hereinafter collectively jointly referred to as the VENDORS (which expression shall, unless it be repugnant to the context or meaning thereof, mean and include their respective legal heirs, successors, executors, administrators and assigns) of the FIRST PART.
 
 ## AND
-
-M/s. Kuval Projects Pvt. Ltd., having its office at Pasima Building, near NIO Police Station, Dona Paula, Goa a private company incorporated under the Indian Companies Act 1956 (bearing registration No.U4S201GA200PTC006113 and hereinafter referred to as THE DEVELOPERS (which expression shall, unless repugnant to the context or meaning thereof, include its directors, executors, legal representatives administrators and official assigns) OF THE SECOND PART.

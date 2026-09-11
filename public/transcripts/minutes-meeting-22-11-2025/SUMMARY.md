@@ -6,7 +6,7 @@
 **Kind:** order  
 **Pages:** 2
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-# BEFORE THE SOLE ARBITRATOR
+## Page 1 of 2
 
-# SR. ADV. NITIN N. N. P. SARDESSAI
+BEFORE THE SOLE ARBITRATOR
 
-**AT PANAJI – GOA**
+              SR. ADV. NITIN N. N. P. SARDESSAI
 
-VIKRAM SHAH
+                       AT PANAJI – GOA
 
-…CLAIMANT
+VIKRAM SHAH                                       …CLAIMANT
 
-VERSUS
+                              VERSUS
 
-RIVA TRINDADE AND 3 ORS
+RIVA TRINDADE AND 3 ORS                           …RESPONDENTS
 
-…RESPONDENTS
 
-# MINUTES OF PROCEEDINGS HELD ON 22<sup>nd</sup> NOVEMBER AT
+MINUTES OF PROCEEDINGS HELD ON 22nd NOVEMBER AT
 
-<u>11.30 AM</u>
+                             11.30 AM
 
-**1.** Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade,
-Mrs. Albertina Trindade and Mrs. Karita Trindade.  Respondent
-No. 1, 2 & 3. Respondent No. 4 Shri. Murlidhar Sadarangani
-present in  person. Adv. Noorani sent an SMS  informing  there is
-some medical emergency in his family and as such will seek time.
-Adv. Noorani stated that he has informed to the contesting parties
-/ their advocates these circumstances and that they have consented
-to an adjournment.
+1.   Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade,
 
-**2.** The Tribunal inquired with Adv Braganza about the development
-in the settlement talks. Adv. Braganza informed that the talks are
-on and the parties will require some more time to wind up on a
-fruitful note.
+     Mrs. Albertina Trindade and Mrs. Karita Trindade. Respondent
 
----
+     No. 1, 2 & 3. Respondent No. 4 Shri. Murlidhar Sadarangani
 
-**3.** In view of the above with consent of the parties, matter is
-adjourned to 13.12.2025 at 05.00 pm same venue same seat.
+     present in person. Adv. Noorani sent an SMS informing there is
 
-**4.** The matter stands adjourned as above.
+     some medical emergency in his family and as such will seek time.
+
+     Adv. Noorani stated that he has informed to the contesting parties
+
+     / their advocates these circumstances and that they have consented
+
+     to an adjournment.
+
+
+
+2.   The Tribunal inquired with Adv Braganza about the development
+
+     in the settlement talks. Adv. Braganza informed that the talks are

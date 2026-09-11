@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 7
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 7-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
 THE SOLE ARBITRATOR SENIOR ADV. N.N.P.
@@ -67,4 +69,4 @@ d. This Hon’ble Tribunal be pleased to pass a judgment, order and decree direc
 
 3. This Respondent has filed the Statement of Defense and raised questions qua the jurisdiction and/or arbitrability of the disputes raised in the claim and, in no manner, waives her right to assail the arbitrability of the dispute or the jurisdiction of this Tribunal.
 
-4. This Respondent had also preferred an application under Section 16 of the Arbitration and Conciliation Act, 1996 before th
+4. This Re

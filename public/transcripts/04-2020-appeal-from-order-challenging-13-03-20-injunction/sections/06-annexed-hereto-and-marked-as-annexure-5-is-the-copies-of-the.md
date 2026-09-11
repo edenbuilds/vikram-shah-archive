@@ -4,7 +4,7 @@
 **Mark:** 6  
 **PDF pages:** 9-10
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 ## ANNEXED HERETO AND MARKED AS ANNEXURE – 5 IS THE COPIES OF THE APPLICATION UNDER ORDER XXIII RULE 3 READ WITH SECTION 151 OF THE CPC
 

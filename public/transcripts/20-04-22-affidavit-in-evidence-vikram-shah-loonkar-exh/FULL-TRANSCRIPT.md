@@ -8,7 +8,7 @@
 **Source file:** Civil Suit/20.04.22 Affidavit in Evidence, Vikram Shah for Loonkar (Exh C-144).pdf  
 **SHA-256:** `9c29a7744e1f1711774032c6ee1fe7db1f5def1e3c0b736e2c1cce3142cc2005`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | 20.04.22 Affidavit in Evidence, Vikram Shah for Loonkar (Exh C-144) | 1-23 |
 
 <!-- SECTION: full | PDF pages 1-23 -->
+
+> Clerk note: continuous OCR for a 23-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # IN THE COURT OF CIVIL JUDGE SENIOR DIVISION:
 AT PANAJI – GOA

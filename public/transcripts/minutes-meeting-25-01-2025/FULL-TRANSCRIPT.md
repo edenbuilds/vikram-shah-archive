@@ -8,7 +8,7 @@
 **Source file:** Minutes/Minutes of Meeting - 25.01.2025.pdf  
 **SHA-256:** `b5a23f43bb88fb5cf03d78e26b3d03617679c5e7bd82da91aed3a01a97dd85fb`
 
-> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+> This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact.
 
 
 ## Contents
@@ -18,6 +18,8 @@
 | 1 | Minutes of Meeting - 25.01.2025 | 1-2 |
 
 <!-- SECTION: full | PDF pages 1-2 -->
+
+> Clerk note: continuous OCR for a 2-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 # BEFORE THE SOLE ARBITRATOR
 SR. ADV. NITIN N. N. P. SARDESSAI

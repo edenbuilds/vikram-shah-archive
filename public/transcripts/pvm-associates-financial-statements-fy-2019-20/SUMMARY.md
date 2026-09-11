@@ -6,7 +6,7 @@
 **Kind:** statement  
 **Pages:** 9
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -33,6 +33,8 @@ Tables and amounts, where they appear, are copied in the transcript. They are no
 If the paper contains prayers or a requested order, they remain in the transcript. This summary does not add any.
 
 ## Opening extract (as transcribed)
+
+> Clerk note: continuous OCR for a 9-page paper. Open Original scans for page boundaries. Figures are as printed.
 
 ## PVM ASSOCIATES
 
@@ -72,5 +74,3 @@ ITR-4(BUGAMO), ITR-5, ITR-6, ITR-7 filed and verified)
 | (+) Tax Payable A-) Refundable (6-7) | 8 | 0 |  |  |  |
 |  | (+)Tax Payable/(-)Refundable(6-7) | 8 | 0 |  |  |
 | Dividend Distribution Tax details | Dividend Tax Payable | 9 | 0 |  |  |
-| Dividend Distribution Tax details | Interest Payable | 10 | 0 |  |  |
-| Dividend Distribution Tax details | Total Dividend tax and interest payable | 11 | 0 |  |  |

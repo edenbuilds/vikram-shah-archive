@@ -6,7 +6,7 @@
 **Kind:** pleading  
 **Pages:** 16
 
-> Editorial only. This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
+> Editorial only. This archive restates a party's papers under the Arbitration and Conciliation Act, 1996 and related Goa civil proceedings. It is not an award, not legal advice, and not a determination of fact. Figures below are as stated by the author of the paper, not as found by this archive.
 
 ## What this compilation is
 
@@ -34,6 +34,8 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
+> Clerk note: continuous OCR for a 16-page paper. Open Original scans for page boundaries. Figures are as printed.
+
 Date: 6/08/2021
 
 Ref No. COM/BAM/PER/2020-2021-54
@@ -60,4 +62,4 @@ B) Some Gaunkars of the Communidade of Bambolim had filed Civil Suit No. 66/2009
 
 C) In the year 2013 the Communidade decided to file the suit in respect of these properties on its own. Upon an application of the Communidade of Bambolim to grant approval to file the suit as required under Article 349 of the Code of Communidade, the Hon’ble President, Administrative Tribunal Panaji Goa, vide order dated 08/10/2013 and 15/10/2013 in case no. 4/2013/AT/ADM/PERM/COM/BAMBOLIM conveyed permission to file suit against Mr. Pascoal Trinidade and others in respect of properties surveyed under survey No. 93/2, 93/3 and 93/4 of village Bambolim, Tiswadi, Taluka, and to file application for transposing Communidade as plaintiff in Civil Suit No. 66/2009.
 
-D) Communidade of Bambolim thereafter filed Special Civil Suit No. 52/2013/A against Pascoal Trinidade and others before Civil Judge, Senior Division at Panaji, claiming right in respect to the properties surveyed under survey No. 93/2, 93/3 and 93/4 of village Bambolim, Tiswadi, Taluka, having an area of 35600 square meters, 26825 square meters and 35075 square meters respectively, which are the balance lands of larger properties namely lote No. 43 Adicao ‘B’, lote No. 47 and lote No. 49 of Planta No 15036 and 15037 after land acquisition proceedings no. LQN-10/1965. The acquiring Depart
+D) Communidade of Bambolim thereafter filed Special Civil Suit No. 52/2013/A against Pascoal Trinidade and others before Civil Judge, Senior Division at Panaji, claiming right in respect to the properties surveyed under survey No. 93/2, 93/3 and 93/4 of village Bambolim, Tiswadi, Taluka, having an area of 35600 square meters, 26825 square meters and 35075 square meters respectively, which are the balance lands of larger properties namely lote No. 43 Adicao ‘B’, lote No. 47 a
