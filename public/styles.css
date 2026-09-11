@@ -775,12 +775,17 @@ footer {
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 .mm-node:hover { border-color: var(--seal); }
-.mm-node.seal {
+.mm-node.mm-cause {
   background: var(--seal);
   color: var(--paper);
   border-color: var(--seal-deep);
 }
-.mm-node.seal .mm-meta { color: color-mix(in oklab, var(--paper) 75%, transparent); }
+.mm-node.mm-cause .mm-meta {
+  color: color-mix(in oklab, var(--paper) 75%, transparent);
+}
+.mm-node.mm-cause .mm-label {
+  color: color-mix(in oklab, var(--paper) 82%, transparent);
+}
 .mm-node h3 {
   margin: 0.15rem 0 0.25rem;
   font-size: clamp(0.95rem, 3.2vw, 1.1rem);

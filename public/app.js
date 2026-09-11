@@ -614,7 +614,7 @@ function mindmapPage() {
       <div class="mindmap-scroll">
         <div class="mindmap">
           <div class="mm-root">
-            <div class="mm-node seal">
+            <div class="mm-node mm-cause">
               <span class="mm-label">Cause</span>
               <h3>${c.short || c.title}</h3>
               <p class="mm-meta">${c.forum}<br>${c.venue}</p>
