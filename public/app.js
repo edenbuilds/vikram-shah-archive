@@ -56,7 +56,15 @@ function docs() {
 function docById(id) {
   return docs().find((d) => d.id === id);
 }
-const ASSET_BASE = "";
+const ASSET_BASE =
+  location.hostname === "localhost" || location.hostname === "127.0.0.1"
+    ? ""
+    : "https://cdn.jsdelivr.net/gh/edenbuilds/vikram-shah-archive@main/public";
+function fileUrl(path) {
+  if (!ASSET_BASE) return path;
+  if (/\.(pdf|jpe?g)$/i.test(path)) return ASSET_BASE + path;
+  return path;
+}
 function pageSrc(doc, n) {
   return `${ASSET_BASE}/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
 }
@@ -285,7 +293,7 @@ function downloadsPage() {
     .map((d) => {
       const zip = `/downloads/${d.id}-transcripts.zip`;
       return `<a href="${zip}" download="${d.id}-transcripts.zip" data-dl="${d.id}-transcripts.zip"><strong>${d.title}</strong> <span class="subtle">ZIP</span><div class="muted">Transcript, Word, summary, section files, original PDF</div></a>
-      <a href="/downloads/${d.file}" download="${d.file}" data-dl="${d.file}"><strong>${d.title}</strong> <span class="subtle">PDF</span><div class="muted">Original scan as filed</div></a>
+      <a href="${fileUrl("/downloads/" + d.file)}" download="${d.file}" data-dl="${d.file}"><strong>${d.title}</strong> <span class="subtle">PDF</span><div class="muted">Original scan as filed</div></a>
       <a href="/downloads/${d.id}-FULL-TRANSCRIPT.md" download="${d.id}-FULL-TRANSCRIPT.md" data-dl="${d.id}-FULL-TRANSCRIPT.md"><strong>${d.title}</strong> <span class="subtle">Markdown</span><div class="muted">Full typed transcript</div></a>
       <a href="/downloads/${d.id}-FULL-TRANSCRIPT.docx" download="${d.id}-FULL-TRANSCRIPT.docx" data-dl="${d.id}-FULL-TRANSCRIPT.docx"><strong>${d.title}</strong> <span class="subtle">Word</span><div class="muted">A4 transcript</div></a>`;
     })
