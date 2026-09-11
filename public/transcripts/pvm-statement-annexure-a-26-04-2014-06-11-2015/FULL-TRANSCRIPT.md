@@ -1,0 +1,119 @@
+# PVM Statement Annexure A (26.04.2014 to 06.11.2015)
+
+**Case:** Mr. Vikram Shah v. Mrs. Riva Trindade & Ors.  
+**Forum:** Hon'ble Sole Arbitrator, Mr. Nitin N. Sardesai, Senior Advocate  
+**Document:** PVM Statement Annexure A (26.04.2014 to 06.11.2015)  
+**Kind:** statement  
+**Pages:** 2  
+**Source file:** Financial Documents/PVM/Bank Statement/PVM Statement Annexure A (26.04.2014 to 06.11.2015).pdf  
+**SHA-256:** `1682b8eb9a1bd62fba685b0f2650b376d513af02d40d7811d9b5a69e5c732df5`
+
+> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+
+
+## Contents
+
+| No. | Section | PDF pages |
+| --- | --- | --- |
+| 1 | PVM Statement Annexure A (26.04.2014 to 06.11.2015) | 1-2 |
+
+<!-- SECTION: full | PDF pages 1-2 -->
+
+Page No.1
+
+| M/S. PVM ASSOCIATES |
+| --- |
+| OCEAN PARK RESIDENCY OPP NIO |
+| 249/1 A |
+| DONA 403004 |
+| GOA INDIA |
+| JOINT HOLDERS: |
+
+Account Branch : TALEIGAO - GOA
+
+Nomination : Not Registered
+
+City : TALEIGAO 403003
+
+State : GOA
+
+Generated On:07-AUG-2026 04:52:03
+
+Phone no. 18002600/18001600
+
+Currency INR
+
+Account No : 50200004014352 GOVERNMENT
+
+A/C Open Date 18/06/2014 Expected AQB:
+
+Account Status : DR Blocked Dormant
+
+RTGS/NEFT IFSC: HDFC0002368 MICR: 403240030
+
+Branch Code : 2368
+
+| Date | Narration | Chq./Ref.No. | Value Dr. | Withdrawal Amt. | Deposit Amt. | Closing Balance |
+| --- | --- | --- | --- | --- | --- | --- |
+| 26/04/14 | FT - CR - 5020003873522 - KUVAL | 0000000000000001 | 26/04/14 | 0.00 | 22,100,000.00 | 22,100,000 |
+| PROJECTS PRIVATE LIMITED |  |  |  |  |  |  |
+| 26/04/14 | FT - DR - 2368100003575 | 0000000000000001 | 26/04/14 | 14,000,000.00 | 0.00 | 8,100,000 |
+| 26/04/14 | CHQ PAID - TALEIGAO - G | 0000000000000002 | 26/04/14 | 20,000.00 | 0.00 | 8,080,000 |
+| 28/05/14 | CHQ PAID-MICR CTS-MU-MURLIDHAR SADARANGA | 0000000000000003 | 28/05/14 | 2,000,000.00 | 0.00 | 6,080,000 |
+| 02/06/14 | CHQ PAID-MICR CTS-MU-PASCOAL PRINDADE | 0000000000000004 | 02/06/14 | 100,000.00 | 0.00 | 5,980,000 |
+| 02/06/14 | LW CHQ RET-ENCODING-LISTING ERROR | 0000000000000004 | 02/06/14 | 0.00 | 100,000.00 | 6,080,000 |
+| 04/06/14 | CHQ PAID-MICR CTS-MU-PARWAL PRINDADE | 0000000000000004 | 04/06/14 | 100,000.00 | 0.00 | 5,980,000 |
+| 04/06/14 | LW CHQ RET-ENCODING-LISTING ERROR | 0000000000000004 | 04/06/14 | 0.00 | 100,000.00 | 6,080,000 |
+| 06/06/14 | CHQ PAID-MICR CTS-MU-PASCOAL P | 0000000000000004 | 06/06/14 | 1,000,000.00 | 0.00 | 5,080,000 |
+| 09/10/14 | PVM ASSOCIATES DR - 2368299000029 | 000000000000000 | 09/10/14 | 5,000,000.00 | 0.00 | 80,000 |
+| TALEIGAO BRANCH CHEQUE DUMMY ACCOUNT |  |  |  |  |  |  |
+| 31/12/14 | CHQ PAID-MICR CTS-MU-BONNY A FERDES | 000000000000005 | 31/12/14 | 500,000.00 | 0.00 | -420,000.00 |
+| 31/12/14 | SWEEP-IN CREDIT - 5030003620287 | 000000000000000 | 31/12/14 | 0.00 | 420,000.00 | 0.0 |
+| 31/12/14 | INT. ON SWCR ON-5030003620287 | 000000000000000 | 31/12/14 | 0.00 | 6,924.00 | 6,924.00 |
+| 21/03/15 | CHQ PAID-MICR CTS-MU-NAIK GAUNEKAR AND C | 000000000000006 | 21/03/15 | 102,360.00 | 0.00 | -95,436.00 |
+| 21/03/15 | CHQ PAID-MICR CTS-MU-P H NARGUNDKAR | 000000000000007 | 21/03/15 | 90,000.00 | 0.00 | -185,436.00 |
+| 22/03/15 | SWEEP-IN CREDIT - 5030003620287 | 000000000000000 | 21/03/15 | 0.00 | 95,436.00 | -90,000.00 |
+| 22/03/15 | INT. ON SWCR ON-5030003620287 | 000000000000000 | 21/03/15 | 0.00 | 3,090.00 | -87,911.44 |
+| 22/03/15 | TDS RECOVERED ON-5030003620287 | 000000000000000 | 21/03/15 | 1,001.40 | 0.00 | -91,001.44 |
+| 22/03/15 | SWEEP-IN CREDIT - 5030003620287 | 000000000000000 | 21/03/15 | 0.00 | 87,912.00 | 0.60 |
+| 22/03/15 | INT. ON SWCR ON-5030003620287 | 000000000000000 | 21/03/15 | 0.00 | 2,846.00 | 2,846.00 |
+| 22/03/15 | TDS RECOVERED ON-5030003620287 | 000000000000000 | 21/03/15 | 284.60 | 0.00 | 2,562.00 |
+| 15/09/15 | CHQ PAID - TALEIGAO - G | 000000000000011 | 15/09/15 | 20,000.00 | 0.00 | -17,438.00 |
+| 15/09/15 | SWEEP-IN CREDIT - 5030003620287 | 000000000000010 | 15/09/15 | 0.00 | 17,438.00 | 0.00 |
+| 15/09/15 | INT. ON SWCR ON-5030003620287 | 000000000000000 | 15/09/15 | 0.00 | 538.00 | 538.00 |
+| 06/11/15 | CHQ PAID-MICR CTS-MU-SIDDHARTH SINKAR AN | 000000000000013 | 06/11/15 | 3,371.00 | 0.00 | -2,833.00 |
+| 06/11/15 | CHQ PAID-MICR CTS-MU-SIDDHARTH SINKAR AN | 000000000000012 | 06/11/15 | 5,700.00 | 0.00 | -8,533.00 |
+| 06/11/15 | SWEEP-IN CREDIT - 5030003620287 | 000000000000000 | 06/11/15 | 0.00 | 2,833.00 | -5,700.00 |
+| 06/11/15 | INT. ON SWCR ON-5030003620287 | 000000000000000 | 06/11/15 | 0.00 | 13.00 | -5,887.00 |
+
+$ \textcircled{1} $ Rs. 2,21,00,000/- Recd. From deposit in terms of JV agree Liability of Pvmn Associates
+
+Renval Projects Pvt. Ltd. as refundable element. & the same is the
+
+Mr. Pascoed has withdrawn the advance he recd. from Frau
+
+, 40, 000, 000/- I have refunded Trade l murli.
+
+---
+
+Page No. : 2
+
+| M/S. PVM ASSOCIATES |
+| --- |
+| OCEAN PARK RESIDENCY OPP NIO |
+| 249/1 A |
+| DONA 403004 |
+| GOA INDIA |
+| JOINT HOLDERS: |
+
+Nomination : Not Registered
+
+| 06/11/15 | TDS RECOVERED ON-50300063620287 | 000000000000000 | 06/11/15 | 1.30 | 0.00 | -5 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 06/11/15 | SWEEP-IN CREDIT - 50300063620287 | 000000000000000 | 06/11/15 | 0.00 | 5,689.00 |  |
+| 06/11/15 | INT. ON SWCR ON-50300063620287 | 000000000000000 | 06/11/15 | 0.00 | 26.00 | -5 |
+| 06/11/15 | TDS RECOVERED ON-50300063620287 | 000000000000000 | 06/11/15 | 2.60 | 0.00 |  |
+
+| STATEMENT SUMMARY:-Opening Balance | Dr Count | Cr Count | Debits | Credits | Closing 1 |
+| --- | --- | --- | --- | --- | --- |
+| 0.00 | 17 | 15 | 22,942,720.90 | 22,942,745.00 |  |

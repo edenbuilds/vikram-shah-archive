@@ -1,0 +1,66 @@
+# Covering Letter, Adv. Kaif Noorani, enclosing Application for Appointment of Arbitrator (AAR 13-2024)
+
+**Case:** Mr. Vikram Shah v. Mrs. Riva Trindade & Ors.  
+**Forum:** Hon'ble Sole Arbitrator, Mr. Nitin N. Sardesai, Senior Advocate  
+**Document:** Covering Letter, Adv. Kaif Noorani, enclosing Application for Appointment of Arbitrator (AAR 13-2024)  
+**Kind:** correspondence  
+**Pages:** 4  
+**Source file:** HC Order wrt Arbitration/Covering Letter, Adv. Kaif Noorani, enclosing Application for Appointment of Arbitrator (AAR 13-2024).pdf  
+**SHA-256:** `e2809667a21a0742f3ae8183251501db2ad38b1ec4ecd5802e668b87a8b67c89`
+
+> This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
+
+
+## Contents
+
+| No. | Section | PDF pages |
+| --- | --- | --- |
+| 1 | Covering Letter, Adv. Kaif Noorani, enclosing Application for Appointment of Arbitrator (AAR 13-2024) | 1-4 |
+
+<!-- SECTION: full | PDF pages 1-4 -->
+
+2) That His Lordship by way of order dated 10.07.2024 was pleased to allow the Applicant to serve a copy of the said Application by way of private service in addition to Ordinary mode of service.
+
+3) A physical copy of the same has been attached and will be issued by way of Courts Notice (Ordinary Mode).
+
+4) Attached herewith is a copy of the abovementioned Application for Appointment of Arbitrator bearing No. 13 of 2024–Vikram Shah V/s Riva Trindade & Ors. with its accompanying annexures.
+
+Yours, Sincerely,
+
+CHAMBERS: 401, Edcon Galleria, Caetano De Albuquerque Road,
+Panaji-Goa, 403 001
+
++918975810919 kaifn@me.com
+
+---
+
+...
+
+---
+
+To,
+
+1) Mr. Riva Trindade;
+S/o late Pascoal Trindade;
+
+2) Mrs. Albertina Trindade;
+w/o late Pascoal Trindade;
+
+3) Mrs. Karita Trindade;
+w/o Riva Trindade;
+
+All r/o Palbrika Mansion,
+NIO Circle, Dona Paula,
+Tiswadi, Goa-403004
+
+4) Mr. Murlidhar Badarangani;
+r/o S-3, Eden Hall, Dr. Annie Beasant Road, Worli, Mumbai,
+400018.
+
+Subject: - Application for Appointment of Arbitrator bearing No. 13 of 2024- Vikram Shah V/s Riva Trindade & Ors.
+
+1) Please take note, The above mention Application for Appointment of Arbitrator bearing No. 13 of 2024- Vikram Shah V/s Riva Trindade & Ors. has been filed before the Hon'ble High Court of Bombay at Goa.
+
+---
+
+...

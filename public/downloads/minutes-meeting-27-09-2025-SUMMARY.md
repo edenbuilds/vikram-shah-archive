@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 2
+# BEFORE THE SOLE ARBITRATOR
 
-BEFORE THE SOLE ARBITRATOR
+# SR. ADV. NITIN N. N. P. SARDESSAI
 
-               SR. ADV. NITIN N. N. P. SARDESSAI
+**AT PANAJI – GOA**
 
-                            AT PANAJI – GOA
+VIKRAM SHAH
 
-VIKRAM SHAH                                          …CLAIMANT
+…CLAIMANT
 
-                                VERSUS
+VERSUS
 
-RIVA TRINDADE AND 3 ORS                              …RESPONDENTS
+RIVA TRINDADE AND 3 ORS
 
+…RESPONDENTS
 
-     MINUTES OF PROCEEDINGS HELD ON 27th SEPTEMBER
+## MINUTES OF PROCEEDINGS HELD ON 27<sup>th</sup> SEPTEMBER
 
-                            2025 AT 11.00 AM
+## MINUTES OF PROCEEDINGS HELD ON 27 th SEPTEMBER
 
-1.     Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
+<u>2025 AT 11.00 AM</u>
 
-       Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
+**1.** Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
+Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
+Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
+Riva Trindade present in person. Respondent No. 4 Shri.
+Murlidhar Sadarangani present in person. Authorized
+Representative  of  the  Claimant  Shri.  Hemavand  Namdarian
+present in person.
 
-       Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
+**2.** Adv. V. Braganza states that he has received a counter proposal for
+settlement from the Claimant just this morning pursuant to
+settlement talks on 26/09/2025. In view of the same, he states that
+he requires some more time to consider. The Parties appearing in
+this matter do not have any objection to the adjournment. It is made clear by the Tribunal that this adjournment will be last
+opportunity to try and settle, as the matter is dragging on for quite
+some time on this score.
 
-       Riva Trindade present in person. Respondent No. 4 Shri.
-
-       Murlidhar    Sadarangani     present    in   person.   Authorized
-
-       Representative of the Claimant Shri. Hemavand Namdarian
-
-       present in person.
-
-
-
-2.     Adv. V. Braganza states that he has received a counter proposal for
-
-       settlement from the Claimant just this morning pursuant to
-
-       settlement talks on 26/09/2025. In view of the same, he states that
+3. On the 5<sup>th</sup> of September 2025, the Claimant and respondents
+no.4 had undertaken to deposit the balance of advance fees before

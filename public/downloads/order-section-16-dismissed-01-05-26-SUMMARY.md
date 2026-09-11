@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 13
+# BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF THE SOLE ARBITRATOR SENIOR ADV. NITIN SARDESSAI AT PANAJI – GOA
 
-BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
+## IN THE MATTER OF:
 
-              THE SOLE ARBITRATOR SENIOR ADV. NITIN
+**VIKRAM SHAH**
 
-                     SARDESSAI AT PANAJI – GOA
+… Claimant
 
-IN THE MATTER OF:
+V/s.
 
-VIKRAM SHAH                                           … Claimant
+**RIVA TRINDADE & 3 Ors.**
 
-              V/s.
+… Respondent
 
-RIVA TRINDADE & 3 Ors.                                … Respondent
+## Appearances
 
+**_Adv. K. Noorani_** *present for the Claimant.*
 
-Appearances
+**_Adv. S. Desai_** *present with* **_Adv. Jatin Ramaiya_** *and* **_Adv. Omkar Thakur_**
+*for Respondent No. 1, 2 & 3.* **_Mr. Riva Trindade_** *present.*
 
-Adv. K. Noorani present for the Claimant.
+**_Adv. E. Kotwal_** *present via Video Conference with* **_Adv. S. Kamat_** *who was*
+*present physically for Respondent No. 4.* **_Mr. Sadarangani_** *present via Video*
+*Conference.*
 
-Adv. S. Desai present with Adv. Jatin Ramaiya and Adv. Omkar Thakur
+## ORDER DATED 1<sup>st</sup> May, 2026
 
-for Respondent No. 1, 2 & 3. Mr. Riva Trindade present.
+## ORDER DATED 1 st May, 2026
 
-Adv. E. Kotwal present via Video Conference with Adv. S. Kamat who was
+1. This Order shall dispose of Application under Section 16 of the
+Arbitration & Conciliation Act, 1996 dated 14.03.2026 filed by the
+Respondent No.2 calling in question the arbitrability of the dispute referred to this Tribunal and / or the jurisdiction of this Tribunal
+to decide the dispute referred to it by Order dated  07.08.2024
+passed  by  the  Hon’ble  High  Court  of  Bombay  at  Goa  in
+Application for Appointment of Arbitrator No. 13 of 2024.
 
-present physically for Respondent No. 4. Mr. Sadarangani present via Video
-
-Conference.
-
-
-
-                      ORDER DATED 1st May, 2026
-
-
-1.     This Order shall dispose of Application under Section 16 of the
-
-       Arbitration & Conciliation Act, 1996 dated 14.03.2026 filed by the
-
+2. It is the case of the Respondent No.2 that the claim of the original
+Claimant is a claim *in rem* as the dispute requires determination of
+title, character, status and rights of the parties to the  subject
+Property and as such is non-arbitrable by any forum other than a

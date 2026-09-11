@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 6
+# BEFORE THE HON’BLE SOLE ARBITRATOR
 
-BEFORE THE HON’BLE SOLE ARBITRATOR
-              MR. NITIN N. SARDESSAI (SR. ADVOCATE)
-                              AT PANAJI, GOA
-
+# MR. NITIN N. SARDESSAI (SR. ADVOCATE) AT PANAJI, GOA
 
 IN THE MATTER OF:
 
+Mr. Vikram Shah ……Claimant
 
-Mr. Vikram Shah                                                 ……Claimant
-v
+Mr. Riva Trindade & Ors.
 
-Mr. Riva Trindade & Ors.                                   …..Respondents
+…..Respondents
 
+## AFFIDAVIT IN REPLY ON BEHALF OF RESPONDENT NO. 4 TO THE APPLICATION FILED UNDER SECTION 16 OF THE ARBITRATION AND CONCILIATION ACT, 1996
 
-    AFFIDAVIT IN REPLY ON BEHALF OF RESPONDENT NO. 4 TO THE
-              APPLICATION FILED UNDER SECTION 16 OF THE
-                ARBITRATION AND CONCILIATION ACT, 1996
-
-
-       I, Murlidhar Shamdas Sadarangani, aged about 67 years, resident of S-3,
-        Eden Hall, Dr. Annie Beasant Road, Worli, Mumbai 400 018, do
-        hereby on solemn oath state and submit as under:
+I, Murlidhar Shamdas Sadarangani, aged about 67 years, resident of S-3,
+Eden Hall, Dr. Annie Beasant Road, Worli, Mumbai 400 018, do
+hereby on solemn oath state and submit as under:
 
 1. I say that the Application filed by Respondent No. 2 under Section 16 of
-        the Arbitration and Conciliation Act, 1996, (“Arbitration Act”)
-        suffers from gross delay and laches and should be dismissed on that
-        ground alone. Section 16(2) of the Arbitration Act, mandates that a
-        plea that the arbitral tribunal does not have jurisdiction must be raised
-        not later than the submission of the statement of defence. The extent of
-        the delay is shown as below.
+the  Arbitration  and  Conciliation  Act,  1996,  (**“Arbitration  Act”**)
+suffers from  gross  delay and  laches and  should be dismissed on that
+ground alone.  Section 16(2)  of the Arbitration Act,  mandates that  a
+plea that the arbitral tribunal does not have jurisdiction must be raised
+not later than the submission of the statement of defence. The extent of
+the delay is shown as below.
 
-2. I say that the arbitrator was appointed by an Order of the Hon’ble High
-        Court of Bombay at Goa dated 7th August 2024. Hereto annexed and
-        marked ‘Annexure 1’ is a copy of the said Order.
+2. I say that the arbitrator  was appointed by an Order of the Hon’ble High
+Court of Bombay at Goa dated 7<sup>th</sup> August 2024.  Hereto annexed and
+marked **‘Annexure 1’** is a copy of the said Order.
 
-3. Pursuant to the said Order, arbitration proceedings commenced on 26th
-        August 2024 at which meeting the Ld. Arbitrator directed that Notice
-        be issued inter alia to Respondent Nos. 1-3.
+3. Pursuant to the said Order, arbitration proceedings commenced on 26<sup>th</sup>
+August 2024 at which meeting the Ld. Arbitrator directed that Notice
+be issued inter alia to Respondent Nos. 1-3.
+
+$$
+26^{th}
+$$
+
+4. On 14 September 2024, Respondent Nos. 1-3 through their advocate
+appeared before the Ld. Arbitrator, proposed a global settlement and

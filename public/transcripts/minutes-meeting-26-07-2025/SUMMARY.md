@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 2
+# BEFORE THE SOLE ARBITRATOR
 
-BEFORE THE SOLE ARBITRATOR
+# SR. ADV. NITIN N. N. P. SARDESSAI
 
-               SR. ADV. NITIN N. N. P. SARDESSAI
+**AT PANAJI – GOA**
 
-                           AT PANAJI – GOA
+VIKRAM SHAH
 
-VIKRAM SHAH                                        …CLAIMANT
+…CLAIMANT
 
-                               VERSUS
+VERSUS
 
-RIVA TRINDADE AND 3 ORS                            …RESPONDENTS
+RIVA TRINDADE AND 3 ORS
 
+…RESPONDENTS
 
-     MINUTES OF PROCEEDINGS HELD ON 26th July 2025 AT
+# MINUTES OF PROCEEDINGS HELD ON 26<sup>th</sup> July 2025 AT
 
-                              11.00 AM
+<u>11.00 AM</u>
 
-1.     Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
+**1.** Adv. Kaif Noorani appeared on behalf of Claimant Shri. Vikram
+Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
+Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
+Riva Trindade present in person. Respondent No. 4 Shri.
+Murlidhar Sadarangani present in person.
 
-       Shah. Adv. Vledson Braganza appeared on behalf of Mr. Riva
+**2.** The parties before me state that time sought for settlement talks
+could not be fruitfully  utilized as there was  hospitalization of
+(Claimants  Representatives)  Hemavand  Namdarian’s  mother.
+They further state that they are  hopeful of going ahead with
+settlement talks.
 
-       Trindade, Mrs. Albertina Trindade and Mrs. Karita Trindade. Mr.
+---
 
-       Riva Trindade present in person. Respondent No. 4 Shri.
+**3.** A request is made  by the Advocate for the  Claimant and the
+Advocate for Respondent 1, 2 and 3 that the matter be adjourned
+to a longer date.
 
-       Murlidhar Sadarangani present in person.
-
-
-2.     The parties before me state that time sought for settlement talks
-
-       could not be fruitfully utilized as there was hospitalization of
-
-       (Claimants Representatives) Hemavand Namdarian’s mother.
-
-       They further state that they are hopeful of going ahead with
-
-       settlement talks.
-
+**4.** In  view of the same and by consent of the Advocate for the
+Claimant, Respondent No. 1,2 & 3 and Respondent No. 4 Mr.

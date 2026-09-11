@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 2
+# BEFORE THE SOLE ARBITRATOR
 
-BEFORE THE SOLE ARBITRATOR
+# SR. ADV. NITIN N. N. P. SARDESSAI
 
-              SR. ADV. NITIN N. N. P. SARDESSAI
+**AT PANAJI – GOA**
 
-                       AT PANAJI – GOA
+VIKRAM SHAH
 
-VIKRAM SHAH                                       …CLAIMANT
+…CLAIMANT
 
-                              VERSUS
+VERSUS
 
-RIVA TRINDADE AND 3 ORS                           …RESPONDENTS
+RIVA TRINDADE AND 3 ORS
 
+…RESPONDENTS
 
-MINUTES OF PROCEEDINGS HELD ON 22nd NOVEMBER AT
+# MINUTES OF PROCEEDINGS HELD ON 22<sup>nd</sup> NOVEMBER AT
 
-                             11.30 AM
+<u>11.30 AM</u>
 
-1.   Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade,
+**1.** Adv. Vledson Braganza appeared on behalf of Mr. Riva Trindade,
+Mrs. Albertina Trindade and Mrs. Karita Trindade.  Respondent
+No. 1, 2 & 3. Respondent No. 4 Shri. Murlidhar Sadarangani
+present in  person. Adv. Noorani sent an SMS  informing  there is
+some medical emergency in his family and as such will seek time.
+Adv. Noorani stated that he has informed to the contesting parties
+/ their advocates these circumstances and that they have consented
+to an adjournment.
 
-     Mrs. Albertina Trindade and Mrs. Karita Trindade. Respondent
+**2.** The Tribunal inquired with Adv Braganza about the development
+in the settlement talks. Adv. Braganza informed that the talks are
+on and the parties will require some more time to wind up on a
+fruitful note.
 
-     No. 1, 2 & 3. Respondent No. 4 Shri. Murlidhar Sadarangani
+---
 
-     present in person. Adv. Noorani sent an SMS informing there is
+**3.** In view of the above with consent of the parties, matter is
+adjourned to 13.12.2025 at 05.00 pm same venue same seat.
 
-     some medical emergency in his family and as such will seek time.
-
-     Adv. Noorani stated that he has informed to the contesting parties
-
-     / their advocates these circumstances and that they have consented
-
-     to an adjournment.
-
-
-
-2.   The Tribunal inquired with Adv Braganza about the development
-
-     in the settlement talks. Adv. Braganza informed that the talks are
+**4.** The matter stands adjourned as above.

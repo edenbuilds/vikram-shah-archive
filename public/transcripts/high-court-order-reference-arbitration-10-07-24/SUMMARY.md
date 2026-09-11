@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 4
+shakuntala
 
-:   AAR 13 of 2024
-[!]~~~.~    ~ L"'V"'-lf:,.:-. \lji'I
-~ - ~ ~ \ ~ - , . . ~ • • ~--   l:J
--=..r:-~;t~~,:1:!-~IJ.---~ ....
-,;:}_~••.fI!-R
- • -· ~-~,_...,i.J
-. .
-L :
-         ..... :1. -
+# ;~~-~~--·~~L-.... ·--·~· • IN THE HIGH COURT OF BOMBA y AT GOA 2024
 
-           ••
-             4
-                 •
-                   "'
-                     •
-                        •
-                          .   :--~!.•
-                               '=C-,"
-                      r-.:-=--. •            shakuntala
+-~cQ.~~~~
 
-;~~-~~--·~~L-. .·--·~· •                              IN THE HIGH COURT OF BOMBA y AT GOA
-t~c.. -~cQ.~~~~ APPLN. FOR APPOINTMENT OF ARBITRATOR NO.1J OF 2024
-                                                                                               ... APPLICANT
-                                        VIKRAM SHAH
-                                          Versus
-                                        RIV A TRINDADE AND 3 ORS                               ... ,RESPONDENTS
+APPLN. FOR APPOINTMENT OF ARBITRATOR NO.1J OF
 
+VIKRAM SHAH
+Versus
 
-                                        Mr..Kaif Noorani, Advocate for the Applicant.
+...  APPLICANT
 
+CORAM:- .BHARAT P. DESHPANDE, J.
+DATED  :-10th July, 2024
 
-                                                             CORAM:- .BHARAT P. DESHPANDE, J.
-                                                             DATED :- 10th July, 2024
+P.C.
+1. Heard Mr. Noorani learned counsel appearing for the applicant.
 
-                                        P.C.
-                                        1.     Heard Mr. Noorani learned counsel appearing for the applicant.
+2. This  is  an application for  the  appointmeJ?.t  of arbitrator under
+Section 11 ( 6) of Arbitration _and  Conciliation Act,  1996.
 
+3. Vide Articles of Association executed on 01.04.2013, the parties
+agreed that in case of dispute arising  out of the  said agreement,  the
+same  shall  be  referred  to  the  Arbitrator.  Clause  35  of  the  said
+agreement  refers  to  the  intention  of  the  parties  to  go  before  the
+Arbitrator.
+[Image: Im0]
 
+4. Mr.  Noorani submits that party to the first part expired and his
+legal  heirs  inherited  the  said  property.  Since,  the  partnership  is  not
+going forward  and  legal  representatives  are  not cooperating,  a  notice to Respondents. However, vide
+having an arbitration clause was issued
+refused  to  refer the  matter to  the
+their reply  dated  11.03.2024,  they
+Arbitrator.
+[Image: Im0]
+
+on 07.08.2024.
+5. Issue notice to Respondents returnable

@@ -4,4 +4,4 @@ work/
 .DS_Store
 public/pages/
 public/downloads/*.pdf
-public/downloads/*.zip
+public/downloads/*-transcripts.zip

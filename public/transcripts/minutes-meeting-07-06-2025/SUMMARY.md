@@ -34,43 +34,43 @@ If the paper contains prayers or a requested order, they remain in the transcrip
 
 ## Opening extract (as transcribed)
 
-## Page 1 of 2
+# BEFORE THE SOLE ARBITRATOR
 
-BEFORE THE SOLE ARBITRATOR
-      SR. ADV. NITIN N. N. P. SARDESSAI
-                   AT PANAJI – GOA
+# SR. ADV. NITIN N. N. P. SARDESSAI AT PANAJI – GOA
 
+VIKRAM SHAH
 
-VIKRAM SHAH                                        …CLAIMANT
-                        VERSUS
-RIVA TRINDADE AND 3 ORS                        …RESPONDENTS
+…CLAIMANT
 
+VERSUS
 
-MINUTES OF PROCEEDINGS HELD ON 07TH June 2025
-                AT 11.00 AM
+RIVA TRINDADE AND 3 ORS                                    …RESPONDENTS
 
+## MINUTES OF PROCEEDINGS HELD ON 07TH June 2025 AT 11.00 AM
 
-1.   Adv. Kaif Noorani appeared on behalf of Claimant Shri.
-     Vikram Shah. Adv. Vledson Braganza appeared on behalf of
-     Mr. Riva Trindade, Mrs. Albertina Trindade and Mrs. Karita
-     Trindade. Mr. Riva Trindade present in person. Respondent
-     No. 4 Shri. Murlidhar Sadarangani appeared in person via
-     video conference. Mr. Hemavand Namdarian the authorized
-     representative of the Claimant is present in person.
+**1.** Adv. Kaif Noorani appeared on behalf of Claimant Shri.
+Vikram Shah. Adv. Vledson Braganza appeared on behalf of
+Mr. Riva Trindade, Mrs. Albertina Trindade and Mrs. Karita
+Trindade. Mr. Riva Trindade present in person. Respondent
+No. 4 Shri. Murlidhar Sadarangani appeared in person via
+video conference. Mr. Hemavand Namdarian the authorized
+representative of the Claimant is present in person.
 
+**2.** The parties informed me that there are settlement talks
+initiated and there were two meetings held between
+Claimant and LR’s of Pascol Trindade. Adv. Braganza in light
+of the same, states that he will want to continue to respond
+on S. 17 Application of the Claimant on some other date as he
+hopes that wisdom may dawn upon parties to settlement
+talks.
 
-2.   The parties informed me that there are settlement talks
-     initiated and there were two meetings held between
-     Claimant and LR’s of Pascol Trindade. Adv. Braganza in light
-     of the same, states that he will want to continue to respond
-     on S. 17 Application of the Claimant on some other date as he
-     hopes that wisdom may dawn upon parties to settlement
-     talks.
-
-3.   Adv. Noorani and Mr. Sadarangani do not dispute this
-     position and agree to the request made by Adv. Braganza.
-     Mr. Noorani has placed on record his reply dated 29th May
+**3.** Adv. Noorani and Mr. Sadarangani do not dispute this
+position and agree to the request made by Adv. Braganza.
+Mr. Noorani has placed on record his reply dated 29<sup>th</sup> May
 
 ---
 
-## Page 2 of 2
+2025, to the Section 17 Application of Respondent No. 1, 2
+and 3. The same is taken on record.
+
+4. Arguments were heard of all parties on Application for

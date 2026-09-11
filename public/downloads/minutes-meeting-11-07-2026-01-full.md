@@ -6,92 +6,62 @@
 
 > This archive restates a party's papers. It is not an award, not legal advice, and not a determination of fact.
 
-## Page 1 of 3
+## BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF THE SOLE ARBITRATOR SENIOR ADV. NITIN SARDESSAI AT PANAJI – GOA
 
-BEFORE THE ARBITRAL TRIBUNAL COMPRISING OF
+## IN THE MATTER OF:
 
-        THE SOLE ARBITRATOR SENIOR ADV. NITIN
+**VIKRAM SHAH**
 
-                 SARDESSAI AT PANAJI – GOA
+… Claimant
 
-IN THE MATTER OF:
+V/s.
 
-VIKRAM SHAH                                        … Claimant
+**RIVA TRINDADE & 3 Ors.**
 
-         V/s.
+… Respondent
 
-RIVA TRINDADE & 3 Ors.                             … Respondent
+## MINUTES OF PROCEEDINGS DATED 11<sup>th</sup> JULY 2026 AT 11.00 AM
 
- MINUTES OF PROCEEDINGS DATED 11th JULY 2026 AT 11.00 AM
+1. The Claimant Shri. Vikram Shah present via video conference.
+Adv. Jatin Ramaiya present for Respondent No. 1, 2 & 3 via video
+conference. Adv. S. Kamat physically present for Respondent No.
+4. Adv. Kotwal along Respondent No. 4, Mr. Sadarangani present
+via video conference.
 
+2. The Tribunal received an email from Adv. Ramaiyya on behalf of
+Respondent No. 1, 2 & 3 seeking 3 weeks time as he received the
+reply to his applications for additional documents, application for
+additional reply and application for amendment just a day prior to
+the hearing.  The request seeking time was objected to by Adv.
+Kotwal on behalf of Respondent No. 4. Since there is no dispute that the reply was served on Respondents 1, 2 & 3 just a day prior
+to the hearing, the Tribunal deems it fit to adjourn the matter. In
+view of the objection  raised by Respondent No. 4 through his
+advocate, adjournment granted for 10 days.
 
-1.   The Claimant Shri. Vikram Shah present via video conference.
+3. Adv. Kotwal states that there is an error in the reply that he filed
+to the Application for Additional Documents and craves leave to
+withdraw the same with liberty to file afresh. The other parties do
+not object to the same, thus the request to withdraw reply and file
+afresh is grated to the Respondent No. 4.
 
-     Adv. Jatin Ramaiya present for Respondent No. 1, 2 & 3 via video
+4. Time is accordingly granted, replies/  rejoinders if any are to be
+exchanged between the parties  1 week prior to the next date of
+hearing. Respondent No. 4 is directed to file the reply by 14.07.2026
+& serve copies to the other parties.
 
-     conference. Adv. S. Kamat physically present for Respondent No.
+5. With the consent of all the parties, matter fixed on  21.07.2026 at
+05.30 PM for arguments on all the 3 applications as filled by
+Respondent No. 1, 2 & 3.
 
-     4. Adv. Kotwal along Respondent No. 4, Mr. Sadarangani present
+6. Stand over to 21.07.2026 at 05.30 at the same seat and venue.
 
-     via video conference.
-
-
-2.   The Tribunal received an email from Adv. Ramaiyya on behalf of
-
-     Respondent No. 1, 2 & 3 seeking 3 weeks time as he received the
-
-     reply to his applications for additional documents, application for
-
-     additional reply and application for amendment just a day prior to
-
-     the hearing. The request seeking time was objected to by Adv.
-
-     Kotwal on behalf of Respondent No. 4. Since there is no dispute
-
----
-
-## Page 2 of 3
-
-that the reply was served on Respondents 1, 2 & 3 just a day prior
-
-     to the hearing, the Tribunal deems it fit to adjourn the matter. In
-
-     view of the objection raised by Respondent No. 4 through his
-
-     advocate, adjournment granted for 10 days.
-
-
-3.   Adv. Kotwal states that there is an error in the reply that he filed
-
-     to the Application for Additional Documents and craves leave to
-
-     withdraw the same with liberty to file afresh. The other parties do
-
-     not object to the same, thus the request to withdraw reply and file
-
-     afresh is grated to the Respondent No. 4.
-
-4.   Time is accordingly granted, replies/ rejoinders if any are to be
-
-     exchanged between the parties 1 week prior to the next date of
-
-     hearing. Respondent No. 4 is directed to file the reply by 14.07.2026
-
-     & serve copies to the other parties.
-
-5.   With the consent of all the parties, matter fixed on 21.07.2026 at
-
-     05.30 PM for arguments on all the 3 applications as filled by
-
-     Respondent No. 1, 2 & 3.
-
-6.   Stand over to 21.07.2026 at 05.30 at the same seat and venue.
+M.Rodriguez
 
 ---
 
-## Page 3 of 3
+Place: Panaji – Goa
 
-Place: Panaji – Goa   Sr. Adv. Nitin Sardessai
-Date: 11.07.2026           Sole Arbitrator
+Date: 11.07.2026
 
----
+**Sr. Adv. Nitin Sardessai**
+**Sole Arbitrator**

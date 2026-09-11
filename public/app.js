@@ -35,15 +35,21 @@ function saveBlob(filename, blob) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 async function downloadUrl(url, filename) {
-  try {
-    const res = await fetch(url);
-    if (res.ok) {
-      saveBlob(filename, await res.blob());
-      return;
-    }
-  } catch (_) {}
+  const targets = [url];
+  if (/\.(pdf|jpe?g|zip)$/i.test(url) || url.startsWith("/pages/") || url.startsWith("/downloads/")) {
+    targets.push(SUPABASE_ASSET + url, GITHUB_ASSET + url);
+  }
+  for (const target of targets) {
+    try {
+      const res = await fetch(target);
+      if (res.ok) {
+        saveBlob(filename, await res.blob());
+        return;
+      }
+    } catch (_) {}
+  }
   const a = document.createElement("a");
-  a.href = url;
+  a.href = targets[targets.length - 1];
   a.download = filename;
   a.rel = "noopener";
   document.body.appendChild(a);
@@ -56,17 +62,17 @@ function docs() {
 function docById(id) {
   return docs().find((d) => d.id === id);
 }
-const ASSET_BASE =
-  location.hostname === "localhost" || location.hostname === "127.0.0.1"
-    ? ""
-    : "https://cdn.jsdelivr.net/gh/edenbuilds/vikram-shah-archive@main/public";
+const SUPABASE_ASSET = "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive";
+const GITHUB_ASSET = "https://raw.githubusercontent.com/edenbuilds/vikram-shah-archive/main/public";
 function fileUrl(path) {
-  if (!ASSET_BASE) return path;
-  if (/\.(pdf|jpe?g)$/i.test(path)) return ASSET_BASE + path;
   return path;
 }
 function pageSrc(doc, n) {
-  return `${ASSET_BASE}/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
+  return `/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
+}
+function pageSrcFallback(doc, n) {
+  const leaf = `/pages/${doc.id}/page-${String(n).padStart(3, "0")}.jpg`;
+  return GITHUB_ASSET + leaf;
 }
 function setActive() {
   const p = path();
@@ -281,7 +287,7 @@ function pagesIndex(d) {
   for (let n = 1; n <= d.pages; n++) {
     const s = d.sections.find((x) => n >= x.pageStart && n <= x.pageEnd);
     cards.push(
-      `<a class="page-card" href="/docs/${d.id}/pages/${n}"><img src="${pageSrc(d, n)}" alt="Page ${n}" loading="lazy" /><span>${n}${s ? " · " + s.mark : ""}</span></a>`
+      `<a class="page-card" href="/docs/${d.id}/pages/${n}"><img src="${pageSrc(d, n)}" alt="Page ${n}" loading="lazy" onerror="this.onerror=null;this.src='${pageSrcFallback(d, n)}'" /><span>${n}${s ? " · " + s.mark : ""}</span></a>`
     );
   }
   return `<div class="page"><p class="eyebrow">Source scans</p><h1>Original pages</h1><p class="lede">${d.pages} scans from this PDF only.</p><div class="pagegrid">${cards.join("")}</div></div>`;
@@ -434,7 +440,7 @@ async function render() {
           ${next ? `<a class="btn btn-ghost" href="/docs/${d.id}/pages/${next}">p. ${next} →</a>` : ""}
           ${s ? `<a class="btn btn-solid" href="/docs/${d.id}/sections/${s.id}">Typed transcript</a>` : ""}
         </p>
-        <figure class="scan"><img src="${pageSrc(d, n)}" alt="Scanned page ${n}" /></figure>
+        <figure class="scan"><img src="${pageSrc(d, n)}" alt="Scanned page ${n}" onerror="this.onerror=null;this.src='${pageSrcFallback(d, n)}'" /></figure>
       </div>`;
       return;
     }
@@ -448,7 +454,7 @@ async function render() {
       const thumbs = [];
       for (let n = s.pageStart; n <= s.pageEnd; n++) {
         thumbs.push(
-          `<a href="/docs/${d.id}/pages/${n}"><img src="${pageSrc(d, n)}" alt="Page ${n}" loading="lazy" /></a>`
+          `<a href="/docs/${d.id}/pages/${n}"><img src="${pageSrc(d, n)}" alt="Page ${n}" loading="lazy" onerror="this.onerror=null;this.src='${pageSrcFallback(d, n)}'" /></a>`
         );
       }
       root.innerHTML = `<div class="page narrow"><p class="eyebrow">${s.mark} · pages ${s.pages}</p>
