@@ -184,8 +184,8 @@ function overview() {
       )
       .join("")}</div>
     <div class="cards3" style="margin-top:2rem">
+      <a class="card" href="/map"><h3>Case mindmap</h3><p class="muted">Expand the branches — parties, Act stages, and every paper.</p></a>
       <a class="card" href="/docs"><h3>Open all sections</h3><p class="muted">One card per PDF, grouped in the filing tree.</p></a>
-      <a class="card" href="#tree"><h3>Filing tree</h3><p class="muted">Stages under the Arbitration &amp; Conciliation Act, 1996, then civil / Comunidade papers.</p></a>
       <a class="card" href="/summary"><h3>Editorial summary</h3><p class="muted">How the papers relate. Not a finding.</p></a>
     </div>
     <h2 id="tree">Navigation tree</h2>
@@ -209,10 +209,98 @@ function overview() {
         .join("")}
     </div>
     <h2>Map</h2>
-    <div class="card" style="padding:0;overflow:auto">
+    <div class="table-wrap">
       <table><thead><tr><th>Mark</th><th>Section</th><th>Pages</th></tr></thead><tbody>${mapRows}</tbody></table>
     </div>
   </div>`;
+}
+
+function mindmapPage() {
+  const c = DATA.case;
+  const bundles = DATA.bundles || [];
+  const all = docs();
+  const branches = bundles
+    .map((b, idx) => {
+      const kids = all.filter((d) => d.bundle === b.id);
+      const open = idx < 2 ? " open" : "";
+      return `<details class="mm-branch"${open}>
+        <summary>
+          <span class="dot" aria-hidden="true"></span>
+          <span>
+            <strong>${b.title}</strong>
+            <div class="subtle">${b.note || ""}</div>
+          </span>
+          <span class="mm-count">${kids.length} docs · ${b.pages} pp.</span>
+        </summary>
+        <div class="mm-docs">${kids
+          .map(
+            (d) =>
+              `<a href="/docs/${d.id}"><span class="mm-kind">${d.kind} · ${d.pages} pp.</span><strong>${d.title}</strong><span>${d.note || b.note || ""}</span></a>`
+          )
+          .join("")}</div>
+      </details>`;
+    })
+    .join("");
+  return `<div class="page">
+    <p class="eyebrow">Case structure</p>
+    <h1>Mindmap<span class="sub">Branches of the paper tree</span></h1>
+    <p class="lede">Read the cause from the centre outward: parties, then Arbitration &amp; Conciliation Act stages, then each PDF leaf. Expand a branch to open its papers. ${c.disclaimer}</p>
+    <div class="mindmap-shell">
+      <div class="mindmap-toolbar">
+        <p class="hint">Tap a stage to expand its documents. Links open that paper’s transcript.</p>
+        <div class="mindmap-actions">
+          <button type="button" class="chip" id="mmExpand">Expand all</button>
+          <button type="button" class="chip" id="mmCollapse">Collapse all</button>
+          <a class="chip" href="#tree">Jump to filing tree</a>
+        </div>
+      </div>
+      <div class="mindmap-scroll">
+        <div class="mindmap">
+          <div class="mm-root">
+            <div class="mm-node seal">
+              <span class="mm-label">Cause</span>
+              <h3>${c.short || c.title}</h3>
+              <p class="mm-meta">${c.forum}<br>${c.venue}</p>
+            </div>
+          </div>
+          <div class="mm-spine">Parties</div>
+          <div class="mm-parties">
+            <div class="mm-node">
+              <span class="mm-label">Claimant</span>
+              <h3>${c.claimant}</h3>
+              <p class="mm-meta">As named in the papers</p>
+            </div>
+            <div class="mm-node">
+              <span class="mm-label">Respondents 1–3</span>
+              <h3>${c.respondents13}</h3>
+              <p class="mm-meta">Trindade side, as stated</p>
+            </div>
+            <div class="mm-node">
+              <span class="mm-label">Respondent No. 4</span>
+              <h3>${c.respondent4}</h3>
+              <p class="mm-meta">As named in the papers</p>
+            </div>
+          </div>
+          <div class="mm-spine">Act stages &amp; leaves</div>
+          <div class="mm-branches" id="mmBranches">${branches}</div>
+          <p class="mm-legend"><span><i></i>Expandable stage under A&amp;C Act / civil papers</span><span>${all.length} documents · ${c.pageCount} pages</span></p>
+        </div>
+      </div>
+    </div>
+    <h2 id="tree">Same tree as a filing list</h2>
+    <p class="lede">If you prefer the clerk’s expandable list, it lives on the overview.</p>
+    <p class="row"><a class="btn btn-solid" href="/#tree">Open filing tree</a><a class="btn btn-ghost" href="/docs">Browse all documents</a></p>
+  </div>`;
+}
+
+function bindMindmap() {
+  const root = document.getElementById("mmBranches");
+  if (!root) return;
+  const nodes = [...root.querySelectorAll("details.mm-branch")];
+  const expand = document.getElementById("mmExpand");
+  const collapse = document.getElementById("mmCollapse");
+  if (expand) expand.addEventListener("click", () => nodes.forEach((d) => (d.open = true)));
+  if (collapse) collapse.addEventListener("click", () => nodes.forEach((d) => (d.open = false)));
 }
 
 function docsIndex() {
@@ -361,6 +449,11 @@ async function render() {
   if (p === "/") {
     root.innerHTML = overview();
     bindFilter();
+    return;
+  }
+  if (p === "/map") {
+    root.innerHTML = mindmapPage();
+    bindMindmap();
     return;
   }
   if (p === "/docs") {
