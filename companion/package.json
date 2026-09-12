@@ -1,0 +1,35 @@
+{
+  "name": "case-companion",
+  "private": true,
+  "type": "module",
+  "description": "Advocate's private study companion over the paper archive corpus.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev -p 3060",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "load-archive": "python3 worker/load_archive.py",
+    "worker": "python3 worker/worker.py",
+    "eval:qa": "node --env-file=.env.local --experimental-strip-types scripts/eval-qa.ts",
+    "test": "node --experimental-strip-types --test lib/*.test.ts && python3 worker/corpus.py && python3 worker/test_worker.py",
+    "mcp": "node --env-file=.env.local mcp/server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
+    "next": "^15.5.25",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3"
+  }
+}
