@@ -1,6 +1,6 @@
 -- Case Companion: private, per-matter study layer over paper-archive corpora.
--- Lives in the archive project (mnsmfobozohejvnmnalw) next to the public `archive`
--- bucket, which it reads but never writes. The public reader uses no tables.
+-- Lives in its own project (rcynnecqcxnlbbvmvimb). Archive page scans are read from the
+-- public `archive` bucket in mnsmfobozohejvnmnalw, never written. The reader uses no tables.
 --
 -- Source tables (documents/document_pages/chunks) are written only by the service
 -- role (worker/load_archive.py, worker/worker.py). App users get SELECT only on
