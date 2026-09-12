@@ -28,6 +28,14 @@ test("rejects a figure that is not in the quoted source", () => {
   assert.match(v.rejected[0].reason, /15\.08\.2026/);
 });
 
+test("a figure from the cited paper's own title counts as sourced; one from elsewhere does not", () => {
+  const claim = (text: string) => ({ status: "answered" as const, claims: [{ text, citations: [{ chunk_id: 2, quote: "The matter is adjourned to 14.08.2026" }] }] });
+  const titles = { order: "Order dt 01.08.26", soc: "Statement of Claim 22.01.25" };
+  assert.equal(verify(claim("The Order dt 01.08.26 adjourns the matter to 14.08.2026."), chunks, titles).status, "answered");
+  // 22.01.25 belongs to a paper the claim does not cite
+  assert.equal(verify(claim("Per the 22.01.25 claim, adjourned to 14.08.2026."), chunks, titles).status, "not_in_corpus");
+});
+
 test("rejects citations to chunks the model was not shown", () => {
   const v = verify({ status: "answered", claims: [{ text: "Something.", citations: [{ chunk_id: 99, quote: "The matter is adjourned" }] }] }, chunks);
   assert.equal(v.status, "not_in_corpus");

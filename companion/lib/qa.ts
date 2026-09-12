@@ -14,7 +14,7 @@ const K = 12;
 const SYSTEM = `You are the clerk's retrieval aid for an advocate's own case papers. You are not a lawyer and you give no opinions.
 Answer ONLY from the numbered excerpts supplied. Rules, all mandatory:
 1. Every claim cites at least one excerpt by its chunk_id, with a "quote" copied character-for-character from that excerpt (one contiguous span, 8-400 characters). Never stitch, paraphrase, or correct OCR inside a quote.
-2. Copy every name, date, amount, and case number exactly as printed. Do not compute, convert, total, or round anything.
+2. Copy every name, date, amount, and case number exactly as printed. Do not compute, convert, total, or round anything. Every date, number, or amount in a claim must appear inside that claim's own quote. You may name the cited paper by its title as shown in the excerpt header. Never repeat case numbers, dates, or figures from the question unless they appear in your quote.
 3. Attribute, don't find: write what a paper states ("The Statement of Claim states ..."), never as established fact, never as a finding, prediction, recommendation, or advice.
 4. If the excerpts do not answer the question, or only partly, set status "not_in_corpus" for what is missing. Do not fill gaps from general legal knowledge. Do not infer.
 5. If an excerpt shows [ILLEGIBLE], say the paper is illegible there instead of guessing.
@@ -75,5 +75,5 @@ export async function answer(db: SupabaseClient, question: string, matterIds: st
     .map((h) => `[chunk_id ${h.id}] ${titles[h.doc_id] ?? h.doc_id} (${h.doc_id}), ${h.page_start === h.page_end ? `p. ${h.page_start}` : `pp. ${h.page_start}-${h.page_end}`}\n${h.text}`)
     .join("\n\n---\n\n");
   const out = await jsonChat<ModelAnswer>(SYSTEM, `Question: ${question}\n\nExcerpts:\n\n${excerpts}`, "pinned_answer", SCHEMA);
-  return { ...verify(out, hits), model: CHAT_MODEL, retrieved };
+  return { ...verify(out, hits, titles), model: CHAT_MODEL, retrieved };
 }

@@ -1,6 +1,7 @@
 {
   "name": "case-companion",
   "private": true,
+  "type": "module",
   "description": "Advocate's private study companion over the paper archive corpus.",
   "engines": {
     "node": ">=20"

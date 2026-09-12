@@ -40,6 +40,10 @@ for (const c of CASES) {
   console.log(`      claims=${r.claims.length} pins=${pinned} exact-page=${exact} withheld=${r.rejected.length}${r.gate ? ` gate="${r.gate}"` : ""}`);
   for (const cl of r.claims.slice(0, 3)) console.log(`      - ${cl.text}  <- ${cl.citations.map((p) => `${p.doc_id} p.${p.page_start}`).join("; ")}`);
   for (const p of problems) console.log(`      ! ${p}`);
+  if (problems.length || process.env.EVAL_VERBOSE) {
+    console.log(`      top hits: ${r.retrieved.slice(0, 4).map((x) => `${x.doc_id.slice(0, 32)} p${x.page_start} sim ${x.similarity.toFixed(2)}`).join(" | ")}`);
+    for (const x of r.rejected) console.log(`      withheld: ${x.text}\n        reason: ${x.reason}`);
+  }
   if (problems.length) fail++;
 }
 console.log(fail ? `\n${fail}/${CASES.length} failed` : `\nall ${CASES.length} passed`);

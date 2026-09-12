@@ -41,7 +41,10 @@ export function unsupportedFigures(text: string, support: string): string[] {
   return figures(text).filter((n) => !s.includes(n.toLowerCase()));
 }
 
-export function verify(answer: ModelAnswer, chunks: Chunk[]): Verified {
+// `titles` (doc id -> title as filed) lets a claim name its cited paper by title, e.g.
+// "the Order dt 07.08.24". Figures from the title of a paper the claim actually cites
+// count as sourced. Figures echoed from the question do not.
+export function verify(answer: ModelAnswer, chunks: Chunk[], titles: Record<string, string> = {}): Verified {
   const byId = new Map(chunks.map((c) => [c.id, c]));
   const claims: VerifiedClaim[] = [];
   const rejected: Rejected[] = [];
@@ -57,10 +60,12 @@ export function verify(answer: ModelAnswer, chunks: Chunk[]): Verified {
       }
     }
     if (!good.length) {
-      rejected.push({ text, reason: "no citation matched a verbatim span of the retrieved papers" });
+      const tried = (claim.citations ?? []).map((c) => `chunk ${c.chunk_id}: "${(c.quote ?? "").slice(0, 160)}"`).join("; ");
+      rejected.push({ text, reason: `no citation matched a verbatim span of the retrieved papers (offered ${tried || "none"})` });
       continue;
     }
-    const missing = unsupportedFigures(text, good.map((g) => g.quote).join(" \n "));
+    const support = [...good.map((g) => g.quote), ...new Set(good.map((g) => titles[g.doc_id] ?? ""))].join(" \n ");
+    const missing = unsupportedFigures(text, support);
     if (missing.length) {
       rejected.push({ text, reason: `figure(s) not in the quoted source: ${missing.join(", ")}` });
       continue;
