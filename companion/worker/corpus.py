@@ -6,12 +6,18 @@ from __future__ import annotations
 import json
 import os
 import re
+import ssl
 import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+import certifi
+
+# python.org builds ship without a CA bundle; same fix as scripts/google_vision_ocr.py.
+TLS = ssl.create_default_context(cafile=certifi.where())
 
 HERE = Path(__file__).resolve().parent
 COMPANION = HERE.parent
@@ -40,7 +46,7 @@ def _req(method: str, url: str, body: bytes | None, headers: dict, timeout: int 
     for attempt in range(4):
         req = urllib.request.Request(url, data=body, method=method, headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as r:
+            with urllib.request.urlopen(req, timeout=timeout, context=TLS) as r:
                 raw = r.read()
                 return json.loads(raw) if raw and "json" in (r.headers.get("Content-Type") or "") else raw
         except urllib.error.HTTPError as e:
