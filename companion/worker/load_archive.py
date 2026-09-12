@@ -109,13 +109,13 @@ def main() -> None:
         body_len = len(transcript.split("<!-- SECTION", 1)[-1])
         page_chars = sum(len(t or "") for t in texts)
 
-        # Page-exact chunks when the page text carries the paper; otherwise chunk the
-        # displayed transcript by its section page ranges (honest range, not a guessed page).
-        if page_chars >= 0.5 * body_len or not SECTION_MARK.search(transcript):
-            units = [(i, i, t) for i, t in enumerate(texts, 1) if t and not ILLEGIBLE_ONLY.match(t)]
-            stats["page_level"] += 1
-        else:
-            units = split_marked(transcript, SECTION_MARK)
+        # Page-exact chunks from the page text. When that text is much thinner than the
+        # displayed transcript (e.g. Firecrawl tables), also index the transcript by its
+        # section page ranges, so nothing is lost and each pin states its real precision.
+        units = [(i, i, t) for i, t in enumerate(texts, 1) if t and not ILLEGIBLE_ONLY.match(t)]
+        stats["page_level"] += bool(units)
+        if page_chars < 0.5 * body_len and SECTION_MARK.search(transcript):
+            units += split_marked(transcript, SECTION_MARK)
             stats["section_level"] += 1
         chunks = corpus.chunk_units(units)
 
