@@ -90,7 +90,9 @@ def main() -> None:
         "posture": case.get("lawNote"), "disclaimer": case["disclaimer"],
         "parties": {k: case[k] for k in ("claimant", "respondents13", "respondent4")},
         "stages": [{"id": b["id"], "title": b["title"], "note": b.get("note")} for b in REG["bundles"]],
-        "storage_base": f"{corpus.SUPABASE_URL}/storage/v1/object/public/archive",
+        # Scans stay where the public reader serves them (see ../vercel.json), whichever
+        # project holds the companion tables. Nothing is copied.
+        "storage_base": "https://mnsmfobozohejvnmnalw.supabase.co/storage/v1/object/public/archive",
     }], "resolution=merge-duplicates,return=minimal")
     owner = a.owner.lower()
     rest("POST", "app_users", "on_conflict=email", [{"email": owner}], "resolution=ignore-duplicates,return=minimal")
