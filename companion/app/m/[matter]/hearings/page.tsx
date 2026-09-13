@@ -12,38 +12,51 @@ export default async function Hearings({ params }: { params: Promise<{ matter: s
   ]);
   const state = (id: string) => {
     const n = (notes ?? []).find((x) => x.hearing_id === id);
-    if (!n) return null;
-    return n.reviewed_by_advocate ? <span className="pill note">minutes reviewed</span> : n.draft ? <span className="pill warn">unreviewed draft</span> : <span className="pill">notes only</span>;
+    if (!n) return <span className="pill">no notes yet</span>;
+    return n.reviewed_by_advocate ? <span className="pill ok">minutes reviewed</span> : n.draft ? <span className="pill warn">draft to review</span> : <span className="pill">notes only</span>;
   };
   const group = (s: string) => (hearings ?? []).filter((h) => h.status === s);
+  const upcoming = group("upcoming").reverse();
 
   return (
-    <div className="grid2">
-      {(["upcoming", "held"] as const).map((s) => (
-        <section key={s}>
-          <h2>{s === "upcoming" ? "Upcoming" : "Held"}</h2>
-          <ul className="plain doclist">
-            {group(s).map((h) => (
-              <li key={h.id}>
-                <Link href={`/m/${matter}/hearings/${h.id}`}><b>{fmtDate(h.date)}</b> {h.purpose ?? ""}</Link>
-                <span>{state(h.id)}</span>
-              </li>
-            ))}
-            {!group(s).length && <li className="subtle">None.</li>}
-          </ul>
-        </section>
-      ))}
-      <form action={saveHearing} className="card stack">
-        <h3>Add a hearing</h3>
-        <input type="hidden" name="matter" value={matter} />
-        <div className="row">
-          <label>Date<input type="date" name="date" required /></label>
-          <label>Status<select name="status"><option value="upcoming">upcoming</option><option value="held">held</option></select></label>
+    <div className="stack" style={{ gap: "1.25rem" }}>
+      {!hearings?.length && (
+        <div className="empty">
+          <div className="glyph">⚖</div>
+          <h3>No hearings yet</h3>
+          <p>Add the next date. During or after the hearing, type your notes; the app drafts the Minutes of Proceedings from them for you to review. Upcoming hearings get a prep brief compiled from your records.</p>
         </div>
-        <label>Forum<input type="text" name="forum" /></label>
-        <label>Purpose<input type="text" name="purpose" placeholder="Arguments on s.16 application" /></label>
-        <div><button className="btn small">Add</button></div>
-      </form>
+      )}
+      <details className="adder" open={!hearings?.length}>
+        <summary>＋ Add a hearing</summary>
+        <form action={saveHearing} className="card stack">
+          <input type="hidden" name="matter" value={matter} />
+          <div className="row">
+            <label>Date<input type="date" name="date" required /></label>
+            <label>Status<select name="status"><option value="upcoming">upcoming</option><option value="held">held</option></select></label>
+            <label>Forum<input type="text" name="forum" /></label>
+          </div>
+          <label>Purpose<input type="text" name="purpose" placeholder="Arguments on s.16 application" /></label>
+          <div><button className="btn small">Add hearing</button></div>
+        </form>
+      </details>
+
+      {!!hearings?.length && (
+        <div className="grid2">
+          {([["Upcoming", upcoming], ["Held", group("held")]] as const).map(([label, list]) => (
+            <section key={label} className="stage-card">
+              <header><h2>{label}</h2><span className="subtle">{list.length}</span></header>
+              {list.map((h) => (
+                <Link key={h.id} href={`/m/${matter}/hearings/${h.id}`} className="docrow">
+                  <span className="dt"><b style={{ fontFamily: "var(--mono)", fontSize: ".85rem", color: "var(--seal)" }}>{fmtDate(h.date)}</b><br />{h.purpose ?? h.forum ?? "Hearing"}</span>
+                  <span className="meta">{state(h.id)}</span>
+                </Link>
+              ))}
+              {!list.length && <p className="subtle" style={{ padding: ".8rem 1.1rem", margin: 0 }}>None.</p>}
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

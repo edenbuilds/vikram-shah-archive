@@ -27,6 +27,18 @@ export default async function Chronology({ params }: { params: Promise<{ matter:
         </p>
       </div>
 
+      {!entries?.length && (
+        <div className="empty">
+          <div className="glyph">⟶</div>
+          <h3>Build your working timeline</h3>
+          <p>Add dates as you study the papers. Link each to the paper and page that backs it; anything unlinked stays flagged as your own note. Confirmed hearing minutes land here automatically.</p>
+        </div>
+      )}
+      <details className="adder" open={!entries?.length}>
+        <summary>＋ Add an entry</summary>
+        <div className="card"><EntryForm matter={matter} docs={(docs ?? []) as Doc[]} /></div>
+      </details>
+
       <ul className="plain chrono">
         {((entries ?? []) as Entry[]).map((e, i, all) => (
           <li key={e.id}>
@@ -61,13 +73,7 @@ export default async function Chronology({ params }: { params: Promise<{ matter:
             </div>
           </li>
         ))}
-        {!entries?.length && <li className="subtle" style={{ display: "block" }}>No entries yet.</li>}
       </ul>
-
-      <div className="card">
-        <h3>Add an entry</h3>
-        <EntryForm matter={matter} docs={(docs ?? []) as Doc[]} />
-      </div>
     </div>
   );
 }

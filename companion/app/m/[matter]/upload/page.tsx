@@ -22,25 +22,27 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
         </p>
       </div>
       <Uploader matter={m.id} stages={m.stages} busy={busy} />
-      <section className="card">
-        <h3>Processing queue</h3>
-        <ul className="plain doclist">
-          {(jobs ?? []).map((j) => (
-            <li key={j.id}>
-              <span>
-                {j.doc_id ? <Link href={`/m/${m.id}/d/${j.doc_id}`}>{j.title}</Link> : j.title}
-                <div className="subtle">{m.stages.find((s) => s.id === j.stage)?.title ?? j.stage} · {j.filename}</div>
-                {j.error && <div className="err">{j.error}</div>}
-              </span>
-              <span className={`pill ${j.status === "done" ? "note" : j.status === "failed" ? "seal" : "warn"}`}>
-                {j.status}{j.status === "processing" && j.page_count ? ` ${j.pages_done}/${j.page_count} pp.` : ""}
-              </span>
-            </li>
-          ))}
-          {!jobs?.length && <li className="subtle">Nothing uploaded yet.</li>}
-        </ul>
-        {busy && <p className="subtle">The worker picks up queued files within a few seconds while it is running (<span className="mono">npm run worker</span>).</p>}
-      </section>
+      {!!jobs?.length && (
+        <section className="card">
+          <h3>Processing queue</h3>
+          <ul className="plain queue">
+            {jobs.map((j) => (
+              <li key={j.id}>
+                <span style={{ minWidth: 0 }}>
+                  {j.doc_id ? <Link href={`/m/${m.id}/d/${j.doc_id}`} style={{ fontFamily: "var(--serif)" }}>{j.title}</Link> : <span style={{ fontFamily: "var(--serif)" }}>{j.title}</span>}
+                  <div className="subtle">{m.stages.find((s) => s.id === j.stage)?.title ?? j.stage} · {j.filename}</div>
+                  {j.status === "processing" && j.page_count ? <div className="bar"><i style={{ width: `${Math.round((100 * j.pages_done) / j.page_count)}%` }} /></div> : null}
+                  {j.error && <div className="err">{j.error}</div>}
+                </span>
+                <span className={`pill ${j.status === "done" ? "ok" : j.status === "failed" ? "seal" : "warn"}`}>
+                  {j.status === "done" ? "filed" : j.status}{j.status === "processing" && j.page_count ? ` · ${j.pages_done}/${j.page_count} pp.` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {busy && <p className="subtle" style={{ margin: ".6rem 0 0" }}>Processing on the office Mac; this list updates by itself.</p>}
+        </section>
+      )}
     </div>
   );
 }

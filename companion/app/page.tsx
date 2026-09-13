@@ -1,42 +1,81 @@
 import Link from "next/link";
+import { fmtDate } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
-import { TAXONOMIES } from "@/lib/taxonomies";
+import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
 import { createMatter } from "./actions";
+
+type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
 export default async function Workspace() {
   const { supabase, user } = await requireUser();
-  const [{ data: matters }, { data: staff }, { data: counts }] = await Promise.all([
-    supabase.from("matters").select("id, title, kind, forum, cause").order("created_at"),
+  const today = new Date().toISOString().slice(0, 10);
+  const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }] = await Promise.all([
+    supabase.from("matters").select("id, title, kind, forum, cause, stages").order("created_at"),
     supabase.from("app_users").select("email").maybeSingle(),
-    supabase.from("documents").select("matter_id"),
+    supabase.from("documents").select("matter_id, stage, page_count"),
+    supabase.from("annotations").select("matter_id"),
+    supabase.from("hearings").select("matter_id, date").eq("status", "upcoming").gte("date", today).order("date"),
   ]);
-  const n = (id: string) => (counts ?? []).filter((c) => c.matter_id === id).length;
+  const stat = (id: string) => {
+    const d = (docs ?? []).filter((x) => x.matter_id === id);
+    return {
+      papers: d.length,
+      pages: d.reduce((a, x) => a + (x.page_count ?? 0), 0),
+      notes: (notes ?? []).filter((x) => x.matter_id === id).length,
+      next: (hearings ?? []).find((h) => h.matter_id === id)?.date ?? null,
+      byStage: (s: string) => d.filter((x) => x.stage === s).length,
+    };
+  };
 
   return (
-    <main className="wrap stack">
-      <div>
+    <main className="wrap stack" style={{ gap: "1.5rem" }}>
+      <div className="hero">
         <p className="kicker">Workspace</p>
         <h1>Your matters</h1>
-        <p className="muted">Signed in as {user.email}. Every paper you file here stays private to the matter&apos;s members.</p>
-      </div>
-      {!matters?.length && (
-        <p className="card">No matters visible to this account yet. The owner adds you as a member of a matter.</p>
-      )}
-      <div className="grid2">
-        {(matters ?? []).map((m) => (
-          <Link key={m.id} href={`/m/${m.id}`} className="card" style={{ textDecoration: "none" }}>
-            <span className="pill seal">{m.kind}</span>
-            <h2 style={{ marginTop: ".5rem" }}>{m.title}</h2>
-            <p className="muted" style={{ margin: 0 }}>{m.forum}</p>
-            <p className="subtle">{m.cause} · {n(m.id)} papers</p>
-          </Link>
-        ))}
+        <p className="muted" style={{ margin: 0 }}>Every paper on file, searchable to the page. Private to each matter&apos;s members. Signed in as {user.email}.</p>
       </div>
 
+      {!matters?.length ? (
+        <div className="empty">
+          <div className="glyph">§</div>
+          <h3>No matters yet</h3>
+          <p>Create a matter, then drop in its PDFs. Each paper is OCR&apos;d page by page, filed by stage, and becomes searchable.</p>
+        </div>
+      ) : (
+        <div className="matters">
+          {(matters as M[]).map((m) => {
+            const s = stat(m.id);
+            const filled = m.stages.map((st) => ({ st, n: s.byStage(st.id) })).filter((x) => x.n);
+            return (
+              <Link key={m.id} href={`/m/${m.id}`} className="matter-card">
+                <div className="row" style={{ alignItems: "center", gap: ".4rem" }}>
+                  <span className="pill seal" style={{ flex: "0 0 auto" }}>{m.kind}</span>
+                  {s.next && <span className="pill warn" style={{ flex: "0 0 auto" }}>Next hearing {fmtDate(s.next)}</span>}
+                </div>
+                <h2>{m.title}</h2>
+                {m.forum && <p className="forum">{m.forum}</p>}
+                {m.cause && <p className="subtle" style={{ margin: 0 }}>{m.cause}</p>}
+                {s.papers > 0 && (
+                  <div className="stagebar" title={filled.map((x) => `${x.st.title}: ${x.n}`).join("\n")}>
+                    {filled.map((x) => <i key={x.st.id} style={{ flex: x.n, opacity: 0.35 + 0.65 * (x.n / Math.max(...filled.map((f) => f.n))) }} />)}
+                  </div>
+                )}
+                <div className="metrics">
+                  <span><b>{s.papers}</b> papers</span>
+                  <span><b>{s.pages.toLocaleString("en-IN")}</b> pages</span>
+                  <span><b>{s.notes}</b> notes</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
       {staff && (
-        <details className="card">
-          <summary><b>New matter</b>: create a folder, then upload its PDFs</summary>
-          <form action={createMatter} className="stack" style={{ marginTop: "1rem" }}>
+        <details className="adder">
+          <summary>＋ New matter</summary>
+          <form action={createMatter} className="card stack">
+            <p className="muted" style={{ margin: 0 }}>Creates a private folder with the filing tree for its type. You&apos;ll go straight to uploading its PDFs.</p>
             <label>Cause title<input type="text" name="title" required placeholder="A v. B" /></label>
             <div className="row">
               <label>Type
@@ -47,7 +86,7 @@ export default async function Workspace() {
               <label>Forum<input type="text" name="forum" placeholder="Sole Arbitrator / Court / Commission" /></label>
               <label>Case no.<input type="text" name="cause" placeholder="as printed on the papers" /></label>
             </div>
-            <p className="subtle">Names below feed cross-matter memory (e.g. &ldquo;you&apos;ve opposed this counsel before&rdquo;). One per line, as printed.</p>
+            <p className="subtle" style={{ margin: 0 }}>Names feed cross-matter memory (&ldquo;you&apos;ve seen this counsel before&rdquo;). One per line, as printed. All optional.</p>
             <div className="row">
               <label>Claimant / petitioner<textarea name="claimant" rows={2} /></label>
               <label>Respondent(s)<textarea name="respondent" rows={2} /></label>
@@ -56,7 +95,7 @@ export default async function Workspace() {
               <label>Arbitrator / presiding<textarea name="arbitrator" rows={2} /></label>
               <label>Opposing counsel<textarea name="opposing_counsel" rows={2} /></label>
             </div>
-            <div><button className="btn">Create matter</button></div>
+            <div><button className="btn">Create matter and upload papers</button></div>
           </form>
         </details>
       )}
