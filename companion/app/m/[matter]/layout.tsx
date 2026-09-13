@@ -10,7 +10,8 @@ export default async function MatterLayout({ children, params }: { children: Rea
     <>
       <div className="matter-head">
         <div className="wrap">
-          <p className="kicker">{m.kind} · {m.cause}</p>
+          <p className="crumbs"><a href="/">Workspace</a> / {m.short ?? m.title}</p>
+          <p className="kicker">{[m.kind, m.cause].filter(Boolean).join(" · ")}</p>
           <h1 style={{ marginBottom: ".15rem" }}>{m.title}</h1>
           <p className="muted" style={{ margin: 0 }}>{m.forum}{m.venue ? ` · ${m.venue}` : ""}</p>
           <Tabs base={`/m/${m.id}`} />

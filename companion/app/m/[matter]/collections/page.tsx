@@ -44,7 +44,17 @@ export default async function Collections({ params }: { params: Promise<{ matter
           </details>
         </section>
       ))}
-      <div className="card"><h3>New collection</h3><CollectionForm matter={matter} hearings={hearings ?? []} /></div>
+      {!cols?.length && (
+        <div className="empty">
+          <div className="glyph">❏</div>
+          <h3>No collections yet</h3>
+          <p>Group papers across stages, e.g. &ldquo;Things to raise at the next hearing&rdquo; or &ldquo;Disputed figures&rdquo;. Add papers from any paper&apos;s reader. Link a collection to a hearing and it shows up in that hearing&apos;s prep brief.</p>
+        </div>
+      )}
+      <details className="adder" open={!cols?.length}>
+        <summary>＋ New collection</summary>
+        <div className="card"><CollectionForm matter={matter} hearings={hearings ?? []} /></div>
+      </details>
     </div>
   );
 }
