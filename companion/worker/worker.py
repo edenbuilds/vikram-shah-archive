@@ -40,16 +40,31 @@ def now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+TOKEN_TTL = 45 * 60  # gcloud ADC access tokens expire after ~60 min
+
+
 def vision():
-    """Google Vision page OCR via gcloud ADC, or None when unavailable."""
+    """Google Vision page OCR via gcloud ADC, or None when unavailable. Refreshes the
+    token before it expires and once more on failure; a page that still can't be OCR'd
+    fails the job (RuntimeError) rather than being filed as a silent [ILLEGIBLE]."""
     try:
         import google_vision_ocr as gv
         gv.load_env_google()
-        token = gv.access_token()
-        return lambda jpg: gv.vision_page(token, jpg)
+        tok = {"v": gv.access_token(), "at": time.time()}
     except (Exception, SystemExit) as e:  # noqa: BLE001
         print(f"vision OCR unavailable ({e}); thin pages keep their text layer", file=sys.stderr)
         return None
+
+    def ocr(jpg):
+        for attempt in range(2):
+            if attempt or time.time() - tok["at"] > TOKEN_TTL:
+                tok.update(v=gv.access_token(), at=time.time())
+            try:
+                return gv.vision_page(tok["v"], jpg)
+            except (Exception, SystemExit) as e:  # noqa: BLE001  gv exits the process on HTTP errors
+                err = e
+        raise RuntimeError(f"Google Vision OCR failed: {str(err)[:300]}")
+    return ocr
 
 
 def section_pages(body: str, start: int) -> int:
@@ -151,6 +166,11 @@ def claim() -> dict | None:
 
 def main() -> None:
     once = "--once" in sys.argv
+    # ponytail: assumes a single worker. A job left 'processing' means a previous run died
+    # mid-job, so put it back in the queue. Use a lease/heartbeat if workers ever run in parallel.
+    stale = rest("PATCH", "ingest_jobs", "status=eq.processing", {"status": "queued", "updated_at": now()}, "return=representation")
+    if stale:
+        print(f"requeued {len(stale)} job(s) interrupted by a previous run", flush=True)
     ocr = vision()
     while True:
         job = claim()
@@ -164,7 +184,7 @@ def main() -> None:
             doc_id = process(job, ocr)
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "done", "doc_id": doc_id, "error": None, "updated_at": now()})
             print(f"  -> {doc_id}", flush=True)
-        except Exception as e:  # noqa: BLE001  job-level failure is recorded, worker keeps going
+        except (Exception, SystemExit) as e:  # noqa: BLE001  job-level failure is recorded, worker keeps going
             traceback.print_exc()
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "failed", "error": str(e)[:1000], "updated_at": now()})
 
