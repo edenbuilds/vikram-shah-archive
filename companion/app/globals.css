@@ -213,7 +213,7 @@ a.stat:hover { border-color: var(--seal); }
 .pin:hover { background: var(--seal-wash); }
 .pin cite { display: block; font-family: var(--sans); font-style: normal; font-size: .72rem; color: var(--seal); font-weight: 700; margin-top: .2rem; }
 .refusal { border-left: 4px solid var(--warn); background: var(--warn-bg); padding: .8rem 1rem; border-radius: 0 12px 12px 0; max-width: 94%; }
-.composer { position: sticky; bottom: 1rem; }
+.composer { margin-top: .25rem; }
 
 /* chronology */
 .chrono { position: relative; }
