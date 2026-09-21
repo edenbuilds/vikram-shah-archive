@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Libre_Baskerville, Source_Sans_3 } from "next/font/google";
 import { signOut } from "./actions";
+import AskButton from "./AskButton";
 import { db } from "@/lib/supabase";
 import "./globals.css";
 
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </a>
           {data.user ? (
             <div className="row" style={{ flex: "0 0 auto", gap: "1rem", alignItems: "center" }}>
+              <AskButton />
               <a href="/connect" style={{ flex: "0 0 auto" }}>Connect AI</a>
               <form action={signOut} style={{ flex: "0 0 auto" }}>
                 <button className="link">Sign out</button>

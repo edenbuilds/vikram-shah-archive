@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { draftMinutes, type Item, type Minutes } from "@/lib/minutes";
-import { answer } from "@/lib/qa";
 import { headers } from "next/headers";
 import { admin, tokenFor } from "@/lib/access";
 import { sendSignInLink } from "@/lib/signin-mail";
@@ -215,24 +214,3 @@ export async function confirmMinutes(f: FormData) {
 }
 
 // ── Q&A ─────────────────────────────────────────────────────────────────────
-export async function ask(f: FormData) {
-  const { supabase } = await requireUser();
-  const m = str(f, "matter");
-  const question = str(f, "question");
-  if (!question) return;
-  const all = str(f, "scope") === "all";
-  const thread = opt(f, "thread") ??
-    (must(await supabase.from("qa_threads").insert({ matter_id: all ? null : m, title: question.slice(0, 90) }).select("id").single()) as { id: string }).id;
-  // A thread keeps the scope it was created with (one matter, or all of mine).
-  const t = must(await supabase.from("qa_threads").select("matter_id").eq("id", thread).single()) as { matter_id: string | null };
-  const matterIds = t.matter_id ? [t.matter_id] : (must(await supabase.from("matters").select("id")) as { id: string }[]).map((x) => x.id);
-
-  must(await supabase.from("qa_messages").insert({ thread_id: thread, role: "user", content: question }));
-  const r = await answer(supabase, question, matterIds);
-  must(await supabase.from("qa_messages").insert({
-    thread_id: thread, role: "assistant", status: r.status, model: r.model, citations: r.claims,
-    content: r.status === "answered" ? r.claims.map((c) => c.text).join("\n") : "Not found in the papers on file.",
-    retrieved: { chunks: r.retrieved, rejected: r.rejected, gate: r.gate ?? null },
-  }));
-  redirect(`/m/${m}/ask?t=${thread}`);
-}

@@ -51,7 +51,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
         </div>
         <div className="row" style={{ flex: "0 0 auto", gap: ".5rem" }}>
           {pdf && <a className="btn ghost small" href={pdf} target="_blank" rel="noreferrer">Original PDF ↗</a>}
-          <Link className="btn ghost small" href={`/m/${m.id}/ask`}>Ask about this matter</Link>
+          <Link className="btn ghost small" href={`/ask?m=${m.id}&src=${d.id}`}>Ask about this paper</Link>
         </div>
       </div>
 

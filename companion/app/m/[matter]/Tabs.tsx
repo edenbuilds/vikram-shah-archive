@@ -7,7 +7,6 @@ const TABS = [
   ["/map", "Map"],
   ["/chronology", "Chronology"],
   ["/hearings", "Hearings"],
-  ["/ask", "Ask the papers"],
   ["/collections", "Collections"],
   ["/upload", "Upload"],
 ] as const;

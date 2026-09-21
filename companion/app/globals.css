@@ -296,3 +296,20 @@ a.stat:hover { border-color: var(--seal); }
 .apps h3 { margin: 0; }
 .steps { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: .9rem; display: grid; gap: .2rem; }
 .prompts { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr)); }
+
+/* ── Ask: sources, live steps, receipts ───────────────────────────────────── */
+.askbox textarea { font-size: 1rem; }
+.sources > summary { font-weight: 600; }
+.srclist { max-height: 22rem; overflow: auto; display: grid; gap: .6rem; padding-right: .3rem; }
+.srclist fieldset { border: 1px solid var(--rule); border-radius: 8px; padding: .35rem .6rem .5rem; margin: 0; }
+.srclist legend { font-weight: 600; font-size: .85rem; padding: 0 .3rem; }
+.srclist label { display: flex; gap: .5rem; align-items: baseline; font-weight: 400; }
+.src span:nth-of-type(1) { flex: 1 1 auto; font-family: var(--serif); font-size: .92rem; }
+.src input, .srclist legend input { width: auto; }
+.agent-steps { margin: 0; padding-left: 1.1rem; font-size: .85rem; color: var(--muted); display: grid; gap: .15rem; }
+.receipt { display: grid; grid-template-columns: 5.5rem 1fr; gap: .8rem; align-items: start; text-decoration: none; color: inherit;
+  background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--seal); border-radius: 8px; padding: .55rem; margin: .45rem 0; }
+.receipt:hover { border-color: color-mix(in oklab, var(--seal) 45%, var(--rule)); }
+.receipt img, .receipt .noimg { width: 5.5rem; aspect-ratio: 1 / 1.414; object-fit: cover; object-position: top; border: 1px solid var(--rule); border-radius: 4px; background: var(--white); display: block; }
+.receipt q { display: block; font-family: var(--serif); font-size: .95rem; line-height: 1.45; quotes: "\201C" "\201D"; }
+.receipt cite { display: block; margin-top: .35rem; font-style: normal; font-size: .8rem; color: var(--seal); font-weight: 600; }
