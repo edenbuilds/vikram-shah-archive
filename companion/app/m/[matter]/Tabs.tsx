@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 const TABS = [
   ["", "Papers"],
+  ["/map", "Map"],
   ["/chronology", "Chronology"],
   ["/hearings", "Hearings"],
   ["/ask", "Ask the papers"],
