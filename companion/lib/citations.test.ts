@@ -36,11 +36,18 @@ test("a figure from the cited paper's own title counts as sourced; one from else
   assert.equal(verify(claim("Per the 22.01.25 claim, adjourned to 14.08.2026."), chunks, titles).status, "not_in_corpus");
 });
 
-test("rejects citations to chunks the model was not shown", () => {
-  const v = verify({ status: "answered", claims: [{ text: "Something.", citations: [{ chunk_id: 99, quote: "The matter is adjourned" }] }] }, chunks);
+test("rejects a quote that is in none of the excerpts the model was shown", () => {
+  const v = verify({ status: "answered", claims: [{ text: "Something.", citations: [{ chunk_id: 99, quote: "The award is set aside in full" }] }] }, chunks);
   assert.equal(v.status, "not_in_corpus");
 });
 
 test("not_in_corpus from the model stays not_in_corpus", () => {
   assert.equal(verify({ status: "not_in_corpus", claims: [] }, chunks).status, "not_in_corpus");
+});
+
+test("a verbatim quote cited under the wrong excerpt is pinned to the page that holds it", () => {
+  const v = verify({ status: "answered", claims: [{ text: "The matter was adjourned to 14.08.2026.",
+    citations: [{ chunk_id: 1, quote: "The matter is adjourned to 14.08.2026 for arguments" }] }] }, chunks);
+  assert.equal(v.status, "answered");
+  assert.deepEqual([v.claims[0].citations[0].chunk_id, v.claims[0].citations[0].doc_id, v.claims[0].citations[0].page_start], [2, "order", 2]);
 });

@@ -54,8 +54,12 @@ export function verify(answer: ModelAnswer, chunks: Chunk[], titles: Record<stri
     if (!text) continue;
     const good: Citation[] = [];
     for (const c of claim.citations ?? []) {
-      const ch = byId.get(c.chunk_id);
-      if (ch && isSpan(c.quote, ch.text)) {
+      // A verbatim quote tagged with the wrong excerpt id is re-pinned to the excerpt that
+      // actually holds it (seen live 2026-09-21: text from chunk 4064 cited as 4065). The
+      // quote is still checked character-for-character; only the page shown is corrected.
+      const named = byId.get(c.chunk_id);
+      const ch = named && isSpan(c.quote, named.text) ? named : chunks.find((x) => isSpan(c.quote, x.text));
+      if (ch) {
         good.push({ chunk_id: ch.id, doc_id: ch.doc_id, page_start: ch.page_start, page_end: ch.page_end, quote: c.quote.trim() });
       }
     }
