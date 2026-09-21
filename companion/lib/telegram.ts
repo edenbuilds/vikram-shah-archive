@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { admin } from "@/lib/access";
+import { admin, readState, writeState } from "@/lib/access";
 
 const api = (method: string) => `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`;
 
@@ -27,8 +27,7 @@ export async function linkedChats(): Promise<Record<string, string>> {
     const [id, email] = pair.split("=").map((x) => x.trim());
     if (id && email) out[id] = email.toLowerCase();
   }
-  const { data } = await admin().storage.from("companion").download(LINKS);
-  if (data) Object.assign(out, JSON.parse(await data.text()));
+  Object.assign(out, await readState<Record<string, string>>(LINKS, {}));
   return out;
 }
 
@@ -46,6 +45,6 @@ export async function linkChat(chat: number | string, code: string): Promise<str
   if (!email) return null;
   const map = await linkedChats();
   map[String(chat)] = email;
-  await admin().storage.from("companion").upload(LINKS, new Blob([JSON.stringify(map)], { type: "application/json" }), { upsert: true });
+  await writeState(LINKS, map);
   return email;
 }

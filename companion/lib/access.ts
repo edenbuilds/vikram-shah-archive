@@ -39,3 +39,21 @@ export async function memberMatters(email: string): Promise<string[]> {
   const { data } = await db.from("matter_members").select("matter_id").eq("email", email);
   return (data ?? []).map((r) => r.matter_id);
 }
+
+// Small JSON state files in the private bucket (workspace arrangement, linked Telegram chats).
+// Storage reads go through a CDN cache (1 hour by default), which showed an archived matter as
+// still active right after archiving (2026-09-22). So: write with no caching, read fresh.
+export async function readState<T>(path: string, fallback: T): Promise<T> {
+  const r = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/companion/${path}?fresh=${Date.now()}`, {
+    headers: { Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`, apikey: process.env.SUPABASE_SERVICE_ROLE_KEY! },
+    cache: "no-store",
+  });
+  if (!r.ok) return fallback;
+  try { return (await r.json()) as T; } catch { return fallback; }
+}
+
+export async function writeState(path: string, value: unknown) {
+  const { error } = await admin().storage.from("companion")
+    .upload(path, new Blob([JSON.stringify(value)], { type: "application/json" }), { upsert: true, cacheControl: "0" });
+  if (error) throw new Error(`Could not save: ${error.message}`);
+}
