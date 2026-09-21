@@ -44,7 +44,14 @@ def linked() -> dict[str, str]:
     return out
 
 
+def muted() -> bool:
+    # ponytail: one switch in .env.local; Omkar asked to stop the Ready/failed messages on 22-09-2026 (test uploads were mailing everyone)
+    return os.environ.get("NOTIFY_MUTED", "") == "1"
+
+
 def telegram(text: str, mid: str | None = None) -> None:
+    if muted():
+        return
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     allowed = members(mid)
     for chat, who in linked().items():
@@ -57,6 +64,8 @@ def telegram(text: str, mid: str | None = None) -> None:
 
 
 def email(subject: str, body_html: str, attachments: list[dict] | None = None, mid: str | None = None) -> None:
+    if muted():
+        return
     allowed = members(mid)
     to = [e.strip() for e in os.environ.get("NOTIFY_EMAILS", "").split(",") if e.strip() and (allowed is None or e.strip().lower() in allowed)]
     if not to or not os.environ.get("RESEND_API_KEY"):

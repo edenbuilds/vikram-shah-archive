@@ -12,8 +12,11 @@ await go(p, "/"); ok(await p.isVisible("text=The papers, read to the page."), "s
 await go(p, "/m/shetty-v-oberoi"); ok(p.url().includes("/login"), "signed out: private page redirects to sign-in");
 // 2. sign-in page (no password field; sends a link)
 ok(!(await p.$("input[type=password]")), "sign-in page has no password field");
-await p.fill("input[type=email]", "omkar1sonawane@gmail.com"); await p.click("text=Email me a sign-in link");
-await p.waitForURL(/sent=/); ok(await p.isVisible("text=a sign-in link is on its way"), "sign-in link requested");
+// sending the link mails a real inbox on every run, so only with E2E_SEND=1
+if (process.env.E2E_SEND === "1") {
+  await p.fill("input[type=email]", "omkar1sonawane@gmail.com"); await p.click("text=Email me a sign-in link");
+  await p.waitForURL(/sent=/); ok(await p.isVisible("text=a sign-in link is on its way"), "sign-in link requested");
+} else ok(await p.isVisible("text=Email me a sign-in link"), "sign-in page offers an emailed link");
 // personal link signs in
 await p.goto(link, { waitUntil: "networkidle" }); await go(p, "/");
 ok(await p.isVisible("text=Your matters"), "personal link signs in");
