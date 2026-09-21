@@ -58,15 +58,19 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
         {!thread ? (
           <div>
             <h1 style={{ marginBottom: ".35rem" }}>Ask</h1>
-            <p className="muted" style={{ margin: 0 }}>The agent searches and reads your papers, then answers. Every line comes with its receipt: the exact words, the paper, the page and its scan. If the papers don&apos;t say it, you&apos;ll be told so.</p>
-            <div className="chips" style={{ marginTop: ".8rem" }}>
-              {STARTERS.map((s) => <Link key={s} className="chip" href={`/ask?${new URLSearchParams({ ...(sp.m ? { m: sp.m } : {}), ...(sp.src ? { src: sp.src } : {}), q: s })}`}>{s}</Link>)}
-            </div>
+            <p className="muted" style={{ margin: 0 }}>Every line of the answer comes with its receipt: the exact words, the paper, the page and its scan. If the papers don&apos;t say it, you&apos;ll be told so.</p>
           </div>
         ) : (
           <div>
             <p className="subtle" style={{ margin: 0 }}>{scopeLabel}</p>
             {!!sources?.length && <div className="chips" style={{ marginTop: ".4rem" }}>{sources.map((s) => <Link key={s} className="chip" href={`/m/${matterOf(s)}/d/${s}`}>{title(s)}</Link>)}</div>}
+          </div>
+        )}
+
+        {!thread && (
+          <div className="chips" style={{ order: 3 }}>
+            <span className="subtle" style={{ alignSelf: "center" }}>Try:</span>
+            {STARTERS.map((s) => <Link key={s} className="chip" href={`/ask?${new URLSearchParams({ ...(sp.m ? { m: sp.m } : {}), ...(sp.src ? { src: sp.src } : {}), q: s })}`}>{s}</Link>)}
           </div>
         )}
 

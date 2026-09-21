@@ -340,3 +340,36 @@ label:has(> select), label:has(> input), label:has(> textarea) { grid-template-c
 select { width: 100%; min-width: 0; text-overflow: ellipsis; }
 /* WebKit reports a phantom scroll width for native selects with long options; clip it (with room for the focus ring). */
 label:has(> select) { overflow: hidden; padding: 4px; margin: -4px; }
+
+/* ── Phone layout: the first screen is for the work, not the chrome ───────── */
+.tabs { mask-image: linear-gradient(to right, #000 85%, transparent); -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); }
+.tabs:hover, .tabs:focus-within { mask-image: none; -webkit-mask-image: none; }
+.doc-head .row > * { flex: 0 0 auto; }
+@media (max-width: 640px) {
+  .top { flex-wrap: nowrap; padding: .45rem 1rem; }
+  .brand > span:last-child { display: none; }
+  .brand-mark { width: 2rem; height: 2rem; }
+  .top .row { gap: .85rem !important; font-size: .88rem; }
+  .matter-head .crumbs, .matter-head .muted { display: none; }
+  .matter-head .kicker { font-size: .62rem; margin-bottom: .15rem; }
+  .matter-head h1 { font-size: 1.2rem; line-height: 1.25; }
+  .matter-head .wrap { padding-top: .8rem; }
+  .tabs { margin-top: .6rem; }
+  .tabs a { padding: .5rem .65rem; font-size: .86rem; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
+  .stat { padding: .45rem .5rem; }
+  .stat b { font-size: 1.05rem; overflow-wrap: anywhere; }
+  .stat span { font-size: .58rem; letter-spacing: .03em; }
+  h1 { font-size: 1.45rem; }
+  .doc-head h1 { font-size: 1.15rem !important; }
+  .glance .card, .card { padding: .9rem; }
+  .receipt { grid-template-columns: 4.2rem 1fr; gap: .6rem; }
+  .receipt img, .receipt .noimg { width: 4.2rem; }
+  .receipt q { font-size: .9rem; }
+  body { padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (max-width: 640px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat { display: flex; align-items: baseline; gap: .45rem; }
+  .stat b { font-size: 1.1rem; white-space: nowrap; }
+}

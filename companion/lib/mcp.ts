@@ -3,20 +3,13 @@ import type { McpServer } from "@modelcontextprotocol/server";
 import { admin } from "@/lib/access";
 import { answer } from "@/lib/qa";
 import { isSpan, norm } from "@/lib/citations";
+import { readme } from "@/lib/agent-readme";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
 // Claude (web, Desktop, Code), Codex, Cursor and VS Code through one remote URL.
 
-export const RULES = `You are connected to an advocate's private case papers (Case Companion). Follow these rules without exception:
-1. State only what the papers say, and cite every statement with the paper title and page, using the pins and links the tools return.
-2. If the tools do not return it, say "Not found in the papers on file." Never fill a gap from general knowledge, and never guess a name, date, amount, case number or page.
-3. Before you rely on any quote, check it with verify_quote. Quote exactly; do not correct OCR or tidy wording inside quotation marks.
-4. Anything that is your own reasoning or general law must be labelled as such and kept separate from what the papers say.
-5. When a request is ambiguous (which matter, which party, which hearing), ask the advocate before answering.
-6. [ILLEGIBLE] means the page could not be read. Say so; never reconstruct it.
-7. Never save a note without showing the preview and getting the advocate's explicit yes.
-The advocate's own notes and chronology are her work product, not the record: label them as her notes.`;
+export { RULES } from "@/lib/agent-readme";
 
 type Ctx = { email: string; matters: string[]; origin: string };
 type Doc = { id: string; matter_id: string; title: string; stage: string; page_count: number; source_path: string | null; sections: unknown };
@@ -34,6 +27,15 @@ export function register(server: McpServer, ctx: Ctx) {
     return data && ctx.matters.includes(data.matter_id) ? (data as Doc) : null;
   }
   const noMatter = (m: string) => fail(`No matter "${m}" in your workspace. Call list_matters to see the ids.`);
+
+  server.registerTool("read_me_first", {
+    title: "Read me first",
+    description: "START HERE. The rules (no receipt, no statement; no guesses, no theories), how to work, what a receipt looks like, and what is in the advocate's workspace today (live).",
+    inputSchema: {},
+    annotations: { readOnlyHint: true },
+  }, async () => text(await readme(db, ctx.matters, ctx.origin)));
+  server.registerResource("readme", "case-companion://readme", { title: "Case Companion: guide for AI agents", mimeType: "text/markdown" },
+    async (uri: URL) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readme(db, ctx.matters, ctx.origin) }] }));
 
   server.registerTool("list_matters", {
     title: "List matters",
