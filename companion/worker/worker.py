@@ -168,12 +168,23 @@ def main() -> None:
     once = "--once" in sys.argv
     # ponytail: assumes a single worker. A job left 'processing' means a previous run died
     # mid-job, so put it back in the queue. Use a lease/heartbeat if workers ever run in parallel.
-    stale = rest("PATCH", "ingest_jobs", "status=eq.processing", {"status": "queued", "updated_at": now()}, "return=representation")
+    while True:
+        try:
+            stale = rest("PATCH", "ingest_jobs", "status=eq.processing", {"status": "queued", "updated_at": now()}, "return=representation")
+            break
+        except OSError as e:
+            print(f"queue unreachable ({e}); retrying in 60s", file=sys.stderr, flush=True)
+            time.sleep(60)
     if stale:
         print(f"requeued {len(stale)} job(s) interrupted by a previous run", flush=True)
     ocr = vision()
     while True:
-        job = claim()
+        try:
+            job = claim()
+        except OSError as e:  # URLError included. 2026-09-21: an offline Mac crash-looped the LaunchAgent into a 56k-line log
+            print(f"queue unreachable ({e}); retrying in 60s", file=sys.stderr, flush=True)
+            time.sleep(60)
+            continue
         if not job:
             if once:
                 return
