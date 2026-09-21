@@ -23,14 +23,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ secret:
   const start = String(u.message?.text ?? "").match(/^\/start\s+(c[0-9a-f]{24})$/);
   if (start) {
     const who = await linkChat(chat, start[1]);
-    await say(chat, who ? `Connected to Case Companion as ${who}. Send /help to see what I can do.` : "That link isn't valid. Open Connect AI in your workspace and use the Telegram link there.");
+    await say(chat, who ? `Connected to Case Companion as ${who}. Send /help to see what I can do.` : "That link isn't valid. Open Settings in your workspace and tap Connect Telegram.");
     console.log(`telegram link ${chat} -> ${who ?? "invalid"}`);
     return Response.json({ ok: true });
   }
   const email = await chatUser(chat);
   console.log(`telegram update chat=${chat} user=${email ?? "unlinked"} kind=${u.callback_query ? "button" : u.message?.document ? "document" : u.message?.photo ? "photo" : "text"}`);
   if (!email) {
-    await say(chat, "This is a private assistant. If you have access, open Connect AI in your workspace and tap the Telegram link to connect this chat.");
+    await say(chat, "This is a private assistant. If you have access, open Settings in your workspace and tap Connect Telegram.");
     return Response.json({ ok: true });
   }
   after(() => handle(u, chat, email, origin).catch((e) => say(chat, `Something went wrong: ${esc(String(e?.message ?? e))}`)));
@@ -42,12 +42,33 @@ async function handle(u: any, chat: number, email: string, origin: string) {
   const ids = await memberMatters(email);
   const { data: matters } = await db.from("matters").select("id, title").in("id", ids).order("created_at");
   const title = (id: string) => matters?.find((m) => m.id === id)?.title ?? id;
+  const ddmmyyyy = (d: string) => d.split("-").reverse().join("-");
+  // Granola-style capture: append to the hearing's raw notes (time-stamped, IST); review re-opens.
+  async function addNote(hearing: string, matter: string, note: string, replyTo?: number) {
+    const { data: cur } = await db.from("hearing_notes").select("raw").eq("hearing_id", hearing).maybeSingle();
+    const { data: users } = await db.auth.admin.listUsers({ perPage: 1000 });
+    const uid = users?.users.find((x) => x.email?.toLowerCase() === email)?.id;
+    const stamp = new Date().toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" });
+    const raw = `${cur?.raw ? `${cur.raw.trimEnd()}\n` : ""}[${stamp}] ${note}`;
+    const { error } = await db.from("hearing_notes").upsert({ hearing_id: hearing, matter_id: matter, raw, reviewed_by_advocate: false, reviewed_at: null, updated_at: new Date().toISOString(), created_by: uid }, { onConflict: "hearing_id" });
+    if (error) return say(chat, `Couldn't save the note: ${esc(error.message)}`);
+    const { data: h } = await db.from("hearings").select("date").eq("id", hearing).single();
+    return say(chat, `Saved to the notes for the ${ddmmyyyy(h?.date ?? "")} hearing in <b>${esc(title(matter))}</b>.`, {
+      reply_to_message_id: replyTo, reply_markup: { inline_keyboard: [[{ text: "Open notes and draft minutes", url: `${origin}/m/${matter}/hearings/${hearing}` }]] } });
+  }
 
   // Button pressed: file the document this keyboard was attached to.
   if (u.callback_query) {
     const cb = u.callback_query;
     await tg("answerCallbackQuery", { callback_query_id: cb.id });
     const [kind, mid] = String(cb.data ?? "").split(":");
+    if (kind === "hn") {
+      const { data: h } = await db.from("hearings").select("id, matter_id").eq("id", mid).maybeSingle();
+      const note = String(cb.message.reply_to_message?.text ?? "").replace(/^\/note(@\S+)?\s*/i, "").trim();
+      if (!h || !ids.includes(h.matter_id) || !note) return say(chat, "I couldn't find that note. Send /note again, please.");
+      await tg("editMessageText", { chat_id: chat, message_id: cb.message.message_id, text: "Saving the note…" });
+      return addNote(h.id, h.matter_id, note, cb.message.reply_to_message?.message_id);
+    }
     if (kind === "no") return tg("editMessageText", { chat_id: chat, message_id: cb.message.message_id, text: "Not filed." });
     if (kind !== "up" || !ids.includes(mid)) return;
     const src = cb.message.reply_to_message;
@@ -82,17 +103,20 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     });
   }
 
-  const text: string = (m.text ?? "").trim();
-  if (!text) return;
+  const raw: string = (m.text ?? "").trim();
+  if (!raw) return;
+  // the button bar sends its labels as text
+  const text = ({ "My matters": "/matters", "Processing": "/status", "Hearing note": "/note", "Help": "/help" } as Record<string, string>)[raw] ?? raw;
   const cmd = text.split(/\s+/)[0].toLowerCase().replace(/@.*/, "");
   if (cmd === "/start" || cmd === "/help") {
     return say(chat, [
       "<b>Case Companion</b>",
-      "Send me a PDF or a photo of a page and I'll file it in the right matter, then tell you when it's ready.",
-      "Ask me anything about your papers in plain words; I answer only with exact quotes and page links, or tell you it isn't in the papers.",
+      "<b>File a paper:</b> send a PDF or a photo of a page, pick the matter, and I'll tell you when it's ready.",
+      "<b>Ask:</b> type a question in plain words. Name a paper (\"the Shetty withdrawal application\") to ask only that paper. Every answer has quotes, page links and the page scans, or says it isn't in the papers. Reply to an answer to follow up.",
+      "<b>Hearing note:</b> /note followed by your note adds it to that hearing's notes, ready to turn into minutes in the app.",
       "",
-      "/matters: your matters", "/status: what's being processed", "/link: your sign-in link and AI connection",
-    ].join("\n"));
+      "/matters · /status · /note · /link",
+    ].join("\n\n"), { reply_markup: { keyboard: [[{ text: "My matters" }, { text: "Processing" }], [{ text: "Hearing note" }, { text: "Help" }]], resize_keyboard: true, is_persistent: true } });
   }
   if (cmd === "/matters") {
     const { data: ds } = await db.from("documents").select("matter_id, page_count").in("matter_id", ids);
@@ -105,9 +129,19 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     const { data: js } = await db.from("ingest_jobs").select("title, matter_id, status, pages_done, page_count, error").in("matter_id", ids).order("created_at", { ascending: false }).limit(6);
     return say(chat, (js ?? []).map((j) => `• <b>${esc(j.title)}</b> (${esc(title(j.matter_id))}): ${j.status === "done" ? "filed" : j.status}${j.status === "processing" && j.page_count ? ` ${j.pages_done}/${j.page_count} pages` : ""}${j.error ? `\n  ${esc(j.error.slice(0, 200))}` : ""}`).join("\n") || "Nothing uploaded yet.");
   }
+  if (cmd === "/note") {
+    const note = text.replace(/^\/note(@\S+)?\s*/i, "").trim();
+    if (!note) return say(chat, "Send <b>/note</b> followed by your note, e.g. <i>/note Adjourned to 14-10-2026; R2 to file reply in two weeks</i>. It goes into that hearing's notes for you to turn into minutes.");
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const { data: hs } = await db.from("hearings").select("id, matter_id, date").in("matter_id", ids).gte("date", today).order("date").limit(6);
+    if (!hs?.length) return say(chat, "No upcoming hearing is recorded. Add the hearing in the app first, then send the note again.");
+    if (hs.length === 1) return addNote(hs[0].id, hs[0].matter_id, note, m.message_id);
+    return say(chat, "Which hearing is this note for?", { reply_to_message_id: m.message_id,
+      reply_markup: { inline_keyboard: hs.map((h) => [{ text: `${ddmmyyyy(h.date)} · ${title(h.matter_id).slice(0, 45)}`, callback_data: `hn:${h.id}` }]) } });
+  }
   if (cmd === "/link") {
     const t = tokenFor(email);
-    return say(chat, `<b>Sign in (no password)</b>\n${origin}/k/${t}\n\n<b>AI connection (ChatGPT, Claude, Cursor…)</b>\n<code>${origin}/api/mcp/${t}</code>\nSetup steps: ${origin}/connect\n\nKeep both private.`);
+    return say(chat, `<b>Sign in (no password)</b>\n${origin}/k/${t}\n\n<b>App connection (ChatGPT, Claude, Cursor…)</b>\n<code>${origin}/api/mcp/${t}</code>\nSetup steps: ${origin}/settings\n\nKeep both private.`);
   }
 
   // Anything else: a question. Work out which papers she means (a named paper, a matter, or a
@@ -124,9 +158,17 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     const { data: docs } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(r.claims.flatMap((c) => c.citations.map((q) => q.doc_id)))]);
     const out = r.claims.map((c) => `${esc(c.text)}\n${c.citations.map((q) => {
       const d = docs?.find((x) => x.id === q.doc_id);
-      return `— <i>"${esc(q.quote.replace(/\s+/g, " ").slice(0, 300))}"</i>\n<a href="${origin}/m/${d?.matter_id}/d/${q.doc_id}?p=${q.page_start}">${esc(d?.title ?? q.doc_id)}, p. ${q.page_start}</a>`;
+      return `<i>"${esc(q.quote.replace(/\s+/g, " ").slice(0, 300))}"</i>\n<a href="${origin}/m/${d?.matter_id}/d/${q.doc_id}?p=${q.page_start}">${esc(d?.title ?? q.doc_id)}, p. ${q.page_start}</a>`;
     }).join("\n")}`).join("\n\n");
-    await say(chat, `${head}\n\n${out.slice(0, 3700)}\n\n<i>Every quote was checked against the page. Reply to this message to ask a follow-up about the same papers.</i>`, { reply_to_message_id: m.message_id });
+    const first = r.claims[0]?.citations[0];
+    const firstDoc = docs?.find((x) => x.id === first?.doc_id);
+    await say(chat, `${head}\n\n${out.slice(0, 3700)}\n\n<i>Every quote was checked against the page. Reply to this message to follow up on the same papers.</i>`, {
+      reply_to_message_id: m.message_id,
+      reply_markup: { inline_keyboard: [[
+        ...(first && firstDoc ? [{ text: "Open the first page", url: `${origin}/m/${firstDoc.matter_id}/d/${first.doc_id}?p=${first.page_start}` }] : []),
+        { text: "Ask on the site", url: `${origin}/ask?${new URLSearchParams({ ...(scope.matterIds.length === 1 ? { m: scope.matterIds[0] } : {}), ...(scope.docIds ? { src: scope.docIds.join(",") } : {}) })}` },
+      ]] },
+    });
 
     // the receipts themselves: up to 4 page scans, captioned with paper and page
     const pages = [...new Map(r.claims.flatMap((c) => c.citations).map((q) => [`${q.doc_id}#${q.page_start}`, q])).values()].slice(0, 4);

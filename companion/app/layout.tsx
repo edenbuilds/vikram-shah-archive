@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Libre_Baskerville, Source_Sans_3 } from "next/font/google";
+import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
 import { signOut } from "./actions";
 import AskButton from "./AskButton";
-import { db } from "@/lib/supabase";
+import { LogOut, Settings2 } from "lucide-react";
+import { currentUser } from "@/lib/supabase";
 import "./globals.css";
 
-const serif = Libre_Baskerville({ subsets: ["latin"], weight: ["400", "700"], style: ["normal", "italic"], variable: "--serif-font" });
+const serif = Newsreader({ subsets: ["latin"], weight: ["300", "400", "500"], style: ["normal", "italic"], variable: "--serif-font" });
 const sans = Source_Sans_3({ subsets: ["latin"], variable: "--sans-font" });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--mono-font" });
 
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { data } = await (await db()).auth.getUser();
+  const { user } = await currentUser();
+  const data = { user };
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
@@ -25,15 +27,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span className="brand-mark" aria-hidden>CC</span>
             <span>
               <b>Case Companion</b>
-              <small>Clerk of the papers · private</small>
             </span>
           </a>
           {data.user ? (
             <div className="row" style={{ flex: "0 0 auto", gap: "1rem", alignItems: "center" }}>
               <AskButton />
-              <a href="/connect" style={{ flex: "0 0 auto" }}>Connect AI</a>
+              <a href="/settings" className="navlink" aria-label="Settings" style={{ flex: "0 0 auto" }}><Settings2 size={16} strokeWidth={1.75} aria-hidden /> <span>Settings</span></a>
               <form action={signOut} style={{ flex: "0 0 auto" }}>
-                <button className="link">Sign out</button>
+                <button className="link navlink" aria-label="Sign out"><LogOut size={16} strokeWidth={1.75} aria-hidden /> <span>Sign out</span></button>
               </form>
             </div>
           ) : (

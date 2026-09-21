@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import type { Stage } from "./taxonomies";
@@ -7,11 +8,12 @@ export type Matter = {
   cause: string | null; posture: string | null; disclaimer: string; stages: Stage[]; storage_base: string | null;
 };
 
-export async function getMatter(db: SupabaseClient, id: string): Promise<Matter> {
+// Cached per request: the matter layout and its page both need it.
+export const getMatter = cache(async (db: SupabaseClient, id: string): Promise<Matter> => {
   const { data } = await db.from("matters").select("*").eq("id", id).maybeSingle();
   if (!data) notFound();
   return data as Matter;
-}
+});
 
 // Uploaded files live in the private bucket under "{matter}/..." and get short-lived
 // signed URLs (storage RLS checks membership). Anything else is the archive's public

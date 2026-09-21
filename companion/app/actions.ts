@@ -6,6 +6,7 @@ import { draftMinutes, type Item, type Minutes } from "@/lib/minutes";
 import { headers } from "next/headers";
 import { admin, tokenFor } from "@/lib/access";
 import { sendSignInLink } from "@/lib/signin-mail";
+import { getPrefs, setPrefs } from "@/lib/prefs";
 import { db, requireUser } from "@/lib/supabase";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 
@@ -38,6 +39,21 @@ export async function signOut() {
 }
 
 // ── workspace ───────────────────────────────────────────────────────────────
+// Folder / archive: arrangement only, per person. The matter must be one she can see.
+export async function organiseMatter(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const matter = str(f, "matter");
+  const { data: visible } = await supabase.from("matters").select("id").eq("id", matter).maybeSingle();
+  if (!visible) return;
+  const p = await getPrefs(user.email!);
+  const folder = str(f, "folder").trim().slice(0, 60);
+  if (folder) p.folders[matter] = folder; else delete p.folders[matter];
+  const act = str(f, "act");
+  if (act === "archive" && !p.archived.includes(matter)) p.archived.push(matter);
+  if (act === "unarchive") p.archived = p.archived.filter((x) => x !== matter);
+  await setPrefs(user.email!, p);
+  revalidatePath("/");
+}
 export async function createMatter(f: FormData) {
   const { supabase } = await requireUser();
   const title = str(f, "title");

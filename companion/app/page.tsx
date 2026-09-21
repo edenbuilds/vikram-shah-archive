@@ -2,7 +2,9 @@ import Link from "next/link";
 import { fmtDate } from "@/lib/data";
 import { db } from "@/lib/supabase";
 import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
-import { createMatter } from "./actions";
+import { Archive, Folder, MoreHorizontal } from "lucide-react";
+import { getPrefs } from "@/lib/prefs";
+import { createMatter, organiseMatter } from "./actions";
 import Landing from "./Landing";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
@@ -31,8 +33,59 @@ export default async function Workspace() {
     };
   };
 
+  const prefs = await getPrefs(user.email!);
+  const all = (matters ?? []) as M[];
+  const archived = all.filter((m) => prefs.archived.includes(m.id));
+  const live = all.filter((m) => !prefs.archived.includes(m.id));
+  const folderNames = [...new Set(Object.values(prefs.folders))].sort((x, y) => x.localeCompare(y));
+  const groups = [...folderNames.map((f) => [f, live.filter((m) => prefs.folders[m.id] === f)] as const), ["", live.filter((m) => !prefs.folders[m.id])] as const]
+    .filter(([, ms]) => ms.length);
+  const card = (m: M, isArchived: boolean) => {
+    const s = stat(m.id);
+    const filled = m.stages.map((st) => ({ st, n: s.byStage(st.id) })).filter((x) => x.n);
+    return (
+      <div key={m.id} className={`matter-wrap${isArchived ? " is-archived" : ""}`}>
+        <Link href={`/m/${m.id}`} className="matter-card">
+          <div className="row" style={{ alignItems: "center", gap: ".4rem" }}>
+            <span className="pill seal" style={{ flex: "0 0 auto" }}>{m.kind}</span>
+            {s.next && <span className="pill warn" style={{ flex: "0 0 auto" }}>Next hearing {fmtDate(s.next)}</span>}
+          </div>
+          <h2>{m.title}</h2>
+          {m.forum && <p className="forum">{m.forum}</p>}
+          {m.cause && <p className="subtle" style={{ margin: 0 }}>{m.cause}</p>}
+          {s.papers > 0 && (
+            <div className="stagebar" title={filled.map((x) => `${x.st.title}: ${x.n}`).join("\n")}>
+              {filled.map((x) => <i key={x.st.id} style={{ flex: x.n, opacity: 0.35 + 0.65 * (x.n / Math.max(...filled.map((f) => f.n))) }} />)}
+            </div>
+          )}
+          <div className="metrics">
+            <span><b>{s.papers}</b> papers</span>
+            <span><b>{s.pages.toLocaleString("en-IN")}</b> pages</span>
+            <span><b>{s.notes}</b> notes</span>
+          </div>
+        </Link>
+        <details className="organise">
+          <summary aria-label={`Organise ${m.title}`}><MoreHorizontal size={18} strokeWidth={1.75} aria-hidden /></summary>
+          <form action={organiseMatter} className="stack" style={{ gap: ".5rem" }}>
+            <input type="hidden" name="matter" value={m.id} />
+            <label>Folder
+              <input name="folder" list="folders" defaultValue={prefs.folders[m.id] ?? ""} placeholder="e.g. RERA appeals" />
+            </label>
+            <div className="row" style={{ gap: ".4rem" }}>
+              <button className="btn small" name="act" value="save" style={{ flex: "0 0 auto" }}>Save</button>
+              <button className="btn ghost small" name="act" value={isArchived ? "unarchive" : "archive"} style={{ flex: "0 0 auto" }}>
+                {isArchived ? "Restore" : "Archive"}
+              </button>
+            </div>
+          </form>
+        </details>
+      </div>
+    );
+  };
+
   return (
     <main className="wrap stack" style={{ gap: "1.5rem" }}>
+      <datalist id="folders">{folderNames.map((f) => <option key={f} value={f} />)}</datalist>
       <div className="hero">
         <p className="kicker">Workspace</p>
         <h1>Your matters</h1>
@@ -62,38 +115,24 @@ export default async function Workspace() {
 
       {!matters?.length ? (
         <div className="empty">
-          <div className="glyph">§</div>
           <h3>No matters yet</h3>
           <p>Create a matter, then drop in its PDFs. Each paper is OCR&apos;d page by page, filed by stage, and becomes searchable.</p>
         </div>
       ) : (
-        <div className="matters">
-          {(matters as M[]).map((m) => {
-            const s = stat(m.id);
-            const filled = m.stages.map((st) => ({ st, n: s.byStage(st.id) })).filter((x) => x.n);
-            return (
-              <Link key={m.id} href={`/m/${m.id}`} className="matter-card">
-                <div className="row" style={{ alignItems: "center", gap: ".4rem" }}>
-                  <span className="pill seal" style={{ flex: "0 0 auto" }}>{m.kind}</span>
-                  {s.next && <span className="pill warn" style={{ flex: "0 0 auto" }}>Next hearing {fmtDate(s.next)}</span>}
-                </div>
-                <h2>{m.title}</h2>
-                {m.forum && <p className="forum">{m.forum}</p>}
-                {m.cause && <p className="subtle" style={{ margin: 0 }}>{m.cause}</p>}
-                {s.papers > 0 && (
-                  <div className="stagebar" title={filled.map((x) => `${x.st.title}: ${x.n}`).join("\n")}>
-                    {filled.map((x) => <i key={x.st.id} style={{ flex: x.n, opacity: 0.35 + 0.65 * (x.n / Math.max(...filled.map((f) => f.n))) }} />)}
-                  </div>
-                )}
-                <div className="metrics">
-                  <span><b>{s.papers}</b> papers</span>
-                  <span><b>{s.pages.toLocaleString("en-IN")}</b> pages</span>
-                  <span><b>{s.notes}</b> notes</span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <>
+          {groups.map(([folder, ms]) => (
+            <section key={folder || "_"} className="stack" style={{ gap: ".7rem" }}>
+              {groups.length > 1 && <h2 className="folder-title"><Folder size={18} strokeWidth={1.6} aria-hidden /> {folder || "Other matters"} <span className="subtle">{ms.length}</span></h2>}
+              <div className="matters">{ms.map((m) => card(m, false))}</div>
+            </section>
+          ))}
+          {!!archived.length && (
+            <details className="archived">
+              <summary><Archive size={16} strokeWidth={1.6} aria-hidden /> Archived <span className="subtle">{archived.length}</span></summary>
+              <div className="matters" style={{ marginTop: ".8rem" }}>{archived.map((m) => card(m, true))}</div>
+            </details>
+          )}
+        </>
       )}
 
       {staff && (

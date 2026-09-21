@@ -23,11 +23,13 @@ const STARTERS = [
 export default async function AskPage({ searchParams }: { searchParams: Promise<{ t?: string; m?: string; src?: string; q?: string }> }) {
   const sp = await searchParams;
   const { supabase } = await requireUser();
-  const [{ data: matters }, { data: papers }, { data: threads }] = await Promise.all([
+  const [{ data: matters }, { data: papers }, { data: threads }, { data: cols }] = await Promise.all([
     supabase.from("matters").select("id, title, stages").order("created_at"),
     supabase.from("documents").select("id, title, stage, page_count, matter_id").order("sort"),
     supabase.from("qa_threads").select("id, title, matter_id, created_at").order("created_at", { ascending: false }).limit(40),
+    supabase.from("collections").select("id, title, matter_id, collection_items(doc_id)").order("created_at"),
   ]);
+  const notebooks = (cols ?? []).map((c) => ({ id: c.id, title: c.title, matter_id: c.matter_id, docs: [...new Set((c.collection_items as { doc_id: string }[]).map((i) => i.doc_id))] })).filter((c) => c.docs.length);
   const thread = (threads ?? []).find((x) => x.id === sp.t);
   const { data: msgData } = thread ? await supabase.from("qa_messages").select("*").eq("thread_id", thread.id).order("created_at") : { data: [] };
   const msgs = (msgData ?? []) as Msg[];
@@ -112,7 +114,7 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
           </div>
         )}
 
-        <AskBox key={thread?.id ?? `${sp.m}-${sp.src}-${sp.q}`} matters={(matters ?? []) as never} papers={(papers ?? []) as never}
+        <AskBox key={thread?.id ?? `${sp.m}-${sp.src}-${sp.q}`} matters={(matters ?? []) as never} papers={(papers ?? []) as never} notebooks={notebooks}
           initialMatter={thread?.matter_id ?? sp.m ?? ""} initialSources={sp.src ? sp.src.split(",") : []}
           initialQuestion={thread ? "" : sp.q ?? ""} thread={thread?.id} locked={thread ? `Follow-ups use the same sources: ${scopeLabel}.` : undefined} />
       </div>

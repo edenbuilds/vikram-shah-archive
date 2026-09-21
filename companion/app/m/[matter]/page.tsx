@@ -45,7 +45,7 @@ export default async function Papers({ params, searchParams }: { params: Promise
         <div className="stat"><b>{list.reduce((a, d) => a + d.page_count, 0).toLocaleString("en-IN")}</b><span>Pages</span></div>
         <div className="stat"><b>{notes?.length ?? 0}</b><span>Your notes</span></div>
         <Link className="stat" href={next?.[0] ? `/m/${m.id}/hearings/${next[0].id}` : `/m/${m.id}/hearings`}>
-          <b style={{ fontSize: next?.[0] ? "1.15rem" : undefined, paddingTop: next?.[0] ? ".3rem" : undefined }}>{next?.[0] ? fmtDate(next[0].date) : "—"}</b>
+          <b style={{ fontSize: next?.[0] ? "1.15rem" : undefined, paddingTop: next?.[0] ? ".3rem" : undefined }}>{next?.[0] ? fmtDate(next[0].date) : "None set"}</b>
           <span>Next hearing</span>
         </Link>
       </div>

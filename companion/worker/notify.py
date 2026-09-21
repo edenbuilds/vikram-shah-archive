@@ -22,27 +22,42 @@ def _post(url: str, body: dict, headers: dict) -> None:
     urllib.request.urlopen(req, timeout=30, context=corpus.TLS).read()
 
 
-def chats() -> list[str]:
-    """TELEGRAM_USERS plus chats linked via a personal t.me link (stored by the bot)."""
-    ids = [p.split("=")[0].strip() for p in os.environ.get("TELEGRAM_USERS", "").split(",") if p.strip()]
+def members(mid: str | None) -> set[str] | None:
+    """Emails with access to a matter; notifications about a matter go only to them."""
+    if not mid:
+        return None
+    return {r["email"].lower() for r in rest("GET", "matter_members", f"select=email&matter_id=eq.{urllib.parse.quote(mid)}", prefer="")}
+
+
+def linked() -> dict[str, str]:
+    out = {}
+    for p in os.environ.get("TELEGRAM_USERS", "").split(","):
+        if "=" in p:
+            c, e = p.split("=", 1)
+            out[c.strip()] = e.strip().lower()
     try:
-        ids += list(json.loads(corpus.storage_get("_system/telegram-users.json")).keys())
-    except Exception:  # noqa: BLE001  no linked chats yet
+        raw = corpus.storage_get("_system/telegram-users.json")
+        out.update(raw if isinstance(raw, dict) else json.loads(raw))
+    except Exception:  # noqa: BLE001
         pass
-    return list(dict.fromkeys(ids))
+    return out
 
 
-def telegram(text: str) -> None:
+def telegram(text: str, mid: str | None = None) -> None:
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    for chat in chats():
+    allowed = members(mid)
+    for chat, who in linked().items():
+        if allowed is not None and who not in allowed:
+            continue
         try:
             _post(f"https://api.telegram.org/bot{token}/sendMessage", {"chat_id": chat, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}, {})
         except Exception as e:  # noqa: BLE001
             print(f"  telegram notify failed: {e}", file=sys.stderr, flush=True)
 
 
-def email(subject: str, body_html: str, attachments: list[dict] | None = None) -> None:
-    to = [e.strip() for e in os.environ.get("NOTIFY_EMAILS", "").split(",") if e.strip()]
+def email(subject: str, body_html: str, attachments: list[dict] | None = None, mid: str | None = None) -> None:
+    allowed = members(mid)
+    to = [e.strip() for e in os.environ.get("NOTIFY_EMAILS", "").split(",") if e.strip() and (allowed is None or e.strip().lower() in allowed)]
     if not to or not os.environ.get("RESEND_API_KEY"):
         return
     try:
@@ -86,7 +101,7 @@ def job_done(job: dict) -> None:
 
     lines = "\n".join(f"• <a href=\"{link(d)}\">{html.escape(d['title'])}</a> ({d['page_count']} pp.)" for d in docs[:25])
     more = f"\n…and {len(docs) - 25} more" if len(docs) > 25 else ""
-    telegram(f"<b>Ready:</b> {html.escape(job['title'])}\n{html.escape(m['title'])}: {what}\n\n{lines}{more}\n\n{ORIGIN}/m/{mid}/map")
+    telegram(f"<b>Ready:</b> {html.escape(job['title'])}\n{html.escape(m['title'])}: {what}\n\n{lines}{more}\n\n{ORIGIN}/m/{mid}/map", mid)
 
     rows = "".join(
         f'<tr><td style="padding:10px 0;border-bottom:1px solid #efe7da;font-family:Georgia,serif;font-size:15px;line-height:1.35">'
@@ -99,18 +114,18 @@ def job_done(job: dict) -> None:
         f"<b style=\"color:#1c1612\">{html.escape(m['title'])}</b>: {what}." + (" It was split into its papers using the volume's own index." if len(docs) > 1 else ""),
         f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table>',
         (f"{ORIGIN}/m/{mid}/map", "Open the matter"),
-        "Every page keeps its original scan beside the text. Unreadable pages are marked [ILLEGIBLE], never guessed.<br>Sent by Case Companion to the workspace owners."))
+        "Every page keeps its original scan beside the text. Unreadable pages are marked [ILLEGIBLE], never guessed.<br>Sent by Case Companion to the people with access to this matter."), mid=mid)
 
 
 def job_failed(job: dict, error: str) -> None:
     mid = job["matter_id"]
-    telegram(f"<b>Couldn't file:</b> {html.escape(job['title'])}\n{html.escape(error[:500])}\n\nTry again or upload on the website: {ORIGIN}/m/{mid}/upload")
+    telegram(f"<b>Couldn't file:</b> {html.escape(job['title'])}\n{html.escape(error[:500])}\n\nTry again or upload on the website: {ORIGIN}/m/{mid}/upload", mid)
     email(f"Couldn't file: {job['title']}", page(
         "An upload needs another try",
         f"<b style=\"color:#1c1612\">{html.escape(job['filename'])}</b> could not be processed.",
         f'<p style="margin:0;padding:12px 14px;background:#f3e3de;border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6f2424">{html.escape(error[:800])}</p>',
         (f"{ORIGIN}/m/{mid}/upload", "Open uploads"),
-        "Uploading the same file again is safe: papers already filed from it are updated, not duplicated."))
+        "Uploading the same file again is safe: papers already filed from it are updated, not duplicated."), mid=mid)
 
 
 def ready_digest(files: list[tuple[str, str]]) -> None:
@@ -133,7 +148,7 @@ def ready_digest(files: list[tuple[str, str]]) -> None:
             "each named as its volume's index lists it, with the original scan beside the text.")
     email(f"Your papers are ready: {total_d} papers, {total_p:,} pages", page(
         "Your papers are ready", lede, "".join(blocks), (f"{ORIGIN}/", "Open your workspace"),
-        "Ask the papers anything on the site, in Telegram (@arya_case_archivebot) or from ChatGPT / Claude via Connect AI. "
+        "Ask the papers anything on the site, in Telegram (@arya_case_archivebot) or from ChatGPT and Claude (connect them in Settings). "
         "Answers come only with exact quotes and page links; anything not in the papers is reported as not found.<br>Sent by Case Companion to the workspace owners."))
     telegram("<b>Your papers are ready</b>\n" + "\n".join(tg_lines) +
              f"\n\n{total_d} papers, {total_p:,} pages in all.\n\nSend me a PDF or a photo any time and I'll file it. Ask me a question in plain words and I'll answer only from the papers, with page links.\n/matters · /status · /link\n\n{ORIGIN}/")

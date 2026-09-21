@@ -7,8 +7,9 @@ type Matter = { id: string; title: string; stages: { id: string; title: string }
 
 // The single Ask box: pick sources (a matter, or particular papers in it), ask, watch the agent
 // search and read, then land on the answer with its receipts.
-export default function AskBox({ matters, papers, initialMatter, initialSources, initialQuestion = "", thread, locked }: {
-  matters: Matter[]; papers: Paper[]; initialMatter: string; initialSources: string[]; initialQuestion?: string; thread?: string; locked?: string;
+export default function AskBox({ matters, papers, notebooks = [], initialMatter, initialSources, initialQuestion = "", thread, locked }: {
+  matters: Matter[]; papers: Paper[]; notebooks?: { id: string; title: string; matter_id: string; docs: string[] }[];
+  initialMatter: string; initialSources: string[]; initialQuestion?: string; thread?: string; locked?: string;
 }) {
   const router = useRouter();
   const [matter, setMatter] = useState(initialMatter);
@@ -63,6 +64,14 @@ export default function AskBox({ matters, papers, initialMatter, initialSources,
           {matter && (
             <details className="sources" open={initialSources.length > 0}>
               <summary>Choose particular papers</summary>
+              {notebooks.some((n) => n.matter_id === matter) && (
+                <div className="chips" style={{ margin: ".5rem 0 0" }}>
+                  <span className="subtle" style={{ alignSelf: "center" }}>Collections:</span>
+                  {notebooks.filter((n) => n.matter_id === matter).map((n) => (
+                    <button key={n.id} type="button" className="chip" onClick={() => setPicked(new Set(n.docs))}>{n.title} ({n.docs.length})</button>
+                  ))}
+                </div>
+              )}
               <div className="row" style={{ margin: ".5rem 0", alignItems: "center" }}>
                 <input type="search" placeholder="Filter papers" value={filter} onChange={(e) => setFilter(e.target.value)} style={{ flex: "1 1 12rem" }} />
                 <button type="button" className="btn ghost small" style={{ flex: "0 0 auto" }} onClick={() => setPicked(new Set())}>Clear (use all)</button>

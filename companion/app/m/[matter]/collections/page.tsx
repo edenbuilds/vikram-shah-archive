@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MessageSquareQuote } from "lucide-react";
 import { removeFromCollection, saveCollection } from "@/app/actions";
 import { fmtDate } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
@@ -21,7 +22,15 @@ export default async function Collections({ params }: { params: Promise<{ matter
       </div>
       {(cols ?? []).map((c) => (
         <section key={c.id} id={c.id} className="card stack">
-          <h3>{c.title}</h3>
+          <div className="row" style={{ alignItems: "center", justifyContent: "space-between" }}>
+            <h3 style={{ margin: 0, flex: "1 1 auto" }}>{c.title}</h3>
+            {(c.collection_items as { doc_id: string }[]).length > 0 && (
+              <Link className="btn small" style={{ flex: "0 0 auto" }}
+                href={`/ask?m=${matter}&src=${[...new Set((c.collection_items as { doc_id: string }[]).map((i) => i.doc_id))].join(",")}`}>
+                <MessageSquareQuote size={15} strokeWidth={1.75} aria-hidden /> Ask these papers
+              </Link>
+            )}
+          </div>
           {c.note && <p className="note" style={{ margin: 0 }}><span className="note-label">Advocate&apos;s note</span>{c.note}</p>}
           <ul className="plain doclist">
             {(c.collection_items as { doc_id: string; page_no: number | null; note: string | null }[]).map((it) => (
