@@ -23,7 +23,13 @@ ok(await p.isVisible("text=Your matters"), "personal link signs in");
 ok(await p.isVisible("a[aria-label=Settings]") && await p.isVisible("button[aria-label='Sign out']"), "header: Ask, Settings, Sign out");
 ok(!(await p.content()).includes("Connect AI"), "no 'Connect AI' wording");
 
-// 3. folders and archive (on the test matter)
+// 3. folders and archive (on the test matter); a previous run may have left it archived
+if (await p.locator("details.archived .matter-wrap", { hasText: "zz Upload test" }).count()) {
+  await p.click("details.archived > summary");
+  const a = p.locator("details.archived .matter-wrap", { hasText: "zz Upload test" });
+  await a.locator("summary").click({ force: true }); await a.locator("button[value=unarchive]").click({ force: true });
+  await p.waitForTimeout(1500); await go(p, "/");
+}
 const card = p.locator(".matter-wrap", { hasText: "zz Upload test" });
 await card.locator("summary").click({ force: true }); await card.locator("input[name=folder]").fill("Tests");
 await card.locator("button[value=save]").click({ force: true });
@@ -38,9 +44,13 @@ ok(await p.locator("details.archived .matter-wrap", { hasText: "zz Upload test" 
 
 // 4. upload through the page
 await go(p, "/m/zz-upload-test/upload");
+// earlier runs leave e2e-upload.pdf rows in the list, so wait for one more row, not for any row
+const rows = () => p.locator(".queue li", { hasText: "e2e-upload.pdf" }).count();
+const before = await rows();
 await p.setInputFiles("input[type=file]", pdf);
 await p.click("button:has-text('Upload 1 file')");
-const queued = await p.locator(".queue li", { hasText: "e2e-upload.pdf" }).first().waitFor({ timeout: 180000 }).then(() => true, () => false);
+let queued = false;
+for (let k = 0; k < 30 && !queued; k++) { await p.waitForTimeout(4000); await go(p, "/m/zz-upload-test/upload"); queued = (await rows()) > before; }
 ok(queued, "upload queued through the upload page");
 
 // 5. Ask with one chosen paper
