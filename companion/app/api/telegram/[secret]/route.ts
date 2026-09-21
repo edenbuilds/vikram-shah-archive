@@ -1,9 +1,10 @@
 import { after } from "next/server";
 import { admin, memberMatters, tokenFor } from "@/lib/access";
-import { answer } from "@/lib/qa";
+import { runAgent } from "@/lib/agent";
+import { resolveScope } from "@/lib/scope";
 import { chatUser, esc, hookSecret, say, tg } from "@/lib/telegram";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 // @arya_case_archivebot. Private: only chats listed in TELEGRAM_USERS get a reply.
 // Send a file -> pick the matter -> it is queued exactly like a web upload; the worker reports
@@ -100,14 +101,39 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     return say(chat, `<b>Sign in (no password)</b>\n${origin}/k/${t}\n\n<b>AI connection (ChatGPT, Claude, Cursor…)</b>\n<code>${origin}/api/mcp/${t}</code>\nSetup steps: ${origin}/connect\n\nKeep both private.`);
   }
 
-  // Anything else: a question to the papers, answered only with verified quotes.
+  // Anything else: a question. Work out which papers she means (a named paper, a matter, or a
+  // reply to an earlier answer), then the same agent as the Ask button answers from only those,
+  // with receipts: quotes, page links, and the page scans themselves.
+  const context = m.reply_to_message?.text ?? m.reply_to_message?.caption ?? "";
+  const typing = setInterval(() => tg("sendChatAction", { chat_id: chat, action: "typing" }), 4500);
   await tg("sendChatAction", { chat_id: chat, action: "typing" });
-  const r = await answer(db, text, ids);
-  if (r.status !== "answered") return say(chat, "Not found in the papers on file.");
-  const { data: docs } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(r.claims.flatMap((c) => c.citations.map((q) => q.doc_id)))]);
-  const out = r.claims.map((c) => `${esc(c.text)}\n${c.citations.map((q) => {
-    const d = docs?.find((x) => x.id === q.doc_id);
-    return `— <i>"${esc(q.quote.replace(/\s+/g, " ").slice(0, 300))}"</i>\n<a href="${origin}/m/${d?.matter_id}/d/${q.doc_id}?p=${q.page_start}">${esc(d?.title ?? q.doc_id)}, p. ${q.page_start}</a>`;
-  }).join("\n")}`).join("\n\n");
-  return say(chat, `${out.slice(0, 3900)}\n\n<i>Every quote was checked against the page.</i>`);
+  try {
+    const scope = await resolveScope(db, text, context, ids);
+    const r = await runAgent(db, text, { matterIds: scope.matterIds, docIds: scope.docIds }, context ? [{ q: "(earlier in this chat)", a: context.slice(0, 2000) }] : [], () => {});
+    const head = `<b>Sources:</b> ${esc(scope.label.slice(0, 300))}`;
+    if (r.status !== "answered") return say(chat, `${head}\n\nNot found in these papers. Nothing is filled in from outside them.`, { reply_to_message_id: m.message_id });
+    const { data: docs } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(r.claims.flatMap((c) => c.citations.map((q) => q.doc_id)))]);
+    const out = r.claims.map((c) => `${esc(c.text)}\n${c.citations.map((q) => {
+      const d = docs?.find((x) => x.id === q.doc_id);
+      return `— <i>"${esc(q.quote.replace(/\s+/g, " ").slice(0, 300))}"</i>\n<a href="${origin}/m/${d?.matter_id}/d/${q.doc_id}?p=${q.page_start}">${esc(d?.title ?? q.doc_id)}, p. ${q.page_start}</a>`;
+    }).join("\n")}`).join("\n\n");
+    await say(chat, `${head}\n\n${out.slice(0, 3700)}\n\n<i>Every quote was checked against the page. Reply to this message to ask a follow-up about the same papers.</i>`, { reply_to_message_id: m.message_id });
+
+    // the receipts themselves: up to 4 page scans, captioned with paper and page
+    const pages = [...new Map(r.claims.flatMap((c) => c.citations).map((q) => [`${q.doc_id}#${q.page_start}`, q])).values()].slice(0, 4);
+    const media = [];
+    for (const q of pages) {
+      const d = docs?.find((x) => x.id === q.doc_id);
+      const { data: pg } = await db.from("document_pages").select("jpeg_path").eq("doc_id", q.doc_id).eq("page_no", q.page_start).maybeSingle();
+      const { data: mt } = await db.from("matters").select("storage_base").eq("id", d?.matter_id ?? "").maybeSingle();
+      if (!pg) continue;
+      const url = pg.jpeg_path.startsWith(`${d?.matter_id}/`) || !mt?.storage_base
+        ? (await db.storage.from("companion").createSignedUrl(pg.jpeg_path, 600)).data?.signedUrl
+        : `${mt.storage_base}/${pg.jpeg_path}`;
+      if (url) media.push({ type: "photo", media: url, caption: `${d?.title ?? q.doc_id}, p. ${q.page_start}`.slice(0, 1000) });
+    }
+    if (media.length) await tg("sendMediaGroup", { chat_id: chat, media });
+  } finally {
+    clearInterval(typing);
+  }
 }

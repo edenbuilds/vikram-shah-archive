@@ -142,7 +142,7 @@ a.stat:hover { border-color: var(--seal); }
 .chip { display: inline-block; padding: .3rem .75rem; border-radius: 99px; background: var(--white); border: 1px solid var(--rule); font-size: .84rem; text-decoration: none; color: var(--muted); cursor: pointer; }
 .chip:hover { border-color: var(--seal); color: var(--seal); }
 .layout { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem); align-items: start; }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 .stage-card { background: var(--white); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: .9rem; overflow: hidden; }
 .stage-card > header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .8rem 1.1rem; border-bottom: 1px solid var(--rule); background: color-mix(in oklab, var(--paper) 45%, var(--white)); }
 .stage-card > header h2 { margin: 0; font-size: 1.05rem; }
@@ -170,7 +170,7 @@ a.stat:hover { border-color: var(--seal); }
 
 /* document reader */
 .reader { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) minmax(19rem, 27rem); align-items: start; }
-@media (max-width: 960px) { .reader { grid-template-columns: 1fr; } .rail { position: static !important; max-height: none !important; } }
+@media (max-width: 960px) { .reader { grid-template-columns: minmax(0, 1fr); } .rail { position: static !important; max-height: none !important; } }
 .doc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
 .doc-facts { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
 .paper-text { background: var(--white); border: 1px solid var(--rule); border-radius: var(--radius); padding: clamp(1.1rem, 3.5vw, 2.4rem); font-family: var(--serif); font-size: .96rem; line-height: 1.8; box-shadow: var(--shadow); }
@@ -313,3 +313,30 @@ a.stat:hover { border-color: var(--seal); }
 .receipt img, .receipt .noimg { width: 5.5rem; aspect-ratio: 1 / 1.414; object-fit: cover; object-position: top; border: 1px solid var(--rule); border-radius: 4px; background: var(--white); display: block; }
 .receipt q { display: block; font-family: var(--serif); font-size: .95rem; line-height: 1.45; quotes: "\201C" "\201D"; }
 .receipt cite { display: block; margin-top: .35rem; font-style: normal; font-size: .8rem; color: var(--seal); font-weight: 600; }
+
+/* ── Phones (Safari): grid items may not grow past their track ────────────────
+   2026-09-22: on iPhone Safari a one-line hearing title (white-space: nowrap) stretched the
+   "Coming up" grid track, widening every card and causing sideways scroll. Chrome clipped it. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overflow-x: clip; }
+.matters > *, .upcoming > *, .glance > *, .apps > *, .prompts > *, .grid2 > *, .stats > *, .land-points > *, .layout > *, .row > * { min-width: 0; }
+.upcoming .what { overflow: hidden; }
+.matter-card h2, .claim, .receipt q, .doc-head h1 { overflow-wrap: anywhere; }
+.top { flex-wrap: wrap; row-gap: .4rem; }
+@media (max-width: 520px) {
+  .brand small { display: none; }
+  .top .row { gap: .7rem !important; }
+}
+/* the root cause: .stack is a one-column grid whose track grew to its widest unbreakable line */
+.stack { grid-template-columns: minmax(0, 1fr); }
+.stack > * { min-width: 0; }
+select, input, textarea { max-width: 100%; }
+.b { overflow-wrap: anywhere; }
+.reader > *, .srclist > *, .srclist fieldset { min-width: 0; }
+.chip { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.q { max-width: 100%; overflow-wrap: anywhere; }
+label { min-width: 0; }
+label:has(> select), label:has(> input), label:has(> textarea) { grid-template-columns: minmax(0, 1fr); }
+select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+/* WebKit reports a phantom scroll width for native selects with long options; clip it (with room for the focus ring). */
+label:has(> select) { overflow: hidden; padding: 4px; margin: -4px; }

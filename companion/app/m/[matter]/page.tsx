@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ExportZip from "./ExportZip";
 import { fmtDate, getMatter, pages } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 
@@ -14,7 +15,7 @@ export default async function Papers({ params, searchParams }: { params: Promise
   const today = new Date().toISOString().slice(0, 10);
 
   const [{ data: docs }, { data: people }, { data: notes }, { data: next }, hits] = await Promise.all([
-    supabase.from("documents").select("id, title, stage, page_count, kind").eq("matter_id", m.id).order("sort"),
+    supabase.from("documents").select("id, title, stage, page_count, kind, filename").eq("matter_id", m.id).order("sort"),
     supabase.from("matter_people").select("role, as_printed, person_id").eq("matter_id", m.id),
     supabase.from("annotations").select("id, doc_id, page_no, body, created_at").eq("matter_id", m.id).order("created_at", { ascending: false }),
     supabase.from("hearings").select("id, date, purpose").eq("matter_id", m.id).eq("status", "upcoming").gte("date", today).order("date").limit(1),
@@ -117,6 +118,13 @@ export default async function Papers({ params, searchParams }: { params: Promise
         </section>
 
         <aside className="side">
+          {!!docs?.length && (
+            <div className="card">
+              <h3>Download</h3>
+              <ExportZip matter={m.id} files={[...new Set(docs.map((d) => d.filename))].map((name) => ({ name, papers: docs.filter((d) => d.filename === name).length }))
+                .filter((f) => f.papers > 1 || docs.length < 60)} />
+            </div>
+          )}
           {!!notes?.length && (
             <div className="card">
               <h3>Recent notes</h3>
