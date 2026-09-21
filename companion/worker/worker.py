@@ -13,6 +13,7 @@ container (Railway) when uploads need to process with the laptop closed.
 from __future__ import annotations
 
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
 import re
 import subprocess
 import sys
@@ -28,6 +29,7 @@ from corpus import ARCHIVE_ROOT, rest
 
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
 from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sections  # noqa: E402
+import volume_index  # noqa: E402
 
 # Same scan size/quality as scripts/rasterize.py, via poppler (already required for
 # pdftotext) instead of PyMuPDF, so the worker has no native-wheel/arch dependency.
@@ -114,29 +116,58 @@ def process(job: dict, ocr) -> str:
     if dup:
         return dup[0]["id"]  # same bytes already filed in this matter
 
-    doc_id = f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}"
-    with tempfile.TemporaryDirectory() as tmp:
-        pdf_path = Path(tmp) / "in.pdf"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir)
+        pdf_path = tmp / "in.pdf"
         pdf_path.write_bytes(pdf)
         n = page_count(pdf_path)
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)
-        texts: list[str] = []
-        sources: list[str | None] = []
-        for i in range(1, n + 1):
-            jpg = rasterize(pdf_path, i, Path(tmp))
-            corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", jpg.read_bytes(), "image/jpeg")
 
+        def read(i: int) -> tuple[str, str | None]:
+            jpg = rasterize(pdf_path, i, tmp)  # tmp/page-NNN.jpg, kept until filed
             text, src = layer[i - 1], "pdftotext"
             if len(text) < THIN and ocr:
                 v = ocr(jpg).strip()
                 if len(v) > len(text):  # density pick, per page
                     text, src = v, "google-vision"
-            texts.append(text)
-            sources.append(src if text else None)
-            if i % 5 == 0 or i == n:
-                rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"pages_done": i, "updated_at": now()})
+            (tmp / f"page-{i:03d}.txt").write_text(text)
+            return text, (src if text else None)
+
+        texts: list[str] = []
+        sources: list[str | None] = []
+        # 6 pages at a time: an 800-page volume took ~35 min one page at a time
+        with ThreadPoolExecutor(6) as pool:
+            for i, (text, src) in enumerate(pool.map(read, range(1, n + 1)), 1):
+                texts.append(text)
+                sources.append(src)
+                if i % 10 == 0 or i == n:
+                    rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"pages_done": i, "updated_at": now()})
+
+        # A compiled volume (petition + exhibits, appeal + proceedings below) is filed as its
+        # separate papers, named by the volume's own index. Anything doubtful: one paper, as before.
+        try:
+            parts = volume_index.split_nested(texts, [tmp / f"page-{i:03d}.jpg" for i in range(1, n + 1)])
+        except Exception as e:  # noqa: BLE001
+            print(f"  index split skipped: {e}", file=sys.stderr, flush=True)
+            parts = None
+        if parts and len(parts) > 2:
+            import split_volume  # late: split_volume imports this module
+            stages = rest("GET", "matters", f"select=stages&id=eq.{urllib.parse.quote(mid)}", prefer="")[0]["stages"]
+            # papers found inside an exhibit (its own index) sit in that exhibit's stage
+            for p, st in zip(parts, volume_index.assign_stages([p.get("parent") or p["title"] for p in parts], stages, job["stage"])):
+                p["stage"] = st
+            base, ids = int(time.time()), []
+            for k, p in enumerate(parts):
+                ids.append(split_volume.file_part(mid, {s["id"] for s in stages}, {"pdf": pdf_path, "cache": tmp}, p,
+                                                  base + k, filename=job["filename"], sources=sources))
+            print(f"  split by index into {len(ids)} papers", flush=True)
+            return ids[0]
+
+        doc_id = f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}"
+        for i in range(1, n + 1):
+            corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", (tmp / f"page-{i:03d}.jpg").read_bytes(), "image/jpeg")
 
     body, sections = sectioned(job["title"], texts)
 

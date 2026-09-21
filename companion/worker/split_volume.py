@@ -52,9 +52,14 @@ def slice_pdf(pdf: Path, pages: list[int], tmp: Path) -> bytes:
     return out.read_bytes()
 
 
-def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int) -> str:
+def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int,
+              filename: str | None = None, sources: list | None = None) -> str:
+    """One paper from a volume: its PDF slice, page scans renumbered from 1, verbatim page text.
+    `vol` = {pdf, cache}: the cache holds page-NNN.jpg/.txt per PDF page. `sources` (per PDF
+    page, 1-based list) records pdftotext vs google-vision; manifests default to Vision."""
     assert part["stage"] in stages, f"unknown stage {part['stage']}"
     pdf, cache = Path(vol["pdf"]), Path(vol["cache"])
+    filename = filename or pdf.name
     rng = [i for a, b in ranges(part) for i in range(a, b + 1)]
     with tempfile.TemporaryDirectory() as tmp:
         data = slice_pdf(pdf, rng, Path(tmp))
@@ -68,15 +73,18 @@ def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int) -> str:
         texts.append((cache / f"page-{i:03d}.txt").read_text().strip())
     body, sections = sectioned(part["title"], texts)
     span = ", ".join(f"pp. {a}-{b}" if b > a else f"p. {a}" for a, b in ranges(part))
+    src = [(sources[i - 1] if sources else "google-vision") for i in rng]
+    used = {x for x, t in zip(src, texts) if t}
     corpus.write_document({
         "id": doc_id, "matter_id": mid, "stage": part["stage"], "title": part["title"],
-        "filename": pdf.name, "source_path": f"{pdf.name}, {span}", "page_count": len(texts),
+        "filename": filename, "source_path": f"{filename}, {span}", "page_count": len(texts),
         "bytes": len(data), "sha256": sha, "pdf_path": f"{mid}/pdfs/{doc_id}.pdf",
-        "ocr_source": "google-vision", "sections": sections, "transcript": body, "sort": sort,
+        "ocr_source": used.pop() if len(used) == 1 else ("mixed" if used else "none"),
+        "sections": sections, "transcript": body, "sort": sort,
     }, [{
         "doc_id": doc_id, "page_no": k, "jpeg_path": f"{mid}/pages/{doc_id}/page-{k:03d}.jpg",
-        "text": t or None, "text_source": "google-vision" if t else None,
-    } for k, t in enumerate(texts, 1)], corpus.chunk_units([(k, k, t) for k, t in enumerate(texts, 1) if t]))
+        "text": t or None, "text_source": x if t else None,
+    } for k, (t, x) in enumerate(zip(texts, src), 1)], corpus.chunk_units([(k, k, t) for k, t in enumerate(texts, 1) if t]))
     return doc_id
 
 
