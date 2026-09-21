@@ -287,3 +287,12 @@ a.stat:hover { border-color: var(--seal); }
 .tree details[open] > summary::before { content: "−"; }
 .tree a { font-family: var(--serif); text-decoration: none; }
 .tree a:hover { text-decoration: underline; }
+
+/* ── Connect page ─────────────────────────────────────────────────────────── */
+.keyline { display: flex; gap: .6rem; align-items: center; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: .45rem .55rem; }
+.keyline code { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: .8rem; }
+.apps { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.apps .card { display: flex; flex-direction: column; gap: .5rem; }
+.apps h3 { margin: 0; }
+.steps { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: .9rem; display: grid; gap: .2rem; }
+.prompts { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr)); }

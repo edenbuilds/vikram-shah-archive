@@ -70,9 +70,13 @@ export default async function DocPage({ params, searchParams }: { params: Promis
               </li>
             ))}
           </ol>
-          <div className="row" style={{ marginTop: ".8rem", gap: ".5rem" }}>
-            {pdf && <a className="btn ghost small" style={{ flex: "0 0 auto" }} href={pdf} target="_blank" rel="noreferrer">PDF</a>}
-            <a className="btn ghost small" style={{ flex: "0 0 auto" }} href={`/m/${m.id}/d/${d.id}/transcript`}>Transcript (.md)</a>
+          <div className="row" style={{ marginTop: ".8rem", gap: ".5rem", alignItems: "center" }}>
+            <span className="subtle" style={{ flex: "0 0 auto" }}>Download</span>
+            {(["pdf", "docx", "md", "txt"] as const).map((f) => (
+              <a key={f} className="btn ghost small" style={{ flex: "0 0 auto" }} href={`/m/${m.id}/d/${d.id}/download/${f}`}>
+                {{ pdf: "PDF", docx: "Word", md: "Markdown", txt: "Text" }[f]}
+              </a>
+            ))}
           </div>
         </section>
         {printed.length > 0 && (
