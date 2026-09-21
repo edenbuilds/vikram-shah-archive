@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { draftMinutes, type Item, type Minutes } from "@/lib/minutes";
 import { answer } from "@/lib/qa";
+import { headers } from "next/headers";
+import { admin, tokenFor } from "@/lib/access";
+import { sendSignInLink } from "@/lib/signin-mail";
 import { db, requireUser } from "@/lib/supabase";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 
@@ -17,10 +20,17 @@ const must = <T,>(r: { data: T; error: { message: string } | null }) => {
 };
 
 // ── auth ────────────────────────────────────────────────────────────────────
+// No passwords: a one-click sign-in link goes to the address (and to her Telegram, if linked).
+// The reply is the same whether or not the address has access, so nobody can probe for accounts.
 export async function signIn(f: FormData) {
-  const { error } = await (await db()).auth.signInWithPassword({ email: str(f, "email"), password: String(f.get("password") ?? "") });
-  if (error) redirect(`/login?e=${encodeURIComponent(error.message)}`);
-  redirect("/");
+  const email = str(f, "email").trim().toLowerCase();
+  const { data: staff } = await admin().from("app_users").select("email").eq("email", email).maybeSingle();
+  if (staff) {
+    const h = await headers();
+    const link = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}/k/${tokenFor(email)}`;
+    await sendSignInLink(email, link);
+  }
+  redirect(`/login?sent=${encodeURIComponent(email)}`);
 }
 
 export async function signOut() {
