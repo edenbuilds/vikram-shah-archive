@@ -2,7 +2,7 @@ import { after } from "next/server";
 import { admin, memberMatters, tokenFor } from "@/lib/access";
 import { runAgent } from "@/lib/agent";
 import { resolveScope } from "@/lib/scope";
-import { chatUser, esc, hookSecret, say, tg } from "@/lib/telegram";
+import { chatUser, esc, hookSecret, linkChat, say, tg } from "@/lib/telegram";
 
 export const maxDuration = 300;
 
@@ -19,9 +19,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ secret:
   const msg = u.message ?? u.callback_query?.message;
   const chat = msg?.chat?.id;
   if (!chat) return Response.json({ ok: true });
-  const email = chatUser(chat);
+  // /start <code> from a personal t.me link connects this chat to that workspace account
+  const start = String(u.message?.text ?? "").match(/^\/start\s+(c[0-9a-f]{24})$/);
+  if (start) {
+    const who = await linkChat(chat, start[1]);
+    await say(chat, who ? `Connected to Case Companion as ${who}. Send /help to see what I can do.` : "That link isn't valid. Open Connect AI in your workspace and use the Telegram link there.");
+    console.log(`telegram link ${chat} -> ${who ?? "invalid"}`);
+    return Response.json({ ok: true });
+  }
+  const email = await chatUser(chat);
+  console.log(`telegram update chat=${chat} user=${email ?? "unlinked"} kind=${u.callback_query ? "button" : u.message?.document ? "document" : u.message?.photo ? "photo" : "text"}`);
   if (!email) {
-    await say(chat, "This is a private assistant. Ask the workspace owner for access.");
+    await say(chat, "This is a private assistant. If you have access, open Connect AI in your workspace and tap the Telegram link to connect this chat.");
     return Response.json({ ok: true });
   }
   after(() => handle(u, chat, email, origin).catch((e) => say(chat, `Something went wrong: ${esc(String(e?.message ?? e))}`)));

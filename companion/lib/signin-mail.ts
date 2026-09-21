@@ -1,4 +1,4 @@
-import { say } from "@/lib/telegram";
+import { linkedChats, say } from "@/lib/telegram";
 
 // The sign-in email, in the same paper-toned design as the "papers ready" mails.
 export async function sendSignInLink(email: string, link: string) {
@@ -21,9 +21,8 @@ export async function sendSignInLink(email: string, link: string) {
       body: JSON.stringify({ from: "Case Companion <companion@edenbuilds.me>", to: [email], subject: "Your Case Companion sign-in link", html }),
     }));
   }
-  for (const pair of (process.env.TELEGRAM_USERS ?? "").split(",")) {
-    const [chat, e] = pair.split("=").map((x) => x.trim());
-    if (chat && e?.toLowerCase() === email) sends.push(say(chat, `Your sign-in link (no password):\n${link}`));
+  for (const [chat, e] of Object.entries(await linkedChats())) {
+    if (e === email) sends.push(say(chat, `Your sign-in link (no password):\n${link}`));
   }
   await Promise.allSettled(sends);
 }

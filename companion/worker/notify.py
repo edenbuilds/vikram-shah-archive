@@ -22,10 +22,19 @@ def _post(url: str, body: dict, headers: dict) -> None:
     urllib.request.urlopen(req, timeout=30, context=corpus.TLS).read()
 
 
+def chats() -> list[str]:
+    """TELEGRAM_USERS plus chats linked via a personal t.me link (stored by the bot)."""
+    ids = [p.split("=")[0].strip() for p in os.environ.get("TELEGRAM_USERS", "").split(",") if p.strip()]
+    try:
+        ids += list(json.loads(corpus.storage_get("_system/telegram-users.json")).keys())
+    except Exception:  # noqa: BLE001  no linked chats yet
+        pass
+    return list(dict.fromkeys(ids))
+
+
 def telegram(text: str) -> None:
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    for pair in filter(None, os.environ.get("TELEGRAM_USERS", "").split(",")):
-        chat = pair.split("=")[0].strip()
+    for chat in chats():
         try:
             _post(f"https://api.telegram.org/bot{token}/sendMessage", {"chat_id": chat, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}, {})
         except Exception as e:  # noqa: BLE001

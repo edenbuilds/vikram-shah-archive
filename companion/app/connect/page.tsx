@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { tokenFor } from "@/lib/access";
+import { startCode } from "@/lib/telegram";
 import { PROMPTS } from "@/lib/mcp";
 import { requireUser } from "@/lib/supabase";
 import CopyButton from "../CopyButton";
@@ -29,6 +30,8 @@ export default async function Connect() {
     { name: "VS Code", open: [vscode, "Add to VS Code"], steps: ["One click, then Install"] },
     { name: "Claude Code", copy: [`claude mcp add --transport http --scope user case-companion ${url}`, "Copy command"], steps: ["Paste in Terminal"] },
     { name: "Codex (CLI and app)", copy: [`codex mcp add case-companion --url ${url}`, "Copy command"], steps: ["Paste in Terminal; the Codex app uses the same setting"] },
+    { name: "Telegram", open: [`https://t.me/arya_case_archivebot?start=${startCode(user.email!)}`, "Connect Telegram"],
+      steps: ["Tap, then Start", "Send files to file them; ask questions for answers with receipts"] },
     { name: "Anything else", copy: [json, "Copy config"], steps: ["Paste into the app's MCP settings (JSON)"] },
   ];
 
