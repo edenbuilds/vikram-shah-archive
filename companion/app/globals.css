@@ -230,3 +230,36 @@ a.stat:hover { border-color: var(--seal); }
 .queue li:last-child { border-bottom: 0; }
 .bar { height: 4px; border-radius: 99px; background: var(--paper-deep); overflow: hidden; margin-top: .35rem; width: 10rem; max-width: 100%; }
 .bar i { display: block; height: 100%; background: var(--warn); transition: width .4s; }
+
+/* ── Landing (signed out) ─────────────────────────────────────────────────── */
+.land-hero { display: grid; gap: 2.5rem; align-items: center; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); padding-top: clamp(2.5rem, 9vh, 6rem); padding-bottom: 3rem; }
+.land-hero h1 { font-size: clamp(2.2rem, 5.2vw, 3.6rem); line-height: 1.08; letter-spacing: -.02em; margin-bottom: 1rem; }
+.lede { font-size: 1.12rem; color: var(--muted); max-width: 34rem; margin: 0 0 1.6rem; }
+.split-art { display: grid; grid-template-columns: auto 3rem 1fr; align-items: center; gap: .9rem; }
+.split-art .vol { position: relative; width: 7.5rem; height: 10rem; border-radius: 6px; background: var(--seal); color: var(--paper); box-shadow: var(--shadow); display: grid; place-items: center; font-family: var(--serif); font-size: .95rem; }
+.split-art .vol i { position: absolute; left: 100%; top: 6px; bottom: 6px; width: 3px; background: var(--paper-edge); border-right: 1px solid var(--rule-strong); }
+.split-art .vol i:nth-child(3) { margin-left: 3px; } .split-art .vol i:nth-child(4) { margin-left: 6px; } .split-art .vol i:nth-child(5) { margin-left: 9px; } .split-art .vol i:nth-child(6) { margin-left: 12px; }
+.split-art .arrow { height: 1px; background: var(--rule-strong); position: relative; margin-left: 12px; }
+.split-art .arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4.5px solid transparent; border-left: 7px solid var(--rule-strong); }
+.split-art ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.split-art li { background: var(--white); border: 1px solid var(--rule); border-left: 3px solid var(--seal); border-radius: 6px; padding: .45rem .8rem; font-family: var(--serif); font-size: .92rem; box-shadow: var(--shadow-sm); }
+.split-art li:nth-child(even) { margin-left: .9rem; }
+.land-points { display: grid; gap: 1.5rem 2.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); border-top: 1px solid var(--rule); padding-top: 2.25rem; }
+.land-points h2 { font-size: 1.2rem; }
+.land-points p { color: var(--muted); margin: 0; }
+.land-foot { padding-top: 3rem; padding-bottom: 2.5rem; }
+@media (max-width: 760px) {
+  .land-hero { grid-template-columns: 1fr; }
+  .split-art { grid-template-columns: auto 2rem 1fr; }
+  .split-art .vol { width: 5.5rem; height: 7.5rem; font-size: .8rem; }
+}
+
+/* ── Workspace: coming up ─────────────────────────────────────────────────── */
+.upcoming { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+.upcoming a { display: flex; gap: .9rem; align-items: center; text-decoration: none; background: var(--white); border: 1px solid var(--rule); border-radius: var(--radius); padding: .7rem .9rem; box-shadow: var(--shadow-sm); }
+.upcoming a:hover { border-color: color-mix(in oklab, var(--seal) 45%, var(--rule)); }
+.upcoming .day { text-align: center; min-width: 3.1rem; border-right: 1px solid var(--rule); padding-right: .8rem; }
+.upcoming .day b { display: block; font-family: var(--serif); font-size: 1.45rem; font-weight: 400; line-height: 1; color: var(--seal); }
+.upcoming .day span { font-size: .75rem; color: var(--muted); }
+.upcoming .what { min-width: 0; }
+.upcoming .what div { font-family: var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

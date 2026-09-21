@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Libre_Baskerville, Source_Sans_3 } from "next/font/google";
 import { signOut } from "./actions";
+import { db } from "@/lib/supabase";
 import "./globals.css";
 
 const serif = Libre_Baskerville({ subsets: ["latin"], weight: ["400", "700"], style: ["normal", "italic"], variable: "--serif-font" });
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { data } = await (await db()).auth.getUser();
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
@@ -25,9 +27,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <small>Clerk of the papers · private</small>
             </span>
           </a>
-          <form action={signOut}>
-            <button className="link">Sign out</button>
-          </form>
+          {data.user ? (
+            <form action={signOut}>
+              <button className="link">Sign out</button>
+            </form>
+          ) : (
+            <a href="/login" className="btn small ghost">Sign in</a>
+          )}
         </header>
         {children}
       </body>

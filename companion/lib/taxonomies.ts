@@ -40,6 +40,27 @@ export const TAXONOMIES: Record<string, Stage[]> = {
     s("documents", "6. Documents relied on"),
     s("other", "7. Other papers"),
   ],
+  writ: [
+    s("chronology", "0. Chronology"),
+    s("notices", "1. Court notices & service"),
+    s("petition", "2. Petition & synopsis"),
+    s("exhibits", "3. Exhibits to the petition"),
+    s("replies", "4. Replies & rejoinders"),
+    s("applications", "5. Applications"),
+    s("orders", "6. Orders & judgments"),
+    s("correspondence", "7. Correspondence"),
+    s("other", "8. Other papers"),
+  ],
+  "rera-appeal": [
+    s("chronology", "0. Chronology"),
+    s("appeal", "1. Memo of appeal & synopsis"),
+    s("impugned", "2. Impugned order"),
+    s("complaint", "3. Complaint & proceedings below"),
+    s("replies", "4. Replies"),
+    s("applications", "5. Applications"),
+    s("orders", "6. Orders & roznama"),
+    s("other", "7. Other papers"),
+  ],
 };
 
 export const DEFAULT_DISCLAIMER =
