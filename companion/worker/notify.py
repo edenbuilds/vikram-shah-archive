@@ -102,3 +102,33 @@ def job_failed(job: dict, error: str) -> None:
         f'<p style="margin:0;padding:12px 14px;background:#f3e3de;border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6f2424">{html.escape(error[:800])}</p>',
         (f"{ORIGIN}/m/{mid}/upload", "Open uploads"),
         "Uploading the same file again is safe: papers already filed from it are updated, not duplicated."))
+
+
+def ready_digest(files: list[tuple[str, str]]) -> None:
+    """One "your papers are ready" message covering several source files: (matter_id, filename)."""
+    blocks, tg_lines, total_p, total_d = [], [], 0, 0
+    for mid in dict.fromkeys(m for m, _ in files):
+        m = rest("GET", "matters", f"select=title,cause&id=eq.{urllib.parse.quote(mid)}", prefer="")[0]
+        rows = ""
+        for _, fn in (x for x in files if x[0] == mid):
+            docs = rest("GET", "documents", f"select=id,page_count&matter_id=eq.{urllib.parse.quote(mid)}&filename=eq.{urllib.parse.quote(fn)}", prefer="")
+            p = sum(d["page_count"] for d in docs)
+            total_p += p; total_d += len(docs)
+            rows += (f'<tr><td style="padding:8px 0;border-bottom:1px solid #efe7da;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#1c1612">{html.escape(fn)}'
+                     f'<div style="font-size:12px;color:#8a8073;margin-top:2px">{len(docs)} paper{"s" if len(docs) != 1 else ""} · {p} pages</div></td></tr>')
+            tg_lines.append(f"• {html.escape(fn)}: {len(docs)} paper{'s' if len(docs) != 1 else ''}, {p} pages")
+        blocks.append(f'<div style="margin:0 0 22px"><a href="{ORIGIN}/m/{mid}/map" style="font-family:Georgia,serif;font-size:17px;color:#8b2e2e;text-decoration:none">{html.escape(m["title"])}</a>'
+                      f'<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#8a8073;margin:3px 0 6px">{html.escape(m["cause"] or "")}</div>'
+                      f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></div>')
+    lede = (f"{len(files)} files have been read page by page and filed as <b style=\"color:#1c1612\">{total_d} separate papers ({total_p:,} pages)</b>, "
+            "each named as its volume's index lists it, with the original scan beside the text.")
+    email(f"Your papers are ready: {total_d} papers, {total_p:,} pages", page(
+        "Your papers are ready", lede, "".join(blocks), (f"{ORIGIN}/", "Open your workspace"),
+        "Ask the papers anything on the site, in Telegram (@arya_case_archivebot) or from ChatGPT / Claude via Connect AI. "
+        "Answers come only with exact quotes and page links; anything not in the papers is reported as not found.<br>Sent by Case Companion to the workspace owners."))
+    telegram("<b>Your papers are ready</b>\n" + "\n".join(tg_lines) +
+             f"\n\n{total_d} papers, {total_p:,} pages in all.\n\nSend me a PDF or a photo any time and I'll file it. Ask me a question in plain words and I'll answer only from the papers, with page links.\n/matters · /status · /link\n\n{ORIGIN}/")
+
+
+if __name__ == "__main__" and sys.argv[1:2] == ["digest"]:
+    ready_digest([tuple(a.split("::", 1)) for a in sys.argv[2:]])
