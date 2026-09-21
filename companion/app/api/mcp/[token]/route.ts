@@ -2,7 +2,7 @@ import { createMcpHandler } from "mcp-handler";
 import { emailFrom, memberMatters } from "@/lib/access";
 import { register, RULES } from "@/lib/mcp";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 // One URL per advocate: /api/mcp/<personal token>. Every client (ChatGPT, Claude, Codex,
 // Cursor, VS Code) accepts a plain URL, so the token in the path is the whole install.

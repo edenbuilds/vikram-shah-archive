@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { admin } from "@/lib/access";
-import { answer } from "@/lib/qa";
+import { runAgent } from "@/lib/agent";
 import { isSpan, norm } from "@/lib/citations";
 import { readme } from "@/lib/agent-readme";
 
@@ -127,7 +127,8 @@ export function register(server: McpServer, ctx: Ctx) {
   }, async ({ question, matter_id }) => {
     const ids = scope(matter_id);
     if (!ids.length) return matter_id ? noMatter(matter_id) : text("No matters in this workspace yet.");
-    const r = await answer(db, question, ids);
+    // same agent as the Ask button and Telegram: searches, reads, then every quote is checked
+    const r = await runAgent(db, question, { matterIds: ids, docIds: null }, [], () => {});
     if (r.status !== "answered") return text(`Not found in the papers on file.${r.rejected.length ? ` (${r.rejected.length} draft statement(s) were withheld because their quotes did not match the papers.)` : ""}`);
     const docs = new Map<string, Doc>();
     for (const c of r.claims.flatMap((c) => c.citations)) if (!docs.has(c.doc_id)) { const d = await doc(c.doc_id); if (d) docs.set(d.id, d); }
