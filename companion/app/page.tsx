@@ -1,20 +1,24 @@
 import Link from "next/link";
 import { fmtDate } from "@/lib/data";
-import { requireUser } from "@/lib/supabase";
+import { db } from "@/lib/supabase";
 import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
 import { createMatter } from "./actions";
+import Landing from "./Landing";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
 export default async function Workspace() {
-  const { supabase, user } = await requireUser();
-  const today = new Date().toISOString().slice(0, 10);
+  const supabase = await db();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return <Landing />;
+  const user = auth.user;
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
   const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }] = await Promise.all([
     supabase.from("matters").select("id, title, kind, forum, cause, stages").order("created_at"),
     supabase.from("app_users").select("email").maybeSingle(),
     supabase.from("documents").select("matter_id, stage, page_count"),
     supabase.from("annotations").select("matter_id"),
-    supabase.from("hearings").select("matter_id, date").eq("status", "upcoming").gte("date", today).order("date"),
+    supabase.from("hearings").select("id, matter_id, date, forum, purpose").eq("status", "upcoming").gte("date", today).order("date"),
   ]);
   const stat = (id: string) => {
     const d = (docs ?? []).filter((x) => x.matter_id === id);
@@ -34,6 +38,27 @@ export default async function Workspace() {
         <h1>Your matters</h1>
         <p className="muted" style={{ margin: 0 }}>Every paper on file, searchable to the page. Private to each matter&apos;s members. Signed in as {user.email}.</p>
       </div>
+
+      {!!hearings?.length && (
+        <section className="stack" style={{ gap: ".6rem" }}>
+          <h3 style={{ margin: 0 }}>Coming up</h3>
+          <div className="upcoming">
+            {hearings.slice(0, 6).map((h) => {
+              const d = new Date(h.date + "T00:00:00");
+              const m = (matters as M[] | null)?.find((x) => x.id === h.matter_id);
+              return (
+                <Link key={h.id} href={`/m/${h.matter_id}/hearings`}>
+                  <span className="day"><b>{d.getDate()}</b><span>{d.toLocaleDateString("en-IN", { month: "short" })}</span></span>
+                  <span className="what">
+                    <div>{m?.title ?? h.matter_id}</div>
+                    <span className="subtle">{[h.purpose, h.forum].filter(Boolean).join(" · ")}</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {!matters?.length ? (
         <div className="empty">

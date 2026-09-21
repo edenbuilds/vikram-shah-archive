@@ -43,8 +43,21 @@ Create the advocate's login in the Supabase dashboard (Auth → Users → Add us
 ```bash
 python3 worker/load_archive.py --owner advocate@example.com   # mirror the archive matter
 npm run dev                                                   # http://localhost:3060
-npm run worker                                                # processes uploads (needs pdftotext, PyMuPDF, gcloud ADC)
+npm run worker                                                # processes uploads (needs poppler, gcloud ADC)
 ```
+
+Compiled court volumes (a petition with all its exhibits in one 800-page PDF) are filed as
+separate papers instead: OCR the volume once, write a manifest mapping the volume's own index to
+PDF page ranges, validate, then file.
+
+```bash
+python3 worker/ocr_volume.py volume.pdf cache/vol1 6           # Google Vision, cached, resumable
+python3 worker/split_volume.py manifest.json --check           # every page in exactly one paper
+python3 worker/split_volume.py manifest.json                   # create matter, file each paper
+```
+
+A manifest is `{matter: {id, title, kind, forum, cause, stages, disclaimer, people}, volumes:
+[{pdf, cache, parts: [{title, stage, from, to} | {title, stage, ranges: [[a, b], ...]}]}]}`.
 
 ## Checks
 

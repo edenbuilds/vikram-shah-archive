@@ -19,7 +19,8 @@ export async function middleware(req: NextRequest) {
   );
   const { data } = await supabase.auth.getUser();
   const isLogin = req.nextUrl.pathname === "/login";
-  if (!data.user && !isLogin) return NextResponse.redirect(new URL("/login", req.url));
+  const isLanding = req.nextUrl.pathname === "/"; // signed-out visitors get the landing page
+  if (!data.user && !isLogin && !isLanding) return NextResponse.redirect(new URL("/login", req.url));
   if (data.user && isLogin) return NextResponse.redirect(new URL("/", req.url));
   return res;
 }
