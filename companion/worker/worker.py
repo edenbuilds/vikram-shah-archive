@@ -146,6 +146,8 @@ def process(job: dict, ocr) -> str:
     mid = job["matter_id"]
     original = fetch_upload(job["storage_path"])
     sha = hashlib.sha256(original).hexdigest()
+    if len(original) <= STORE_MAX:  # kept as uploaded, for "Original file" exports
+        corpus.storage_put(f"{mid}/originals/{job['filename']}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
     dup = rest("GET", "documents", f"select=id&matter_id=eq.{urllib.parse.quote(mid)}&sha256=eq.{sha}", prefer="")
     if dup:
         return dup[0]["id"]  # same bytes already filed in this matter

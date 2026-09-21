@@ -373,3 +373,10 @@ label:has(> select) { overflow: hidden; padding: 4px; margin: -4px; }
   .stat { display: flex; align-items: baseline; gap: .45rem; }
   .stat b { font-size: 1.1rem; white-space: nowrap; }
 }
+
+/* ── Download panel ───────────────────────────────────────────────────────── */
+.formats { border: 1px solid var(--rule); border-radius: 8px; padding: .4rem .7rem .6rem; margin: 0; display: grid; gap: .35rem; }
+.formats legend { font-weight: 600; font-size: .85rem; padding: 0 .3rem; }
+.formats label { display: flex; gap: .5rem; align-items: center; font-weight: 400; font-size: .9rem; }
+.formats input { width: auto; }
+.export .btn { justify-self: start; }

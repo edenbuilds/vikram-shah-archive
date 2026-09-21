@@ -32,12 +32,12 @@ def telegram(text: str) -> None:
             print(f"  telegram notify failed: {e}", file=sys.stderr, flush=True)
 
 
-def email(subject: str, body_html: str) -> None:
+def email(subject: str, body_html: str, attachments: list[dict] | None = None) -> None:
     to = [e.strip() for e in os.environ.get("NOTIFY_EMAILS", "").split(",") if e.strip()]
     if not to or not os.environ.get("RESEND_API_KEY"):
         return
     try:
-        _post("https://api.resend.com/emails", {"from": FROM, "to": to, "subject": subject, "html": body_html},
+        _post("https://api.resend.com/emails", {"from": FROM, "to": to, "subject": subject, "html": body_html, **({"attachments": attachments} if attachments else {})},
               {"Authorization": f"Bearer {os.environ['RESEND_API_KEY']}", "User-Agent": "case-companion-worker"})
     except Exception as e:  # noqa: BLE001
         print(f"  email notify failed: {e}", file=sys.stderr, flush=True)

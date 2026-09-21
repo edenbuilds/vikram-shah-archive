@@ -16,11 +16,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ matter: 
   const list = docs ?? [];
   const urls = await fileUrls(supabase, m, list.map((d) => d.pdf_path ?? ""));
   const stage = new Map(m.stages.map((s, i) => [s.id, { n: i, title: s.title }]));
+  // the files exactly as uploaded
+  const { data: objs } = await supabase.storage.from("companion").list(`${m.id}/originals`, { limit: 1000 });
+  const origNames = (objs ?? []).map((o) => o.name).filter((n) => !only || n === only);
+  const { data: signed } = origNames.length
+    ? await supabase.storage.from("companion").createSignedUrls(origNames.map((n) => `${m.id}/originals/${n}`), 1800)
+    : { data: [] };
   return NextResponse.json({
     matter: m.title,
+    originals: origNames.map((name, i) => ({ name, url: signed?.[i]?.signedUrl ?? null })).filter((o) => o.url),
     papers: list.map((d, i) => ({
       id: d.id, title: d.title, stage: stage.get(d.stage)?.title ?? d.stage, stageOrder: stage.get(d.stage)?.n ?? 99, order: i + 1,
-      pages: d.page_count, source: d.source_path, sha256: d.sha256, pdf: urls[i] || null, md: `/m/${m.id}/d/${d.id}/download/md`,
+      pages: d.page_count, source: d.source_path, filename: d.filename, sha256: d.sha256, pdf: urls[i] || null,
+      md: `/m/${m.id}/d/${d.id}/download/md`, docx: `/m/${m.id}/d/${d.id}/download/docx`,
     })),
   });
 }
