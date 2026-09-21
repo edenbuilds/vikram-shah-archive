@@ -29,6 +29,7 @@ from corpus import ARCHIVE_ROOT, rest
 
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
 from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sections  # noqa: E402
+import notify  # noqa: E402
 import volume_index  # noqa: E402
 
 # Same scan size/quality as scripts/rasterize.py, via poppler (already required for
@@ -276,9 +277,11 @@ def main() -> None:
             doc_id = process(job, ocr)
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "done", "doc_id": doc_id, "error": None, "updated_at": now()})
             print(f"  -> {doc_id}", flush=True)
+            notify.job_done({**job, "doc_id": doc_id})
         except (Exception, SystemExit) as e:  # noqa: BLE001  job-level failure is recorded, worker keeps going
             traceback.print_exc()
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "failed", "error": str(e)[:1000], "updated_at": now()})
+            notify.job_failed(job, str(e))
 
 
 if __name__ == "__main__":

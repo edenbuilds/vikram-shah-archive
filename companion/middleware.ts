@@ -5,7 +5,7 @@ export async function middleware(req: NextRequest) {
   // Token-authorised routes (personal sign-in links, the MCP server, the skill file) skip the
   // session check entirely, so MCP calls don't pay for a Supabase round trip.
   const p0 = req.nextUrl.pathname;
-  if (p0.startsWith("/k/") || p0.startsWith("/api/mcp/") || p0.startsWith("/skill/")) return NextResponse.next();
+  if (p0.startsWith("/k/") || p0.startsWith("/api/mcp/") || p0.startsWith("/api/telegram/") || p0.startsWith("/skill/")) return NextResponse.next();
   let res = NextResponse.next({ request: req });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
