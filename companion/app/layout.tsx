@@ -28,9 +28,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </span>
           </a>
           {data.user ? (
-            <form action={signOut}>
-              <button className="link">Sign out</button>
-            </form>
+            <div className="row" style={{ flex: "0 0 auto", gap: "1rem", alignItems: "center" }}>
+              <a href="/connect" style={{ flex: "0 0 auto" }}>Connect AI</a>
+              <form action={signOut} style={{ flex: "0 0 auto" }}>
+                <button className="link">Sign out</button>
+              </form>
+            </div>
           ) : (
             <a href="/login" className="btn small ghost">Sign in</a>
           )}

@@ -72,13 +72,30 @@ def rpc(fn: str, args: dict):
                 {**_auth(), "Content-Type": "application/json"})
 
 
+def _retry(fn, tries: int = 4):
+    """Storage calls under parallel load occasionally drop (seen 2026-09-21: 1 scan in ~2,100
+    missing after a split). Retry with backoff; a real 4xx other than 429 is raised at once."""
+    for k in range(tries):
+        try:
+            return fn()
+        except Exception as e:  # noqa: BLE001
+            msg = str(e)
+            if k == tries - 1 or (re.search(r"-> 4\d\d", msg) and "-> 429" not in msg and "-> 408" not in msg):
+                raise
+            time.sleep(1.5 * (k + 1))
+
+
 def storage_put(path: str, data: bytes, content_type: str) -> None:
+    return _retry(lambda: _storage_put(path, data, content_type))
+
+
+def _storage_put(path: str, data: bytes, content_type: str) -> None:
     _req("POST", f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/{urllib.parse.quote(path)}", data,
          {**_auth(), "Content-Type": content_type, "x-upsert": "true"}, timeout=300)
 
 
 def storage_get(path: str) -> bytes:
-    return _req("GET", f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/{urllib.parse.quote(path)}", None, _auth(), timeout=300)
+    return _retry(lambda: _req("GET", f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/{urllib.parse.quote(path)}", None, _auth(), timeout=300))
 
 
 # ── Chunking ────────────────────────────────────────────────────────────────

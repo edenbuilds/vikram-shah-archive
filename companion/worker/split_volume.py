@@ -65,7 +65,12 @@ def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int,
         data = slice_pdf(pdf, rng, Path(tmp))
     sha = hashlib.sha256(data).hexdigest()
     doc_id = f"{slug_tokens(part['title'])[:60].strip('-')}-{sha[:8]}"
-    corpus.storage_put(f"{mid}/pdfs/{doc_id}.pdf", data, "application/pdf")
+    pdf_path: str | None = f"{mid}/pdfs/{doc_id}.pdf"
+    try:
+        corpus.storage_put(pdf_path, data, "application/pdf")
+    except RuntimeError as e:  # a single paper over the 50 MB storage cap: text and scans still filed
+        print(f"  PDF not stored for {part['title']}: {e}", flush=True)
+        pdf_path = None
 
     texts = []
     for k, i in enumerate(rng, 1):
@@ -78,7 +83,7 @@ def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int,
     corpus.write_document({
         "id": doc_id, "matter_id": mid, "stage": part["stage"], "title": part["title"],
         "filename": filename, "source_path": f"{filename}, {span}", "page_count": len(texts),
-        "bytes": len(data), "sha256": sha, "pdf_path": f"{mid}/pdfs/{doc_id}.pdf",
+        "bytes": len(data), "sha256": sha, "pdf_path": pdf_path,
         "ocr_source": used.pop() if len(used) == 1 else ("mixed" if used else "none"),
         "sections": sections, "transcript": body, "sort": sort,
     }, [{

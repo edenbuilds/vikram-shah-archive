@@ -29,6 +29,7 @@ from corpus import ARCHIVE_ROOT, rest
 
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
 from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sections  # noqa: E402
+import notify  # noqa: E402
 import volume_index  # noqa: E402
 
 # Same scan size/quality as scripts/rasterize.py, via poppler (already required for
@@ -108,16 +109,50 @@ def rasterize(pdf: Path, i: int, dest: Path) -> Path:
     return stem.with_suffix(".jpg")
 
 
+STORE_MAX = 48 * 1024 * 1024  # storage refuses objects over 50 MB on this plan
+
+
+def fetch_upload(path: str) -> bytes:
+    """The uploaded file, rejoined when the browser sent it in 45 MB pieces (<path>.partNNN)."""
+    try:
+        return corpus.storage_get(path)
+    except RuntimeError as whole:
+        parts, k = [], 0
+        while True:
+            try:
+                parts.append(corpus.storage_get(f"{path}.part{k:03d}"))
+            except RuntimeError:
+                break
+            k += 1
+        if not parts:
+            raise whole
+        return b"".join(parts)
+
+
+def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
+    """PDFs as they are; photos of pages (JPG, PNG, HEIC, TIFF) converted with macOS sips."""
+    if data[:5] == b"%PDF-":
+        return data
+    ext = Path(filename).suffix.lower()
+    if ext in {".jpg", ".jpeg", ".png", ".heic", ".tif", ".tiff"}:
+        src, out = tmp / f"in{ext}", tmp / "converted.pdf"
+        src.write_bytes(data)
+        subprocess.run(["sips", "-s", "format", "pdf", str(src), "--out", str(out)], check=True, capture_output=True)
+        return out.read_bytes()
+    raise RuntimeError(f"Can't read {ext or 'this'} files yet. Save it as a PDF and upload that.")
+
+
 def process(job: dict, ocr) -> str:
     mid = job["matter_id"]
-    pdf = corpus.storage_get(job["storage_path"])
-    sha = hashlib.sha256(pdf).hexdigest()
+    original = fetch_upload(job["storage_path"])
+    sha = hashlib.sha256(original).hexdigest()
     dup = rest("GET", "documents", f"select=id&matter_id=eq.{urllib.parse.quote(mid)}&sha256=eq.{sha}", prefer="")
     if dup:
         return dup[0]["id"]  # same bytes already filed in this matter
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir)
+        pdf = as_pdf(original, tmp, job["filename"])
         pdf_path = tmp / "in.pdf"
         pdf_path.write_bytes(pdf)
         n = page_count(pdf_path)
@@ -165,7 +200,23 @@ def process(job: dict, ocr) -> str:
             print(f"  split by index into {len(ids)} papers", flush=True)
             return ids[0]
 
+        if len(pdf) > STORE_MAX:
+            # no index to split by, and too big to store as one object: file it in page ranges
+            import split_volume  # late: split_volume imports this module
+            k = -(-len(pdf) // STORE_MAX) + 1
+            step = -(-n // k)
+            stages = {s["id"] for s in rest("GET", "matters", f"select=stages&id=eq.{urllib.parse.quote(mid)}", prefer="")[0]["stages"]}
+            ids = [split_volume.file_part(mid, stages, {"pdf": pdf_path, "cache": tmp},
+                                          {"title": f"{job['title']} (part {j + 1} of {k}, pp. {a}-{min(a + step - 1, n)})", "stage": job["stage"],
+                                           "from": a, "to": min(a + step - 1, n)}, int(time.time()) + j, filename=job["filename"], sources=sources)
+                   for j, a in enumerate(range(1, n + 1, step))]
+            return ids[0]
+
         doc_id = f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}"
+        pdf_store = job["storage_path"]
+        if pdf is not original or len(original) > 45 * 1024 * 1024:
+            pdf_store = f"{mid}/pdfs/{doc_id}.pdf"  # converted or rejoined: store the PDF itself
+            corpus.storage_put(pdf_store, pdf, "application/pdf")
         for i in range(1, n + 1):
             corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", (tmp / f"page-{i:03d}.jpg").read_bytes(), "image/jpeg")
 
@@ -175,7 +226,7 @@ def process(job: dict, ocr) -> str:
     corpus.write_document({
         "id": doc_id, "matter_id": mid, "stage": job["stage"], "title": job["title"],
         "filename": job["filename"], "source_path": job["filename"], "page_count": n,
-        "bytes": len(pdf), "sha256": sha, "pdf_path": job["storage_path"],
+        "bytes": len(pdf), "sha256": sha, "pdf_path": pdf_store,
         "ocr_source": used.pop() if len(used) == 1 else ("mixed" if used else "none"),
         "sections": sections, "transcript": body,
         "sort": int(time.time()),
@@ -226,9 +277,11 @@ def main() -> None:
             doc_id = process(job, ocr)
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "done", "doc_id": doc_id, "error": None, "updated_at": now()})
             print(f"  -> {doc_id}", flush=True)
+            notify.job_done({**job, "doc_id": doc_id})
         except (Exception, SystemExit) as e:  # noqa: BLE001  job-level failure is recorded, worker keeps going
             traceback.print_exc()
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "failed", "error": str(e)[:1000], "updated_at": now()})
+            notify.job_failed(job, str(e))
 
 
 if __name__ == "__main__":

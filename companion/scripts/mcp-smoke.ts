@@ -1,0 +1,35 @@
+// End-to-end MCP check with a real client: node --env-file=.env.local --experimental-strip-types scripts/mcp-smoke.ts <base-url> <email>
+import { createHmac } from "node:crypto";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+
+const [base, email] = process.argv.slice(2);
+const e = email.toLowerCase();
+const token = `${Buffer.from(e).toString("base64url")}.${createHmac("sha256", process.env.COMPANION_LINK_SECRET!).update(`v1:${e}`).digest("base64url")}`;
+const client = new Client({ name: "smoke", version: "1" });
+await client.connect(new StreamableHTTPClientTransport(new URL(`${base}/api/mcp/${token}`)));
+const say = (label: string, r: any) => console.log(`\n=== ${label}${r.isError ? " (isError)" : ""}\n${(r.content?.[0]?.text ?? JSON.stringify(r)).slice(0, 900)}`);
+console.log("instructions:", (client.getInstructions() ?? "").slice(0, 80));
+console.log("tools:", (await client.listTools()).tools.map((t) => t.name).join(", "));
+console.log("prompts:", (await client.listPrompts()).prompts.map((p) => p.name).join(", "));
+const call = (name: string, args: Record<string, unknown> = {}) => client.callTool({ name, arguments: args });
+say("list_matters", await call("list_matters"));
+say("list_papers", await call("list_papers", { matter_id: "shetty-v-oberoi" }));
+say("list_papers (not hers)", await call("list_papers", { matter_id: "nope" }));
+const docId = "complaint-exhibit-d-agreement-for-sale-dated-19-08-2015-b7409c27";
+say("get_paper", await call("get_paper", { doc_id: docId }));
+say("read_pages", await call("read_pages", { doc_id: docId, from_page: 1, to_page: 1 }));
+say("search_papers", await call("search_papers", { query: "withdrawal of the appeal review order", matter_id: "shetty-v-oberoi" }));
+say("ask_papers", await call("ask_papers", { question: "Why do the appellants want to withdraw the appeal?", matter_id: "shetty-v-oberoi" }));
+say("ask_papers (off corpus)", await call("ask_papers", { question: "What is the appellant's blood group?", matter_id: "shetty-v-oberoi" }));
+say("verify_quote true", await call("verify_quote", { doc_id: docId, quote: "PREMISES OWNERSHIP AGREEMENT", page: 1 }));
+say("verify_quote false", await call("verify_quote", { doc_id: docId, quote: "The developer admitted the delay was deliberate" }));
+say("get_hearings", await call("get_hearings", { matter_id: "lade-v-state-wp-1575-2026" }));
+say("get_notes", await call("get_notes", { matter_id: "shetty-v-oberoi" }));
+say("add_note preview", await call("add_note", { doc_id: docId, page: 1, note: "smoke test note", quote: "PREMISES OWNERSHIP AGREEMENT" }));
+say("add_note bad quote", await call("add_note", { doc_id: docId, page: 1, note: "x", quote: "words that are not there at all" }));
+say("search (ChatGPT)", await call("search", { query: "notice returnable date" }));
+say("fetch (ChatGPT)", await call("fetch", { id: `${docId}#p1` }));
+const pr = await client.getPrompt({ name: "hearing_brief", arguments: { matter: "lade-v-state-wp-1575-2026" } });
+console.log("\n=== prompt hearing_brief\n", (pr.messages[0].content as any).text.slice(0, 200));
+await client.close();
