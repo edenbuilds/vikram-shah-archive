@@ -26,6 +26,7 @@ from pathlib import Path
 
 import corpus
 
+AFTER = "Papers after the index"
 INDEX_WORD = re.compile(r"\bI\s?N\s?D\s?E\s?X\b")
 
 
@@ -111,7 +112,10 @@ def proven(page_text: str, evidence: str) -> bool:
     """The model's evidence must really be on that page (not invented), and the page must not be
     a translation page (those follow the exhibit they translate). Many first pages carry no stamp,
     only a court heading, so the evidence itself need not be a number."""
-    zone = page_text[:300] + " " + page_text[-80:]
+    # the model sees edge(): whitespace-collapsed text. 2026-09-22: raw pdftotext on scanned exhibits
+    # pads lines with spaces, so a raw 300-char window missed Exhibits A, B, C, E and F of WP 811/2024.
+    flat = " ".join(page_text.split())
+    zone = flat[:300] + " " + flat[-80:]
     e = norm(evidence)
     return len(e) >= 2 and e in norm(zone) and not re.search(r"(?i)translat", page_text[:150])
 
@@ -150,6 +154,9 @@ def locate(texts: list[str], rows: list[dict], index_end: int) -> list[dict] | N
         if p and r and last < p <= len(texts) and proven(texts[p - 1], g["evidence"]):
             placed.append({"row": i, "page": p})
             last = p
+    missed = sorted(set(range(len(rows))) - {x["row"] for x in placed})
+    if missed:
+        print(f"  index rows not placed (merged into the paper before): {missed}", flush=True)
     return placed if len(placed) >= 2 else None
 
 
@@ -186,7 +193,9 @@ def split_nested(texts: list[str], jpgs: list, depth: int = 0) -> list[dict] | N
     for p in parts:
         a, b = p["from"], p["to"]
         inner = split_nested(texts[a - 1:b], jpgs[a - 1:b], depth + 1) if b - a + 1 >= 40 else None
-        if inner and len(inner) > 2:
+        if inner and len(inner) > 2 and p["title"] == AFTER:
+            out += [{**q, "from": q["from"] + a - 1, "to": q["to"] + a - 1} for q in inner]  # a separate compilation: its own titles
+        elif inner and len(inner) > 2:
             label = f"Exhibit {p['mark']}" if p.get("mark") else p["title"][:40].rstrip(" ,.-")
             for q in inner:
                 title = p["title"] if q["title"] == "Index" else f"{label} › {q['title']}"
@@ -219,13 +228,23 @@ def split_by_index(texts: list[str], jpgs: list) -> list[dict] | None:
     if first["page"] > end + 1:
         head = [r["particulars"].strip() for r in rows[:first["row"]] if r["from"] and not r["from"].strip().isdigit()]
         parts.append({"title": "; ".join(head) or "Front matter", "from": end + 1, "to": first["page"] - 1})
+    end_last = n
+    r = rows[placed[-1]["row"]]
+    if (r["from"] or "").strip().isdigit() and (r["to"] or "").strip().isdigit():
+        stop = placed[-1]["page"] + int(r["to"]) - int(r["from"])
+        # 2026-09-22 WP 811/2024: a reply compilation (its own index, stamped 242 on) was bound after
+        # the Vakalatnama row and filed as "Vakalatnama". Cut where the stamps stop continuing the row.
+        if stop < n and printed_numbers(texts).get(stop + 1) not in (None, int(r["to"]) + 1):
+            end_last = stop
     for k, x in enumerate(placed):
         r = rows[x["row"]]
         title = " ".join(r["particulars"].split())
         if r["mark"] and not re.search(r"(?i)\b(ex|exh|exhibit|annexure)\b", title):
             title = f"Exhibit {r['mark']}: {title}"
         parts.append({"title": title, "mark": (r["mark"] or "").strip(), "from": x["page"],
-                      "to": placed[k + 1]["page"] - 1 if k + 1 < len(placed) else n})
+                      "to": placed[k + 1]["page"] - 1 if k + 1 < len(placed) else end_last})
+    if end_last < n:
+        parts.append({"title": AFTER, "from": end_last + 1, "to": n})
     pages = [i for p in parts for i in range(p["from"], p["to"] + 1)]
     return parts if pages == list(range(1, n + 1)) else None
 

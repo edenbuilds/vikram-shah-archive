@@ -196,9 +196,17 @@ def process(job: dict, ocr) -> str:
             for p, st in zip(parts, volume_index.assign_stages([p.get("parent") or p["title"] for p in parts], stages, job["stage"])):
                 p["stage"] = st
             base, ids = int(time.time()), []
-            for k, p in enumerate(parts):
-                ids.append(split_volume.file_part(mid, {s["id"] for s in stages}, {"pdf": pdf_path, "cache": tmp}, p,
-                                                  base + k, filename=job["filename"], sources=sources))
+            try:
+                for k, p in enumerate(parts):
+                    ids.append(split_volume.file_part(mid, {s["id"] for s in stages}, {"pdf": pdf_path, "cache": tmp}, p,
+                                                      base + k, filename=job["filename"], sources=sources))
+            except Exception:
+                # 2026-09-22: a network drop mid-split left Index, Synopsis and Writ Petition filed, and the
+                # retry filed them again. Take back this job's papers so a retry starts clean.
+                # ponytail: their storage objects stay (harmless, overwritten on retry).
+                if ids:
+                    rest("DELETE", "documents", "id=in.(" + ",".join(ids) + ")")
+                raise
             print(f"  split by index into {len(ids)} papers", flush=True)
             return ids[0]
 
