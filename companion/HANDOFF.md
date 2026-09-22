@@ -31,6 +31,13 @@ Notifications are **muted**:
 - To turn them back on, remove that line and run `launchctl kickstart -k gui/$(id -u)/me.edenbuilds.case-companion-worker`.
 - `scripts/e2e.mjs` only sends the sign-in email when `E2E_SEND=1` is set.
 
+### Later on 22-09-2026 (verified live)
+
+- **Index split fix (WP 811/2024, Kanojiya):** only 3 of 8 exhibits were filed. The model placed all of them, but `proven()` in worker/volume_index.py checked the first 300 raw characters, and pdftotext pads scanned pages with spaces. It now checks the whitespace-collapsed text the model saw. The last index row no longer swallows a separately bound compilation (the SRA reply). A failed split now takes back the papers it already filed. The volume was re-filed as 20 papers; `worker/test_volume_index.py` covers both cases.
+- **Old papers:** the 18 papers from the two earlier runs are still in that matter, next to the correct 20. They are waiting for Omkar's OK before they are deleted (nothing references them).
+- **Uploads:** 6 MB pieces, each retried up to 5 times, with a percentage and progress bar. The 70 MB live test went from 7% to 99% and was queued.
+- **Editing:** "Edit details" under a matter's title (case name, short name, forum, cause) and "Rename" under a paper's title, both in an in-app dialog.
+
 ## How it fits together
 
 - **Web app:** Next.js 15 App Router, React 19 and `@supabase/ssr`.
@@ -86,7 +93,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Open items
 
-- **Supabase free plan:** each file is capped at 50 MB. Uploads work around it by sending chunks. Moving to Pro would remove the cap; that is Omkar's call.
+- **Supabase free plan:** each file is capped at 50 MB. Uploads work around it by sending 6 MB pieces that the worker joins. Moving to Pro would remove the cap; that is Omkar's call.
 - **Telegram:** files over 20 MB can't be fetched by the bot, so they need the web upload.
 - **Test matter:** `zz-upload-test` collects e2e uploads. Delete it when testing stops.
 - **Key rotation:** see Env vars above.
