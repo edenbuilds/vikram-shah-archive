@@ -1,3 +1,5 @@
+import EditDialog from "@/components/EditDialog";
+import { renameDocument } from "@/app/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fileUrls, getMatter } from "@/lib/data";
@@ -41,6 +43,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
         <div style={{ minWidth: 0, flex: "1 1 32rem" }}>
           <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}`}>Papers</Link> / {stage?.title ?? d.stage}</p>
           <h1 style={{ fontSize: "clamp(1.25rem, 2.4vw, 1.6rem)", margin: 0 }}>{d.title}</h1>
+          <EditDialog action={renameDocument} hidden={{ doc: d.id }} label="Rename" fields={[{ name: "title", label: "Title", value: d.title }]} />
           <div className="doc-facts">
             <span className="pill">{d.page_count} pages</span>
             {d.kind && <span className="pill">{d.kind}</span>}

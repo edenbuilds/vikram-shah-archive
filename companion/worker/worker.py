@@ -113,7 +113,7 @@ STORE_MAX = 48 * 1024 * 1024  # storage refuses objects over 50 MB on this plan
 
 
 def fetch_upload(path: str) -> bytes:
-    """The uploaded file, rejoined when the browser sent it in 45 MB pieces (<path>.partNNN)."""
+    """The uploaded file, rejoined when the browser sent it in pieces (<path>.partNNN)."""
     try:
         return corpus.storage_get(path)
     except RuntimeError as whole:

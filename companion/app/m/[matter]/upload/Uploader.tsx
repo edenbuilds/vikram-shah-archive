@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { queueUpload } from "@/app/actions";
 import type { Stage } from "@/lib/taxonomies";
 
-type Row = { file: File; title: string; state: string };
+type Row = { file: File; title: string; state: string; pct?: number };
 
 export default function Uploader({ matter, stages, busy }: { matter: string; stages: Stage[]; busy: boolean }) {
   const router = useRouter();
@@ -22,9 +22,27 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
 
   const add = (files: FileList | File[] | null) =>
     setRows((rs) => [...rs, ...Array.from(files ?? []).map((file) => ({ file, title: file.name.replace(/\.[a-z0-9]+$/i, ""), state: "ready" }))]);
-  // Storage takes at most 50 MB per object on this plan, so bigger files go up in 45 MB pieces
-  // (<path>.part000, .part001, ...) and the worker joins them back into the exact original.
-  const PIECE = 45 * 1024 * 1024;
+  // Files go up in 6 MB pieces (<path>.part000, .part001, ...), each retried on its own, and the worker
+  // joins them back into the exact original. 2026-09-22: a 70 MB volume sent as 45 MB pieces failed
+  // on the office connection with nothing to show; one dropped request lost the whole piece.
+  const PIECE = 6 * 1024 * 1024;
+
+  function put(url: string, token: string, body: Blob, onBytes: (n: number) => void) {
+    return new Promise<void>((resolve, reject) => {
+      const x = new XMLHttpRequest();
+      x.open("POST", url);
+      x.setRequestHeader("Authorization", `Bearer ${token}`);
+      x.setRequestHeader("apikey", process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!);
+      x.setRequestHeader("Content-Type", "application/octet-stream");
+      x.upload.onprogress = (e) => onBytes(e.loaded);
+      // a retry of a piece that did arrive (reply lost) comes back "already exists": that is success
+      x.onload = () => (x.status < 300 || /exist|duplicate/i.test(x.responseText) ? resolve() : reject(new Error(`${x.status} ${x.responseText.slice(0, 120)}`)));
+      x.onerror = () => reject(new Error("connection dropped"));
+      x.ontimeout = () => reject(new Error("timed out"));
+      x.timeout = 120000;
+      x.send(body);
+    });
+  }
 
   async function start() {
     const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!);
@@ -32,23 +50,30 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (r.state === "queued") continue;
-      const set = (state: string) => setRows((rs) => rs.map((x, k) => (k === i ? { ...x, state } : x)));
-      set("uploading…");
+      const set = (state: string, pct?: number) => setRows((rs) => rs.map((x, k) => (k === i ? { ...x, state, pct } : x)));
+      set("uploading", 0);
       const safe = r.file.name.replace(/[^A-Za-z0-9._-]+/g, "_");
       const path = `${matter}/uploads/${crypto.randomUUID()}-${safe}`;
-      const type = r.file.type || "application/octet-stream";
-      let error: { message: string } | null = null;
-      if (r.file.size <= PIECE) {
-        ({ error } = await supabase.storage.from("companion").upload(path, r.file, { contentType: type }));
-      } else {
-        const n = Math.ceil(r.file.size / PIECE);
-        for (let k = 0; k < n && !error; k++) {
-          set(`uploading part ${k + 1} of ${n}…`);
-          ({ error } = await supabase.storage.from("companion").upload(`${path}.part${String(k).padStart(3, "0")}`,
-            r.file.slice(k * PIECE, (k + 1) * PIECE), { contentType: "application/octet-stream" }));
+      const n = Math.ceil(r.file.size / PIECE) || 1;
+      let failed = "";
+      for (let k = 0; k < n && !failed; k++) {
+        const piece = r.file.slice(k * PIECE, (k + 1) * PIECE);
+        const name = n === 1 ? path : `${path}.part${String(k).padStart(3, "0")}`;
+        for (let attempt = 1; ; attempt++) {
+          try {
+            const token = (await supabase.auth.getSession()).data.session?.access_token;
+            if (!token) throw new Error("signed out, please sign in again");
+            await put(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/companion/${name.split("/").map(encodeURIComponent).join("/")}`, token, piece,
+              (b) => set("uploading", Math.min(99, Math.round((100 * (k * PIECE + b)) / r.file.size))));
+            break;
+          } catch (e) {
+            if (attempt >= 5) { failed = (e as Error).message; break; }
+            set(`retrying (${(e as Error).message})`, Math.round((100 * k * PIECE) / r.file.size));
+            await new Promise((w) => setTimeout(w, 2000 * attempt));
+          }
         }
       }
-      if (error) { set(`failed: ${error.message}`); continue; }
+      if (failed) { set(`failed: ${failed}. Press Upload to try again.`); continue; }
       try {
         await queueUpload({ matter, stage, title: r.title.trim() || r.file.name, filename: r.file.name, path });
         set("queued");
@@ -83,7 +108,9 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
               <label style={{ flex: "4 1 18rem" }}>Title as it should appear
                 <input type="text" value={r.title} onChange={(e) => setRows((rs) => rs.map((x, k) => (k === i ? { ...x, title: e.target.value } : x)))} />
               </label>
-              <span className="subtle" style={{ flex: "1 1 8rem" }}>{(r.file.size / 1e6).toFixed(1)} MB · {r.state}</span>
+              <span className="subtle" style={{ flex: "1 1 8rem" }}>{(r.file.size / 1e6).toFixed(1)} MB · {r.state}{r.pct !== undefined && r.state === "uploading" ? ` ${r.pct}%` : ""}
+                {r.pct !== undefined && <span className="bar" role="progressbar" aria-valuenow={r.pct} aria-valuemin={0} aria-valuemax={100} style={{ display: "block" }}><i style={{ width: `${r.pct}%`, background: "var(--seal)" }} /></span>}
+              </span>
               {!running && <button type="button" className="link subtle" style={{ flex: "0 0 auto" }} onClick={() => setRows((rs) => rs.filter((_, k) => k !== i))}>remove</button>}
             </div>
           ))}

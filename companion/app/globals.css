@@ -471,3 +471,5 @@ main > *:nth-child(n+4), .matters > *:nth-child(n+4), .apps > *:nth-child(n+4) {
   .settings-nav a { border: 1px solid var(--rule); border-radius: 999px; padding: .35rem .7rem; font-size: .88rem; }
 }
 @media (max-width: 640px) { .navlink span { display: none; } }
+.edit-dialog { width: min(32rem, calc(100vw - 32px)); border: 1px solid var(--rule-strong); padding: 1.2rem; }
+.edit-dialog::backdrop { background: rgb(0 0 0 / .35); }

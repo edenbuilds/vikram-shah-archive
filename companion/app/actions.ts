@@ -230,3 +230,26 @@ export async function confirmMinutes(f: FormData) {
 }
 
 // ── Q&A ─────────────────────────────────────────────────────────────────────
+
+// ── renaming ────────────────────────────────────────────────────────────────
+// Matter details: members may update their matter (RLS "edit" policy).
+export async function updateMatter(f: FormData) {
+  const { supabase } = await requireUser();
+  const id = str(f, "matter");
+  const title = str(f, "title");
+  if (!title) return;
+  must(await supabase.from("matters").update({ title, short: opt(f, "short"), forum: opt(f, "forum"), cause: opt(f, "cause") }).eq("id", id));
+  revalidatePath("/", "layout");
+}
+
+// A paper's title. Documents have no update policy for members, so membership is checked
+// here and the write goes through the service role. The id (and so every link) stays the same.
+export async function renameDocument(f: FormData) {
+  const { supabase } = await requireUser();
+  const id = str(f, "doc");
+  const title = str(f, "title").slice(0, 300);
+  const { data: visible } = await supabase.from("documents").select("matter_id").eq("id", id).maybeSingle();
+  if (!visible || !title) return;
+  must(await admin().from("documents").update({ title }).eq("id", id));
+  revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
