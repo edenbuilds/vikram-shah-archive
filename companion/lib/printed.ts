@@ -22,6 +22,8 @@ export function printedNumbers(pages: { page_no: number; text: string | null }[]
   const nodes = pages.flatMap((pg) => candidates(pg.text).map((c): Node => ({ p: pg.page_no, c, len: 1, prev: null })))
     .sort((a, b) => a.p - b.p);
   const out: Record<number, number> = {};
+  // a blank back has no text and no number; never give it one (Shetty memo of appeal, PDF p. 10)
+  const blank = new Set(pages.filter((pg) => !(pg.text ?? "").trim()).map((pg) => pg.page_no));
   // Longest run within [lo, hi], then the same again either side of it: a file can hold two numberings.
   const within = (lo: number, hi: number) => {
     const ns = nodes.filter((n) => n.p >= lo && n.p <= hi).map((n) => ({ ...n, len: 1, prev: null as Node | null }));
@@ -41,7 +43,7 @@ export function printedNumbers(pages: { page_no: number; text: string | null }[]
     run.forEach((n, k) => {
       out[n.p] = n.c;
       const m = run[k + 1];
-      if (m && m.c - n.c === m.p - n.p) for (let p = n.p + 1; p < m.p; p++) out[p] = n.c + (p - n.p);
+      if (m && m.c - n.c === m.p - n.p) for (let p = n.p + 1; p < m.p; p++) if (!blank.has(p)) out[p] = n.c + (p - n.p);
     });
     within(lo, run[0].p - 1);
     within(run.at(-1)!.p + 1, hi);
@@ -63,7 +65,7 @@ export async function printedFor(db: SupabaseClient, matter: string): Promise<Pr
   const { data: docs } = await db.from("documents").select("id").eq("matter_id", matter);
   const missing = (docs ?? []).map((d) => d.id).filter((id) => !(id in saved));
   if (!missing.length) return saved;
-  for (const id of missing) {
+  const one = async (id: string) => {
     const pages: { page_no: number; text: string | null }[] = [];
     for (let from = 0; ; from += 1000) {
       const { data } = await db.from("document_pages").select("page_no, text").eq("doc_id", id).order("page_no").range(from, from + 999);
@@ -71,7 +73,8 @@ export async function printedFor(db: SupabaseClient, matter: string): Promise<Pr
       if ((data ?? []).length < 1000) break;
     }
     saved[id] = printedNumbers(pages);
-  }
+  };
+  for (let i = 0; i < missing.length; i += 8) await Promise.all(missing.slice(i, i + 8).map(one));
   await writeState(at(matter), saved);
   return saved;
 }

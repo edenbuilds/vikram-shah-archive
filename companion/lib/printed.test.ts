@@ -16,6 +16,11 @@ test("blank backs are skipped, a missed number between two in step is filled, st
   assert.equal(got[8], undefined); assert.equal(got[10], undefined);
 });
 
+test("a blank page between two numbered pages gets no number", () => {
+  const got = printedNumbers([page(9, "4"), { page_no: 10, text: "" }, page(11, "6"), page(12, "7")]);
+  assert.equal(got[10], undefined); assert.equal(got[11], 6);
+});
+
 test("one lone number is not a numbering", () => {
   assert.deepEqual(printedNumbers([page(1, "42"), page(2), page(3)]), {});
   assert.equal(pageLabel(350, 254), "p. 254 (PDF 350)");
