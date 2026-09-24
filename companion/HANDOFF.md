@@ -69,6 +69,7 @@ New, verified on the live site unless marked:
   - The idle worker runs a vector query every 5 minutes, because the first search after an idle spell took 8 s on a cold index.
   - Telegram shows typing at once, then a progress line that updates while it reads; page scans are fetched in parallel.
 - Checks: `node scripts/study-e2e.mjs` now covers the reading order, upload formats and the header; `scripts/responsive-check.mjs` includes the reading pages and Settings, Skills.
+- **Blocked: the OpenAI account has no credit** (`insufficient_quota`, from 24-09-2026). Until credit is added, these wait: Ask, Telegram answers, the embedding of new uploads, and the reading orders for Agile, Kanojiya, Hingorani and 7 shah-v-trindade papers. Search falls back to exact words, and the app says plainly what is wrong. After adding credit, run `/usr/local/bin/python3 scripts/tmp/reading_all.py` (or press Continue on each Reading order tab).
 - **Test papers.** zz-upload-test now holds 8 extra test papers (note-md-test, plain-text-test, word-test, photo-png-test, photo-heic-test, zipped-md-test, zipped-txt-test, incremental-test). They can go whenever the test matter is deleted.
 
 ## 24-09-2026
