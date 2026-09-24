@@ -31,6 +31,21 @@ ok(await p.locator(".paper-dates mark").count() >= dates, "the printed date is m
 await go("/m/shetty-v-oberoi/chronology/papers?y=2015");
 ok((await p.locator(".paper-dates .date").allTextContents()).every((t) => t.endsWith("2015")), "year filter shows only that year");
 
+await go("/m/shetty-v-oberoi/chronology/papers?o=newest");
+const iso = (t) => t.split("-").reverse().join("-");
+const order = (await p.locator(".paper-dates .date").allTextContents()).map(iso);
+ok(order.length > 2 && order[0] > order.at(-1), `dates newest first: ${order[0]} … ${order.at(-1)}`);
+
+const AG = "/m/agile-real-estate-pvt-ltd-vs-vikram-singh-85ba";
+await go(`${AG}/explainer`);
+const parts = await p.locator(".explainer .brief-section").count(), notes = await p.locator(".explainer ol.footnotes li").count();
+ok(parts === 5 && notes > 20, `explainer: ${parts} parts, ${notes} footnotes`);
+ok(await p.locator(".explainer table tbody tr").count() > 3, "explainer ends with a summary table");
+ok(await p.isVisible("text=Your explainer (PDF)"), "her own explainer PDF is linked on the Agile matter");
+ok((await p.locator(".explainer ol.footnotes cite").allTextContents()).some((t) => /p\. \d+ \(PDF \d+\)/.test(t)), "footnotes give the printed page with the PDF page");
+await go(`${AG}/d/exhibit-h-copy-of-the-impugned-order-8c5a5c69?pg=254`);
+ok(/Page 3 of \d+, printed 254/.test(await p.locator(".where").textContent()), "?pg=254 opens the page printed 254 (PDF p. 3)");
+
 await go("/m/shetty-v-oberoi/compare");
 await p.fill("input[placeholder^='e.g.']", "why the appeal is being withdrawn");
 await p.click("button:has-text('Compare')");

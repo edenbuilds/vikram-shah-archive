@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { deleteEntry, moveEntry, saveEntry } from "@/app/actions";
-import { fmtDate } from "@/lib/data";
+import { dmy } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import Switch from "./Switch";
 
@@ -56,7 +56,7 @@ export default async function Chronology({ params, searchParams }: { params: Pro
       <ul className="plain chrono">
         {((entries ?? []) as Entry[]).map((e, i, all) => (
           <li key={e.id}>
-            <div className="date">{e.date ? fmtDate(e.date) : e.date_text || "undated"}</div>
+            <div className="date">{e.date ? dmy(e.date) : e.date_text || "undated"}</div>
             <div>
               <b>{e.title}</b>
               {e.body && <div className="muted" style={{ whiteSpace: "pre-wrap" }}>{e.body}</div>}

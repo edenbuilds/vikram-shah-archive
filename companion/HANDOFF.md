@@ -38,6 +38,22 @@ Notifications are **muted**:
 - **Uploads:** 6 MB pieces, each retried up to 5 times, with a percentage and progress bar. The 70 MB live test went from 7% to 99% and was queued.
 - **Editing:** "Edit details" under a matter's title (case name, short name, forum, cause) and "Rename" under a paper's title, both in an in-app dialog.
 
+## 24-09-2026
+
+New, verified on the live site unless marked:
+
+- **Explainer** (`/m/<matter>/explainer`, first tab after Papers). Five parts, in the shape of the Agile explainer Arya's Claude made: what kind of case it is, the ladder of authorities, the papers in the file, the story in date order, a summary table. Each part is one run of the receipts agent (`EXPLAINER` in `app/api/study/route.ts`); every sentence is footnoted to paper, printed page and quote. Unlike her PDF, nothing comes from general knowledge. Made for all 8 matters that have papers. It asks before remaking when new papers arrive (the matter page and the explainer page both ask). Copy and Save .md.
+- **Her Agile explainer PDF** is kept at `companion/_system/study/<agile>/explainer-yours.pdf` and linked as "Your explainer (PDF)" on that matter's explainer page. It is not filed as a paper, so it never shows up as the record.
+- **Printed page numbers** (`lib/printed.ts`). A paper book's own page number often differs from the PDF page: Agile PDF p. 350 is printed 254; in the Jay Hiren Gandhi revision application, PDF p. 58 is printed 42, which is the index's "Exhibit A, Pg. 42-44". The number is read from bare numbers on a page's first or last lines, kept only when it runs in sequence with neighbouring pages. Blank backs get none. The result is cached per matter in `_system/study/<matter>/printed.json`; new papers are added on first view. Receipts, footnotes, pins, search, dates and MCP labels show "p. 254 (PDF 350)". The reader shows "Page 3 of 38, printed 254", and `?pg=254` opens a page by its printed number. To recompute, delete the matter's printed.json.
+- **Chronology order.** Your chronology has As arranged (with the move buttons), Oldest first and Newest first. Dates in the papers has Oldest first and Newest first. Chronology dates are now shown as DD-MM-YYYY.
+- **Drafting skill on the MCP.** Her Maharashtra courts drafting pack is copied verbatim into `companion/drafting/` and traced into the MCP function (`next.config.ts`). The tools are `drafting_skill` (the guide and a file index) and `drafting_file` (one file; only listed paths are served). There is also a `draft` prompt. Rule 9 in the guide and in SKILL.md: before drafting, ask whether to use the skill and whether she has a reference document, and wait for both answers.
+- **Agile re-split.** The 441-page volume is now 19 papers. The old whole-volume paper "Appeal and Exhibits - Vikram Singh" is still there next to them, waiting for an OK before it is deleted.
+- **Not verified yet:**
+  - "Prashant Hingorani 2.pdf" was still filing at the time of writing (4 papers so far).
+  - "WP - Order - 16-09-2026.pdf" is queued behind it.
+  - The new matter "jay-hiren-gandhi-vs-the-deputy-registrar" has no papers yet.
+  - Once they are filed, make their explainers from the Explainer tab.
+
 ## How it fits together
 
 - **Web app:** Next.js 15 App Router, React 19 and `@supabase/ssr`.
@@ -74,6 +90,7 @@ The `<link>` in the commands below is Omkar's sign-in link from the keys file.
 cd companion && npm run typecheck && npm test && npm run build
 node scripts/e2e.mjs https://case-companion.edenbuilds.me <link> <small.pdf>
 node scripts/responsive-check.mjs https://case-companion.edenbuilds.me <link> <shots-dir>
+node scripts/study-e2e.mjs https://case-companion.edenbuilds.me <link>   # search, pins, dates, explainer, printed pages, compare, brief
 node scripts/zip-check.mjs https://case-companion.edenbuilds.me <link> <matter> "" <out-dir>
 node --env-file=.env.local --experimental-strip-types scripts/mcp-smoke.ts https://case-companion.edenbuilds.me omkar1sonawane@gmail.com
 node --env-file=.env.local --experimental-strip-types scripts/agent-test.ts
