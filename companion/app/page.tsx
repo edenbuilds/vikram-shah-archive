@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fmtDate } from "@/lib/data";
+import { dmy, fmtDate } from "@/lib/data";
 import { db } from "@/lib/supabase";
 import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
 import { Archive, Folder, MoreHorizontal } from "lucide-react";
@@ -34,6 +34,9 @@ export default async function Workspace() {
   };
 
   const prefs = await getPrefs(user.email!);
+  // the evening before (or the day of) a hearing, offer its brief
+  const tomorrow = new Date(Date.parse(today + "T00:00:00Z") + 864e5).toISOString().slice(0, 10);
+  const soon = (hearings ?? []).filter((h) => h.date <= tomorrow);
   const all = (matters ?? []) as M[];
   const archived = all.filter((m) => prefs.archived.includes(m.id));
   const live = all.filter((m) => !prefs.archived.includes(m.id));
@@ -91,6 +94,13 @@ export default async function Workspace() {
         <h1>Your matters</h1>
         <p className="muted" style={{ margin: 0 }}>Every paper on file, searchable to the page. Private to each matter&apos;s members. Signed in as {user.email}.</p>
       </div>
+
+      {soon.map((h) => (
+        <div key={h.id} className="ask-first">
+          <p>Hearing <b>{h.date === today ? "today" : h.date === tomorrow ? "tomorrow" : dmy(h.date)}</b> in <b>{all.find((m) => m.id === h.matter_id)?.title}</b>{h.purpose ? `: ${h.purpose}` : ""}. Want the one-page brief?</p>
+          <Link className="btn" href={`/m/${h.matter_id}/brief`}>Open the brief</Link>
+        </div>
+      ))}
 
       {!!hearings?.length && (
         <section className="stack" style={{ gap: ".6rem" }}>

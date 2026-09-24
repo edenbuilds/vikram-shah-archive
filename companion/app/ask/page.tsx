@@ -3,6 +3,8 @@ import type { VerifiedClaim } from "@/lib/citations";
 import { fileUrls, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import AskBox from "./AskBox";
+import PinButton from "@/components/PinButton";
+import { getPins, pinId } from "@/lib/study";
 
 export const metadata = { title: "Ask · Case Companion" };
 
@@ -22,13 +24,15 @@ const STARTERS = [
 
 export default async function AskPage({ searchParams }: { searchParams: Promise<{ t?: string; m?: string; src?: string; q?: string }> }) {
   const sp = await searchParams;
-  const { supabase } = await requireUser();
-  const [{ data: matters }, { data: papers }, { data: threads }, { data: cols }] = await Promise.all([
+  const { supabase, user } = await requireUser();
+  const [{ data: matters }, { data: papers }, { data: threads }, { data: cols }, pins] = await Promise.all([
     supabase.from("matters").select("id, title, stages").order("created_at"),
     supabase.from("documents").select("id, title, stage, page_count, matter_id").order("sort"),
     supabase.from("qa_threads").select("id, title, matter_id, created_at").order("created_at", { ascending: false }).limit(40),
     supabase.from("collections").select("id, title, matter_id, collection_items(doc_id)").order("created_at"),
+    getPins(user.email!),
   ]);
+  const pinned = new Set(pins.map((p) => p.id));
   const notebooks = (cols ?? []).map((c) => ({ id: c.id, title: c.title, matter_id: c.matter_id, docs: [...new Set((c.collection_items as { doc_id: string }[]).map((i) => i.doc_id))] })).filter((c) => c.docs.length);
   const thread = (threads ?? []).find((x) => x.id === sp.t);
   const { data: msgData } = thread ? await supabase.from("qa_messages").select("*").eq("thread_id", thread.id).order("created_at") : { data: [] };
@@ -90,13 +94,16 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
                           const href = `/m/${matterOf(p.doc_id)}/d/${p.doc_id}?p=${p.page_start}`;
                           const img = thumbs.get(`${p.doc_id}#${p.page_start}`);
                           return (
-                            <Link key={j} href={href} className="receipt">
-                              {img ? <img src={img} alt={`Scan of ${title(p.doc_id)}, page ${p.page_start}`} loading="lazy" /> : <span className="noimg" />}
-                              <span>
-                                <q>{p.quote.replace(/\s+/g, " ")}</q>
-                                <cite>{title(p.doc_id)}, p. {p.page_start} →</cite>
-                              </span>
-                            </Link>
+                            <div key={j} className="receipt-wrap">
+                              <Link href={href} className="receipt">
+                                {img ? <img src={img} alt={`Scan of ${title(p.doc_id)}, page ${p.page_start}`} loading="lazy" /> : <span className="noimg" />}
+                                <span>
+                                  <q>{p.quote.replace(/\s+/g, " ")}</q>
+                                  <cite>{title(p.doc_id)}, p. {p.page_start} →</cite>
+                                </span>
+                              </Link>
+                              <PinButton matter={matterOf(p.doc_id)} doc={p.doc_id} page={p.page_start} quote={p.quote} on={pinned.has(pinId(p.doc_id, p.page_start, p.quote.replace(/\s+/g, " ").trim()))} />
+                            </div>
                           );
                         })}
                       </div>

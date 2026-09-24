@@ -9,6 +9,9 @@ import { sendSignInLink } from "@/lib/signin-mail";
 import { getPrefs, setPrefs } from "@/lib/prefs";
 import { db, requireUser } from "@/lib/supabase";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
+import { norm } from "@/lib/citations";
+import { getMatter } from "@/lib/data";
+import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins } from "@/lib/study";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const opt = (f: FormData, k: string) => str(f, k) || null;
@@ -66,6 +69,10 @@ export async function createMatter(f: FormData) {
     m_id: id, m_title: title, m_kind: kind, m_forum: opt(f, "forum"), m_cause: opt(f, "cause"),
     m_stages: TAXONOMIES[kind], m_disclaimer: DEFAULT_DISCLAIMER, m_people: people,
   }));
+  // 2026-09-23: Arya created "Agile Real Estate v. Vikram Singh" from one account and it was
+  // invisible from her other account: create_matter only adds the creator. Share with the workspace.
+  const { data: staff } = await admin().from("app_users").select("email");
+  await admin().from("matter_members").upsert((staff ?? []).map((u) => ({ matter_id: id, email: u.email, role: "advocate" })), { ignoreDuplicates: true });
   redirect(`/m/${id}/upload`);
 }
 
@@ -141,6 +148,7 @@ export async function saveEntry(f: FormData) {
   const id = opt(f, "id");
   must(id ? await supabase.from("chronology_entries").update(row).eq("id", id) : await supabase.from("chronology_entries").insert(row));
   revalidatePath(`/m/${m}/chronology`);
+  revalidatePath(`/m/${m}/chronology/papers`);
 }
 
 export async function deleteEntry(f: FormData) {
@@ -252,4 +260,52 @@ export async function renameDocument(f: FormData) {
   if (!visible || !title) return;
   must(await admin().from("documents").update({ title }).eq("id", id));
   revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
+
+// ── study aids: pins and the dates in the record ────────────────────────────
+// A pin is only saved if its quote is really on that page (checked with her own client, so RLS
+// also decides whether she may see the paper at all). Pinning the same receipt again unpins it.
+export async function togglePin(p: { matter: string; doc: string; page: number; quote: string }): Promise<{ ok: boolean; pinned: boolean }> {
+  const { supabase, user } = await requireUser();
+  const quote = String(p.quote ?? "").replace(/\s+/g, " ").trim().slice(0, 1200);
+  const id = pinId(p.doc, p.page, quote);
+  const pins = await getPins(user.email!);
+  if (pins.some((x) => x.id === id)) {
+    await savePins(user.email!, pins.filter((x) => x.id !== id));
+    revalidatePath("/pins");
+    return { ok: true, pinned: false };
+  }
+  // a search passage can run onto the next page, so look at that one too and pin the page it is on
+  const [{ data: pages }, { data: doc }] = await Promise.all([
+    supabase.from("document_pages").select("page_no, text").eq("doc_id", p.doc).gte("page_no", p.page).lte("page_no", p.page + 1).order("page_no"),
+    supabase.from("documents").select("title, matter_id").eq("id", p.doc).maybeSingle(),
+  ]);
+  const on = (pages ?? []).find((x) => norm(x.text ?? "").includes(norm(quote)));
+  if (!on || !doc || quote.length < 4) return { ok: false, pinned: false };
+  await savePins(user.email!, [{ id, matter: doc.matter_id, doc: p.doc, title: doc.title, page: on.page_no, quote, at: new Date().toISOString() }, ...pins]);
+  revalidatePath("/pins");
+  return { ok: true, pinned: true };
+}
+
+export async function unpin(f: FormData) {
+  const { user } = await requireUser();
+  await savePins(user.email!, (await getPins(user.email!)).filter((x) => x.id !== str(f, "id")));
+  revalidatePath("/pins");
+}
+
+export async function rebuildDates(f: FormData) {
+  const { supabase } = await requireUser();
+  const matter = str(f, "matter");
+  await getMatter(supabase, matter); // her access, before the service-role write
+  await saveDates(matter, await buildDates(supabase, matter));
+  revalidatePath(`/m/${matter}/chronology/papers`);
+}
+
+export async function keepDates(f: FormData) {
+  const { supabase } = await requireUser();
+  const matter = str(f, "matter");
+  await getMatter(supabase, matter);
+  const d = await getDates(matter);
+  if (d) await saveDates(matter, { ...d, ack: await basisOf(supabase, matter) });
+  revalidatePath(`/m/${matter}/chronology/papers`);
 }

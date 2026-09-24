@@ -2,6 +2,7 @@ import Link from "next/link";
 import { deleteEntry, moveEntry, saveEntry } from "@/app/actions";
 import { fmtDate } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
+import Switch from "./Switch";
 
 type Entry = { id: string; date: string | null; date_text: string | null; title: string; body: string | null; doc_id: string | null; page_no: number | null; hearing_id: string | null };
 type Doc = { id: string; title: string };
@@ -18,6 +19,7 @@ export default async function Chronology({ params }: { params: Promise<{ matter:
 
   return (
     <div className="stack">
+      <Switch matter={matter} on="mine" />
       <div>
         <h2>Working chronology</h2>
         <p className="muted">

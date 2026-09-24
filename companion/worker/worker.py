@@ -142,14 +142,14 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     raise RuntimeError(f"Can't read {ext or 'this'} files yet. Save it as a PDF and upload that.")
 
 
-def process(job: dict, ocr) -> str:
+def process(job: dict, ocr, force: bool = False) -> str:
     mid = job["matter_id"]
     original = fetch_upload(job["storage_path"])
     sha = hashlib.sha256(original).hexdigest()
     if len(original) <= STORE_MAX:  # kept as uploaded, for "Original file" exports
         corpus.storage_put(f"{mid}/originals/{job['filename']}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
     dup = rest("GET", "documents", f"select=id&matter_id=eq.{urllib.parse.quote(mid)}&sha256=eq.{sha}", prefer="")
-    if dup:
+    if dup and not force:
         return dup[0]["id"]  # same bytes already filed in this matter
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -258,6 +258,13 @@ def claim() -> dict | None:
 
 def main() -> None:
     once = "--once" in sys.argv
+    if "--refile" in sys.argv:
+        # file an upload again even though its bytes are on file (e.g. its index split was skipped);
+        # the earlier papers stay until someone decides to remove them
+        job = rest("GET", "ingest_jobs", f"select=*&id=eq.{sys.argv[sys.argv.index('--refile') + 1]}", prefer="")[0]
+        print(f"refile {job['id']} {job['filename']}", flush=True)
+        print(f"  -> {process(job, vision(), force=True)}", flush=True)
+        return
     # ponytail: assumes a single worker. A job left 'processing' means a previous run died
     # mid-job, so put it back in the queue. Use a lease/heartbeat if workers ever run in parallel.
     while True:

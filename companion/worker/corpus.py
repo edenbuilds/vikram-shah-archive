@@ -55,6 +55,12 @@ def _req(method: str, url: str, body: bytes | None, headers: dict, timeout: int 
                 time.sleep(2 ** attempt)
                 continue
             raise RuntimeError(f"{method} {url.split('?')[0]} -> {e.code}: {msg}") from None
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            # 2026-09-23: one read timeout during the index read filed a 441-page appeal as a single paper
+            if attempt == 3:
+                raise
+            print(f"  network: {e}; retrying", file=sys.stderr, flush=True)
+            time.sleep(5 * 2 ** attempt)
 
 
 def _auth() -> dict:
