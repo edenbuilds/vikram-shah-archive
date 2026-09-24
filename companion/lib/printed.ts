@@ -60,9 +60,15 @@ const at = (matter: string) => `_system/study/${matter}/printed.json`;
 
 /** Printed numbers for every paper in a matter, worked out once per paper and kept in the bucket.
  *  Callers check matter access first. Papers never change after filing, so only new ones are read. */
+// A paper's printed numbers never change (its id carries its hash), so a warm server keeps them:
+// search over 11 matters spent ~0.5 s per matter re-reading the saved file (24-09-2026).
+const mem = new Map<string, Printed>();
 export async function printedFor(db: SupabaseClient, matter: string): Promise<Printed> {
-  const saved = await readState<Printed>(at(matter), {});
   const { data: docs } = await db.from("documents").select("id").eq("matter_id", matter);
+  const hot = mem.get(matter);
+  if (hot && (docs ?? []).every((d) => d.id in hot)) return hot;
+  const saved = await readState<Printed>(at(matter), {});
+  mem.set(matter, saved);
   const missing = (docs ?? []).map((d) => d.id).filter((id) => !(id in saved));
   if (!missing.length) return saved;
   const one = async (id: string) => {

@@ -1,3 +1,4 @@
+import { unzipSync } from "fflate";
 import { after } from "next/server";
 import { admin, memberMatters, tokenFor } from "@/lib/access";
 import { runAgent } from "@/lib/agent";
@@ -9,7 +10,9 @@ export const maxDuration = 300;
 // @arya_case_archivebot. Private: only chats listed in TELEGRAM_USERS get a reply.
 // Send a file -> pick the matter -> it is queued exactly like a web upload; the worker reports
 // back here and by email when the papers are filed. Any other text is a question to the papers.
-const MAX_BOT_FILE = 20 * 1024 * 1024; // Telegram's limit for files a bot may download
+const MAX_BOT_FILE = 20 * 1024 * 1024;
+// what the worker can turn into a PDF (worker/worker.py as_pdf)
+const OK = /\.(pdf|jpe?g|png|heic|heif|tiff?|gif|bmp|webp|docx?|rtf|odt|html?|md|markdown|txt|csv)$/i; // Telegram's limit for files a bot may download
 
 export async function POST(req: Request, { params }: { params: Promise<{ secret: string }> }) {
   const { secret } = await params;
@@ -33,6 +36,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ secret:
     await say(chat, "This is a private assistant. If you have access, open Settings in your workspace and tap Connect Telegram.");
     return Response.json({ ok: true });
   }
+  // show life at once: the answer itself takes a minute of reading (24-09-2026, "telegram should be prompt")
+  if (u.message?.text && !u.message.text.startsWith("/")) await tg("sendChatAction", { chat_id: chat, action: "typing" });
   after(() => handle(u, chat, email, origin).catch((e) => say(chat, `Something went wrong: ${esc(String(e?.message ?? e))}`)));
   return Response.json({ ok: true });
 }
@@ -74,7 +79,7 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     const src = cb.message.reply_to_message;
     const f = src?.document ?? src?.photo?.[src.photo.length - 1];
     if (!f) return say(chat, "I couldn't find the file. Send it again, please.");
-    const name: string = src.document?.file_name ?? `photo-${src.message_id}.jpg`;
+    let name: string = src.document?.file_name ?? `photo-${src.message_id}.jpg`;
     if ((f.file_size ?? 0) > MAX_BOT_FILE) {
       return tg("editMessageText", { chat_id: chat, message_id: cb.message.message_id, parse_mode: "HTML",
         text: `<b>${esc(name)}</b> is ${(f.file_size / 1e6).toFixed(1)} MB. Telegram only lets bots fetch files up to 20 MB, so please upload this one on the website (any size works there):\n${origin}/m/${mid}/upload` });
@@ -82,16 +87,24 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     await tg("editMessageText", { chat_id: chat, message_id: cb.message.message_id, text: `Uploading ${name} to ${title(mid)}…` });
     const info = await tg("getFile", { file_id: f.file_id });
     const bytes = new Uint8Array(await (await fetch(`https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${info.result.file_path}`)).arrayBuffer());
-    const path = `${mid}/uploads/${crypto.randomUUID()}-${name.replace(/[^A-Za-z0-9._-]+/g, "_")}`;
-    const up = await db.storage.from("companion").upload(path, bytes, { contentType: src.document?.mime_type ?? "image/jpeg" });
-    if (up.error) return say(chat, `Upload failed: ${esc(up.error.message)}`);
     const { data: users } = await db.auth.admin.listUsers({ perPage: 1000 });
     const uid = users?.users.find((x) => x.email?.toLowerCase() === email)?.id;
-    const cleanTitle = (src.caption?.trim() || name.replace(/\.[a-z0-9]+$/i, "")).slice(0, 200);
-    const { error } = await db.from("ingest_jobs").insert({ matter_id: mid, stage: "other", title: cleanTitle, filename: name, storage_path: path, created_by: uid });
-    if (error) return say(chat, `Couldn't queue it: ${esc(error.message)}`);
+    // a zip is opened here and each paper in it queued on its own, as the website does
+    const files: [string, Uint8Array][] = /\.zip$/i.test(name)
+      ? Object.entries(unzipSync(bytes, { filter: (e) => OK.test(e.name) && !/(^|\/)(__MACOSX|\.)/.test(e.name) })).map(([n, b]) => [n.split("/").pop()!, b])
+      : [[name, bytes]];
+    if (!files.length) return say(chat, `Nothing in <b>${esc(name)}</b> I can read. Send PDFs, Word, Markdown or text files, or photos of pages.`);
+    for (const [fname, b] of files) {
+      const path = `${mid}/uploads/${crypto.randomUUID()}-${fname.replace(/[^A-Za-z0-9._-]+/g, "_")}`;
+      const up = await db.storage.from("companion").upload(path, b, { contentType: "application/octet-stream" });
+      if (up.error) return say(chat, `Upload failed: ${esc(up.error.message)}`);
+      const cleanTitle = (files.length === 1 && src.caption?.trim() || fname.replace(/\.[a-z0-9]+$/i, "")).slice(0, 200);
+      const { error } = await db.from("ingest_jobs").insert({ matter_id: mid, stage: "other", title: cleanTitle, filename: fname, storage_path: path, created_by: uid });
+      if (error) return say(chat, `Couldn't queue ${esc(fname)}: ${esc(error.message)}`);
+    }
+    if (files.length > 1) name = `${files.length} files from ${name}`;
     return tg("editMessageText", { chat_id: chat, message_id: cb.message.message_id, parse_mode: "HTML",
-      text: `Queued <b>${esc(name)}</b> for <b>${esc(title(mid))}</b>.\nI'll message you here (and by email) when it's read and filed. If it's a volume with an index, it will be split into its papers.` });
+      text: `Queued <b>${esc(name)}</b> for <b>${esc(title(mid))}</b>.\nI'll message you here (and by email) when it's read and filed. If it's a volume with an index, it will be split into its papers.\n\nAnother document for this matter? Just send it.` });
   }
 
   const m = u.message;
@@ -111,7 +124,7 @@ async function handle(u: any, chat: number, email: string, origin: string) {
   if (cmd === "/start" || cmd === "/help") {
     return say(chat, [
       "<b>Case Companion</b>",
-      "<b>File a paper:</b> send a PDF or a photo of a page, pick the matter, and I'll tell you when it's ready.",
+      "<b>File a paper:</b> send a PDF, Word file, Markdown or text file, a zip, or a photo of a page, pick the matter, and I'll tell you when it's ready.",
       "<b>Ask:</b> type a question in plain words. Name a paper (\"the Shetty withdrawal application\") to ask only that paper. Every answer has quotes, page links and the page scans, or says it isn't in the papers. Reply to an answer to follow up.",
       "<b>Hearing note:</b> /note followed by your note adds it to that hearing's notes, ready to turn into minutes in the app.",
       "",
@@ -152,7 +165,15 @@ async function handle(u: any, chat: number, email: string, origin: string) {
   await tg("sendChatAction", { chat_id: chat, action: "typing" });
   try {
     const scope = await resolveScope(db, text, context, ids);
-    const r = await runAgent(db, text, { matterIds: scope.matterIds, docIds: scope.docIds }, context ? [{ q: "(earlier in this chat)", a: context.slice(0, 2000) }] : [], () => {});
+    // one progress line, edited as the reading goes, removed when the answer lands
+    const status = (await say(chat, `<i>Looking in ${esc(scope.label.slice(0, 120))}…</i>`, { reply_to_message_id: m.message_id })).result?.message_id;
+    let shown = Date.now();
+    const r = await runAgent(db, text, { matterIds: scope.matterIds, docIds: scope.docIds }, context ? [{ q: "(earlier in this chat)", a: context.slice(0, 2000) }] : [], (st) => {
+      if (!status || Date.now() - shown < 2500) return;
+      shown = Date.now();
+      tg("editMessageText", { chat_id: chat, message_id: status, parse_mode: "HTML", text: `<i>${esc(st.text.slice(0, 200))}…</i>` });
+    });
+    if (status) tg("deleteMessage", { chat_id: chat, message_id: status });
     const head = `<b>Sources:</b> ${esc(scope.label.slice(0, 300))}`;
     if (r.status !== "answered") return say(chat, `${head}\n\nNot found in these papers. Nothing is filled in from outside them.`, { reply_to_message_id: m.message_id });
     const { data: docs } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(r.claims.flatMap((c) => c.citations.map((q) => q.doc_id)))]);
@@ -172,17 +193,17 @@ async function handle(u: any, chat: number, email: string, origin: string) {
 
     // the receipts themselves: up to 4 page scans, captioned with paper and page
     const pages = [...new Map(r.claims.flatMap((c) => c.citations).map((q) => [`${q.doc_id}#${q.page_start}`, q])).values()].slice(0, 4);
-    const media = [];
-    for (const q of pages) {
+    const media = (await Promise.all(pages.map(async (q) => {
       const d = docs?.find((x) => x.id === q.doc_id);
-      const { data: pg } = await db.from("document_pages").select("jpeg_path").eq("doc_id", q.doc_id).eq("page_no", q.page_start).maybeSingle();
-      const { data: mt } = await db.from("matters").select("storage_base").eq("id", d?.matter_id ?? "").maybeSingle();
-      if (!pg) continue;
+      const [{ data: pg }, { data: mt }] = await Promise.all([
+        db.from("document_pages").select("jpeg_path").eq("doc_id", q.doc_id).eq("page_no", q.page_start).maybeSingle(),
+        db.from("matters").select("storage_base").eq("id", d?.matter_id ?? "").maybeSingle()]);
+      if (!pg) return null;
       const url = pg.jpeg_path.startsWith(`${d?.matter_id}/`) || !mt?.storage_base
         ? (await db.storage.from("companion").createSignedUrl(pg.jpeg_path, 600)).data?.signedUrl
         : `${mt.storage_base}/${pg.jpeg_path}`;
-      if (url) media.push({ type: "photo", media: url, caption: `${d?.title ?? q.doc_id}, p. ${q.page_start}`.slice(0, 1000) });
-    }
+      return url ? { type: "photo", media: url, caption: `${d?.title ?? q.doc_id}, p. ${q.page_start}`.slice(0, 1000) } : null;
+    }))).filter(Boolean);
     if (media.length) await tg("sendMediaGroup", { chat_id: chat, media });
   } finally {
     clearInterval(typing);

@@ -12,6 +12,7 @@ import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 import { norm } from "@/lib/citations";
 import { getMatter } from "@/lib/data";
 import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins } from "@/lib/study";
+import { removeSkill, saveSkill } from "@/lib/skills";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const opt = (f: FormData, k: string) => str(f, k) || null;
@@ -308,4 +309,23 @@ export async function keepDates(f: FormData) {
   const d = await getDates(matter);
   if (d) await saveDates(matter, { ...d, ack: await basisOf(supabase, matter) });
   revalidatePath(`/m/${matter}/chronology/papers`);
+}
+
+// ── her skills ──────────────────────────────────────────────────────────────
+// Markdown only, read by the connected apps as instructions; nothing in a skill runs on the server.
+export async function addSkill(files: Record<string, string>): Promise<{ ok: true; name: string } | { ok: false; error: string }> {
+  const { user } = await requireUser();
+  try {
+    const s = await saveSkill(files, user.email!);
+    revalidatePath("/settings");
+    return { ok: true, name: s.name };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
+export async function deleteSkill(name: string) {
+  await requireUser();
+  await removeSkill(name);
+  revalidatePath("/settings");
 }

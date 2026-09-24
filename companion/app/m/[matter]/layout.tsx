@@ -1,4 +1,4 @@
-import { getMatter } from "@/lib/data";
+import { dmyIST, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import EditDialog from "@/components/EditDialog";
 import { updateMatter } from "@/app/actions";
@@ -7,7 +7,9 @@ import Tabs from "./Tabs";
 export default async function MatterLayout({ children, params }: { children: React.ReactNode; params: Promise<{ matter: string }> }) {
   const { matter } = await params;
   const { supabase } = await requireUser();
-  const m = await getMatter(supabase, matter);
+  const [m, { data: last }] = await Promise.all([getMatter(supabase, matter),
+    supabase.from("documents").select("ingested_at").eq("matter_id", matter).order("ingested_at", { ascending: false }).limit(1).maybeSingle()]);
+  const at = last?.ingested_at ? new Date(last.ingested_at) : null;
   return (
     <>
       <div className="matter-head">
@@ -18,7 +20,7 @@ export default async function MatterLayout({ children, params }: { children: Rea
           <EditDialog action={updateMatter} hidden={{ matter: m.id }} label="Edit details" fields={[
             { name: "title", label: "Case name", value: m.title }, { name: "short", label: "Short name", value: m.short },
             { name: "forum", label: "Court or forum", value: m.forum }, { name: "cause", label: "Cause", value: m.cause }]} />
-          <p className="muted" style={{ margin: 0 }}>{m.forum}{m.venue ? ` · ${m.venue}` : ""}</p>
+          <p className="muted" style={{ margin: 0 }}>{[m.forum, m.venue, at && `Last updated ${dmyIST(last!.ingested_at)}, ${at.toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })}`].filter(Boolean).join(" · ")}</p>
           <Tabs base={`/m/${m.id}`} />
         </div>
       </div>

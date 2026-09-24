@@ -13,6 +13,10 @@ container (Railway) when uploads need to process with the laptop closed.
 from __future__ import annotations
 
 import hashlib
+import json
+import os
+import threading
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 import re
 import subprocess
@@ -129,16 +133,46 @@ def fetch_upload(path: str) -> bytes:
         return b"".join(parts)
 
 
+CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+IMAGES = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tif", ".tiff", ".gif", ".bmp", ".webp"}
+WORD = {".doc", ".docx", ".rtf", ".odt", ".wordml", ".webarchive", ".html", ".htm"}
+TEXT = {".md", ".markdown", ".txt", ".text", ".csv"}
+
+
+def html_pdf(html: Path, out: Path) -> bytes:
+    """Print an HTML file to A4 PDF with headless Chrome, so the text layer is real text."""
+    subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={out}", html.as_uri()],
+                   check=True, capture_output=True, timeout=120)
+    return out.read_bytes()
+
+
 def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
-    """PDFs as they are; photos of pages (JPG, PNG, HEIC, TIFF) converted with macOS sips."""
-    if data[:5] == b"%PDF-":
-        return data
+    """Every upload becomes a PDF: PDFs as they are, photos of pages through sips, Word/RTF/ODT through
+    textutil and Chrome, Markdown and text printed as they are written (nothing rewritten)."""
+    # 2026-09-22: a .pdf with a few bytes before "%PDF-" (allowed by the spec) was refused as "Can't read .pdf"
+    if b"%PDF-" in data[:1024]:
+        return data[data.index(b"%PDF-"):]
     ext = Path(filename).suffix.lower()
-    if ext in {".jpg", ".jpeg", ".png", ".heic", ".tif", ".tiff"}:
-        src, out = tmp / f"in{ext}", tmp / "converted.pdf"
-        src.write_bytes(data)
+    src, out = tmp / f"in{ext}", tmp / "converted.pdf"
+    src.write_bytes(data)
+    if ext in IMAGES:
         subprocess.run(["sips", "-s", "format", "pdf", str(src), "--out", str(out)], check=True, capture_output=True)
         return out.read_bytes()
+    if ext in WORD:
+        html = tmp / "converted.html"
+        if ext not in {".html", ".htm"}:
+            subprocess.run(["textutil", "-convert", "html", str(src), "-output", str(html)], check=True, capture_output=True)
+        else:
+            html = src
+        return html_pdf(html, out)
+    if ext in TEXT:
+        import html as h
+        text = data.decode("utf-8", errors="replace")
+        page = tmp / "converted.html"
+        page.write_text('<meta charset="utf-8"><style>body{font:11pt/1.5 Georgia,serif;margin:2cm;white-space:pre-wrap}</style>' + h.escape(text))
+        return html_pdf(page, out)
+    if ext == ".pdf":
+        raise RuntimeError("This file is named .pdf but is not a readable PDF. Open it and save it again as a PDF.")
     raise RuntimeError(f"Can't read {ext or 'this'} files yet. Save it as a PDF and upload that.")
 
 
@@ -247,6 +281,42 @@ def process(job: dict, ocr, force: bool = False) -> str:
     return doc_id
 
 
+APP = os.environ.get("COMPANION_URL", "https://case-companion.edenbuilds.me")
+REFRESH = ["dates", "reading", "explainer", "brief"]
+
+
+def worker_token() -> str:
+    """Signed like a sign-in link (lib/access.ts tokenFor) for the worker's own address."""
+    import base64
+    import hmac
+    email = "worker@case-companion"
+    b64 = lambda b: base64.urlsafe_b64encode(b).decode().rstrip("=")  # noqa: E731
+    sig = hmac.new(os.environ["COMPANION_LINK_SECRET"].encode(), f"v1:{email}".encode(), hashlib.sha256).digest()
+    return f"{b64(email.encode())}.{b64(sig)}"
+
+
+def refresh_after(matter: str) -> None:
+    """Once a matter's queue is empty, bring what she already made (dates, reading order, explainer,
+    brief) up to date in the background. 24-09-2026: she asked for every doc to follow new papers.
+    Aids she never made are left alone (the app answers "not made yet" for those)."""
+    if rest("GET", "ingest_jobs", f"select=id&matter_id=eq.{urllib.parse.quote(matter)}&status=in.(queued,processing)&limit=1", prefer=""):
+        return  # more papers on the way: refresh once, after the last
+
+    def one(kind: str) -> None:
+        req = urllib.request.Request(f"{APP}/api/study", method="POST",
+                                     data=json.dumps({"kind": kind, "matter": matter, "ifMade": True}).encode(),
+                                     headers={"authorization": f"Bearer {worker_token()}", "content-type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=330, context=corpus.TLS) as r:
+                last = r.read().decode().strip().splitlines()[-1:]
+            print(f"  refreshed {kind} for {matter}: {last[0][:120] if last else ''}", flush=True)
+        except Exception as e:  # noqa: BLE001  the stale banner in the app still offers the update
+            print(f"  refresh {kind} for {matter} failed: {e}", file=sys.stderr, flush=True)
+
+    for k in REFRESH:
+        threading.Thread(target=one, args=(k,), daemon=True).start()
+
+
 def claim() -> dict | None:
     q = rest("GET", "ingest_jobs", "select=id&status=eq.queued&order=created_at&limit=1", prefer="")
     if not q:
@@ -277,6 +347,7 @@ def main() -> None:
     if stale:
         print(f"requeued {len(stale)} job(s) interrupted by a previous run", flush=True)
     ocr = vision()
+    warm = 0.0
     while True:
         try:
             job = claim()
@@ -287,6 +358,15 @@ def main() -> None:
         if not job:
             if once:
                 return
+            if time.time() - warm > 300:
+                # 24-09-2026: the first search after an idle spell took 8 s (cold vector index), then 0.8 s.
+                # The worker is always on, so it keeps the index in the database's memory.
+                warm = time.time()
+                try:
+                    rest("POST", "rpc/match_chunks", "", {"query_embedding": [0.02] * 1536, "query_text": "order", "matter_ids": [
+                        m["id"] for m in rest("GET", "matters", "select=id", prefer="")], "match_count": 5}, prefer="")
+                except Exception as e:  # noqa: BLE001
+                    print(f"warm-up skipped: {e}", file=sys.stderr, flush=True)
             time.sleep(10)
             continue
         print(f"job {job['id']} {job['filename']}", flush=True)
@@ -295,6 +375,7 @@ def main() -> None:
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "done", "doc_id": doc_id, "error": None, "updated_at": now()})
             print(f"  -> {doc_id}", flush=True)
             notify.job_done({**job, "doc_id": doc_id})
+            refresh_after(job["matter_id"])
         except (Exception, SystemExit) as e:  # noqa: BLE001  job-level failure is recorded, worker keeps going
             traceback.print_exc()
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "failed", "error": str(e)[:1000], "updated_at": now()})

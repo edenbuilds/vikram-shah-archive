@@ -1,6 +1,14 @@
 import { runAgent, type Step } from "@/lib/agent";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { admin, emailFrom } from "@/lib/access";
+import { printedFor } from "@/lib/printed";
+import { buildReading, getReading, saveReading } from "@/lib/reading";
 import { db } from "@/lib/supabase";
-import { basisOf, getBrief, getComparisons, getExplainer, saveBrief, saveComparisons, saveExplainer, type Section } from "@/lib/study";
+import { basisOf, buildDates, getBrief, getComparisons, getDates, getExplainer, saveBrief, saveComparisons, saveDates, saveExplainer, type Section } from "@/lib/study";
+
+// The upload worker signs its refresh requests as this address (see worker/worker.py refresh_after).
+const WORKER = "worker@case-companion";
+const MADE: Record<string, (m: string) => Promise<unknown>> = { brief: getBrief, explainer: getExplainer, reading: getReading, dates: getDates };
 
 export const maxDuration = 300;
 
@@ -23,12 +31,17 @@ const EXPLAINER = [
   ["table", "Summary table", "Build a summary table of the proceedings and key papers in this matter, oldest first. Write each row as one claim in exactly this form: 'Proceeding | What it does | Who filed or passed it | Date as printed | Outcome as the papers state it, or Pending, or Not stated'. Quote the paper for each row."],
 ] as const;
 
-// POST {kind: "brief" | "explainer" | "compare" | "keep-brief" | "keep-explainer", matter, point?} -> NDJSON: {type:"step"} … {type:"done"}.
-// Everything goes through her own client (RLS), then the result is saved for the matter.
+// POST {kind: "brief" | "explainer" | "reading" | "reading-all" | "dates" | "compare" | "keep-brief" | "keep-explainer" | "keep-reading", matter, point?}
+// -> NDJSON: {type:"step"} … {type:"done"}. Everything goes through her own client (RLS), then the result is saved for the matter.
+// The worker, once a matter's uploads are all filed, asks for the same kinds with {ifMade: true}, so what she
+// already made is brought up to date and nothing she never asked for is made (24-09-2026: "update all the docs").
 export async function POST(req: Request) {
-  const supabase = await db();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return new Response("Sign in first", { status: 401 });
+  const worker = emailFrom(req.headers.get("authorization")?.replace(/^Bearer /, "")) === WORKER;
+  const supabase: SupabaseClient = worker ? admin() : await db();
+  if (!worker) {
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) return new Response("Sign in first", { status: 401 });
+  }
   const body = await req.json();
   const matter = String(body.matter ?? "");
   const { data: m } = await supabase.from("matters").select("id").eq("id", matter).maybeSingle();
@@ -52,6 +65,16 @@ export async function POST(req: Request) {
           const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
           const { data: h } = await supabase.from("hearings").select("date, purpose, forum").eq("matter_id", matter).eq("status", "upcoming").gte("date", today).order("date").limit(1).maybeSingle();
           await saveBrief(matter, { made_at: new Date().toISOString(), basis, hearing: h ?? null, sections: await run(SECTIONS) });
+        } else if (body.ifMade && MADE[body.kind] && !(await MADE[body.kind](matter))) {
+          send({ type: "step", text: "Not made yet, left for her to make" });
+        } else if (body.kind === "reading" || body.kind === "reading-all") {
+          const r = await buildReading(supabase, matter, body.kind === "reading-all", (t) => send({ type: "step", text: t }));
+          if (r.left) send({ type: "step", text: `${r.left} papers still to read; press Continue` });
+        } else if (body.kind === "keep-reading") {
+          const r = await getReading(matter);
+          if (r) await saveReading(matter, { ...r, ack: basis });
+        } else if (body.kind === "dates") {
+          await Promise.all([buildDates(supabase, matter).then((d) => saveDates(matter, d)), printedFor(supabase, matter)]);
         } else if (body.kind === "explainer") {
           await saveExplainer(matter, { made_at: new Date().toISOString(), basis, sections: await run(EXPLAINER) });
         } else if (body.kind === "keep-explainer") {

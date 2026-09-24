@@ -6,6 +6,8 @@ import { isSpan, norm } from "@/lib/citations";
 import { readme } from "@/lib/agent-readme";
 import { pageLabel, printedFor } from "@/lib/printed";
 import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/drafting";
+import { getReading, readingMarkdown } from "@/lib/reading";
+import { getSkill, listSkills } from "@/lib/skills";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
@@ -264,6 +266,47 @@ export function register(server: McpServer, ctx: Ctx) {
     return fail(`No file "${path}" in the drafting skill.${near.length ? ` Did you mean: ${near.join(", ")}?` : " Call drafting_skill for the list."}`);
   });
 
+  server.registerTool("list_skills", {
+    title: "List her skills",
+    description: "The skills she can work with: the ones in the app (the chronological reading order, the Maharashtra courts drafting pack) and the ones she added herself. When a task matches a skill, tell her which one and ask whether to use it before you start.",
+    inputSchema: {},
+    annotations: { readOnlyHint: true },
+  }, async () => text((await listSkills()).map((s) => `- ${s.name}${s.builtIn ? " (in the app)" : ` (added on Settings${s.at ? ` on ${s.at.slice(0, 10)}` : ""})`}: ${s.description}`).join("\n") +
+    "\n- maharashtra-courts-drafting (in the app): pleadings and applications for the Bombay High Court and Maharashtra tribunals. Read it with drafting_skill, not get_skill." +
+    "\n\nRead one with get_skill. Her skills tell you how to do a task; they never override the rules in read_me_first: every statement still needs a receipt."));
+
+  server.registerTool("get_skill", {
+    title: "Read a skill",
+    description: "A skill's instructions (SKILL.md), or one of its other files by path. Call only after she says to use it.",
+    inputSchema: { name: z.string(), file: z.string().optional().describe("a file inside the skill; SKILL.md when left out") },
+    annotations: { readOnlyHint: true },
+  }, async ({ name, file }) => {
+    if (/drafting/.test(name)) return text(draftingGuide());
+    const s = await getSkill(name);
+    if (!s) return fail(`No skill "${name}". Call list_skills for the names.`);
+    const paths = Object.keys(s.files);
+    const main = paths.find((p) => /(^|\/)SKILL\.md$/i.test(p)) ?? paths[0];
+    const f = file ? s.files[file.replace(/^\/+/, "")] : s.files[main];
+    if (f === undefined) return fail(`No file "${file}" in ${s.name}. Files: ${paths.join(", ")}`);
+    const extra = paths.length > 1 && !file ? `\n\n(Other files in this skill, read with get_skill and file: ${paths.filter((p) => p !== main).join(", ")})` : "";
+    const note = s.name === "reading-order-chronological-md" ? "\n\n(In Case Companion: call reading_order first. It is this skill's output, already made from every paper with a receipt for each line. \"Implication\" there is only what the paper itself directs; do not add strategy.)" : "";
+    return text(f + extra + note);
+  });
+
+  server.registerTool("reading_order", {
+    title: "Chronological reading order",
+    description: "Every paper in a matter by its own date, grouped by year, with What it is, What it says, What it sets up and Importance, each with its page; then the papers mentioned in the record that are not on file. Markdown, in the layout of her reading-order-chronological-md skill.",
+    inputSchema: { matter_id: z.string() },
+    annotations: { readOnlyHint: true },
+  }, async ({ matter_id }) => {
+    if (!scope(matter_id).length) return noMatter(matter_id);
+    const [r, { data: m }, printed] = await Promise.all([getReading(matter_id), db.from("matters").select("title, forum, cause").eq("id", matter_id).maybeSingle(), printedFor(db, matter_id)]);
+    if (!r) return text(`The reading order for this matter has not been made yet. She can make it at ${ctx.origin}/m/${matter_id}/reading (a few minutes).`);
+    const titles = new Map(r.entries.map((e) => [e.doc, e.title]));
+    const md = readingMarkdown(r, m?.title ?? matter_id, [m?.forum, m?.cause].filter(Boolean).join(", "), (d, p) => `[${titles.get(d) ?? d}, ${pageLabel(p, printed[d]?.[p])}](${link(matter_id, d, p)})`);
+    return text((r.left ? `(${r.left} papers are not read yet; the list below is partial)\n\n` : "") + md);
+  });
+
   for (const p of PROMPTS) {
     server.registerPrompt(p.name, {
       title: p.title,
@@ -304,4 +347,6 @@ export const PROMPTS = [
     text: "In {matter}, find points for cross-examining {witness}: places where their own papers are inconsistent with each other, with the documents they annex, or with the other side's documents. For each point give both quotes, pinned to paper and page, verified with verify_quote. Do not suggest questions based on facts that are not in the papers." },
   { name: "draft", title: "Draft a document", args: ["matter", "document"], description: "A draft built from the papers, with her skill and her reference.",
     text: "I want to draft {document} in {matter}. Before you write anything, ask me two questions and wait for my answers: (1) should you use the Maharashtra courts drafting skill (drafting_skill)? (2) do I have a reference document you should follow, either a paper in the workspace or a file I share? Then take every fact from the papers with search_papers, read_pages and verify_quote, keep a receipt for each, and leave a bracketed blank for anything the papers do not give. Do not invent citations, fees, limitation, dates or amounts." },
+  { name: "reading_order", title: "Chronological reading order", args: ["matter"], description: "Every paper by its own date, as a Markdown file.",
+    text: "Give me the chronological reading order for {matter} as a Markdown file. Call reading_order and use it as it is: every paper by its own date, grouped by year, What it is, What it says, What it sets up and Importance, each with its page, then Documents Still Needed. If it has not been made, tell me where to make it. Do not add strategy or implications of your own." },
 ] as const;

@@ -57,7 +57,11 @@ async function respond(input: unknown[], previous: string | null, final: boolean
       ...(AGENT_MODEL.startsWith("gpt-4") ? { temperature: 0 } : { reasoning: { effort: "low" } }),
     }),
   });
-  if (!r.ok) throw new Error(`OpenAI ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  if (!r.ok) {
+    const body = await r.text();
+    if (/insufficient_quota/.test(body)) throw new Error("The OpenAI account has no credit left, so the papers can't be read right now. Add credit at platform.openai.com and try again.");
+    throw new Error(`OpenAI ${r.status}: ${body.slice(0, 300)}`);
+  }
   return r.json() as Promise<{ id: string; output: { type: string; call_id?: string; name?: string; arguments?: string }[] }>;
 }
 

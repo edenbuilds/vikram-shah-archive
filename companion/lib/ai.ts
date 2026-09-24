@@ -15,7 +15,11 @@ async function post(path: string, body: unknown) {
     headers: { Authorization: `Bearer ${KEY()}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!r.ok) throw new Error(`OpenAI ${path} ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  if (!r.ok) {
+    const body = await r.text();
+    if (/insufficient_quota/.test(body)) throw new Error("The OpenAI account has no credit left, so the papers can't be read right now. Add credit at platform.openai.com and try again.");
+    throw new Error(`OpenAI ${r.status}: ${body.slice(0, 300)}`);
+  }
   return r.json();
 }
 

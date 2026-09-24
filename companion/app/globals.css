@@ -519,3 +519,6 @@ label.check input { width: auto; }
 .explainer table { border-collapse: collapse; width: 100%; font-size: .86rem; min-width: 36rem; }
 .explainer th, .explainer td { text-align: left; vertical-align: top; padding: .45rem .5rem; border-bottom: 1px solid var(--line); }
 .explainer th { font-weight: 600; color: var(--muted); }
+
+/* reading order: a quoted run of figures ("39,73,899.00 39,50,000.") must wrap on a phone */
+.explainer article, .explainer li { overflow-wrap: anywhere; }

@@ -43,6 +43,15 @@ ok(parts === 5 && notes > 20, `explainer: ${parts} parts, ${notes} footnotes`);
 ok(await p.locator(".explainer table tbody tr").count() > 3, "explainer ends with a summary table");
 ok(await p.isVisible("text=Your explainer (PDF)"), "her own explainer PDF is linked on the Agile matter");
 ok((await p.locator(".explainer ol.footnotes cite").allTextContents()).some((t) => /p\. \d+ \(PDF \d+\)/.test(t)), "footnotes give the printed page with the PDF page");
+
+await go("/m/shetty-v-oberoi/reading");
+const read = await p.evaluate(() => ({ years: [...document.querySelectorAll(".explainer section.stack > h3")].map((h) => h.textContent), papers: document.querySelectorAll("article").length, receipts: document.querySelectorAll("article a q").length }));
+ok(read.papers > 5 && read.receipts > read.papers, `reading order: ${read.papers} papers, ${read.receipts} receipts, years ${read.years.join(" ")}`);
+ok(read.years.join() === [...read.years].sort().join() || read.years.at(-1) === "Undated", "reading order runs oldest first, undated last");
+ok(await p.isVisible("text=Mentioned in the papers, not on file"), "reading order lists papers mentioned but not on file");
+await go(`${AG}/upload`);
+ok(/Word, Markdown/.test(await p.locator(".dropzone").innerText()), "upload takes Word, Markdown, photos and zips");
+ok(/Last updated \d{2}-\d{2}-\d{4}, \d{2}:\d{2}/.test(await p.locator(".matter-head").innerText()), "the matter header shows when it was last updated");
 await go(`${AG}/d/exhibit-h-copy-of-the-impugned-order-8c5a5c69?pg=254`);
 ok(/Page 3 of \d+, printed 254/.test(await p.locator(".where").textContent()), "?pg=254 opens the page printed 254 (PDF p. 3)");
 

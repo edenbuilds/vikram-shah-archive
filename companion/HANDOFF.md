@@ -38,6 +38,39 @@ Notifications are **muted**:
 - **Uploads:** 6 MB pieces, each retried up to 5 times, with a percentage and progress bar. The 70 MB live test went from 7% to 99% and was queued.
 - **Editing:** "Edit details" under a matter's title (case name, short name, forum, cause) and "Rename" under a paper's title, both in an in-app dialog.
 
+## 24-09-2026 (later)
+
+New, verified on the live site unless marked:
+
+- **Any format uploads** (`worker/worker.py as_pdf`). Everything becomes a PDF before reading:
+  - PDFs as they are (also a .pdf with a few bytes before `%PDF-`, which used to fail as "Can't read .pdf files yet");
+  - photos (JPG, PNG, HEIC, TIFF, GIF, BMP, WebP) through `sips`;
+  - Word, RTF, ODT and HTML through `textutil`, then printed by headless Chrome;
+  - Markdown, text and CSV printed as written.
+  - A zip is opened in the browser (and by the Telegram bot), and each readable file inside is queued as its own paper; the rest are named and skipped.
+  - Checked live with .md, .txt, .docx, .png, .heic and a zip in zz-upload-test: all filed, text verbatim.
+- **"Add another document?"** After an upload the page asks, in the page itself; "Add another" opens the file picker. The Telegram bot ends its "Queued" message with the same offer.
+- **Last updated** (latest paper filed, DD-MM-YYYY, HH:MM IST) in every matter's header.
+- **Reading order** tab (`/m/<matter>/reading`, `lib/reading.ts`). Her reading-order-chronological-md skill, kept to receipts:
+  - every paper by its own date, grouped by year, undated last;
+  - What it is, What it says, What it sets up, Importance.
+  - Every field has a verbatim quote that is checked in code; a field that fails shows "Not found in the papers on file".
+  - Her skill's "Implication" (strategy) becomes "What it sets up": only what the paper itself directs.
+  - "Mentioned in the papers, not on file" is tiered like her Documents Still Needed, each with the quote that mentions it.
+  - One model call per paper, kept per paper, so after an upload only the new papers are read.
+  - Copy and Save .md export in her skill's layout. Made for every matter.
+- **Docs follow new papers.** When a matter's upload queue empties, the worker asks the app (`/api/study`, signed as `worker@case-companion` with the link secret) to update the dates list, reading order, explainer and brief. Only aids she already made are updated. The "new papers" banners stay as a fallback if an update fails.
+- **Skills.** The MCP has `list_skills`, `get_skill` and `reading_order`, plus a `reading_order` prompt.
+  - Built-in skills live in `companion/skills/<name>/SKILL.md`.
+  - She can add her own on Settings, Skills: a SKILL.md, some Markdown files or a zip of a skill folder. They are stored in `_system/skills/` and can be removed there with an in-page confirm.
+  - Rule 10 in the guide and SKILL.md: name the matching skill and ask before using it. A skill shapes the work, never its facts.
+- **Speed.**
+  - Printed page numbers are kept in memory on a warm server.
+  - The idle worker runs a vector query every 5 minutes, because the first search after an idle spell took 8 s on a cold index.
+  - Telegram shows typing at once, then a progress line that updates while it reads; page scans are fetched in parallel.
+- Checks: `node scripts/study-e2e.mjs` now covers the reading order, upload formats and the header; `scripts/responsive-check.mjs` includes the reading pages and Settings, Skills.
+- **Test papers.** zz-upload-test now holds 8 extra test papers (note-md-test, plain-text-test, word-test, photo-png-test, photo-heic-test, zipped-md-test, zipped-txt-test, incremental-test). They can go whenever the test matter is deleted.
+
 ## 24-09-2026
 
 New, verified on the live site unless marked:

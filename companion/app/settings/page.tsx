@@ -1,4 +1,4 @@
-import { Bell, KeyRound, Link2, MessageCircle, Plug, ScrollText } from "lucide-react";
+import { Bell, BookOpen, KeyRound, Link2, MessageCircle, Plug, ScrollText } from "lucide-react";
 import { headers } from "next/headers";
 import { tokenFor } from "@/lib/access";
 import { PROMPTS } from "@/lib/mcp";
@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/supabase";
 import { linkedChats, startCode } from "@/lib/telegram";
 import CopyButton from "../CopyButton";
 import Prompts from "./Prompts";
+import Skills from "./Skills";
+import { listSkills } from "@/lib/skills";
 
 export const metadata = { title: "Settings · Case Companion" };
 
@@ -14,6 +16,7 @@ const SECTIONS = [
   ["telegram", "Telegram", MessageCircle],
   ["signin", "Sign-in link", KeyRound],
   ["notifications", "Notifications", Bell],
+  ["skills", "Skills", BookOpen],
   ["prompts", "Prompts and skill", ScrollText],
 ] as const;
 
@@ -27,7 +30,7 @@ export default async function Settings() {
   const signIn = `${origin}/k/${token}`;
   const tgLink = `https://t.me/arya_case_archivebot?start=${startCode(email)}`;
   const chats = Object.entries(await linkedChats()).filter(([, e]) => e === email).length;
-  const { data: matters } = await supabase.from("matters").select("id, title").order("created_at");
+  const [{ data: matters }, skills] = await Promise.all([supabase.from("matters").select("id, title").order("created_at"), listSkills()]);
 
   const cursor = `https://cursor.com/en/install-mcp?name=case-companion&config=${Buffer.from(JSON.stringify({ url })).toString("base64")}`;
   const vscode = `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: "case-companion", type: "http", url }))}`;
@@ -94,6 +97,14 @@ export default async function Settings() {
         <section id="notifications" className="card stack">
           <h2 style={{ margin: 0 }}>Notifications</h2>
           <p className="muted" style={{ margin: 0 }}>When an upload is read and filed, or fails, the people with access to that matter get an email{chats ? " and a Telegram message" : ""}. Emails go to {email}.</p>
+        </section>
+
+        <section id="skills" className="stack">
+          <div>
+            <h2>Skills</h2>
+            <p className="muted" style={{ margin: 0 }}>How-to instructions your connected apps can follow, such as a drafting style or a reading order. They ask you before using one, and every fact still comes from the papers.</p>
+          </div>
+          <Skills skills={skills} />
         </section>
 
         <section id="prompts" className="stack">

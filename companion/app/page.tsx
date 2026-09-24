@@ -15,12 +15,13 @@ export default async function Workspace() {
   if (!auth.user) return <Landing />;
   const user = auth.user;
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }] = await Promise.all([
+  const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }, prefs] = await Promise.all([
     supabase.from("matters").select("id, title, kind, forum, cause, stages").order("created_at"),
     supabase.from("app_users").select("email").maybeSingle(),
     supabase.from("documents").select("matter_id, stage, page_count"),
     supabase.from("annotations").select("matter_id"),
     supabase.from("hearings").select("id, matter_id, date, forum, purpose").eq("status", "upcoming").gte("date", today).order("date"),
+    getPrefs(user.email!),
   ]);
   const stat = (id: string) => {
     const d = (docs ?? []).filter((x) => x.matter_id === id);
@@ -33,7 +34,6 @@ export default async function Workspace() {
     };
   };
 
-  const prefs = await getPrefs(user.email!);
   // the evening before (or the day of) a hearing, offer its brief
   const tomorrow = new Date(Date.parse(today + "T00:00:00Z") + 864e5).toISOString().slice(0, 10);
   const soon = (hearings ?? []).filter((h) => h.date <= tomorrow);

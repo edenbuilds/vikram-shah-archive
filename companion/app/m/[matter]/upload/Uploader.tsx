@@ -1,11 +1,20 @@
 "use client";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { unzip } from "fflate";
+import { useEffect, useRef, useState } from "react";
 import { queueUpload } from "@/app/actions";
 import type { Stage } from "@/lib/taxonomies";
 
 type Row = { file: File; title: string; state: string; pct?: number };
+
+// What the worker turns into a PDF (worker/worker.py as_pdf). A zip is opened here and each paper in it
+// goes up on its own, so one bad file in a zip does not hold up the rest.
+const OK = /\.(pdf|jpe?g|png|heic|heif|tiff?|gif|bmp|webp|docx?|rtf|odt|html?|md|markdown|txt|csv)$/i;
+const ACCEPT = ".pdf,.jpg,.jpeg,.png,.heic,.heif,.tif,.tiff,.gif,.bmp,.webp,.doc,.docx,.rtf,.odt,.html,.htm,.md,.markdown,.txt,.csv,.zip,image/*";
+const unzipped = (f: File) => f.arrayBuffer().then((b) => new Promise<File[]>((ok, no) =>
+  unzip(new Uint8Array(b), { filter: (e) => OK.test(e.name) && !/(^|\/)(__MACOSX|\.)/.test(e.name) }, (err, out) =>
+    err ? no(err) : ok(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)).map(([n, u]) => new File([u as BlobPart], n.split("/").pop()!))))));
 
 export default function Uploader({ matter, stages, busy }: { matter: string; stages: Stage[]; busy: boolean }) {
   const router = useRouter();
@@ -13,6 +22,9 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
   const [rows, setRows] = useState<Row[]>([]);
   const [running, setRunning] = useState(false);
   const [over, setOver] = useState(false);
+  const [asked, setAsked] = useState<number | null>(null); // papers just queued: ask about another
+  const [skipped, setSkipped] = useState<string[]>([]);
+  const pick = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!busy) return;
@@ -20,8 +32,18 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
     return () => clearInterval(t);
   }, [busy, router]);
 
-  const add = (files: FileList | File[] | null) =>
-    setRows((rs) => [...rs, ...Array.from(files ?? []).map((file) => ({ file, title: file.name.replace(/\.[a-z0-9]+$/i, ""), state: "ready" }))]);
+  async function add(files: FileList | File[] | null) {
+    setAsked(null);
+    const all: File[] = [], bad: string[] = [];
+    for (const f of Array.from(files ?? [])) {
+      if (/\.zip$/i.test(f.name)) {
+        try { all.push(...(await unzipped(f))); } catch { bad.push(`${f.name} (could not open the zip)`); }
+      } else if (OK.test(f.name) || f.type.startsWith("image/")) all.push(f);
+      else bad.push(f.name);
+    }
+    setSkipped(bad);
+    setRows((rs) => [...rs, ...all.map((file) => ({ file, title: file.name.replace(/\.[a-z0-9]+$/i, ""), state: "ready" }))]);
+  }
   // Files go up in 6 MB pieces (<path>.part000, .part001, ...), each retried on its own, and the worker
   // joins them back into the exact original. 2026-09-22: a 70 MB volume sent as 45 MB pieces failed
   // on the office connection with nothing to show; one dropped request lost the whole piece.
@@ -47,6 +69,7 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
   async function start() {
     const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!);
     setRunning(true);
+    let queued = 0;
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (r.state === "queued") continue;
@@ -77,12 +100,14 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
       try {
         await queueUpload({ matter, stage, title: r.title.trim() || r.file.name, filename: r.file.name, path });
         set("queued");
+        queued++;
       } catch (e) {
         set(`failed: ${(e as Error).message}`);
       }
     }
     setRunning(false);
     setRows((rs) => rs.filter((r) => r.state !== "queued"));
+    setAsked(queued);
     router.refresh();
   }
 
@@ -91,10 +116,21 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
       <label className={`dropzone${over ? " over" : ""}`} style={{ position: "relative" }}
         onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
         onDrop={(e) => { e.preventDefault(); setOver(false); add(e.dataTransfer.files); }}>
-        <input type="file" multiple onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
+        <input ref={pick} type="file" multiple accept={ACCEPT} onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
         <b>Drop files here</b>
-        <span className="subtle">or click to choose. PDFs of any size, and photos of pages. A volume with an index is split into its papers.</span>
+        <span className="subtle">or click to choose. PDF, Word, Markdown or text, photos of pages (JPG, PNG, HEIC), or a zip of any of these. A volume with an index is split into its papers.</span>
       </label>
+      {!!skipped.length && <p className="err" style={{ margin: 0 }}>Not added, this kind of file can&apos;t be read yet: {skipped.join(", ")}. Save it as a PDF and add that.</p>}
+
+      {asked !== null && !rows.length && (
+        <div className="ask-first" role="dialog" aria-label="Add another document">
+          <p>{asked ? <><b>{asked} {asked === 1 ? "paper is" : "papers are"} in the queue.</b> </> : null}Add another document to this matter?</p>
+          <div className="row" style={{ gap: ".5rem" }}>
+            <button className="btn" type="button" onClick={() => pick.current?.click()}>Add another</button>
+            <button className="btn ghost" type="button" onClick={() => setAsked(null)}>No, that&apos;s all</button>
+          </div>
+        </div>
+      )}
 
       {rows.length > 0 && (
         <>

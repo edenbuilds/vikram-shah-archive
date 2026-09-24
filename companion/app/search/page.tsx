@@ -26,7 +26,7 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
         const run = () => supabase.rpc("match_chunks", { query_embedding: e, query_text: q, matter_ids: ids, match_count: 60 });
         const r = await run();
         return r.error ? run() : r;
-      }),
+      }).catch(() => ({ data: [] as Hit[] })), // no embedding (e.g. no model credit): exact words still answer
       supabase.from("chunks").select("id, doc_id, page_start, page_end, text").in("matter_id", ids).textSearch("tsv", q, { type: "websearch", config: "english" }).limit(60),
     ]);
     const seen = new Set<number>();
