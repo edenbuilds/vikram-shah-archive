@@ -1,8 +1,9 @@
 import type { VerifiedClaim } from "@/lib/citations";
+import type { Printed } from "@/lib/printed";
 import { pinId } from "@/lib/study";
 import Receipt from "./Receipt";
 
-type Ctx = { matter: string; titles: Map<string, string>; pinned: Set<string> };
+type Ctx = { matter: string; titles: Map<string, string>; pinned: Set<string>; printed?: Printed };
 
 // Checked claims, each followed by its receipts.
 export function Claims({ claims, ctx }: { claims: VerifiedClaim[]; ctx: Ctx }) {
@@ -12,7 +13,7 @@ export function Claims({ claims, ctx }: { claims: VerifiedClaim[]; ctx: Ctx }) {
         <div key={i} className="claim">
           <p style={{ margin: "0 0 .4rem" }}>{c.text}</p>
           {c.citations.map((p, j) => (
-            <Receipt key={j} matter={ctx.matter} doc={p.doc_id} page={p.page_start} quote={p.quote} title={ctx.titles.get(p.doc_id) ?? p.doc_id}
+            <Receipt key={j} matter={ctx.matter} doc={p.doc_id} page={p.page_start} quote={p.quote} title={ctx.titles.get(p.doc_id) ?? p.doc_id} printed={ctx.printed?.[p.doc_id]?.[p.page_start]}
               pinned={ctx.pinned.has(pinId(p.doc_id, p.page_start, p.quote.replace(/\s+/g, " ").trim()))} />
           ))}
         </div>

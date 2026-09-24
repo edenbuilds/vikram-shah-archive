@@ -2,6 +2,7 @@ import Link from "next/link";
 import PinButton from "@/components/PinButton";
 import { embed } from "@/lib/ai";
 import { MIN_SIMILARITY } from "@/lib/qa";
+import { pageLabel, printedFor, type Printed } from "@/lib/printed";
 import { getPins, pinId } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 
@@ -20,7 +21,12 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
   let hits: Hit[] = [];
   if (q) {
     const [sem, lex] = await Promise.all([
-      exact ? Promise.resolve({ data: [] as Hit[] }) : embed(q).then((e) => supabase.rpc("match_chunks", { query_embedding: e, query_text: q, matter_ids: ids, match_count: 60 })),
+      // one retry: a failed call silently left only exact-word matches (15 passages instead of 67)
+      exact ? Promise.resolve({ data: [] as Hit[] }) : embed(q).then(async (e) => {
+        const run = () => supabase.rpc("match_chunks", { query_embedding: e, query_text: q, matter_ids: ids, match_count: 60 });
+        const r = await run();
+        return r.error ? run() : r;
+      }),
       supabase.from("chunks").select("id, doc_id, page_start, page_end, text").in("matter_id", ids).textSearch("tsv", q, { type: "websearch", config: "english" }).limit(60),
     ]);
     const seen = new Set<number>();
@@ -35,6 +41,7 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
     getPins(user.email!),
   ]);
   const doc = new Map((docs ?? []).map((d) => [d.id, d]));
+  const printed: Printed = Object.assign({}, ...(await Promise.all([...new Set((docs ?? []).map((d) => d.matter_id))].map((m) => printedFor(supabase, m)))));
   const pinned = new Set(pins.map((p) => p.id));
   const terms = q.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((t) => t.length > 2);
   const snip = (text: string) => {
@@ -76,7 +83,7 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
             return (
               <div key={h.id} className="receipt-wrap">
                 <Link href={`/m/${m.id}/d/${h.doc_id}?p=${h.page_start}`} className="receipt bare">
-                  <span><q>{mark(s)}</q><cite>{d.title}, p. {h.page_start}{h.page_end !== h.page_start ? `-${h.page_end}` : ""} →</cite></span>
+                  <span><q>{mark(s)}</q><cite>{d.title}, {pageLabel(h.page_start, printed[h.doc_id]?.[h.page_start])}{!printed[h.doc_id]?.[h.page_start] && h.page_end !== h.page_start ? `-${h.page_end}` : ""} →</cite></span>
                 </Link>
                 <PinButton matter={m.id} doc={h.doc_id} page={h.page_start} quote={s} on={pinned.has(pinId(h.doc_id, h.page_start, s))} />
               </div>

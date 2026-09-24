@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // Starts a brief or a comparison and shows the agent's searching and reading as it happens.
 export default function RunStudy({ matter, kind, label, ghost, placeholder, suggestions = [], point: fixed }: {
-  matter: string; kind: "brief" | "compare" | "keep-brief"; label: string; ghost?: boolean; placeholder?: string; suggestions?: string[]; point?: string;
+  matter: string; kind: "brief" | "explainer" | "compare" | "keep-brief" | "keep-explainer"; label: string; ghost?: boolean; placeholder?: string; suggestions?: string[]; point?: string;
 }) {
   const router = useRouter();
   const [point, setPoint] = useState("");

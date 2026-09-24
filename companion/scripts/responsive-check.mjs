@@ -9,7 +9,8 @@ const DEVICES = {
   "desktop": { viewport: { width: 1440, height: 900 } },
 };
 const PAGES = ["/", "/m/lade-v-state-wp-1575-2026", "/m/lade-v-state-wp-1575-2026/map", "/m/shetty-v-oberoi/d/complaint-exhibit-d-agreement-for-sale-dated-19-08-2015-b7409c27",
-  "/ask", "/ask?m=shetty-v-oberoi", "/settings", "/m/shetty-v-oberoi/collections", "/m/lade-v-state-wp-1575-2026/upload", "/m/lade-v-state-wp-1575-2026/hearings", "/m/lade-v-state-wp-1575-2026/chronology", "/m/lade-v-state-wp-1575-2026/collections"];
+  "/ask", "/ask?m=shetty-v-oberoi", "/settings", "/m/shetty-v-oberoi/collections", "/m/lade-v-state-wp-1575-2026/upload", "/m/lade-v-state-wp-1575-2026/hearings", "/m/lade-v-state-wp-1575-2026/chronology", "/m/lade-v-state-wp-1575-2026/collections",
+  "/m/shetty-v-oberoi/brief", "/m/shetty-v-oberoi/compare", "/m/shetty-v-oberoi/chronology/papers", "/search?q=withdrawal+of+the+appeal", "/pins"];
 const b = await webkit.launch();
 let bad = 0;
 for (const [name, dev] of Object.entries(DEVICES)) {

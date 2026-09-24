@@ -1,6 +1,6 @@
 import { runAgent, type Step } from "@/lib/agent";
 import { db } from "@/lib/supabase";
-import { basisOf, getBrief, getComparisons, saveBrief, saveComparisons, type Section } from "@/lib/study";
+import { basisOf, getBrief, getComparisons, getExplainer, saveBrief, saveComparisons, saveExplainer, type Section } from "@/lib/study";
 
 export const maxDuration = 300;
 
@@ -11,7 +11,19 @@ const SECTIONS = [
   ["orders", "Orders so far", "List the orders passed in this matter so far, in date order, each with its date and what it directs, quoting the order."],
 ] as const;
 
-// POST {kind: "brief" | "compare", matter, point?} -> NDJSON: {type:"step"} … {type:"done"}.
+// The explainer, in the shape of the one Arya's Claude made for Agile v Vikram Singh (24-09-2026):
+// plain English for a first-year law student, five parts, every sentence footnoted to its page.
+// Unlike that one, nothing comes from general knowledge: a term is explained only as the papers put it.
+const PLAIN = "Write in plain English for a first-year law student: short sentences, and say what a legal term means only where the papers themselves say it. ";
+const EXPLAINER = [
+  ["kind", "What kind of case is this?", PLAIN + "Who are the parties and what is each of them (for example a developer, a flat buyer, a society, an authority)? What is the dispute about: the property, agreement, order or event at its centre? Which Acts and sections do the papers invoke? Give each point as the papers state it, attributed to the paper."],
+  ["ladder", "The ladder of authorities", PLAIN + "List every court, tribunal or authority that has dealt with this matter or is asked to, from the lowest to the highest, as the papers show: its name, the provision under which the papers say it acts, what it decided or is asked to decide, with the case number and date. End with where the matter stands now, according to the latest paper."],
+  ["papers", "The papers in this file", PLAIN + "Go through the kinds of paper in this matter (complaint, petition, reply, affidavit, written submissions, order, appeal memo, application, notice, exhibits). For each, say what it is, who filed or passed it, when, and what it asks for or decides in this case. One claim per paper."],
+  ["story", "The story", PLAIN + "Tell what happened in this matter in date order, from the start of the parties' dealings to the latest paper. Where the parties' papers give different versions of a fact, give each version attributed to its paper, and do not say which is right."],
+  ["table", "Summary table", "Build a summary table of the proceedings and key papers in this matter, oldest first. Write each row as one claim in exactly this form: 'Proceeding | What it does | Who filed or passed it | Date as printed | Outcome as the papers state it, or Pending, or Not stated'. Quote the paper for each row."],
+] as const;
+
+// POST {kind: "brief" | "explainer" | "compare" | "keep-brief" | "keep-explainer", matter, point?} -> NDJSON: {type:"step"} … {type:"done"}.
 // Everything goes through her own client (RLS), then the result is saved for the matter.
 export async function POST(req: Request) {
   const supabase = await db();
@@ -29,16 +41,22 @@ export async function POST(req: Request) {
     async start(c) {
       const send = (o: unknown) => c.enqueue(enc.encode(JSON.stringify(o) + "\n"));
       const scope = { matterIds: [matter], docIds: null };
+      // each section is one run of the receipts agent over the whole matter, all at once
+      const run = (list: readonly (readonly [string, string, string])[]): Promise<Section[]> => Promise.all(list.map(async ([key, title, q]) => {
+        const r = await runAgent(supabase, q, scope, [], (s: Step) => send({ type: "step", text: `${title}: ${s.text}` }));
+        return { key, title, status: r.status, claims: r.claims, rejected: r.rejected };
+      }));
       try {
         const basis = await basisOf(supabase, matter);
         if (body.kind === "brief") {
           const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
           const { data: h } = await supabase.from("hearings").select("date, purpose, forum").eq("matter_id", matter).eq("status", "upcoming").gte("date", today).order("date").limit(1).maybeSingle();
-          const sections: Section[] = await Promise.all(SECTIONS.map(async ([key, title, q]) => {
-            const r = await runAgent(supabase, q, scope, [], (s: Step) => send({ type: "step", text: `${title}: ${s.text}` }));
-            return { key, title, status: r.status, claims: r.claims, rejected: r.rejected };
-          }));
-          await saveBrief(matter, { made_at: new Date().toISOString(), basis, hearing: h ?? null, sections });
+          await saveBrief(matter, { made_at: new Date().toISOString(), basis, hearing: h ?? null, sections: await run(SECTIONS) });
+        } else if (body.kind === "explainer") {
+          await saveExplainer(matter, { made_at: new Date().toISOString(), basis, sections: await run(EXPLAINER) });
+        } else if (body.kind === "keep-explainer") {
+          const e = await getExplainer(matter);
+          if (e) await saveExplainer(matter, { ...e, ack: basis });
         } else if (body.kind === "compare") {
           const q = `On this point: "${point}". Find what each party's papers state about it. Give one claim per paper that addresses the point, ` +
             `attributed to that paper ("The complaint states…"), with its quote. Cover every side whose papers address the point. ` +

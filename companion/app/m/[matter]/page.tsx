@@ -2,7 +2,7 @@ import Link from "next/link";
 import ExportZip from "./ExportZip";
 import { fmtDate, getMatter, pages } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
-import { getBrief, getDates, newSince } from "@/lib/study";
+import { getBrief, getDates, getExplainer, newSince } from "@/lib/study";
 
 type Doc = { id: string; title: string; stage: string; page_count: number; kind: string | null };
 
@@ -15,19 +15,22 @@ export default async function Papers({ params, searchParams }: { params: Promise
   const m = await getMatter(supabase, matter);
   const today = new Date().toISOString().slice(0, 10);
 
-  const [{ data: docs }, { data: people }, { data: notes }, { data: next }, hits, brief, dates] = await Promise.all([
+  const [{ data: docs }, { data: people }, { data: notes }, { data: next }, hits, brief, dates, explainer] = await Promise.all([
     supabase.from("documents").select("id, title, stage, page_count, kind, filename, ingested_at").eq("matter_id", m.id).order("sort"),
     supabase.from("matter_people").select("role, as_printed, person_id").eq("matter_id", m.id),
     supabase.from("annotations").select("id, doc_id, page_no, body, created_at").eq("matter_id", m.id).order("created_at", { ascending: false }),
     supabase.from("hearings").select("id, date, purpose").eq("matter_id", m.id).eq("status", "upcoming").gte("date", today).order("date").limit(1),
     q ? supabase.from("chunks").select("id, doc_id, page_start, page_end, text").eq("matter_id", m.id)
           .textSearch("tsv", q, { type: "websearch", config: "english" }).limit(40) : Promise.resolve({ data: null }),
-    getBrief(matter), getDates(matter),
+    getBrief(matter), getDates(matter), getExplainer(matter),
   ]);
   // new papers since her brief or the dates list were made: ask before remaking them
   const now = { papers: (docs ?? []).length, last: (docs ?? []).reduce((a, d) => (d.ingested_at > a ? d.ingested_at : a), "") };
   const staleBrief = brief ? newSince(brief.basis, now, brief.ack) : 0;
   const staleDates = dates ? newSince(dates.basis, now, dates.ack) : 0;
+  const staleEx = explainer ? newSince(explainer.basis, now, explainer.ack) : 0;
+  const stale = [[staleEx, "explainer", "/explainer", "Review the explainer"], [staleBrief, "hearing brief", "/brief", "Review the brief"], [staleDates, "dates list", "/chronology/papers", "Review the dates"]]
+    .filter(([n]) => (n as number) > 0) as [number, string, string, string][];
   const list = (docs ?? []) as Doc[];
   const title = new Map(list.map((d) => [d.id, d.title]));
   const noteCount = (id: string) => (notes ?? []).filter((n) => n.doc_id === id).length;
@@ -46,12 +49,11 @@ export default async function Papers({ params, searchParams }: { params: Promise
 
   return (
     <div className="stack" style={{ gap: "1.25rem" }}>
-      {(staleBrief > 0 || staleDates > 0) && (
+      {stale.length > 0 && (
         <div className="ask-first">
-          <p><b>New papers on file.</b> Your {staleBrief && staleDates ? "hearing brief and the dates list were" : staleBrief ? "hearing brief was" : "dates list was"} made before {Math.max(staleBrief, staleDates) > 1 ? "they" : "it"} arrived. Update now?</p>
+          <p><b>New papers on file.</b> Your {stale.map(([, what]) => what).join(stale.length > 2 ? ", " : " and ").replace(/, ([^,]*)$/, " and $1")} {stale.length > 1 ? "were" : "was"} made before {Math.max(...stale.map(([n]) => n)) > 1 ? "they" : "it"} arrived. Update now?</p>
           <div className="row" style={{ gap: ".5rem" }}>
-            {staleBrief > 0 && <Link className="btn" href={`/m/${m.id}/brief`}>Review the brief</Link>}
-            {staleDates > 0 && <Link className="btn ghost" href={`/m/${m.id}/chronology/papers`}>Review the dates</Link>}
+            {stale.map(([, , path, label], i) => <Link key={path} className={`btn${i ? " ghost" : ""}`} href={`/m/${m.id}${path}`}>{label}</Link>)}
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { unpin } from "@/app/actions";
 import { dmyIST } from "@/lib/data";
+import { pageLabel, printedFor, type Printed } from "@/lib/printed";
 import { getPins, reference } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 import Tools from "./Tools";
@@ -11,9 +12,11 @@ export default async function Pins() {
   const [pins, { data: matters }] = await Promise.all([getPins(user.email!), supabase.from("matters").select("id, title")]);
   const visible = new Map((matters ?? []).map((m) => [m.id, m.title]));
   const groups = [...visible.entries()].map(([id, title]) => ({ id, title, pins: pins.filter((p) => p.matter === id) })).filter((g) => g.pins.length);
+  const printed: Printed = Object.assign({}, ...(await Promise.all(groups.map((g) => printedFor(supabase, g.id)))));
+  const pg = (p: { doc: string; page: number }) => printed[p.doc]?.[p.page];
   const origin = "https://case-companion.edenbuilds.me";
-  const md = (g: (typeof groups)[number]) => [`## ${g.title}`, "", ...g.pins.map((p, i) => `${i + 1}. "${p.quote.replace(/\s+/g, " ").trim()}" ([${p.title}, p. ${p.page}](${origin}/m/${p.matter}/d/${p.doc}?p=${p.page}))`), ""].join("\n");
-  const txt = (g: (typeof groups)[number]) => g.pins.map((p, i) => `${i + 1}. ${reference(p)}`).join("\n");
+  const md = (g: (typeof groups)[number]) => [`## ${g.title}`, "", ...g.pins.map((p, i) => `${i + 1}. "${p.quote.replace(/\s+/g, " ").trim()}" ([${p.title}, ${pageLabel(p.page, pg(p))}](${origin}/m/${p.matter}/d/${p.doc}?p=${p.page}))`), ""].join("\n");
+  const txt = (g: (typeof groups)[number]) => g.pins.map((p, i) => `${i + 1}. ${reference(p, pg(p))}`).join("\n");
 
   return (
     <main className="wrap stack" style={{ paddingTop: "1.5rem" }}>
@@ -43,7 +46,7 @@ export default async function Pins() {
             {g.pins.map((p) => (
               <li key={p.id}>
                 <Link href={`/m/${p.matter}/d/${p.doc}?p=${p.page}`} className="receipt bare">
-                  <span><q>{p.quote}</q><cite>{p.title}, p. {p.page} →</cite></span>
+                  <span><q>{p.quote}</q><cite>{p.title}, {pageLabel(p.page, pg(p))} →</cite></span>
                 </Link>
                 <form action={unpin} className="row" style={{ gap: ".6rem", alignItems: "center" }}>
                   <input type="hidden" name="id" value={p.id} />

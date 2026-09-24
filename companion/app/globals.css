@@ -506,3 +506,16 @@ label.check input { width: auto; }
   .navlink span, .pin-btn span { display: none; }
   .pin-btn { padding: .4rem; }
 }
+
+/* Explainer: prose with footnotes, as a printed explainer reads */
+.explainer .prose { margin: 0; line-height: 1.7; }
+.explainer sup a { font-size: .7rem; text-decoration: none; padding: 0 .1rem; }
+.explainer ol.footnotes { margin: .8rem 0 0; padding-left: 1.6rem; font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: .6rem; }
+.explainer ol.footnotes li { margin: .25rem 0; }
+.explainer ol.footnotes a { color: inherit; text-decoration: none; }
+.explainer ol.footnotes cite { font-style: normal; color: var(--subtle); white-space: nowrap; }
+.explainer ol.footnotes li:target { background: var(--paper); }
+.explainer .table-wrap { overflow-x: auto; }
+.explainer table { border-collapse: collapse; width: 100%; font-size: .86rem; min-width: 36rem; }
+.explainer th, .explainer td { text-align: left; vertical-align: top; padding: .45rem .5rem; border-bottom: 1px solid var(--line); }
+.explainer th { font-weight: 600; color: var(--muted); }

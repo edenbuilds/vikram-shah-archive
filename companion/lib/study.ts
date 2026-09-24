@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { readState, writeState } from "./access.ts";
 import type { VerifiedClaim, Rejected } from "./citations.ts";
+import { pageLabel } from "./printed.ts";
 
 // Study aids built from the papers: hearing brief, comparisons, the dates in the record, pins.
 // Each saved aid remembers the papers it was made from (its "basis"), so when new papers arrive
@@ -21,6 +22,7 @@ export const newSince = (saved: Basis | undefined, now: Basis, ack?: Basis) =>
 
 export type Section = { key: string; title: string; status: "answered" | "not_in_corpus"; claims: VerifiedClaim[]; rejected: Rejected[] };
 export type Brief = { made_at: string; basis: Basis; ack?: Basis; hearing: { date: string; purpose: string | null; forum: string | null } | null; sections: Section[] };
+export type Explainer = { made_at: string; basis: Basis; ack?: Basis; sections: Section[] };
 export type Comparison = { id: string; point: string; made_at: string; basis: Basis; status: "answered" | "not_in_corpus"; claims: VerifiedClaim[]; rejected: Rejected[] };
 export type DateMention = { doc: string; page: number; printed: string; quote: string };
 export type PaperDates = { made_at: string; basis: Basis; ack?: Basis; dates: { iso: string; mentions: DateMention[]; more: number }[] };
@@ -28,6 +30,10 @@ export type PaperDates = { made_at: string; basis: Basis; ack?: Basis; dates: { 
 const at = (matter: string, what: string) => `_system/study/${matter}/${what}.json`;
 export const getBrief = (m: string) => readState<Brief | null>(at(m, "brief"), null);
 export const saveBrief = (m: string, b: Brief) => writeState(at(m, "brief"), b);
+export const getExplainer = (m: string) => readState<Explainer | null>(at(m, "explainer"), null);
+export const saveExplainer = (m: string, e: Explainer) => writeState(at(m, "explainer"), e);
+/** Her own explainer file for a matter, if she gave one (kept beside the made one, never mixed in). */
+export const yoursPath = (m: string) => `_system/study/${m}/explainer-yours.pdf`;
 export const getComparisons = (m: string) => readState<Comparison[]>(at(m, "compare"), []);
 export const saveComparisons = (m: string, c: Comparison[]) => writeState(at(m, "compare"), c.slice(0, 30));
 export const getDates = (m: string) => readState<PaperDates | null>(at(m, "dates"), null);
@@ -97,5 +103,5 @@ export const pinId = (doc: string, page: number, quote: string) => createHash("s
 export const getPins = (email: string) => readState<Pin[]>(pinPath(email), []);
 export const savePins = (email: string, p: Pin[]) => writeState(pinPath(email), p);
 
-/** "quote" (Paper, p. 3): one line per pin, ready to paste into a draft. */
-export const reference = (p: Pin) => `"${p.quote.replace(/\s+/g, " ").trim()}" (${p.title}, p. ${p.page})`;
+/** "quote" (Paper, p. 3): one line per pin, ready to paste into a draft; the printed page first where it differs. */
+export const reference = (p: Pin, printed?: number) => `"${p.quote.replace(/\s+/g, " ").trim()}" (${p.title}, ${pageLabel(p.page, printed)})`;

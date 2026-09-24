@@ -4,6 +4,8 @@ import { admin } from "@/lib/access";
 import { runAgent } from "@/lib/agent";
 import { isSpan, norm } from "@/lib/citations";
 import { readme } from "@/lib/agent-readme";
+import { pageLabel, printedFor } from "@/lib/printed";
+import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/drafting";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
@@ -20,7 +22,7 @@ const fail = (t: string) => ({ content: [{ type: "text" as const, text: t }], is
 export function register(server: McpServer, ctx: Ctx) {
   const db = admin();
   const link = (m: string, d: string, p?: number) => `${ctx.origin}/m/${m}/d/${d}${p ? `?p=${p}` : ""}`;
-  const pin = (d: { matter_id: string; id: string; title: string }, p: number) => `[${d.title}, p. ${p}](${link(d.matter_id, d.id, p)})`;
+  const pin = (d: { matter_id: string; id: string; title: string }, p: number, printed?: number) => `[${d.title}, ${pageLabel(p, printed)}](${link(d.matter_id, d.id, p)})`;
   const scope = (m?: string) => (m ? (ctx.matters.includes(m) ? [m] : []) : ctx.matters);
   async function doc(id: string): Promise<Doc | null> {
     const { data } = await db.from("documents").select("id, matter_id, title, stage, page_count, source_path, sections").eq("id", id).maybeSingle();
@@ -101,8 +103,11 @@ export function register(server: McpServer, ctx: Ctx) {
     if (!d) return fail(`No paper "${doc_id}" in your workspace.`);
     const to = Math.min(to_page ?? from_page, from_page + 14, d.page_count);
     if (from_page > d.page_count) return fail(`"${d.title}" has ${d.page_count} pages.`);
-    const { data } = await db.from("document_pages").select("page_no, text").eq("doc_id", d.id).gte("page_no", from_page).lte("page_no", to).order("page_no");
-    const body = (data ?? []).map((p) => `--- ${pin(d, p.page_no)} ---\n${p.text?.trim() || "[ILLEGIBLE: no text could be read from this page]"}`).join("\n\n");
+    const [{ data }, printed] = await Promise.all([
+      db.from("document_pages").select("page_no, text").eq("doc_id", d.id).gte("page_no", from_page).lte("page_no", to).order("page_no"),
+      printedFor(db, d.matter_id),
+    ]);
+    const body = (data ?? []).map((p) => `--- ${pin(d, p.page_no, printed[d.id]?.[p.page_no])} ---\n${p.text?.trim() || "[ILLEGIBLE: no text could be read from this page]"}`).join("\n\n");
     return text(`${body}${to < d.page_count ? `\n\n(${d.page_count} pages in all; continue with from_page ${to + 1}.)` : ""}`);
   });
 
@@ -240,6 +245,25 @@ export function register(server: McpServer, ctx: Ctx) {
     return text(JSON.stringify({ id, title: `${d.title}, p. ${n}`, text: data?.text?.trim() || "[ILLEGIBLE]", url: link(d.matter_id, d.id, n), metadata: { matter: d.matter_id, page: n } }));
   });
 
+  server.registerTool("drafting_skill", {
+    title: "Maharashtra courts drafting skill",
+    description: `Her drafting skill for the Bombay High Court and Maharashtra tribunals: forum headers, long-form templates, case-type rules. ${DRAFTING_ASK} Call this after she says yes.`,
+    inputSchema: {},
+    annotations: { readOnlyHint: true },
+  }, async () => text(draftingGuide()));
+
+  server.registerTool("drafting_file", {
+    title: "Read a file of the drafting skill",
+    description: "One file of the Maharashtra courts drafting skill (a template, a forum header, a case-type skill or a reference note), by the path drafting_skill lists.",
+    inputSchema: { path: z.string().describe('e.g. "templates/high-court/civil-wp.md"') },
+    annotations: { readOnlyHint: true },
+  }, async ({ path }) => {
+    const t = draftingFile(path.replace(/^\/+/, ""));
+    if (t !== null) return text(t);
+    const near = draftingFiles().filter((f) => f.includes(path.split("/").pop()!.replace(/\.md$/, ""))).slice(0, 8);
+    return fail(`No file "${path}" in the drafting skill.${near.length ? ` Did you mean: ${near.join(", ")}?` : " Call drafting_skill for the list."}`);
+  });
+
   for (const p of PROMPTS) {
     server.registerPrompt(p.name, {
       title: p.title,
@@ -254,9 +278,10 @@ export function register(server: McpServer, ctx: Ctx) {
     const hits = (data ?? []) as { doc_id: string; matter_id: string; page_start: number; text: string; similarity: number; fts_rank: number }[];
     const good = hits.filter((h) => h.similarity >= 0.3 || h.fts_rank > 0);
     const { data: ds } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(good.map((h) => h.doc_id))]);
+    const printed = Object.assign({}, ...(await Promise.all([...new Set(good.map((h) => h.matter_id))].map((m) => printedFor(db, m))))) as Record<string, Record<number, number>>;
     return good.map((h) => {
       const d = (ds ?? []).find((x) => x.id === h.doc_id)!;
-      return { doc_id: h.doc_id, matter_id: h.matter_id, page: h.page_start, title: d?.title ?? h.doc_id, text: h.text, pin: pin({ ...d, id: h.doc_id, matter_id: h.matter_id, title: d?.title ?? h.doc_id }, h.page_start) };
+      return { doc_id: h.doc_id, matter_id: h.matter_id, page: h.page_start, title: d?.title ?? h.doc_id, text: h.text, pin: pin({ ...d, id: h.doc_id, matter_id: h.matter_id, title: d?.title ?? h.doc_id }, h.page_start, printed[h.doc_id]?.[h.page_start]) };
     });
   }
 }
@@ -277,4 +302,6 @@ export const PROMPTS = [
     text: "Check this statement against the papers in Case Companion: \"{statement}\". Answer SUPPORTED, CONTRADICTED, or NOT IN THE PAPERS, then show the exact quotes with paper and page (verify each with verify_quote). If it is partly supported, say which part." },
   { name: "cross_points", title: "Points for cross-examination", args: ["matter", "witness"], description: "Inconsistencies in a witness's or party's own papers.",
     text: "In {matter}, find points for cross-examining {witness}: places where their own papers are inconsistent with each other, with the documents they annex, or with the other side's documents. For each point give both quotes, pinned to paper and page, verified with verify_quote. Do not suggest questions based on facts that are not in the papers." },
+  { name: "draft", title: "Draft a document", args: ["matter", "document"], description: "A draft built from the papers, with her skill and her reference.",
+    text: "I want to draft {document} in {matter}. Before you write anything, ask me two questions and wait for my answers: (1) should you use the Maharashtra courts drafting skill (drafting_skill)? (2) do I have a reference document you should follow, either a paper in the workspace or a file I share? Then take every fact from the papers with search_papers, read_pages and verify_quote, keep a receipt for each, and leave a bracketed blank for anything the papers do not give. Do not invent citations, fees, limitation, dates or amounts." },
 ] as const;

@@ -7,11 +7,16 @@ import Switch from "./Switch";
 type Entry = { id: string; date: string | null; date_text: string | null; title: string; body: string | null; doc_id: string | null; page_no: number | null; hearing_id: string | null };
 type Doc = { id: string; title: string };
 
-export default async function Chronology({ params }: { params: Promise<{ matter: string }> }) {
+// "As arranged" is her own order (dates first, then her ↑↓ moves); the other two sort by date only.
+const ORDERS = [["", "As arranged"], ["oldest", "Oldest first"], ["newest", "Newest first"]] as const;
+
+export default async function Chronology({ params, searchParams }: { params: Promise<{ matter: string }>; searchParams: Promise<{ order?: string }> }) {
   const { matter } = await params;
+  const asked = (await searchParams).order;
+  const order = ORDERS.find(([k]) => k === asked)?.[0] ?? "";
   const { supabase } = await requireUser();
   const [{ data: entries }, { data: docs }] = await Promise.all([
-    supabase.from("chronology_entries").select("*").eq("matter_id", matter).order("date", { nullsFirst: false }).order("sort").order("created_at"),
+    supabase.from("chronology_entries").select("*").eq("matter_id", matter).order("date", { ascending: order !== "newest", nullsFirst: false }).order(order ? "created_at" : "sort").order("created_at"),
     supabase.from("documents").select("id, title").eq("matter_id", matter).order("sort"),
   ]);
   const title = new Map(((docs ?? []) as Doc[]).map((d) => [d.id, d.title]));
@@ -41,6 +46,13 @@ export default async function Chronology({ params }: { params: Promise<{ matter:
         <div className="card"><EntryForm matter={matter} docs={(docs ?? []) as Doc[]} /></div>
       </details>
 
+      {(entries?.length ?? 0) > 1 && (
+        <div className="chips" aria-label="Order">
+          {ORDERS.map(([k, label]) => (
+            <Link key={k} className={`chip${k === order ? " on" : ""}`} href={`/m/${matter}/chronology${k ? `?order=${k}` : ""}`} aria-current={k === order ? "true" : undefined}>{label}</Link>
+          ))}
+        </div>
+      )}
       <ul className="plain chrono">
         {((entries ?? []) as Entry[]).map((e, i, all) => (
           <li key={e.id}>
@@ -65,14 +77,14 @@ export default async function Chronology({ params }: { params: Promise<{ matter:
                 <form action={deleteEntry}><input type="hidden" name="id" value={e.id} /><input type="hidden" name="matter" value={matter} /><button className="link">delete entry</button></form>
               </details>
             </div>
-            <div className="row" style={{ flexWrap: "nowrap" }}>
+            {!order && <div className="row" style={{ flexWrap: "nowrap" }}>
               {(["up", "down"] as const).map((dir) => (
                 <form key={dir} action={moveEntry}>
                   <input type="hidden" name="id" value={e.id} /><input type="hidden" name="matter" value={matter} /><input type="hidden" name="dir" value={dir} />
                   <button className="btn ghost small" disabled={dir === "up" ? i === 0 : i === all.length - 1} aria-label={`Move ${dir}`}>{dir === "up" ? "↑" : "↓"}</button>
                 </form>
               ))}
-            </div>
+            </div>}
           </li>
         ))}
       </ul>

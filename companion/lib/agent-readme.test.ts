@@ -9,7 +9,7 @@ test("the agent guide documents every MCP tool the server registers, and the ski
   const tools = [...server.matchAll(/registerTool\("([a-z_]+)"/g)].map((m) => m[1]);
   const looped = [...server.matchAll(/\["(get_[a-z]+)", "/g)].map((m) => m[1]);
   for (const t of [...tools, ...looped]) assert.ok(guide.includes(t), `guide is missing tool ${t}`);
-  for (const rule of ["No receipt, no statement", "verify_quote", "Not found in the papers on file", "No theories", "[ILLEGIBLE]"]) {
+  for (const rule of ["No receipt, no statement", "verify_quote", "Not found in the papers on file", "No theories", "[ILLEGIBLE]", "drafting_skill", "reference document"]) {
     assert.ok(guide.includes(rule), `guide is missing: ${rule}`);
     assert.ok(skill.includes(rule), `skill is missing: ${rule}`);
   }

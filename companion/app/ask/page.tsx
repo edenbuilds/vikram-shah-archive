@@ -4,6 +4,7 @@ import { fileUrls, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import AskBox from "./AskBox";
 import PinButton from "@/components/PinButton";
+import { pageLabel, printedFor, type Printed } from "@/lib/printed";
 import { getPins, pinId } from "@/lib/study";
 
 export const metadata = { title: "Ask · Case Companion" };
@@ -45,10 +46,12 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
   const cites = msgs.flatMap((m) => (m.citations ?? []).flatMap((c) => c.citations));
   const keys = [...new Set(cites.map((c) => `${c.doc_id}#${c.page_start}`))];
   const thumbs = new Map<string, string>();
+  const printed: Printed = {};
   if (keys.length) {
     const { data: pgs } = await supabase.from("document_pages").select("doc_id, page_no, jpeg_path").in("doc_id", [...new Set(cites.map((c) => c.doc_id))]).in("page_no", [...new Set(cites.map((c) => c.page_start))]);
     for (const mid of [...new Set(keys.map((k) => matterOf(k.split("#")[0])))].filter(Boolean)) {
       const m = await getMatter(supabase, mid);
+      Object.assign(printed, await printedFor(supabase, mid));
       const rows = (pgs ?? []).filter((p) => matterOf(p.doc_id) === mid && keys.includes(`${p.doc_id}#${p.page_no}`));
       const urls = await fileUrls(supabase, m, rows.map((r) => r.jpeg_path));
       rows.forEach((r, i) => thumbs.set(`${r.doc_id}#${r.page_no}`, urls[i]));
@@ -99,7 +102,7 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
                                 {img ? <img src={img} alt={`Scan of ${title(p.doc_id)}, page ${p.page_start}`} loading="lazy" /> : <span className="noimg" />}
                                 <span>
                                   <q>{p.quote.replace(/\s+/g, " ")}</q>
-                                  <cite>{title(p.doc_id)}, p. {p.page_start} →</cite>
+                                  <cite>{title(p.doc_id)}, {pageLabel(p.page_start, printed[p.doc_id]?.[p.page_start])} →</cite>
                                 </span>
                               </Link>
                               <PinButton matter={matterOf(p.doc_id)} doc={p.doc_id} page={p.page_start} quote={p.quote} on={pinned.has(pinId(p.doc_id, p.page_start, p.quote.replace(/\s+/g, " ").trim()))} />

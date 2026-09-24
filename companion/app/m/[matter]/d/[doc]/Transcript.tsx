@@ -15,8 +15,8 @@ function offsetIn(el: Element, node: Node, off: number) {
   return r.toString().length;
 }
 
-export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections }: {
-  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[];
+export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections, printed }: {
+  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[]; printed: Record<number, number>;
   scan: string; textSource: string | null; collections: { id: string; title: string }[];
 }) {
   const [sel, setSel] = useState<Sel | null>(null);
@@ -69,7 +69,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
           if (b.kind === "page")
             return (
               <div key={i} className={`b b-page${b.page === currentPage ? " current" : ""}`} data-page-mark={b.page ?? undefined}>
-                <Link href={href(b.page ?? 1)} scroll={false}>{b.text.replace(/^#+\s*/, "")}</Link>
+                <Link href={href(b.page ?? 1)} scroll={false}>{b.text.replace(/^#+\s*/, "")}{b.page && printed[b.page] && printed[b.page] !== b.page ? ` · printed ${printed[b.page]}` : ""}</Link>
               </div>
             );
           // Headings drop their "#" markup for display; data-start shifts by the same amount
@@ -99,7 +99,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
           </div>
           <div className="pager">
             {currentPage > 1 ? <Link className="btn ghost small" href={href(currentPage - 1)} scroll={false}>←</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>←</span>}
-            <span className="where">Page <b>{currentPage}</b> of {pageCount}{textSource ? ` · ${textSource}` : ""}</span>
+            <span className="where">Page <b>{currentPage}</b> of {pageCount}{printed[currentPage] && printed[currentPage] !== currentPage ? <>, printed <b>{printed[currentPage]}</b></> : ""}{textSource ? ` · ${textSource}` : ""}</span>
             {currentPage < pageCount ? <Link className="btn ghost small" href={href(currentPage + 1)} scroll={false}>→</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>→</span>}
           </div>
         </div>

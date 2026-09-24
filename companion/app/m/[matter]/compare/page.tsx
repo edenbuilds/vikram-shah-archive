@@ -1,6 +1,7 @@
 import { SideBySide } from "@/components/Claims";
 import RunStudy from "@/components/RunStudy";
 import { dmyIST, getMatter } from "@/lib/data";
+import { printedFor } from "@/lib/printed";
 import { basisOf, getComparisons, getPins, newSince } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 
@@ -10,11 +11,12 @@ export default async function Compare({ params }: { params: Promise<{ matter: st
   const { matter } = await params;
   const { supabase, user } = await requireUser();
   const m = await getMatter(supabase, matter);
-  const [list, now, pins, { data: docs }] = await Promise.all([
+  const [list, now, pins, { data: docs }, printed] = await Promise.all([
     getComparisons(matter), basisOf(supabase, matter), getPins(user.email!),
     supabase.from("documents").select("id, title, stage").eq("matter_id", matter),
+    printedFor(supabase, matter),
   ]);
-  const ctx = { matter, titles: new Map((docs ?? []).map((d) => [d.id, d.title])), pinned: new Set(pins.map((p) => p.id)) };
+  const ctx = { matter, titles: new Map((docs ?? []).map((d) => [d.id, d.title])), pinned: new Set(pins.map((p) => p.id)), printed };
   const stageOf = new Map((docs ?? []).map((d) => [d.id, d.stage]));
 
   return (

@@ -1,6 +1,7 @@
 import EditDialog from "@/components/EditDialog";
 import { renameDocument } from "@/app/actions";
 import Link from "next/link";
+import { printedNumbers } from "@/lib/printed";
 import { notFound } from "next/navigation";
 import { fileUrls, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
@@ -14,20 +15,23 @@ const cleanTitle = (s: Section) => {
 };
 import Reader, { type Note } from "./Transcript";
 
-export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string }> }) {
+export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
   const { matter, doc } = await params;
   const sp = await searchParams;
   const { supabase } = await requireUser();
   const m = await getMatter(supabase, matter);
   const { data: d } = await supabase.from("documents").select("*").eq("id", doc).eq("matter_id", m.id).maybeSingle();
   if (!d) notFound();
-  const p = Math.min(Math.max(1, Number(sp.p) || 1), d.page_count);
+  const { data: texts } = await supabase.from("document_pages").select("page_no, text").eq("doc_id", d.id).order("page_no");
+  // ?pg= opens a page by the number printed on it (what an index or a draft cites); ?p= is the PDF page
+  const numbers = printedNumbers(texts ?? []);
+  const byPrinted = sp.pg ? Number(Object.entries(numbers).find(([, n]) => n === Number(sp.pg))?.[0]) : 0;
+  const p = Math.min(Math.max(1, byPrinted || Number(sp.p) || 1), d.page_count);
 
-  const [{ data: pg }, { data: notes }, { data: cols }, { data: texts }] = await Promise.all([
+  const [{ data: pg }, { data: notes }, { data: cols }] = await Promise.all([
     supabase.from("document_pages").select("page_no, jpeg_path, text_source").eq("doc_id", d.id).eq("page_no", p).maybeSingle(),
     supabase.from("annotations").select("id, page_no, char_start, char_end, quote, body, tags, created_at").eq("doc_id", d.id).order("created_at"),
     supabase.from("collections").select("id, title").eq("matter_id", m.id).order("created_at"),
-    supabase.from("document_pages").select("page_no, text").eq("doc_id", d.id).order("page_no"),
   ]);
   const sections = ((d.sections ?? []) as Section[]).filter((s) => s.pageStart);
   const printed = facts(texts ?? []);
@@ -106,7 +110,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
       </div>
 
       <Reader
-        matter={m.id} doc={d.id} pageCount={d.page_count} currentPage={p} jump={sp.p !== undefined}
+        matter={m.id} doc={d.id} pageCount={d.page_count} currentPage={p} jump={sp.p !== undefined || !!byPrinted} printed={numbers}
         blocks={blocks} notes={(notes ?? []) as Note[]} scan={scan} textSource={pg?.text_source ?? null}
         collections={cols ?? []}
       />

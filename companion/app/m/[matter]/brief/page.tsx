@@ -3,6 +3,7 @@ import CopyButton from "@/app/CopyButton";
 import { Claims, SideBySide } from "@/components/Claims";
 import RunStudy from "@/components/RunStudy";
 import { dmy, dmyIST, getMatter } from "@/lib/data";
+import { pageLabel, printedFor } from "@/lib/printed";
 import { basisOf, getBrief, getPins, newSince } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 
@@ -13,16 +14,17 @@ export default async function Brief({ params }: { params: Promise<{ matter: stri
   const { supabase, user } = await requireUser();
   const m = await getMatter(supabase, matter);
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  const [brief, now, pins, { data: docs }, { data: next }] = await Promise.all([
+  const [brief, now, pins, { data: docs }, { data: next }, printed] = await Promise.all([
     getBrief(matter), basisOf(supabase, matter), getPins(user.email!),
     supabase.from("documents").select("id, title, stage").eq("matter_id", matter),
     supabase.from("hearings").select("date, purpose, forum").eq("matter_id", matter).eq("status", "upcoming").gte("date", today).order("date").limit(1).maybeSingle(),
+    printedFor(supabase, matter),
   ]);
-  const ctx = { matter, titles: new Map((docs ?? []).map((d) => [d.id, d.title])), pinned: new Set(pins.map((p) => p.id)) };
+  const ctx = { matter, titles: new Map((docs ?? []).map((d) => [d.id, d.title])), pinned: new Set(pins.map((p) => p.id)), printed };
   const stageOf = new Map((docs ?? []).map((d) => [d.id, d.stage]));
   const fresh = brief ? newSince(brief.basis, now, brief.ack) : 0;
   const asText = brief ? [`Hearing brief: ${m.title}`, next ? `Next hearing (your record): ${dmy(next.date)}${next.purpose ? `, ${next.purpose}` : ""}` : "", "",
-    ...brief.sections.flatMap((s) => [s.title.toUpperCase(), ...(s.status === "answered" ? s.claims.flatMap((c) => [c.text, ...c.citations.map((p) => `  "${p.quote.replace(/\s+/g, " ")}" (${ctx.titles.get(p.doc_id)}, p. ${p.page_start})`)]) : ["Not found in the papers on file."]), ""])].join("\n") : "";
+    ...brief.sections.flatMap((s) => [s.title.toUpperCase(), ...(s.status === "answered" ? s.claims.flatMap((c) => [c.text, ...c.citations.map((p) => `  "${p.quote.replace(/\s+/g, " ")}" (${ctx.titles.get(p.doc_id)}, ${pageLabel(p.page_start, printed[p.doc_id]?.[p.page_start])})`)]) : ["Not found in the papers on file."]), ""])].join("\n") : "";
 
   return (
     <div className="stack brief">
