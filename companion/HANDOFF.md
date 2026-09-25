@@ -114,7 +114,7 @@ New, verified on the live site unless marked:
 
 `LLM_MODEL XAI_API_KEY DEEPSEEK_API_KEY OPENAI_API_KEY SUPABASE_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY COMPANION_LINK_SECRET TELEGRAM_BOT_TOKEN TELEGRAM_USERS RESEND_API_KEY AGENTMAIL_API_KEY NOTIFY_EMAILS NOTIFY_MUTED`
 
-These keys were pasted in chat earlier, so rotate them: OpenAI, Supabase service role, Telegram, Resend.
+These keys were pasted in chat earlier, so rotate them: OpenAI, xAI, DeepSeek, Supabase service role, Telegram, Resend.
 
 ## Tests
 
@@ -147,6 +147,8 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 - **Supabase free plan:** each file is capped at 50 MB. Uploads work around it by sending 6 MB pieces that the worker joins. Moving to Pro would remove the cap; that is Omkar's call.
 - **Telegram:** files over 20 MB can't be fetched by the bot, so they need the web upload.
 - **Test matter:** `zz-upload-test` collects e2e uploads. Delete it when testing stops.
+- **OpenAI credit (about $5):** embeddings only. Until then search by meaning is off and whole-matter Ask leans on exact words. The idle worker fills the missing vectors on its own once credit is there.
+- **Not re-checked since the model switch (25-09-2026):** a real Telegram question, `scripts/study-e2e.mjs` (needs her sign-in link) and an upload through the worker.
 - **Key rotation:** see Env vars above.
 
 ## Paste-ready prompt for the next agent
