@@ -181,7 +181,9 @@ def process(job: dict, ocr, force: bool = False) -> str:
     original = fetch_upload(job["storage_path"])
     sha = hashlib.sha256(original).hexdigest()
     if len(original) <= STORE_MAX:  # kept as uploaded, for "Original file" exports
-        corpus.storage_put(f"{mid}/originals/{job['filename']}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
+        # 24-09-2026: Supabase rejected " 342आंधळेमुळ्शी.pdf" and a macOS "7-48\u202fpm" name as invalid keys
+        key = re.sub(r"[^\w .()-]", "_", job["filename"], flags=re.ASCII).strip() or "file"
+        corpus.storage_put(f"{mid}/originals/{key}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
     dup = rest("GET", "documents", f"select=id&matter_id=eq.{urllib.parse.quote(mid)}&sha256=eq.{sha}", prefer="")
     if dup and not force:
         return dup[0]["id"]  # same bytes already filed in this matter
