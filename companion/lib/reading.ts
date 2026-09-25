@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { readState, writeState } from "./access.ts";
 import { isSpan, unsupportedFigures } from "./citations.ts";
-import { AGENT_MODEL } from "./agent.ts";
 import { llm, outputText } from "./ai.ts";
 import { basisOf, datesIn, type Basis } from "./study.ts";
 
@@ -26,9 +25,13 @@ export const getReading = (m: string) => readState<ReadingOrder | null>(at(m), n
 export const saveReading = (m: string, r: ReadingOrder) => writeState(at(m), r);
 export const TIERS = ["Critical", "Needed to file the next step", "Lower priority"] as const;
 
+// Reading orders are one-shot structured reads (~140 calls a matter), so they run on DeepSeek Flash;
+// Ask stays on grok-4.3, where Flash's quotes failed the verbatim check (25-09-2026).
+const READING_MODEL = process.env.READING_MODEL || "deepseek-flash";
+
 async function json<T>(instructions: string, input: string, schema: object): Promise<T> {
   const out = await llm<Parameters<typeof outputText>[0]>("responses", {
-    model: AGENT_MODEL, instructions, input, reasoning: { effort: "low" },
+    model: READING_MODEL, instructions, input, reasoning: { effort: "low" },
     text: { format: { type: "json_schema", name: "out", strict: true, schema } },
   });
   return JSON.parse(outputText(out)) as T;
