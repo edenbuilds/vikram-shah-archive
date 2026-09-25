@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { readState, writeState } from "./access.ts";
 import { isSpan, unsupportedFigures } from "./citations.ts";
 import { AGENT_MODEL } from "./agent.ts";
-import { llm } from "./ai.ts";
+import { llm, outputText } from "./ai.ts";
 import { basisOf, datesIn, type Basis } from "./study.ts";
 
 // Chronological reading order, after Arya's reading-order-chronological-md skill (24-09-2026):
@@ -27,12 +27,11 @@ export const saveReading = (m: string, r: ReadingOrder) => writeState(at(m), r);
 export const TIERS = ["Critical", "Needed to file the next step", "Lower priority"] as const;
 
 async function json<T>(instructions: string, input: string, schema: object): Promise<T> {
-  const out = await llm<{ output?: { content?: { text?: string }[] }[] }>("responses", {
+  const out = await llm<Parameters<typeof outputText>[0]>("responses", {
     model: AGENT_MODEL, instructions, input, reasoning: { effort: "low" },
     text: { format: { type: "json_schema", name: "out", strict: true, schema } },
   });
-  const text = out.output?.flatMap((o: { content?: { text?: string }[] }) => o.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
-  return JSON.parse(text ?? "") as T;
+  return JSON.parse(outputText(out)) as T;
 }
 
 const FIELD = { type: "object", additionalProperties: false, required: ["text", "page", "quote"],

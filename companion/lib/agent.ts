@@ -45,14 +45,13 @@ const TOOLS = [
           doc_id: { type: "string" }, page: { type: "integer" }, quote: { type: "string" } } } } } } } } }, true),
 ];
 
-// Responses API (xAI serves the same shape). The conversation state lives server-side
-// between turns (previous_response_id).
-function respond(input: unknown[], previous: string | null, final: boolean) {
-  return llm<{ id: string; output: { type: string; call_id?: string; name?: string; arguments?: string }[] }>("responses", {
-    // xAI refuses instructions alongside previous_response_id; the first turn's instructions carry over
-    model: AGENT_MODEL, input, tools: TOOLS, ...(previous ? { previous_response_id: previous } : { instructions: SYSTEM }),
-    tool_choice: final ? { type: "function", name: "final_answer" } : "required",
-    reasoning: { effort: "low" },
+// Responses API, stateless: the whole transcript is resent each turn (DeepSeek keeps no
+// previous_response_id; the repeated prefix is billed as cache hits). tool_choice stays "auto"
+// because DeepSeek's thinking mode refuses forced tool calls; a text-only reply is nudged instead.
+type Item = { type: string; call_id?: string; name?: string; arguments?: string };
+function respond(input: unknown[]) {
+  return llm<{ output: Item[] }>("responses", {
+    model: AGENT_MODEL, instructions: SYSTEM, input, tools: TOOLS, tool_choice: "auto", reasoning: { effort: "low" },
   });
 }
 
@@ -130,14 +129,14 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
     }, chunks, titles);
   }
 
-  let previous: string | null = null;
   let result: Verified | null = null;
   let repaired = false;
   for (let turn = 0; turn < MAX_TURNS && !result; turn++) {
-    const res = await respond(input, previous, turn >= MAX_TURNS - 2);
-    previous = res.id;
-    input = [];
-    for (const call of res.output.filter((o) => o.type === "function_call")) {
+    const res = await respond(input);
+    input = [...input, ...res.output];
+    const calls = res.output.filter((o) => o.type === "function_call");
+    if (!calls.length) input.push({ role: "user", content: turn >= MAX_TURNS - 3 ? "Call final_answer now." : "Use the tools; finish by calling final_answer." });
+    for (const call of calls) {
       const args = JSON.parse(call.arguments || "{}");
       let out = "";
       if (call.name === "final_answer") {
@@ -161,6 +160,7 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
       else if (call.name === "list_sources") out = list();
       input.push({ type: "function_call_output", call_id: call.call_id, output: (out || "ok").slice(0, 24000) });
     }
+    if (calls.length && !result && turn >= MAX_TURNS - 2) input.push({ role: "user", content: "Call final_answer now with what you have." });
   }
   const v = result ?? { status: "not_in_corpus" as const, claims: [], rejected: [] };
   return { ...v, steps, pagesRead, model: AGENT_MODEL };

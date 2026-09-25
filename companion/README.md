@@ -26,7 +26,9 @@ bucket and uses no tables. `companion/` is excluded from its Vercel deploy (`../
 `.env.local` (gitignored):
 
 ```
-XAI_API_KEY=...        # reading, drafting, Ask (grok-4.3)
+LLM_MODEL=deepseek-flash  # or grok-4.3
+DEEPSEEK_API_KEY=...
+XAI_API_KEY=...        # grok models and volume indexing
 OPENAI_API_KEY=...     # embeddings only (text-embedding-3-small)
 NEXT_PUBLIC_SUPABASE_URL=https://mnsmfobozohejvnmnalw.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...        # dashboard → Settings → API
