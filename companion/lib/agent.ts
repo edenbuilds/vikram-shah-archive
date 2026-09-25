@@ -23,6 +23,7 @@ const SYSTEM = `You answer an advocate's questions from her own case papers, usi
 - Search, then read the pages you need. Quote only text you have seen in a tool result.
 - Finish by calling final_answer. Every claim needs at least one citation: the paper id, the page,
   and a quote copied character for character from that page (8-400 characters, one contiguous span).
+  The quote must contain every date, number, section and name the claim states; quote the whole sentence if needed.
 - Copy names, dates, amounts and case numbers exactly as printed. Never compute, total or convert.
 - If the sources do not answer the question, call final_answer with status "not_in_papers" and no claims.
   Never fill a gap from general knowledge. Never guess.
@@ -131,6 +132,7 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
 
   let result: Verified | null = null;
   let repaired = false;
+  let first: Verified | null = null; // the first checked answer, kept in case the repair comes back worse
   for (let turn = 0; turn < MAX_TURNS && !result; turn++) {
     const res = await respond(input);
     input = [...input, ...res.output];
@@ -141,14 +143,17 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
       let out = "";
       if (call.name === "final_answer") {
         const ans = args as Answer;
-        if (ans.status !== "answered" || !ans.claims?.length) { result = { status: "not_in_corpus", claims: [], rejected: [] }; out = "received"; }
+        // 25-09-2026: asked to fix its quotes, deepseek-flash gave up with "not_in_papers" and threw away the claims that had passed
+        if (ans.status !== "answered" || !ans.claims?.length) { result = first?.claims.length ? first : { status: "not_in_corpus", claims: [], rejected: [] }; out = "received"; }
         else {
           step({ kind: "note", text: repaired ? "Re-checking the corrected quotes" : "Checking every quote against the page" });
           const v = await check(ans);
-          if (!v.rejected.length || repaired) result = v;
+          if (!v.rejected.length) result = v;
+          else if (repaired) result = first && first.claims.length > v.claims.length ? first : v;
           else {
             // one chance to repair: say exactly what failed; the fix goes through the same check
             repaired = true;
+            first = v;
             step({ kind: "note", text: `${v.rejected.length} line(s) lacked a verbatim receipt; asking for exact quotes` });
             out = `These claims failed verification and will be withheld unless fixed:\n${v.rejected.map((r) => `- "${r.text}": ${r.reason}`).join("\n")}\n` +
               "Call final_answer again with ALL claims (the passing ones too). For each failed claim, quote a longer exact span from the page that contains every date, number and name the claim states, or drop those details from the claim, or drop the claim.";

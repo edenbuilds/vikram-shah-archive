@@ -26,7 +26,7 @@ bucket and uses no tables. `companion/` is excluded from its Vercel deploy (`../
 `.env.local` (gitignored):
 
 ```
-LLM_MODEL=deepseek-flash  # or grok-4.3
+LLM_MODEL=grok-4.3     # or deepseek-flash
 DEEPSEEK_API_KEY=...
 XAI_API_KEY=...        # grok models and volume indexing
 OPENAI_API_KEY=...     # embeddings only (text-embedding-3-small)
