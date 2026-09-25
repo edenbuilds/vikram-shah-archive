@@ -367,6 +367,10 @@ def main() -> None:
                         m["id"] for m in rest("GET", "matters", "select=id", prefer="")], "match_count": 5}, prefer="")
                 except Exception as e:  # noqa: BLE001
                     print(f"warm-up skipped: {e}", file=sys.stderr, flush=True)
+                try:
+                    corpus.backfill_embeddings()
+                except Exception as e:  # noqa: BLE001
+                    print(f"embedding backfill skipped: {e}", file=sys.stderr, flush=True)
             time.sleep(10)
             continue
         print(f"job {job['id']} {job['filename']}", flush=True)

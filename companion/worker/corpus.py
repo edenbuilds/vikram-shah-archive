@@ -38,7 +38,9 @@ load_env()
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY", "")
-EMBED_MODEL = "text-embedding-3-small"
+EMBED_MODEL = "text-embedding-3-small"  # xAI has no embedding model; see lib/ai.ts
+XAI_KEY = os.environ.get("XAI_API_KEY", "")
+LLM_MODEL = os.environ.get("LLM_MODEL", "grok-4.3")
 BUCKET = "companion"
 
 
@@ -158,7 +160,7 @@ def chunk_units(units: list[tuple[int, int, str]]) -> list[dict]:
 
 def embed(texts: list[str]) -> list[list[float]]:
     if not OPENAI_KEY:
-        raise SystemExit("OPENAI_API_KEY missing in companion/.env.local")
+        raise RuntimeError("OPENAI_API_KEY missing in companion/.env.local")
     out: list[list[float]] = []
     for i in range(0, len(texts), 96):
         batch = [t[:8000] for t in texts[i:i + 96]]
@@ -167,6 +169,25 @@ def embed(texts: list[str]) -> list[list[float]]:
                     {"Authorization": f"Bearer {OPENAI_KEY}", "Content-Type": "application/json"})
         out.extend(d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"]))
     return out
+
+
+def try_embed(texts: list[str]) -> list:
+    # 24-09-2026: OpenAI ran out of credit and every upload failed at this step. Papers now file
+    # with empty vectors (exact-word search still finds them); backfill_embeddings fills them later.
+    try:
+        return embed(texts)
+    except Exception as e:  # noqa: BLE001
+        print(f"embeddings skipped, filled in later: {e}", file=sys.stderr, flush=True)
+        return [None] * len(texts)
+
+
+def backfill_embeddings(limit: int = 96) -> int:
+    rows = rest("GET", "chunks", f"select=id,text&embedding=is.null&limit={limit}", prefer="")
+    if not rows:
+        return 0
+    for r, v in zip(rows, embed([r["text"] for r in rows])):
+        rest("PATCH", "chunks", f"id=eq.{r['id']}", {"embedding": v})
+    return len(rows)
 
 
 # ── Write one document (idempotent per doc id) ──────────────────────────────
@@ -179,7 +200,7 @@ def write_document(doc: dict, pages: list[dict], chunks: list[dict]) -> None:
     for i in range(0, len(pages), 200):
         rest("POST", "document_pages", "", pages[i:i + 200])
     if chunks:
-        vecs = embed([c["text"] for c in chunks])
+        vecs = try_embed([c["text"] for c in chunks])
         rows = [{**c, "doc_id": doc["id"], "matter_id": doc["matter_id"], "embedding": v} for c, v in zip(chunks, vecs)]
         for i in range(0, len(rows), 100):
             rest("POST", "chunks", "", rows[i:i + 100])

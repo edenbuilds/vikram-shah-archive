@@ -120,12 +120,12 @@ def proven(page_text: str, evidence: str) -> bool:
     return len(e) >= 2 and e in norm(zone) and not re.search(r"(?i)translat", page_text[:150])
 
 
-def chat(system: str, user, name: str, schema: dict, model: str = "gpt-4.1") -> dict:
-    body = {"model": model, **({"temperature": 0} if model.startswith("gpt-4") else {"reasoning_effort": "medium"}),
+def chat(system: str, user, name: str, schema: dict, effort: str = "low") -> dict:
+    body = {"model": corpus.LLM_MODEL, "temperature": 0, "reasoning_effort": effort,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
             "response_format": {"type": "json_schema", "json_schema": {"name": name, "strict": True, "schema": schema}}}
-    out = corpus._req("POST", "https://api.openai.com/v1/chat/completions", json.dumps(body).encode(),
-                      {"Authorization": f"Bearer {corpus.OPENAI_KEY}", "Content-Type": "application/json"}, timeout=900)
+    out = corpus._req("POST", "https://api.x.ai/v1/chat/completions", json.dumps(body).encode(),
+                      {"Authorization": f"Bearer {corpus.XAI_KEY}", "Content-Type": "application/json"}, timeout=900)
     return json.loads(out["choices"][0]["message"]["content"])
 
 
@@ -134,7 +134,7 @@ def edge(t: str) -> str:
     return "(blank)" if len(t) < 15 else (t[:220] + (" … " + t[-60:] if len(t) > 290 else ""))
 
 
-PLACE_MODEL = "gpt-5.5"  # placement needs reasoning over hundreds of page edges; gpt-4.1 scored ~55% on the test volumes
+PLACE_EFFORT = "medium"  # placement needs reasoning over hundreds of page edges; a non-reasoning model scored ~55% on the test volumes
 
 
 def locate(texts: list[str], rows: list[dict], index_end: int) -> list[dict] | None:
@@ -143,7 +143,7 @@ def locate(texts: list[str], rows: list[dict], index_end: int) -> list[dict] | N
                         for i, r in enumerate(rows))
     guess = printed_numbers(texts)
     pages = "\n".join(f"p{p} [printed {guess.get(p, '?')}]: {edge(texts[p - 1])}" for p in range(index_end + 1, len(texts) + 1))
-    got = chat(PLACE, f"INDEX ROWS\n{listing}\n\nPAGES\n{pages}", "place", PLACE_SCHEMA, PLACE_MODEL)["starts"]
+    got = chat(PLACE, f"INDEX ROWS\n{listing}\n\nPAGES\n{pages}", "place", PLACE_SCHEMA, PLACE_EFFORT)["starts"]
     placed, last = [], index_end
     for g in sorted(got, key=lambda g: g["row"]):
         p, i = g["page"], g["row"]

@@ -69,7 +69,7 @@ New, verified on the live site unless marked:
   - The idle worker runs a vector query every 5 minutes, because the first search after an idle spell took 8 s on a cold index.
   - Telegram shows typing at once, then a progress line that updates while it reads; page scans are fetched in parallel.
 - Checks: `node scripts/study-e2e.mjs` now covers the reading order, upload formats and the header; `scripts/responsive-check.mjs` includes the reading pages and Settings, Skills.
-- **Blocked: the OpenAI account has no credit** (`insufficient_quota`, from 24-09-2026). Until credit is added, these wait: Ask, Telegram answers, the embedding of new uploads, and the reading orders for Agile, Kanojiya, Hingorani and 7 shah-v-trindade papers. Search falls back to exact words, and the app says plainly what is wrong. After adding credit, run `/usr/local/bin/python3 scripts/tmp/reading_all.py` (or press Continue on each Reading order tab).
+- **Models (25-09-2026):** reading, drafting, Ask, Telegram and volume indexing run on xAI `grok-4.3` (`XAI_API_KEY`, override with `LLM_MODEL`). Embeddings stay on OpenAI `text-embedding-3-small` because xAI has none; the OpenAI account still has no credit, so new uploads file with empty vectors and search uses exact words for them. Once OpenAI credit is added, the idle worker fills the missing vectors 96 at a time on its own.
 - **Test papers.** zz-upload-test now holds 8 extra test papers (note-md-test, plain-text-test, word-test, photo-png-test, photo-heic-test, zipped-md-test, zipped-txt-test, incremental-test). They can go whenever the test matter is deleted.
 
 ## 24-09-2026
@@ -112,7 +112,7 @@ New, verified on the live site unless marked:
 
 ## Env vars (`companion/.env.local`, and the same set in Vercel)
 
-`OPENAI_API_KEY SUPABASE_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY COMPANION_LINK_SECRET TELEGRAM_BOT_TOKEN TELEGRAM_USERS RESEND_API_KEY AGENTMAIL_API_KEY NOTIFY_EMAILS NOTIFY_MUTED`
+`XAI_API_KEY OPENAI_API_KEY SUPABASE_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY COMPANION_LINK_SECRET TELEGRAM_BOT_TOKEN TELEGRAM_USERS RESEND_API_KEY AGENTMAIL_API_KEY NOTIFY_EMAILS NOTIFY_MUTED`
 
 These keys were pasted in chat earlier, so rotate them: OpenAI, Supabase service role, Telegram, Resend.
 

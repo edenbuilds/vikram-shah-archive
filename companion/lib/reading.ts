@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { readState, writeState } from "./access.ts";
 import { isSpan, unsupportedFigures } from "./citations.ts";
 import { AGENT_MODEL } from "./agent.ts";
+import { llm } from "./ai.ts";
 import { basisOf, datesIn, type Basis } from "./study.ts";
 
 // Chronological reading order, after Arya's reading-order-chronological-md skill (24-09-2026):
@@ -26,23 +27,12 @@ export const saveReading = (m: string, r: ReadingOrder) => writeState(at(m), r);
 export const TIERS = ["Critical", "Needed to file the next step", "Lower priority"] as const;
 
 async function json<T>(instructions: string, input: string, schema: object): Promise<T> {
-  const r = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      model: AGENT_MODEL, instructions, input, reasoning: { effort: "low" },
-      text: { format: { type: "json_schema", name: "out", strict: true, schema } },
-    }),
+  const out = await llm<{ output?: { content?: { text?: string }[] }[] }>("responses", {
+    model: AGENT_MODEL, instructions, input, reasoning: { effort: "low" },
+    text: { format: { type: "json_schema", name: "out", strict: true, schema } },
   });
-  if (!r.ok) {
-    const body = await r.text();
-    // 24-09-2026: the account ran out of credit mid-run and every paper failed without a word
-    if (/insufficient_quota/.test(body)) throw new Error("The OpenAI account has no credit left. Add credit at platform.openai.com, then press Continue.");
-    throw new Error(`model ${r.status}: ${body.slice(0, 200)}`);
-  }
-  const out = await r.json();
   const text = out.output?.flatMap((o: { content?: { text?: string }[] }) => o.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
-  return JSON.parse(text) as T;
+  return JSON.parse(text ?? "") as T;
 }
 
 const FIELD = { type: "object", additionalProperties: false, required: ["text", "page", "quote"],

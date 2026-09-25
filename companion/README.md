@@ -26,7 +26,8 @@ bucket and uses no tables. `companion/` is excluded from its Vercel deploy (`../
 `.env.local` (gitignored):
 
 ```
-OPENAI_API_KEY=...
+XAI_API_KEY=...        # reading, drafting, Ask (grok-4.3)
+OPENAI_API_KEY=...     # embeddings only (text-embedding-3-small)
 NEXT_PUBLIC_SUPABASE_URL=https://mnsmfobozohejvnmnalw.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...        # dashboard → Settings → API
 SUPABASE_URL=https://mnsmfobozohejvnmnalw.supabase.co

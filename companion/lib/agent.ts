@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { embed } from "./ai.ts";
+import { embed, llm, LLM_MODEL } from "./ai.ts";
 import { verify, type Chunk, type Rejected, type Verified, type VerifiedClaim } from "./citations.ts";
 import { MIN_SIMILARITY } from "./qa.ts";
 
@@ -8,7 +8,7 @@ import { MIN_SIMILARITY } from "./qa.ts";
 // any page it saw); claims without a verbatim receipt are withheld and listed in the audit.
 // All reads go through the caller's own client, so RLS decides what it can see.
 
-export const AGENT_MODEL = process.env.AGENT_MODEL || "gpt-5.5";
+export const AGENT_MODEL = process.env.AGENT_MODEL || LLM_MODEL;
 const MAX_TURNS = 10;
 
 export type Scope = { matterIds: string[]; docIds: string[] | null };
@@ -45,24 +45,15 @@ const TOOLS = [
           doc_id: { type: "string" }, page: { type: "integer" }, quote: { type: "string" } } } } } } } } }, true),
 ];
 
-// OpenAI Responses API: chat completions refuses tools + reasoning on gpt-5.5. The
-// conversation state lives server-side between turns (previous_response_id).
-async function respond(input: unknown[], previous: string | null, final: boolean) {
-  const r = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: AGENT_MODEL, instructions: SYSTEM, input, tools: TOOLS, previous_response_id: previous ?? undefined,
-      tool_choice: final ? { type: "function", name: "final_answer" } : "required",
-      ...(AGENT_MODEL.startsWith("gpt-4") ? { temperature: 0 } : { reasoning: { effort: "low" } }),
-    }),
+// Responses API (xAI serves the same shape). The conversation state lives server-side
+// between turns (previous_response_id).
+function respond(input: unknown[], previous: string | null, final: boolean) {
+  return llm<{ id: string; output: { type: string; call_id?: string; name?: string; arguments?: string }[] }>("responses", {
+    // xAI refuses instructions alongside previous_response_id; the first turn's instructions carry over
+    model: AGENT_MODEL, input, tools: TOOLS, ...(previous ? { previous_response_id: previous } : { instructions: SYSTEM }),
+    tool_choice: final ? { type: "function", name: "final_answer" } : "required",
+    reasoning: { effort: "low" },
   });
-  if (!r.ok) {
-    const body = await r.text();
-    if (/insufficient_quota/.test(body)) throw new Error("The OpenAI account has no credit left, so the papers can't be read right now. Add credit at platform.openai.com and try again.");
-    throw new Error(`OpenAI ${r.status}: ${body.slice(0, 300)}`);
-  }
-  return r.json() as Promise<{ id: string; output: { type: string; call_id?: string; name?: string; arguments?: string }[] }>;
 }
 
 export async function runAgent(db: SupabaseClient, question: string, scope: Scope, history: { q: string; a: string }[],
