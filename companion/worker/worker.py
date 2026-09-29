@@ -351,6 +351,14 @@ def main() -> None:
     ocr = vision()
     warm = 0.0
     while True:
+        # 29-09-2026: the worker started offline, got no Vision token, and filed 3 scanned
+        # volumes (Khadka, Sunita Patil, Kalpataru part 7) with no text as "done". Leave jobs
+        # queued until OCR is back instead of filing scans as silent [ILLEGIBLE].
+        if ocr is None:
+            ocr = vision()
+            if ocr is None:
+                time.sleep(60)
+                continue
         try:
             job = claim()
         except OSError as e:  # URLError included. 2026-09-21: an offline Mac crash-looped the LaunchAgent into a 56k-line log
