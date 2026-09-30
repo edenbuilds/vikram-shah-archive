@@ -72,7 +72,7 @@ New, verified on the live site unless marked:
 - **Models (25-09-2026):** reading orders run on DeepSeek `deepseek-flash` (`READING_MODEL`, `DEEPSEEK_API_KEY`); drafting, Ask and Telegram run on xAI `grok-4.3` (Vercel env `LLM_MODEL`; `deepseek-*` names route to DeepSeek with `DEEPSEEK_API_KEY`). DeepSeek V4.1 Flash was tried and not adopted: it passed `scripts/agent-test.ts` 5/5, but on multi-claim Compare (`scripts/tmp/cmp.ts`) it kept verified claims in 3 of 9 runs against 4 of 5 for grok-4.3, usually by quoting spans too short to carry the dates and numbers it claimed, then giving up. The Ask loop resends the transcript each turn and never forces a tool call, so both providers work. Volume indexing (worker, vision) stays on xAI. Embeddings stay on OpenAI `text-embedding-3-small`, which has no credit yet: new uploads file with empty vectors, search uses exact words, and the idle worker fills the vectors once credit is added. Whole-matter Ask is weaker until then.
 - **Kamble (Mulshi) recovered (25-09-2026).** All 55 uploads had failed on 24-09 (53 on OpenAI credit, 2 on non-ASCII storage names). They were re-filed with `scripts/tmp/refile_matter.py <matter>` (force past the same-bytes check): 55 papers, 619 pages, 893 passages, reading order 55 entries. Vectors are empty until OpenAI credit is added.
 - **Scans filed without text (29-09-2026).** The worker restarted while the Mac was offline, got no Google Vision token, and kept running with OCR off, so Khadka (230 pp.), Sunita Patil (512 of 693 pp.) and Kalpataru part 7 (105 of 106 pp.) were filed as "done" with empty pages and no index split. The worker now re-tries Vision before claiming each job and leaves jobs queued while OCR is down. Recovery: `python3 worker/worker.py --refile <job id>`. A refile that now splits the volume leaves the old one-piece paper behind, so delete it after checking the new papers.
-- **Network drops mid-volume (30-09-2026).** DNS dropped for minutes and killed the Kalpataru refile twice. `corpus._req` now retries network errors for ~5 minutes (HTTP 5xx keeps its short budget). Khadka, Sunita and Kalpataru were re-filed with text and their old empty copies deleted.
+- **Network drops mid-volume (30-09-2026).** DNS dropped for minutes and killed the Kalpataru refile twice. `corpus._req` now retries network errors for ~5 minutes (HTTP 5xx keeps its short budget). Khadka, Sunita and Kalpataru were re-filed with text and their old empty copies deleted. Kalpataru was then filed again from Omkar's 39 MB compressed copy as one 748-page paper with its PDF stored, and the 7 size parts removed.
 - **Test papers.** zz-upload-test now holds 8 extra test papers (note-md-test, plain-text-test, word-test, photo-png-test, photo-heic-test, zipped-md-test, zipped-txt-test, incremental-test). They can go whenever the test matter is deleted.
 
 ## 24-09-2026
@@ -117,7 +117,9 @@ New, verified on the live site unless marked:
 
 `LLM_MODEL XAI_API_KEY DEEPSEEK_API_KEY OPENAI_API_KEY SUPABASE_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY COMPANION_LINK_SECRET TELEGRAM_BOT_TOKEN TELEGRAM_USERS RESEND_API_KEY AGENTMAIL_API_KEY NOTIFY_EMAILS NOTIFY_MUTED`
 
-These keys were pasted in chat earlier, so rotate them: OpenAI, xAI, DeepSeek, Supabase service role, Telegram, Resend.
+These keys were pasted in chat earlier, so rotate them: OpenAI, xAI, DeepSeek, Supabase service role, Telegram, Resend, LlamaParse.
+
+`LLAMA_CLOUD_API_KEY` is worker-only (not in Vercel): LlamaParse reads a page when Google Vision is down or fails it; `document_pages.text_source` says `llamaparse` for those pages. xAI key replaced 30-09-2026 (local and Vercel). xAI has no embedding model, so search by meaning still needs OpenAI credit.
 
 ## Tests
 
@@ -147,7 +149,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Open items
 
-- **Supabase free plan:** each file is capped at 50 MB. Uploads work around it by sending 6 MB pieces that the worker joins. Moving to Pro would remove the cap; that is Omkar's call.
+- **Supabase free plan:** each file is capped at 50 MB (project-wide; the bucket can't be raised past it, tried 30-09-2026). Uploads work around it by sending 6 MB pieces that the worker joins. Moving to Pro would remove the cap; that is Omkar's call.
 - **Telegram:** files over 20 MB can't be fetched by the bot, so they need the web upload.
 - **Test matter:** `zz-upload-test` collects e2e uploads. Delete it when testing stops.
 - **OpenAI credit (about $5):** embeddings only. Until then search by meaning is off and whole-matter Ask leans on exact words. The idle worker fills the missing vectors on its own once credit is there.
