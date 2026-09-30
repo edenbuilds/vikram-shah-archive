@@ -295,7 +295,7 @@ def process(job: dict, ocr, force: bool = False) -> str:
                    for j, a in enumerate(range(1, n + 1, step))]
             return ids[0]
 
-        doc_id = f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}"
+        doc_id = corpus.doc_id(mid, f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}")
         pdf_store = job["storage_path"]
         if pdf is not original or len(original) > 45 * 1024 * 1024:
             pdf_store = f"{mid}/pdfs/{doc_id}.pdf"  # converted or rejoined: store the PDF itself

@@ -64,7 +64,7 @@ def file_part(mid: str, stages: set, vol: dict, part: dict, sort: int,
     with tempfile.TemporaryDirectory() as tmp:
         data = slice_pdf(pdf, rng, Path(tmp))
     sha = hashlib.sha256(data).hexdigest()
-    doc_id = f"{slug_tokens(part['title'])[:60].strip('-')}-{sha[:8]}"
+    doc_id = corpus.doc_id(mid, f"{slug_tokens(part['title'])[:60].strip('-')}-{sha[:8]}")
     pdf_path: str | None = f"{mid}/pdfs/{doc_id}.pdf"
     try:
         corpus.storage_put(pdf_path, data, "application/pdf")

@@ -3,6 +3,7 @@
 worker.py (advocate uploads). Never edits source text: chunks are verbatim slices."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -93,6 +94,15 @@ def _retry(fn, tries: int = 4):
             if k == tries - 1 or (re.search(r"-> 4\d\d", msg) and "-> 429" not in msg and "-> 408" not in msg):
                 raise
             time.sleep(1.5 * (k + 1))
+
+
+def doc_id(mid: str, base: str) -> str:
+    """Paper id for `base` (slug-sha8) in matter `mid`. 30-09-2026: the same PDF uploaded into a test
+    matter took the Shri Sati affidavit with it, because write_document upserts by id alone."""
+    hit = rest("GET", "documents", f"select=matter_id&id=eq.{urllib.parse.quote(base)}", prefer="")
+    if not hit or hit[0]["matter_id"] == mid:
+        return base
+    return f"{base}-{hashlib.sha256(mid.encode()).hexdigest()[:4]}"
 
 
 def storage_put(path: str, data: bytes, content_type: str) -> None:
