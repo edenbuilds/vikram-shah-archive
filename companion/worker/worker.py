@@ -152,10 +152,10 @@ def rasterize(pdf: Path, i: int, dest: Path) -> Path:
 STORE_MAX = 48 * 1024 * 1024  # storage refuses objects over 50 MB on this plan
 
 
-def fetch_upload(path: str) -> bytes:
-    """The uploaded file, rejoined when the browser sent it in pieces (<path>.partNNN)."""
+def fetch_upload(path: str) -> tuple[bytes, bool]:
+    """The uploaded file, and whether it was rejoined from the pieces the browser sent (<path>.partNNN)."""
     try:
-        return corpus.storage_get(path)
+        return corpus.storage_get(path), False
     except RuntimeError as whole:
         parts, k = [], 0
         while True:
@@ -166,7 +166,7 @@ def fetch_upload(path: str) -> bytes:
             k += 1
         if not parts:
             raise whole
-        return b"".join(parts)
+        return b"".join(parts), True
 
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -214,7 +214,7 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
 
 def process(job: dict, ocr, force: bool = False) -> str:
     mid = job["matter_id"]
-    original = fetch_upload(job["storage_path"])
+    original, joined = fetch_upload(job["storage_path"])
     sha = hashlib.sha256(original).hexdigest()
     if len(original) <= STORE_MAX:  # kept as uploaded, for "Original file" exports
         # 24-09-2026: Supabase rejected " 342आंधळेमुळ्शी.pdf" and a macOS "7-48\u202fpm" name as invalid keys
@@ -297,7 +297,9 @@ def process(job: dict, ocr, force: bool = False) -> str:
 
         doc_id = corpus.doc_id(mid, f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}")
         pdf_store = job["storage_path"]
-        if pdf is not original or len(original) > 45 * 1024 * 1024:
+        # 30-09-2026: a 9 MB upload arrives as .part000/.part001, so there is no whole object at
+        # storage_path and its PDF download was dead. Rejoined uploads are stored whole too.
+        if pdf is not original or joined or len(original) > 45 * 1024 * 1024:
             pdf_store = f"{mid}/pdfs/{doc_id}.pdf"  # converted or rejoined: store the PDF itself
             corpus.storage_put(pdf_store, pdf, "application/pdf")
         for i in range(1, n + 1):
