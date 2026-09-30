@@ -50,26 +50,62 @@ def now() -> str:
 TOKEN_TTL = 45 * 60  # gcloud ADC access tokens expire after ~60 min
 
 
+class OCRText(str):
+    """Page text tagged with the engine that read it (document_pages.text_source)."""
+    src = "google-vision"
+
+
+LLAMA = "https://api.cloud.llamaindex.ai/api/v1/parsing"
+
+
+def llamaparse(jpg) -> OCRText:
+    """One page image through LlamaParse. 30-09-2026: the backup when Google Vision is down or fails
+    a page, so a scan is read rather than waiting on gcloud or failing the job."""
+    key = os.environ["LLAMA_CLOUD_API_KEY"]
+    auth = {"Authorization": f"Bearer {key}"}
+    b = "llamaparse" + os.urandom(8).hex()
+    body = (f"--{b}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"page.jpg\"\r\n"
+            f"Content-Type: image/jpeg\r\n\r\n").encode() + Path(jpg).read_bytes() + f"\r\n--{b}--\r\n".encode()
+    job = corpus._req("POST", f"{LLAMA}/upload", body, {**auth, "Content-Type": f"multipart/form-data; boundary={b}"})
+    for _ in range(100):  # ~5 min; a page usually takes ~10 s
+        st = corpus._req("GET", f"{LLAMA}/job/{job['id']}", None, auth)["status"]
+        if st == "SUCCESS":
+            t = OCRText(corpus._req("GET", f"{LLAMA}/job/{job['id']}/result/text", None, auth)["text"])
+            t.src = "llamaparse"
+            return t
+        if st not in ("PENDING", "RUNNING"):
+            raise RuntimeError(f"LlamaParse {st} for {Path(jpg).name}")
+        time.sleep(3)
+    raise RuntimeError(f"LlamaParse timed out for {Path(jpg).name}")
+
+
 def vision():
-    """Google Vision page OCR via gcloud ADC, or None when unavailable. Refreshes the
-    token before it expires and once more on failure; a page that still can't be OCR'd
-    fails the job (RuntimeError) rather than being filed as a silent [ILLEGIBLE]."""
+    """Page OCR: Google Vision via gcloud ADC, with LlamaParse as the backup. None when neither is
+    available. Refreshes the Vision token before it expires and once more on failure; a page that
+    neither engine can read fails the job (RuntimeError) rather than being filed as a silent [ILLEGIBLE]."""
+    backup = llamaparse if os.environ.get("LLAMA_CLOUD_API_KEY") else None
     try:
         import google_vision_ocr as gv
         gv.load_env_google()
         tok = {"v": gv.access_token(), "at": time.time()}
     except (Exception, SystemExit) as e:  # noqa: BLE001
-        print(f"vision OCR unavailable ({e}); thin pages keep their text layer", file=sys.stderr)
-        return None
+        print(f"vision OCR unavailable ({e}); {'using LlamaParse' if backup else 'thin pages keep their text layer'}", file=sys.stderr)
+        return backup
 
     def ocr(jpg):
         for attempt in range(2):
             if attempt or time.time() - tok["at"] > TOKEN_TTL:
-                tok.update(v=gv.access_token(), at=time.time())
+                try:
+                    tok.update(v=gv.access_token(), at=time.time())
+                except (Exception, SystemExit) as e:  # noqa: BLE001
+                    err = e
+                    continue
             try:
-                return gv.vision_page(tok["v"], jpg)
+                return OCRText(gv.vision_page(tok["v"], jpg))
             except (Exception, SystemExit) as e:  # noqa: BLE001  gv exits the process on HTTP errors
                 err = e
+        if backup:
+            return backup(jpg)
         raise RuntimeError(f"Google Vision OCR failed: {str(err)[:300]}")
     return ocr
 
@@ -202,9 +238,10 @@ def process(job: dict, ocr, force: bool = False) -> str:
             jpg = rasterize(pdf_path, i, tmp)  # tmp/page-NNN.jpg, kept until filed
             text, src = layer[i - 1], "pdftotext"
             if len(text) < THIN and ocr:
-                v = ocr(jpg).strip()
+                r = ocr(jpg)
+                v = r.strip()
                 if len(v) > len(text):  # density pick, per page
-                    text, src = v, "google-vision"
+                    text, src = v, getattr(r, "src", "google-vision")
             (tmp / f"page-{i:03d}.txt").write_text(text)
             return text, (src if text else None)
 
