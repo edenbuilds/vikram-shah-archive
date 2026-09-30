@@ -45,7 +45,9 @@ BUCKET = "companion"
 
 
 def _req(method: str, url: str, body: bytes | None, headers: dict, timeout: int = 120):
-    for attempt in range(4):
+    # 2026-09-30: DNS dropped for minutes mid-refile and killed a 750-page Kalpataru job twice;
+    # network errors now get ~5 minutes of retries, HTTP 5xx keeps its short budget.
+    for attempt in range(8):
         req = urllib.request.Request(url, data=body, method=method, headers=headers)
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=TLS) as r:
@@ -59,10 +61,10 @@ def _req(method: str, url: str, body: bytes | None, headers: dict, timeout: int 
             raise RuntimeError(f"{method} {url.split('?')[0]} -> {e.code}: {msg}") from None
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             # 2026-09-23: one read timeout during the index read filed a 441-page appeal as a single paper
-            if attempt == 3:
+            if attempt == 7:
                 raise
             print(f"  network: {e}; retrying", file=sys.stderr, flush=True)
-            time.sleep(5 * 2 ** attempt)
+            time.sleep(min(5 * 2 ** attempt, 60))
 
 
 def _auth() -> dict:
