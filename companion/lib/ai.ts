@@ -11,21 +11,46 @@ const provider = (model: string) => model.startsWith("deepseek")
 export const CHAT_MODEL = LLM_MODEL;
 export const EMBED_MODEL = "text-embedding-3-small";
 
-export async function llm<T = unknown>(path: "responses", body: { model: string; [k: string]: unknown }): Promise<T> {
+// 02-10-2026: the xAI account ran dry and took Ask, briefs and reading down again (OpenAI did the same
+// on 25-09-2026). When one provider is out of credit or down, the same request goes to the other.
+const FALLBACK: Record<string, string> = { xAI: process.env.FALLBACK_DEEPSEEK_MODEL || "deepseek-v4-pro", DeepSeek: "grok-4.3" };
+const dryUntil: Record<string, number> = {};
+
+class Dry extends Error {}
+
+async function call<T>(path: string, body: { model: string; [k: string]: unknown }): Promise<T> {
   const p = provider(body.model);
-  if (!p.key) throw new Error(`${p.name} API key is not configured`);
+  if (!p.key) throw new Dry(`${p.name} API key is not configured`);
+  if ((dryUntil[p.name] ?? 0) > Date.now()) throw new Dry(`The ${p.name} account has no credit left`);
   const r = await fetch(`${p.url}/${path}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${p.key}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
-  });
+  }).catch((e) => { throw new Dry(`${p.name} unreachable: ${(e as Error).message}`); });
   if (!r.ok) {
     const text = await r.text();
-    if (r.status === 402 || /credit|spending limit|exhausted|insufficient balance/i.test(text))
-      throw new Error(`The ${p.name} account has no credit left, so the papers can't be read right now. Add credit at ${p.console} and try again.`);
+    if (r.status === 402 || /credit|spending limit|exhausted|insufficient balance/i.test(text)) {
+      dryUntil[p.name] = Date.now() + 10 * 60_000;
+      throw new Dry(`The ${p.name} account has no credit left, so the papers can't be read right now. Add credit at ${p.console} and try again.`);
+    }
+    if (r.status >= 500 || r.status === 429) throw new Dry(`${p.name} ${r.status}: ${text.slice(0, 200)}`);
     throw new Error(`model ${r.status}: ${text.slice(0, 300)}`);
   }
   return r.json() as Promise<T>;
+}
+
+export async function llm<T = unknown>(path: "responses", body: { model: string; [k: string]: unknown }): Promise<T> {
+  try {
+    return await call<T>(path, body);
+  } catch (e) {
+    const other = FALLBACK[provider(body.model).name];
+    if (!(e instanceof Dry) || !other) throw e;
+    try {
+      return await call<T>(path, { ...body, model: other });
+    } catch (e2) {
+      throw e2 instanceof Dry ? new Error(`${(e as Error).message} The backup model is unavailable too (${(e2 as Error).message}).`) : e2;
+    }
+  }
 }
 
 type Out = { output?: { type: string; content?: { type?: string; text?: string }[] }[] };

@@ -36,6 +36,21 @@ from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sectio
 import notify  # noqa: E402
 import volume_index  # noqa: E402
 
+# 02-10-2026: macOS 27 removed Rosetta, so the Intel poppler in /usr/local/bin stopped running
+# ("Bad CPU type") and every upload would have failed. Native Apple Silicon tools come first.
+os.environ["PATH"] = "/opt/homebrew/bin:" + os.environ.get("PATH", "")
+TOOLS = (["pdftotext", "-v"], ["pdftoppm", "-v"], ["pdfinfo", "-v"])
+
+
+def tools_broken() -> str | None:
+    """Name of a PDF tool this Mac can't run, or None. Jobs wait in the queue rather than fail."""
+    for cmd in TOOLS:
+        try:
+            subprocess.run(cmd, capture_output=True, timeout=30)
+        except OSError as e:
+            return f"{cmd[0]}: {e}"
+    return None
+
 # Same scan size/quality as scripts/rasterize.py, via poppler (already required for
 # pdftotext) instead of PyMuPDF, so the worker has no native-wheel/arch dependency.
 LONG_EDGE, QUALITY = 1700, 80
@@ -389,7 +404,16 @@ def main() -> None:
         print(f"requeued {len(stale)} job(s) interrupted by a previous run", flush=True)
     ocr = vision()
     warm = 0.0
+    quiet_until = 0.0  # embeddings out of credit: try again in 6 hours, not every 5 minutes
+    told = None
     while True:
+        broken = tools_broken()
+        if broken:
+            if broken != told:
+                print(f"PDF tools can't run ({broken}); uploads wait in the queue", file=sys.stderr, flush=True)
+                told = broken
+            time.sleep(60)
+            continue
         # 29-09-2026: the worker started offline, got no Vision token, and filed 3 scanned
         # volumes (Khadka, Sunita Patil, Kalpataru part 7) with no text as "done". Leave jobs
         # queued until OCR is back instead of filing scans as silent [ILLEGIBLE].
@@ -416,10 +440,14 @@ def main() -> None:
                         m["id"] for m in rest("GET", "matters", "select=id", prefer="")], "match_count": 5}, prefer="")
                 except Exception as e:  # noqa: BLE001
                     print(f"warm-up skipped: {e}", file=sys.stderr, flush=True)
-                try:
-                    corpus.backfill_embeddings()
-                except Exception as e:  # noqa: BLE001
-                    print(f"embedding backfill skipped: {e}", file=sys.stderr, flush=True)
+                if time.time() > quiet_until:
+                    try:
+                        corpus.backfill_embeddings()
+                    except Exception as e:  # noqa: BLE001
+                        # 02-10-2026: OpenAI out of credit wrote the same 9-line error every 5 minutes (70k-line log)
+                        print(f"embedding backfill skipped: {str(e)[:160]}", file=sys.stderr, flush=True)
+                        if "429" in str(e):
+                            quiet_until = time.time() + 6 * 3600
             time.sleep(10)
             continue
         print(f"job {job['id']} {job['filename']}", flush=True)
