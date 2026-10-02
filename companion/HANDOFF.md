@@ -174,3 +174,12 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 > - commit as omkar1sonawane@gmail.com.
 >
 > Task: <describe it here>.
+
+## 02-10-2026: why it "stopped working", fixed and verified live
+
+- **macOS 27 removed Rosetta.** The Intel poppler (`pdftotext`, `pdftoppm`, `pdfinfo`) and node in `/usr/local/bin` no longer run ("Bad CPU type"), so every new upload would fail. Native tools are installed in `/opt/homebrew` (`brew install poppler node gh`); the worker puts `/opt/homebrew/bin` first, and the LaunchAgent PATH does too. If a PDF tool can't run, jobs now wait in the queue with one log line instead of failing.
+- **The xAI account is out of credit** (Ask, briefs, drafting, reading all failed). `lib/ai.ts` now sends the same request to the other provider when one is out of credit, 5xx, 429 or unreachable: xAI falls back to `deepseek-v4-pro`, DeepSeek to grok-4.3. DeepSeek balance on 02-10-2026: USD 9.56. Agent test 5/5 on the fallback; live e2e 12/12; brief refresh done.
+- The worker log no longer writes the OpenAI 429 every 5 minutes (backs off 6 hours). The old 70k-line log is at `~/Library/Logs/case-companion-worker.log.old-20261002`.
+- Shell note: run scripts with `PATH=/opt/homebrew/bin:/usr/bin:/bin:$PATH`; the old `vercel` pnpm shim and `gh` in `/usr/local/bin` are Intel and dead. Deploy with `npx -y vercel@latest deploy --prod --yes`.
+- **Still structural:** reading uploads needs Omkar's Mac awake and online. Uploads made while it sleeps wait in the queue (nothing is lost) and are filed when it wakes.
+- Needs Omkar: top up xAI (console.x.ai) or leave DeepSeek as the main model; OpenAI credit for embeddings.
