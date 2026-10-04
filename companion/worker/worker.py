@@ -351,8 +351,11 @@ def process(job: dict, ocr, force: bool = False) -> str:
         n = page_count(pdf_path)
         marks = bookmarks(pdf_path, n)  # read while the temp PDF exists
         pnotes, from_lt = pdf_notes.read(pdf_path)
+        for a in pnotes:
+            a["tags"] = ["from-pdf", "liquidtext"] if from_lt else ["from-pdf"]
         if is_ltproj(job["filename"]):
-            pnotes, from_lt = pnotes + pdf_notes.ltproj_notes(original, pdf_path), True
+            # not inside the PDF, so the LiquidText export (which skips from-pdf) still carries them
+            pnotes += [{**a, "tags": ["from-ltproj", "liquidtext"]} for a in pdf_notes.ltproj_notes(original, pdf_path)]
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)
@@ -452,10 +455,9 @@ def process(job: dict, ocr, force: bool = False) -> str:
     } for i, t in enumerate(texts, 1)], corpus.chunk_units([(i, i, t) for i, t in enumerate(texts, 1) if t]))
     # ponytail: highlights and comments come in for a paper filed whole; a volume split into parts skips them.
     if pnotes:
-        rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=cs.{{from-pdf}}")  # a refile replaces, never doubles
-        tags = ["from-pdf", "liquidtext"] if from_lt else ["from-pdf"]
+        rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=ov.{{from-pdf,from-ltproj}}")  # a refile replaces, never doubles
         rest("POST", "annotations", "", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
-                                          "tags": tags, "created_by": job["created_by"]} for a in pnotes])
+                                          "tags": a["tags"], "created_by": job["created_by"]} for a in pnotes])
         print(f"  {len(pnotes)} highlights/comments brought in as her notes", flush=True)
     return doc_id
 

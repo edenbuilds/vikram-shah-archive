@@ -195,7 +195,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("get_notes", {
     title: "Get the advocate's notes",
-    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), from-pdf / liquidtext (her highlight or comment from another app, quote cut from the uploaded PDF).",
+    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), from-pdf (her highlight or comment from another app, quote cut from the uploaded PDF), from-ltproj (an excerpt or comment from a LiquidText project), liquidtext.",
     inputSchema: { matter_id: z.string(), doc_id: z.string().optional() },
     annotations: { readOnlyHint: true },
   }, async ({ matter_id, doc_id }) => {
