@@ -55,6 +55,26 @@ def project_pdfs(z: zipfile.ZipFile) -> list[str]:
     return sorted(n for n in z.namelist() if n.lower().endswith(".pdf") and "__MACOSX" not in n and not Path(n).name.startswith("."))
 
 
+def project_docs(z: zipfile.ZipFile) -> list[tuple[str, str, str]]:
+    """(title, zip member, LiquidText document id) per document, in her order.
+    04-10-2026, read from a real LiquidText 3 project: Entities.json lists "Documents" (Title, ListIndex,
+    FileContent = base64 protobuf whose field 1 is the file's uuid) and each PDF sits in
+    Blobs/filez<docId>z<fileId> with no extension. Older or hand-zipped projects: any .pdf inside."""
+    import base64
+    import json
+    names = z.namelist()
+    ent = next((n for n in names if n.rsplit("/", 1)[-1] == "Entities.json"), None)
+    docs = []
+    if ent:
+        for d in sorted(json.loads(z.read(ent)).get("Documents", []), key=lambda d: d.get("ListIndex", 0)):
+            raw = base64.b64decode((d.get("FileContent") or "") + "==")
+            fid = raw[2:2 + raw[1]].decode(errors="ignore").lower() if raw[:1] == b"\n" else ""
+            blob = next((n for n in names if fid and fid in n.lower() and z.read(n)[:5] == b"%PDF-"), None)
+            if blob:
+                docs.append((d.get("Title") or Path(blob).stem, blob, d.get("Id", "").lower()))
+    return docs or [(Path(n).stem, n, "") for n in project_pdfs(z)]
+
+
 # Field names (lower case, Core Data's leading "z" dropped) that hold an excerpt's words or her comment.
 # 04-10-2026: no public LiquidText project was found to read the real schema from, so nothing relies on
 # where a field sits: an excerpt counts only if its exact words are on a page of the project's PDFs
@@ -129,28 +149,80 @@ def ltproj_notes(data: bytes, pdf: Path) -> list[dict]:
                 continue
             seen.add(key)
             out.append({"page": page, "quote": " ".join(quote.split()) if quote else None, "body": comment or "(excerpt)"})
-    return out
+    return out + lt_marks(data) + [{"page": i, "quote": None, "body": "Pen marks in LiquidText on this page"} for i in ink_pages(data)]
 
 
 def ltproj_pdf(data: bytes) -> bytes:
     """A LiquidText project is a zip holding its documents. One PDF: that PDF. Several: one PDF with a
-    bookmark per document, so each shows in the paper's contents. Its excerpts and comments are read
-    by ltproj_notes. ponytail: ink and workspace layout are not read."""
+    bookmark per document (her own bookmarks nested under it), so each shows in the paper's contents.
+    Her excerpts, comments and pen marks are read by ltproj_notes."""
     from pypdf import PdfReader, PdfWriter
     z = zipfile.ZipFile(io.BytesIO(data))
-    pdfs = project_pdfs(z)
-    if not pdfs:
+    docs = project_docs(z)
+    if not docs:
         raise RuntimeError("No PDF found inside this LiquidText project. In LiquidText use Export > PDF and upload that.")
-    if len(pdfs) == 1:
-        return z.read(pdfs[0])
+    if len(docs) == 1:
+        return z.read(docs[0][1])
     w = PdfWriter()
-    for n in pdfs:
-        start = len(w.pages)
-        w.append(PdfReader(io.BytesIO(z.read(n))))
-        w.add_outline_item(Path(n).stem, start)
+    for title, blob, _ in docs:
+        w.append(PdfReader(io.BytesIO(z.read(blob))), outline_item=title)
     buf = io.BytesIO()
     w.write(buf)
     return buf.getvalue()
+
+
+def _project(data: bytes):
+    """(Entities.json as a dict, {document id: its first page in the merged PDF, 0-based})."""
+    import json
+    from pypdf import PdfReader
+    z = zipfile.ZipFile(io.BytesIO(data))
+    ent = next((n for n in z.namelist() if n.rsplit("/", 1)[-1] == "Entities.json"), None)
+    if not ent:
+        return {}, {}
+    start, at = {}, 0
+    for _, blob, did in project_docs(z):
+        start[did] = at
+        at += len(PdfReader(io.BytesIO(z.read(blob))).pages)
+    return json.loads(z.read(ent)), start
+
+
+def _page_of(corner: str) -> int | None:
+    """LiquidText's "stable" corner: base64 protobuf, field 1 = x across the page (0-1), field 2 =
+    page index + y down the page. 04-10-2026: 0.20/112.33 sat on page 113 of a 270-page appeal."""
+    import base64
+    import struct
+    b = base64.b64decode(corner + "==")
+    i = b.find(b"\x11")  # field 2, 64-bit
+    return int(struct.unpack("<d", b[i + 1:i + 9])[0]) if i >= 0 and len(b) >= i + 9 else None
+
+
+def ink_pages(data: bytes) -> list[int]:
+    """Pages (of the merged PDF) where she drew with LiquidText's pen. The strokes are drawings, not
+    text, so only the place is recorded; nothing is read into them."""
+    e, start = _project(data)
+    # AttachedToType 1 = a document page; workspace and excerpt ink (3, 107) has no page in the paper
+    return sorted({start[s["AttachedTo"].lower()] + s["OptionalPageIndex"] + 1
+                   for s in e.get("InkSurfaces", [])
+                   if s.get("AttachedToType") == 1 and s.get("OptionalPageIndex", -1) >= 0 and str(s.get("AttachedTo", "")).lower() in start})
+
+
+def lt_marks(data: bytes) -> list[dict]:
+    """Her highlights (LiquidText keeps the highlighted words as it read them) and tags, placed on the
+    merged PDF. A tag hangs on a document, not a spot, so it sits on that document's first page."""
+    e, start = _project(data)
+    out = []
+    for h in e.get("Highlights", []):
+        did, words = str(h.get("AttachedTo", "")).lower(), " ".join(str(h.get("HighlightedString") or "").split())
+        at = _page_of(h.get("StableULCorner") or "")
+        # 04-10-2026: 24 of 36 highlights in a real project were areas drawn over scans, with no words;
+        # the place is kept, the words are not guessed (OCR of that page has them, read it there)
+        if did in start and at is not None:
+            out.append({"page": start[did] + at + 1, "quote": words or None, "body": "(highlight)" if words else "Area highlighted in LiquidText (no words recorded)"})
+    for t in e.get("Tags", []):
+        did, label = str(t.get("AttachedTo", "")).lower(), " ".join(x for x in (t.get("TagCategory"), t.get("TagName")) if x and str(x).strip())
+        if did in start and label:
+            out.append({"page": start[did] + 1, "quote": None, "body": f"LiquidText tag on this document: {label}"})
+    return out
 
 
 if __name__ == "__main__":
@@ -188,7 +260,7 @@ if __name__ == "__main__":
             z.writestr("Documents/one.pdf", out.read_bytes())
             z.writestr("Documents/two.pdf", out.read_bytes())
         merged = PdfReader(io.BytesIO(ltproj_pdf(buf.getvalue())))
-        assert len(merged.pages) == 2 and [o.title for o in merged.outline] == ["one", "two"]
+        assert len(merged.pages) == 2 and [o.title for o in merged.outline if not isinstance(o, list)] == ["one", "two"]
 
         # A project whose excerpts and comments sit in JSON, a Core Data SQLite store and a plist (shapes
         # invented for the test; the reader keys on field names and the PDF's own words, not on layout).
@@ -219,5 +291,31 @@ if __name__ == "__main__":
             {"page": 2, "quote": "terminated by notice dated 01-03-2024", "body": "Notice period looks short"},
             {"page": None, "quote": None, "body": "short excerpt, kept as a comment only"},
         ], got
+        # The real LiquidText 3 layout (04-10-2026 sample, content replaced): Entities.json + extensionless
+        # Blobs, ListIndex order, ink on page index 1 of the second-listed document.
+        import base64, struct, uuid
+        ids = [(str(uuid.uuid4()), str(uuid.uuid4())) for _ in range(2)]
+        fc = lambda f: base64.b64encode(b"\n$" + f.upper().encode()).decode()  # noqa: E731
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("LTMetadata.json", json.dumps({"Version": "3", "ProjName": "x"}))
+            z.writestr("Entities.json", json.dumps({
+                "Documents": [{"Id": ids[0][0], "Title": "Appeal memo", "ListIndex": 1, "FileContent": fc(ids[0][1])},
+                              {"Id": ids[1][0], "Title": "Order", "ListIndex": 0, "FileContent": fc(ids[1][1])}],
+                "InkSurfaces": [{"AttachedTo": ids[0][0].upper(), "AttachedToType": 1, "OptionalPageIndex": 1},
+                                {"AttachedTo": ids[1][0], "AttachedToType": 1, "OptionalPageIndex": -1},
+                                {"AttachedTo": "w", "AttachedToType": 3, "OptionalPageIndex": 0}],
+                "Highlights": [{"AttachedTo": ids[0][0], "AttachedToType": 1, "HighlightedString": "The tenancy  was\nterminated",
+                                "StableULCorner": base64.b64encode(b"\t" + struct.pack("<d", 0.2) + b"\x11" + struct.pack("<d", 1.33)).decode()}],
+                "Tags": [{"AttachedTo": ids[1][0], "TagCategory": "Urgent", "TagName": ""}]}))
+            z.writestr(f"Blobs/filez{ids[0][0]}z{ids[0][1]}", two.read_bytes())
+            z.writestr(f"Blobs/filez{ids[1][0]}z{ids[1][1]}", out.read_bytes())
+            z.writestr(f"Blobs/fobjz{ids[0][0]}z123", b"\n\x05\r\xff\xff")
+        data = buf.getvalue()
+        merged = PdfReader(io.BytesIO(ltproj_pdf(data)))
+        assert len(merged.pages) == 3 and [o.title for o in merged.outline if not isinstance(o, list)] == ["Order", "Appeal memo"]
+        assert ink_pages(data) == [3], ink_pages(data)  # Order is 1 page, so the memo's page index 1 is page 3
+        assert lt_marks(data) == [{"page": 3, "quote": "The tenancy was terminated", "body": "(highlight)"},
+                                  {"page": 1, "quote": None, "body": "LiquidText tag on this document: Urgent"}], lt_marks(data)
         assert worker.is_ltproj("Case.ltproj.zip") and worker.is_ltproj("x.LTPROJ") and not worker.is_ltproj("x.zip")
     print("pdf_notes self-check ok: highlight quote, sticky note, ltproj documents, excerpts and comments")

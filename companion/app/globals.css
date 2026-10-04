@@ -522,3 +522,33 @@ label.check input { width: auto; }
 
 /* reading order: a quoted run of figures ("39,73,899.00 39,50,000.") must wrap on a phone */
 .explainer article, .explainer li { overflow-wrap: anywhere; }
+
+/* ── Bookmarks | Annotations panel (PDFgear-style), bottom sheet on phones ── */
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border-radius: 10px; background: var(--paper-deep); margin-bottom: .6rem; }
+.seg button { border: 0; border-radius: 8px; padding: .45rem .5rem; background: transparent; color: var(--muted); font-weight: 600; font-size: .88rem; cursor: pointer; }
+.seg button span { font-weight: 400; opacity: .7; margin-left: .2rem; }
+.seg button[aria-selected=true] { background: var(--white); color: var(--ink); box-shadow: var(--shadow-sm); }
+.filters { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .5rem; }
+.filters button { border: 1px solid var(--rule); border-radius: 99px; padding: .2rem .7rem; background: var(--white); color: var(--muted); font-size: .8rem; cursor: pointer; }
+.filters button[aria-pressed=true] { border-color: var(--seal); color: var(--seal); background: var(--seal-wash); }
+.olist { list-style: none; margin: 0; padding: 0; max-height: 26rem; overflow: auto; overscroll-behavior: contain; }
+.olist li { display: flex; align-items: center; gap: .4rem; border-bottom: 1px solid var(--rule); }
+.olist li:last-child { border-bottom: 0; }
+.olist a { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: .8rem; padding: .55rem .4rem; text-decoration: none; color: var(--ink); border-radius: 6px; }
+.olist a:hover { background: var(--seal-wash); }
+.olist .t { flex: 1 1 auto; min-width: 0; font-family: var(--serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.olist .pp { flex: 0 0 auto; color: var(--muted); font-variant-numeric: tabular-nums; font-size: .85rem; }
+.olist li.here a { font-weight: 700; }
+.olist li.here .t { color: var(--seal); }
+.olist-head { padding: .8rem .4rem .3rem; font-size: .78rem; color: var(--muted); border-bottom: 1px solid var(--rule); }
+.kind { font-family: var(--sans, inherit); font-size: .74rem; color: var(--muted); margin-right: .5rem; }
+.k-highlight { color: #8a6d1a; } .k-note { color: var(--note); } .k-tag { color: var(--seal); }
+.outline-fab { display: none; }
+.outline-sheet { border: 0; padding: .5rem 1rem calc(1rem + env(safe-area-inset-bottom)); margin: auto 0 0; width: 100%; max-width: 100%; max-height: 78vh; border-radius: 16px 16px 0 0; background: var(--white); color: var(--ink); box-shadow: var(--shadow); }
+.outline-sheet::backdrop { background: color-mix(in oklab, var(--ink) 35%, transparent); }
+.outline-sheet .olist { max-height: 56vh; }
+.sheet-grip { width: 2.6rem; height: 4px; border-radius: 99px; background: var(--rule-strong); margin: .2rem auto .7rem; }
+@media (max-width: 960px) {
+  .outline-fab { display: inline-flex; position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 30; box-shadow: var(--shadow); }
+  .olist a { padding: .7rem .4rem; }
+}

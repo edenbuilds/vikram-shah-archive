@@ -11,7 +11,7 @@ LiquidText has no API. The bridge is files, in both directions.
 
 - **A LiquidText project (.ltproj, or Name.ltproj.zip from Safari).** Every PDF in it is filed as one paper, with a bookmark per document. Her excerpts come in as notes quoted on the right page, but only where those exact words are on a page of the project's PDFs. Her comments come in as notes. Ink and the workspace layout are not read.
 - **A PDF exported from LiquidText (Export > PDF), or from Acrobat, Preview or PDFGear.** Its highlights become notes, each quoting the words under the highlight, cut from the PDF itself. Its comments become notes.
-- Notes from a PDF carry the tag `from-pdf` (plus `liquidtext` when LiquidText made the file); notes from a project carry `from-ltproj` and `liquidtext`. `get_notes` shows them.
+- Notes from a PDF carry the tag `from-pdf` (plus `liquidtext` when LiquidText made the file); notes from a project carry `from-ltproj` and `liquidtext`. `get_notes` shows them. Where she drew with LiquidText's pen, the project gives a note "Pen marks in LiquidText on this page": the place only. The strokes are drawings; never describe or guess what they say. Her LiquidText bookmarks arrive as the paper's contents, nested under each document's title.
 
 ## From Case Companion into LiquidText
 

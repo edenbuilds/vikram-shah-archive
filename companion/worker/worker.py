@@ -303,13 +303,14 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     textutil and Chrome, Markdown and text printed as they are written (nothing rewritten), and
     PowerPoint/Excel/EPUB/Outlook/JSON/XML through MarkItDown first."""
     # 2026-09-22: a .pdf with a few bytes before "%PDF-" (allowed by the spec) was refused as "Can't read .pdf"
+    # 04-10-2026: checked first; a project zip whose first member is a PDF has "%PDF-" in its opening bytes
+    if is_ltproj(filename):
+        return pdf_notes.ltproj_pdf(data)
     if b"%PDF-" in data[:1024]:
         return data[data.index(b"%PDF-"):]
     ext = Path(filename).suffix.lower()
     src, out = tmp / f"in{ext}", tmp / "converted.pdf"
     src.write_bytes(data)
-    if is_ltproj(filename):
-        return pdf_notes.ltproj_pdf(data)
     if ext in IMAGES:
         subprocess.run(["sips", "-s", "format", "pdf", str(src), "--out", str(out)], check=True, capture_output=True)
         return out.read_bytes()

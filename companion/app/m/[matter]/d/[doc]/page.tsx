@@ -1,5 +1,5 @@
 import EditDialog from "@/components/EditDialog";
-import { deleteAnnotation, moveDocument, renameDocument } from "@/app/actions";
+import { moveDocument, renameDocument } from "@/app/actions";
 import { after } from "next/server";
 import { mode } from "@/lib/jev";
 import { cachedSuggestion, saveSuggestion, suggestStage } from "@/lib/stage-suggest";
@@ -18,6 +18,7 @@ const cleanTitle = (s: Section) => {
 };
 import Reader, { type Note } from "./Transcript";
 import Correct from "./Correct";
+import Outline from "./Outline";
 import { getHistory } from "@/lib/corrections";
 
 export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
@@ -91,38 +92,11 @@ export default async function DocPage({ params, searchParams }: { params: Promis
       </div>
 
       <div className="glance">
-        <section className="card">
-          <h3>{sections[0]?.from === "bookmarks" ? "Your bookmarks" : "Contents"}</h3>
-          {d.source_path && d.source_path !== d.filename && <p className="subtle" style={{ margin: "0 0 .6rem" }}>From {d.source_path}</p>}
-          <ol className="contents">
-            {(sections.length ? sections : [{ numeral: "I", title: d.title, pages: `1-${d.page_count}`, pageStart: 1 } as Section]).map((s, i) => (
-              <li key={i} style={s.level ? { paddingLeft: `${Math.min(s.level, 4)}rem` } : undefined}>
-                <Link href={`/m/${m.id}/d/${d.id}?p=${s.pageStart}`}>
-                  <span className="num">{s.numeral ?? i + 1}</span>
-                  <span className="t">{cleanTitle(s)}</span>
-                  <span className="pp">{s.pages?.includes("-") ? `pp. ${s.pages}` : `p. ${s.pages}`}</span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-          {marks.length > 0 && <>
-            <h3 style={{ marginTop: ".9rem" }}>Bookmarked by you</h3>
-            <ol className="contents">
-              {marks.map((b) => (
-                <li key={b.id} style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-                  <Link href={`/m/${m.id}/d/${d.id}?p=${b.page_no}`} style={{ flex: "1 1 auto" }}>
-                    <span className="t">{b.body}</span>
-                    <span className="pp">p. {b.page_no}</span>
-                  </Link>
-                  <form action={deleteAnnotation}>
-                    <input type="hidden" name="id" value={b.id} /><input type="hidden" name="matter" value={m.id} /><input type="hidden" name="doc" value={d.id} />
-                    <button className="link subtle" aria-label={`Remove bookmark ${b.body}`}>remove</button>
-                  </form>
-                </li>
-              ))}
-            </ol>
-          </>}
-          <div className="row" style={{ marginTop: ".8rem", gap: ".5rem", alignItems: "center" }}>
+        <div className="stack" style={{ gap: ".6rem" }}>
+          <Outline matter={m.id} doc={d.id} page={p} marks={marks} notes={plain}
+            rows={(sections.length ? sections : [{ title: d.title, pageStart: 1 } as Section]).map((s) => ({ title: cleanTitle(s), page: s.pageStart!, level: s.level ?? 0, pages: s.pages }))} />
+          {d.source_path && d.source_path !== d.filename && <p className="subtle" style={{ margin: 0 }}>From {d.source_path}</p>}
+          <div className="row" style={{ gap: ".5rem", alignItems: "center" }}>
             <span className="subtle" style={{ flex: "0 0 auto" }}>Download</span>
             {(["pdf", "liquidtext", "docx", "md", "txt"] as const).map((f) => (
               <a key={f} className="btn ghost small" style={{ flex: "0 0 auto" }} href={`/m/${m.id}/d/${d.id}/download/${f}`}>
@@ -130,7 +104,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
               </a>
             ))}
           </div>
-        </section>
+        </div>
         {printed.length > 0 && (
           <section className="card">
             <h3>As printed on this paper</h3>
