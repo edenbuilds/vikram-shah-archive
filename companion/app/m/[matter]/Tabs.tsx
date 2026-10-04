@@ -3,17 +3,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 
+// the third value is the tab's colour (underline and active label), so a matter is not one blue strip
 const TABS = [
-  ["", "Papers"],
-  ["/explainer", "Explainer"],
-  ["/reading", "Reading order"],
-  ["/brief", "Brief"],
-  ["/compare", "Compare"],
-  ["/chronology", "Chronology"],
-  ["/map", "Map"],
-  ["/hearings", "Hearings"],
-  ["/collections", "Collections"],
-  ["/upload", "Upload"],
+  ["", "Papers", "#0007cb"],
+  ["/explainer", "Explainer", "#7c3aed"],
+  ["/reading", "Reading order", "#0e7490"],
+  ["/brief", "Brief", "#b45309"],
+  ["/compare", "Compare", "#be185d"],
+  ["/chronology", "Chronology", "#0f766e"],
+  ["/map", "Map", "#4d7c0f"],
+  ["/hearings", "Hearings", "#c2410c"],
+  ["/collections", "Collections", "#9d174d"],
+  ["/upload", "Upload", "#475569"],
 ] as const;
 
 // 04-10-2026: one underline that slides to the active tab (same 250 ms smooth-out as the top nav);
@@ -42,9 +43,9 @@ export default function Tabs({ base }: { base: string }) {
 
   return (
     <nav ref={bar} className={`tabs${fade.l ? " fade-l" : ""}${fade.r ? " fade-r" : ""}`} aria-label="Matter">
-      {line && <span className="tabs-line" aria-hidden style={{ transform: `translateX(${line.x}px)`, width: line.w }} />}
-      {TABS.map(([suffix, label]) => (
-        <Link key={label} href={base + suffix} aria-current={active(suffix) ? "page" : undefined}>{label}</Link>
+      {line && <span className="tabs-line" aria-hidden style={{ transform: `translateX(${line.x}px)`, width: line.w, background: TABS.find(([x]) => active(x))?.[2] }} />}
+      {TABS.map(([suffix, label, tone]) => (
+        <Link key={label} href={base + suffix} aria-current={active(suffix) ? "page" : undefined} style={{ "--tone": tone } as React.CSSProperties}>{label}</Link>
       ))}
     </nav>
   );

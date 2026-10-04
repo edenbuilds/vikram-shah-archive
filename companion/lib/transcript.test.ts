@@ -15,3 +15,11 @@ test("section markers give page ranges for continuous OCR", () => {
   const b = toBlocks("<!-- SECTION: x | PDF pages 3-9 -->\n\nBody text.");
   assert.deepEqual([b[1].page, b[1].pageEnd, b[0].kind], [3, 9, "meta"]);
 });
+
+test("rows spaced into columns are kept spaced, ordinary prose with a stray double gap is not", () => {
+  const rows = "Date   Event   Page\n01-02-2020   Notice issued   4\n05-06-2020   Reply filed   9";
+  assert.equal(toBlocks(rows)[0].kind, "spaced");
+  assert.equal(toBlocks("A sentence  with a stray gap\nand a second line.")[0].kind, "para");
+  assert.equal(toBlocks("2007-2009      Tenant-entry clearance, funded via Pravar\nStatement of funding and expenses")[0].kind, "spaced");
+  assert.equal(toBlocks("Ordinary prose with single spaces.\nAnd a second line.")[0].kind, "para");
+});

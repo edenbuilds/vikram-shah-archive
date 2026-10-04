@@ -26,6 +26,24 @@ export async function noteVisit(email: string, v: Omit<Visit, "at">) {
 }
 export const lastVisits = (email: string) => readState<Visit[]>(visitsPath(email), []);
 
+/** Written the moment she (or an AI app on her behalf) does something, so memory never waits for a page to be
+ *  opened. 04-10-2026: Omkar: "memory shouldn't be optional/manual, it should be persistent and autonomous". */
+export async function track(email: string | null | undefined, e: { matter?: string | null; text: string; link?: string }) {
+  if (!email) return;
+  try {
+    const at = new Date().toISOString();
+    const stored = await readState<Event[]>(timelinePath(email), []);
+    await writeState(timelinePath(email), merge(stored, [{ key: `act:${at}:${Math.random().toString(36).slice(2, 6)}`, at, matter: e.matter ?? null, text: cut(e.text, 140), link: e.link }]));
+  } catch { /* memory must never break the action it records */ }
+}
+
+/** The stored timeline only (one storage read, no database queries): for an AI app's first message. */
+export async function recentTrail(email: string, matterIds: string[], origin: string, n = 6): Promise<Event[]> {
+  const xs = await readState<Event[]>(timelinePath(email), []);
+  return xs.filter((e) => !e.matter || matterIds.includes(e.matter)).slice(0, n).map((e) => ({ ...e, link: absolute(e.link, origin) }));
+}
+const absolute = (l: string | undefined, origin: string) => (l?.startsWith("/") ? origin + l : l);
+
 /** Fresh events from the database and her own trail, merged into the stored timeline; newest first. */
 export async function activity(db: SupabaseClient, email: string, matterIds: string[], origin = ""): Promise<Event[]> {
   if (!matterIds.length) return [];
@@ -60,7 +78,7 @@ export async function activity(db: SupabaseClient, email: string, matterIds: str
   const added = fresh.filter((e) => !seen.has(e.key));
   const all = merge(stored, fresh);
   if (added.length) await writeState(timelinePath(email), all).catch(() => {});
-  return all.filter((e) => !e.matter || matterIds.includes(e.matter));
+  return all.filter((e) => !e.matter || matterIds.includes(e.matter)).map((e) => ({ ...e, link: absolute(e.link, origin) }));
 }
 
 /** Newest first, one row per key (a fresh copy replaces the stored one), capped. */

@@ -1,4 +1,5 @@
-import { activity, activityNote } from "@/lib/activity";
+import { after } from "next/server";
+import { activity, activityNote, track } from "@/lib/activity";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { admin } from "@/lib/access";
@@ -9,6 +10,7 @@ import { pageLabel, printedFor } from "@/lib/printed";
 import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/drafting";
 import { getReading, readingMarkdown } from "@/lib/reading";
 import { getSkill, listSkills } from "@/lib/skills";
+import { COLOURS, colourTag, type Colour } from "@/lib/highlight";
 import { clean, forScope, forget, getMemory, memoryNote, remember } from "@/lib/memory";
 import { correctPage, getHistory } from "@/lib/corrections";
 
@@ -26,6 +28,26 @@ const fail = (t: string) => ({ content: [{ type: "text" as const, text: t }], is
 
 export function register(server: McpServer, ctx: Ctx) {
   const db = admin();
+  // 04-10-2026: Omkar: memory "should be persistent and autonomous". What her AI apps read lands on the same timeline
+  // as what she does in the app, written after the answer is sent so a tool call never waits on it. Writes (a note, a
+  // saved memory) already show up from their own rows; only the reads that leave no row are logged here.
+  const TRAIL: Record<string, (a: Record<string, string | number | undefined>) => Promise<{ text: string; matter?: string; link?: string } | null>> = {
+    get_paper: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `AI app read "${d.title}"`, matter: d.matter_id, link: link(d.matter_id, d.id) }; },
+    read_pages: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `AI app read "${d.title}" from p. ${a.from_page}`, matter: d.matter_id, link: link(d.matter_id, d.id, Number(a.from_page)) }; },
+    ask_papers: async (a) => ({ text: `AI app asked: "${a.question}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
+    search_papers: async (a) => ({ text: `AI app searched: "${a.query}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
+  };
+  const registerTool = server.registerTool.bind(server) as (n: string, c: unknown, f: (a: never, x: never) => unknown) => unknown;
+  server.registerTool = ((name: string, cfg: unknown, fn: (a: never, x: never) => Promise<{ isError?: boolean }>) =>
+    registerTool(name, cfg, async (a: never, x: never) => {
+      const r = await fn(a, x);
+      const say = TRAIL[name];
+      if (say && !r?.isError) {
+        const p = say(a as Record<string, string | number | undefined>).then((e) => e && track(ctx.email, e)).catch(() => {});
+        try { after(p); } catch { /* outside a request (scripts/mcp-smoke): it still runs */ }
+      }
+      return r;
+    })) as typeof server.registerTool;
   const link = (m: string, d: string, p?: number) => `${ctx.origin}/m/${m}/d/${d}${p ? `?p=${p}` : ""}`;
   const pin = (d: { matter_id: string; id: string; title: string }, p: number, printed?: number) => `[${d.title}, ${pageLabel(p, printed)}](${link(d.matter_id, d.id, p)})`;
   const scope = (m?: string) => (m ? (ctx.matters.includes(m) ? [m] : []) : ctx.matters);
@@ -197,7 +219,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("get_notes", {
     title: "Get the advocate's notes",
-    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), from-pdf (her highlight or comment from another app, quote cut from the uploaded PDF), from-ltproj (from a LiquidText project: excerpts, comments, highlights with the transcript's words under them, pen marks placed by page only, document tags), liquidtext.",
+    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), highlight with color:#rrggbb (a highlight over the quoted words, made in the app or by an AI app), from-pdf (her highlight or comment from another app, quote cut from the uploaded PDF), from-ltproj (from a LiquidText project: excerpts, comments, highlights with the transcript's words under them, pen marks placed by page only, document tags), liquidtext.",
     inputSchema: { matter_id: z.string(), doc_id: z.string().optional() },
     annotations: { readOnlyHint: true },
   }, async ({ matter_id, doc_id }) => {
@@ -210,10 +232,12 @@ export function register(server: McpServer, ctx: Ctx) {
   });
 
   server.registerTool("add_note", {
-    title: "Save a note or bookmark on a paper (asks first)",
-    description: "Save the advocate's sticky note on a paper page, optionally anchored to an exact quote. With bookmark: true it saves a named bookmark to that page instead (note = the bookmark's name), listed with the paper's contents. First call WITHOUT confirm to get a preview; show it to her; call again with confirm: true only after she says yes.",
-    inputSchema: { doc_id: z.string(), page: z.number().int().min(1), note: z.string().min(2), quote: z.string().optional(), bookmark: z.boolean().optional(), confirm: z.boolean().optional() },
-  }, async ({ doc_id, page, note, quote, bookmark, confirm }) => {
+    title: "Save a note, highlight or bookmark on a paper (asks first)",
+    description: "Save the advocate's sticky note on a paper page, optionally anchored to an exact quote. With bookmark: true it saves a named bookmark to that page instead (note = the bookmark's name), listed with the paper's contents. With highlight: true it highlights the exact quote (required) in a colour (yellow, green, blue, pink or orange), with an optional note: she sees it marked over the words in the app, and it goes into the PDF with notes for LiquidText, PDFgear and Acrobat. First call WITHOUT confirm to get a preview; show it to her; call again with confirm: true only after she says yes.",
+    inputSchema: { doc_id: z.string(), page: z.number().int().min(1), note: z.string().min(2).optional(), quote: z.string().optional(), bookmark: z.boolean().optional(), highlight: z.boolean().optional(), colour: z.enum(Object.keys(COLOURS) as [Colour, ...Colour[]]).optional(), confirm: z.boolean().optional() },
+  }, async ({ doc_id, page, note, quote, bookmark, highlight, colour, confirm }) => {
+    if (highlight && !quote) return fail("A highlight needs the exact words to mark: pass quote (copy it exactly from read_pages).");
+    if (!highlight && !note) return fail("Pass note (the text to save).");
     const d = await doc(doc_id);
     if (!d) return fail(`No paper "${doc_id}" in your workspace.`);
     if (page > d.page_count) return fail(`"${d.title}" has ${d.page_count} pages.`);
@@ -225,12 +249,13 @@ export function register(server: McpServer, ctx: Ctx) {
       if (at < 0) return fail(`The quote is not in "${d.title}" exactly as written. Use read_pages and copy the words exactly, or save the note without a quote.`);
       start = at; end = at + quote.length;
     }
-    const preview = `${bookmark ? "Bookmark" : "Note"} on ${pin(d, page)}:\n"${note}"${quote ? `\nanchored to: "${quote}"` : ""}`;
+    const kind = highlight ? `Highlight (${colour ?? "yellow"})` : bookmark ? "Bookmark" : "Note";
+    const preview = `${kind} on ${pin(d, page)}:${note ? `\n"${note}"` : ""}${quote ? `\n${highlight ? "marking" : "anchored to"}: "${quote}"` : ""}`;
     if (!confirm) return text(`PREVIEW (nothing saved yet). Show this to the advocate and ask if she wants it saved:\n\n${preview}`);
     const { data: users } = await db.auth.admin.listUsers({ perPage: 1000 });
     const uid = users?.users.find((u) => u.email?.toLowerCase() === ctx.email)?.id;
     if (!uid) return fail("Could not identify the signed-in advocate; nothing saved.");
-    const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note, tags: bookmark ? ["bookmark", "via-ai"] : ["via-ai"], created_by: uid });
+    const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note ?? "", tags: highlight ? ["highlight", colourTag(COLOURS[colour ?? "yellow"]), "via-ai"] : bookmark ? ["bookmark", "via-ai"] : ["via-ai"], created_by: uid });
     return error ? fail(`Not saved: ${error.message}`) : text(`Saved.\n${preview}`);
   });
 

@@ -21,11 +21,14 @@ export const newSince = (saved: Basis | undefined, now: Basis, ack?: Basis) =>
     ? 0 : Math.max(1, now.papers - saved.papers);
 
 export type Section = { key: string; title: string; status: "answered" | "not_in_corpus"; claims: VerifiedClaim[]; rejected: Rejected[] };
-export type Brief = { made_at: string; basis: Basis; ack?: Basis; hearing: { date: string; purpose: string | null; forum: string | null } | null; sections: Section[] };
-export type Explainer = { made_at: string; basis: Basis; ack?: Basis; sections: Section[] };
+export type Brief = { made_at: string; by?: string; basis: Basis; ack?: Basis; hearing: { date: string; purpose: string | null; forum: string | null } | null; sections: Section[] };
+export type Explainer = { made_at: string; by?: string; basis: Basis; ack?: Basis; sections: Section[] };
 export type Comparison = { id: string; point: string; made_at: string; basis: Basis; status: "answered" | "not_in_corpus"; claims: VerifiedClaim[]; rejected: Rejected[] };
 export type DateMention = { doc: string; page: number; printed: string; quote: string };
 export type PaperDates = { made_at: string; basis: Basis; ack?: Basis; dates: { iso: string; mentions: DateMention[]; more: number }[] };
+
+/** " by arya" for the line under a made study aid; the upload worker refreshes them when a new paper is filed. */
+export const madeBy = (by?: string) => (!by ? "" : by.startsWith("worker@") ? ", refreshed when a new paper was filed" : ` by ${by.split("@")[0]}`);
 
 const at = (matter: string, what: string) => `_system/study/${matter}/${what}.json`;
 export const getBrief = (m: string) => readState<Brief | null>(at(m, "brief"), null);
@@ -34,6 +37,13 @@ export const getExplainer = (m: string) => readState<Explainer | null>(at(m, "ex
 export const saveExplainer = (m: string, e: Explainer) => writeState(at(m, "explainer"), e);
 /** Her own explainer file for a matter, if she gave one (kept beside the made one, never mixed in). */
 export const yoursPath = (m: string) => `_system/study/${m}/explainer-yours.pdf`;
+/** Her own words under a part of a made aid, by section key. Kept beside the receipted text, never mixed into it. */
+export const getSectionNotes = (m: string, kind: "explainer" | "brief") => readState<Record<string, string>>(at(m, `${kind}-notes`), {});
+export async function saveSectionNote(m: string, kind: "explainer" | "brief", key: string, text: string) {
+  const xs = await getSectionNotes(m, kind);
+  if (text) xs[key] = text; else delete xs[key];
+  await writeState(at(m, `${kind}-notes`), xs);
+}
 export const getComparisons = (m: string) => readState<Comparison[]>(at(m, "compare"), []);
 export const saveComparisons = (m: string, c: Comparison[]) => writeState(at(m, "compare"), c.slice(0, 30));
 export const getDates = (m: string) => readState<PaperDates | null>(at(m, "dates"), null);

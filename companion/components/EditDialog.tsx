@@ -2,7 +2,7 @@
 import { toast } from "@/components/Toast";
 import { useRef } from "react";
 
-type Field = { name: string; label: string; value: string | null };
+type Field = { name: string; label: string; value: string | null; rows?: number };
 
 // In-app dialog (never the browser's prompt) for renaming a matter or a paper.
 export default function EditDialog({ action, hidden, fields, label = "Edit" }: {
@@ -17,7 +17,7 @@ export default function EditDialog({ action, hidden, fields, label = "Edit" }: {
           {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
           {fields.map((x) => (
             <label key={x.name}>{x.label}
-              <input type="text" name={x.name} defaultValue={x.value ?? ""} required={x.name === "title"} />
+              {x.rows ? <textarea name={x.name} defaultValue={x.value ?? ""} rows={x.rows} required /> : <input type="text" name={x.name} defaultValue={x.value ?? ""} required={x.name === "title"} />}
             </label>
           ))}
           <div className="row" style={{ justifyContent: "flex-end" }}>

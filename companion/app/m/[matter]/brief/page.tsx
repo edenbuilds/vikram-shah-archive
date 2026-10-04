@@ -2,9 +2,10 @@ import Link from "next/link";
 import CopyButton from "@/app/CopyButton";
 import { Claims, SideBySide } from "@/components/Claims";
 import RunStudy from "@/components/RunStudy";
+import SectionNote from "@/components/SectionNote";
 import { dmy, dmyIST, getMatter } from "@/lib/data";
 import { pageLabel, printedFor } from "@/lib/printed";
-import { basisOf, getBrief, getPins, newSince } from "@/lib/study";
+import { basisOf, getBrief, getPins, getSectionNotes, madeBy, newSince } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 
 // One-page hearing brief: what is listed, each side's stand, the orders so far. Every line is
@@ -14,11 +15,11 @@ export default async function Brief({ params }: { params: Promise<{ matter: stri
   const { supabase, user } = await requireUser();
   const m = await getMatter(supabase, matter);
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-  const [brief, now, pins, { data: docs }, { data: next }, printed] = await Promise.all([
+  const [brief, now, pins, { data: docs }, { data: next }, printed, mine] = await Promise.all([
     getBrief(matter), basisOf(supabase, matter), getPins(user.email!),
     supabase.from("documents").select("id, title, stage").eq("matter_id", matter),
     supabase.from("hearings").select("date, purpose, forum").eq("matter_id", matter).eq("status", "upcoming").gte("date", today).order("date").limit(1).maybeSingle(),
-    printedFor(supabase, matter),
+    printedFor(supabase, matter), getSectionNotes(matter, "brief"),
   ]);
   const ctx = { matter, titles: new Map((docs ?? []).map((d) => [d.id, d.title])), pinned: new Set(pins.map((p) => p.id)), printed };
   const stageOf = new Map((docs ?? []).map((d) => [d.id, d.stage]));
@@ -63,12 +64,13 @@ export default async function Brief({ params }: { params: Promise<{ matter: stri
             : s.key === "stands" ? <SideBySide claims={s.claims} ctx={ctx} stageOf={stageOf} stages={m.stages} />
             : <Claims claims={s.claims} ctx={ctx} />}
           {!!s.rejected.length && <p className="subtle" style={{ margin: ".4rem 0 0" }}>{s.rejected.length} line(s) withheld: no verbatim receipt.</p>}
+          <SectionNote matter={matter} kind="brief" sectionKey={s.key} initial={mine[s.key] ?? ""} />
         </section>
       ))}
 
       {brief && !fresh && (
         <div className="row subtle" style={{ alignItems: "center", gap: ".8rem" }}>
-          <span>Made {dmyIST(brief.made_at)} from {brief.basis.papers} papers.</span>
+          <span>Made {dmyIST(brief.made_at)}{madeBy(brief.by)} from {brief.basis.papers} papers.</span>
           <RunStudy matter={matter} kind="brief" label="Make it again" ghost />
         </div>
       )}

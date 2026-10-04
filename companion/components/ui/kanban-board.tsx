@@ -75,6 +75,12 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
     persist(next, from.current !== col.id ? `Moved to ${col.title}` : undefined);
   };
 
+  const renameTask = (card: string, title: string) => {
+    const t = board.tasks[card.slice(2)];
+    if (!t || !title.trim() || title.trim() === t.title) return;
+    const next = { ...board, tasks: { ...board.tasks, [card.slice(2)]: { ...t, title: title.trim() } } };
+    setBoard(next); persist(next, "Task renamed");
+  };
   const addTask = (colId: string, title: string) => {
     const id = crypto.randomUUID().slice(0, 12);
     const next = { ...board, tasks: { ...board.tasks, [id]: { title, at: new Date().toISOString() } }, cols: board.cols.map((c) => (c.id === colId ? { ...c, cards: [...c.cards, `t:${id}`] } : c)) };
@@ -102,7 +108,7 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
           <Column key={c.id} id={c.id} title={c.title} cards={c.cards} onAdd={(t) => addTask(c.id, t)}>
             {c.cards.map((id) => (
               <Sortable key={id} id={id}>
-                <Card id={id} m={matters[id.slice(2)]} task={board.tasks[id.slice(2)]} onRemove={() => removeTask(id)} />
+                <Card id={id} m={matters[id.slice(2)]} task={board.tasks[id.slice(2)]} onRemove={() => removeTask(id)} onRename={(t) => renameTask(id, t)} />
               </Sortable>
             ))}
           </Column>
@@ -149,12 +155,20 @@ function Sortable({ id, children }: { id: string; children: React.ReactNode }) {
   );
 }
 
-function Card({ id, m, task, onRemove }: { id: string; m?: MatterCard; task?: { title: string; at: string }; onRemove?: () => void }) {
+function Card({ id, m, task, onRemove, onRename }: { id: string; m?: MatterCard; task?: { title: string; at: string }; onRemove?: () => void; onRename?: (t: string) => void }) {
+  const [editing, setEditing] = useState(false);
   const stop = { onMouseDown: (e: React.SyntheticEvent) => e.stopPropagation(), onTouchStart: (e: React.SyntheticEvent) => e.stopPropagation(), onKeyDown: (e: React.SyntheticEvent) => e.stopPropagation() };
   if (id.startsWith("t:")) return (
     <div className="kb-in">
       <span className="kb-tag task">Your task</span>
-      <p className="kb-title">{task?.title}</p>
+      {editing && onRename ? (
+        <input className="kb-input" autoFocus defaultValue={task?.title} maxLength={200} aria-label="Task title" {...stop}
+          onBlur={(e) => { onRename(e.currentTarget.value); setEditing(false); }}
+          onKeyDown={(e) => { e.stopPropagation(); if (e.key === "Enter") e.currentTarget.blur(); if (e.key === "Escape") { e.currentTarget.value = task?.title ?? ""; e.currentTarget.blur(); } }} />
+      ) : onRename ? (
+        <button type="button" className="kb-title kb-rename" title="Click to rename" onKeyDown={stop.onKeyDown}
+          onClick={() => { if (Date.now() - lastDrop > 300) setEditing(true); }}>{task?.title}</button>
+      ) : <p className="kb-title">{task?.title}</p>}
       {onRemove && <div className="kb-foot" {...stop}><HoldButton size="sm" holdTime={600} onHold={onRemove}>Hold to remove</HoldButton></div>}
     </div>
   );

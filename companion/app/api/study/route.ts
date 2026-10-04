@@ -1,9 +1,12 @@
+import { after } from "next/server";
 import { runAgent, type Step } from "@/lib/agent";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { admin, emailFrom } from "@/lib/access";
 import { printedFor } from "@/lib/printed";
 import { buildReading, getReading, saveReading } from "@/lib/reading";
 import { db } from "@/lib/supabase";
+import { track } from "@/lib/activity";
+import { jobKind, saveJob, type Job } from "@/lib/jobs";
 import { basisOf, buildDates, getBrief, getComparisons, getDates, getExplainer, saveBrief, saveComparisons, saveDates, saveExplainer, type Section } from "@/lib/study";
 
 // The upload worker signs its refresh requests as this address (see worker/worker.py refresh_after).
@@ -44,15 +47,34 @@ export async function POST(req: Request) {
   }
   const body = await req.json();
   const matter = String(body.matter ?? "");
-  const { data: m } = await supabase.from("matters").select("id").eq("id", matter).maybeSingle();
+  const { data: m } = await supabase.from("matters").select("id, title").eq("id", matter).maybeSingle();
   if (!m) return new Response("No such matter", { status: 404 });
+  const who = worker ? WORKER : (await supabase.auth.getUser()).data.user?.email ?? "";
   const point = String(body.point ?? "").trim().slice(0, 300);
   if (body.kind === "compare" && !point) return new Response("Name the point to compare", { status: 400 });
 
+  // 04-10-2026: the work must not depend on the browser staying. Before this, closing the tab or opening
+  // another window cancelled the stream, the next step() threw, and the explainer was never saved. Now a
+  // closed stream only stops the live steps; the run goes on to the save, `after` keeps the invocation
+  // alive until it has, and a job record lets every window say when it is ready.
+  let release = () => {};
+  after(new Promise<void>((r) => { release = r; }));
   const enc = new TextEncoder();
+  let open = true;
+  const kind = jobKind(String(body.kind));
+  const skipped = !!body.ifMade && !!MADE[body.kind] && !(await MADE[body.kind](matter));
+  const now = () => new Date().toISOString();
+  const job: Job | null = kind && !skipped ? { id: Date.now().toString(36), matter, title: m.title, kind, by: who, at: now(), touched: now(), status: "running" } : null;
+  if (job) await saveJob(job).catch(() => {});
+  let last = 0;
   const stream = new ReadableStream({
+    cancel() { open = false; },
     async start(c) {
-      const send = (o: unknown) => c.enqueue(enc.encode(JSON.stringify(o) + "\n"));
+      const send = (o: { type: string; text?: string; message?: string }) => {
+        if (job && o.type === "step" && Date.now() - last > 2500) { last = Date.now(); saveJob({ ...job, step: o.text, touched: now() }).catch(() => {}); }
+        if (!open) return;
+        try { c.enqueue(enc.encode(JSON.stringify(o) + "\n")); } catch { open = false; }
+      };
       const scope = { matterIds: [matter], docIds: null };
       // each section is one run of the receipts agent over the whole matter, all at once
       const run = (list: readonly (readonly [string, string, string])[]): Promise<Section[]> => Promise.all(list.map(async ([key, title, q]) => {
@@ -61,12 +83,12 @@ export async function POST(req: Request) {
       }));
       try {
         const basis = await basisOf(supabase, matter);
-        if (body.kind === "brief") {
+        if (skipped) {
+          send({ type: "step", text: "Not made yet, left for her to make" });
+        } else if (body.kind === "brief") {
           const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
           const { data: h } = await supabase.from("hearings").select("date, purpose, forum").eq("matter_id", matter).eq("status", "upcoming").gte("date", today).order("date").limit(1).maybeSingle();
-          await saveBrief(matter, { made_at: new Date().toISOString(), basis, hearing: h ?? null, sections: await run(SECTIONS) });
-        } else if (body.ifMade && MADE[body.kind] && !(await MADE[body.kind](matter))) {
-          send({ type: "step", text: "Not made yet, left for her to make" });
+          await saveBrief(matter, { made_at: new Date().toISOString(), by: who, basis, hearing: h ?? null, sections: await run(SECTIONS) });
         } else if (body.kind === "reading" || body.kind === "reading-all") {
           const r = await buildReading(supabase, matter, body.kind === "reading-all", (t) => send({ type: "step", text: t }));
           if (r.left) send({ type: "step", text: `${r.left} papers still to read; press Continue` });
@@ -76,7 +98,7 @@ export async function POST(req: Request) {
         } else if (body.kind === "dates") {
           await Promise.all([buildDates(supabase, matter).then((d) => saveDates(matter, d)), printedFor(supabase, matter)]);
         } else if (body.kind === "explainer") {
-          await saveExplainer(matter, { made_at: new Date().toISOString(), basis, sections: await run(EXPLAINER) });
+          await saveExplainer(matter, { made_at: new Date().toISOString(), by: who, basis, sections: await run(EXPLAINER) });
         } else if (body.kind === "keep-explainer") {
           const e = await getExplainer(matter);
           if (e) await saveExplainer(matter, { ...e, ack: basis });
@@ -93,10 +115,14 @@ export async function POST(req: Request) {
           if (b) await saveBrief(matter, { ...b, ack: basis });
         } else throw new Error("Unknown request");
         send({ type: "done" });
+        if (job) await saveJob({ ...job, status: "done", touched: now(), finished: now() }).catch(() => {});
+        if (job && !worker) await track(who, { matter, text: `Made the ${job.kind === "brief" ? "hearing brief" : job.kind === "dates" ? "list of dates" : job.kind} for ${m.title}`, link: `/m/${matter}` });
       } catch (e) {
         send({ type: "error", message: (e as Error).message });
+        if (job) await saveJob({ ...job, status: "error", touched: now(), finished: now(), error: (e as Error).message.slice(0, 200) }).catch(() => {});
       }
-      c.close();
+      try { c.close(); } catch { /* the browser already left */ }
+      release();
     },
   });
   return new Response(stream, { headers: { "content-type": "application/x-ndjson; charset=utf-8", "cache-control": "no-store" } });

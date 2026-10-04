@@ -60,10 +60,10 @@ export default async function Papers({ params, searchParams }: { params: Promise
         </div>
       )}
       <div className="stats">
-        <div className="stat"><b>{list.length}</b><span>Papers</span></div>
-        <div className="stat"><b>{list.reduce((a, d) => a + d.page_count, 0).toLocaleString("en-IN")}</b><span>Pages</span></div>
-        <div className="stat"><b>{notes?.length ?? 0}</b><span>Your notes</span></div>
-        <Link className="stat" href={next?.[0] ? `/m/${m.id}/hearings/${next[0].id}` : `/m/${m.id}/hearings`}>
+        <a className="stat" href="#papers" data-tone="papers"><b>{list.length}</b><span>Papers</span></a>
+        <a className="stat" href="#papers" data-tone="pages"><b>{list.reduce((a, d) => a + d.page_count, 0).toLocaleString("en-IN")}</b><span>Pages</span></a>
+        {notes?.length ? <a className="stat" href="#notes" data-tone="notes"><b>{notes.length}</b><span>Your notes</span></a> : <div className="stat" data-tone="notes"><b>0</b><span>Your notes</span></div>}
+        <Link className="stat" data-tone="hearing" href={next?.[0] ? `/m/${m.id}/hearings/${next[0].id}` : `/m/${m.id}/hearings`}>
           <b style={{ fontSize: next?.[0] ? "1.15rem" : undefined, paddingTop: next?.[0] ? ".3rem" : undefined }}>{next?.[0] ? fmtDate(next[0].date) : "None set"}</b>
           <span>Next hearing</span>
         </Link>
@@ -110,8 +110,8 @@ export default async function Papers({ params, searchParams }: { params: Promise
             </div>
           ) : (
             <>
-              {filled.map((s) => (
-                <div key={s.id} className="stage-card">
+              {filled.map((s, i) => (
+                <div key={s.id} className="stage-card" id={i === 0 ? "papers" : undefined}>
                   <header>
                     <div><h2>{s.title}</h2>{s.note && <p>{s.note}</p>}</div>
                     <span className="subtle" style={{ whiteSpace: "nowrap" }}>{byStage.get(s.id)!.length} paper{byStage.get(s.id)!.length === 1 ? "" : "s"}</span>
@@ -145,7 +145,7 @@ export default async function Papers({ params, searchParams }: { params: Promise
             </div>
           )}
           {!!notes?.length && (
-            <div className="card">
+            <div className="card" id="notes">
               <h3>Recent notes</h3>
               {notes.slice(0, 5).map((n) => (
                 <Link key={n.id} className="recent-note" href={`/m/${m.id}/d/${n.doc_id}${n.page_no ? `?p=${n.page_no}` : ""}`}>

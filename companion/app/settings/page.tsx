@@ -115,16 +115,18 @@ export default async function Settings() {
         <section id="memory" className="stack">
           <div>
             <h2>Memory</h2>
-            <p className="muted" style={{ margin: 0 }}>What you ask it to remember, and where you left off.</p>
-            <details className="more"><summary>How it works</summary><p>Your preferences follow you to Telegram (/remember, /memory) and your connected apps. Recent activity is kept automatically from what you open, upload, note and ask, each line dated and linked. Both guide how answers are written; facts still come only from the papers.</p></details>
+            <p className="muted" style={{ margin: 0 }}>Kept automatically from what you and your connected apps do. Nothing to switch on.</p>
+            <details className="more"><summary>How it works</summary><p>Every paper you open, upload, note, ask about or edit, and every paper a connected AI app reads, is written down with its date and link, and handed to the app when it connects. It guides where answers start; facts still come only from the papers. Anything you add under &ldquo;Your own reminders&rdquo; follows you to Telegram (/remember, /memory) and your apps too.</p></details>
           </div>
-          <Memory items={memory} matters={matters ?? []} />
-          {recent.length > 0 && (
-            <details className="card resume-log" open>
-              <summary>Recent activity, kept automatically <span>{recent.length}</span></summary>
-              <ol>{recent.slice(0, 20).map((e) => <li key={e.key}>{e.link ? <Link href={e.link}>{e.text}</Link> : e.text}<time>{when(e.at)}</time></li>)}</ol>
-            </details>
-          )}
+          {recent.length > 0 ? (
+            <div className="card resume-log">
+              <ol>{recent.slice(0, 25).map((e) => <li key={e.key}>{e.link ? <Link href={e.link}>{e.text}</Link> : e.text}<time>{when(e.at)}</time></li>)}</ol>
+            </div>
+          ) : <p className="subtle">Nothing yet. Open a paper and it starts here.</p>}
+          <details className="more" open={memory.length > 0}>
+            <summary>Your own reminders{memory.length ? ` (${memory.length})` : ""}</summary>
+            <Memory items={memory} matters={matters ?? []} />
+          </details>
         </section>
 
         <section id="skills" className="stack">

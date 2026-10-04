@@ -4,7 +4,7 @@ import { PDFDocument, PDFHexString, PDFName } from "pdf-lib";
 // Marathi and Hindi survive (PDFDocEncoding is Latin only).
 type N = { page_no: number | null; quote: string | null; body: string; tags: string[] };
 // A highlight's shape: rects are [x, y, w, h] fractions of the page from its top left (worker/pdf_notes.py).
-export type Ink = { page: number; color: string | null; rects: number[][]; body: string; quote: string | null; tags?: string[] };
+export type Ink = { id?: string; page: number; color: string | null; rects: number[][]; body: string; quote: string | null; tags?: string[] };
 const rgb = (hex: string | null) => (hex && /^#[0-9a-f]{6}$/i.test(hex) ? [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) : [1, 0.92, 0.23]);
 // Each note becomes a standard PDF comment (sticky note) in the page's top-left margin, stacked down.
 // Highlights with a shape become real PDF highlights in her colour, so LiquidText, PDFgear and Acrobat
@@ -37,9 +37,10 @@ export async function withComments(pdf: Uint8Array, notes: N[], ink: Ink[] = [])
     const pg = pages[i], k = stack.get(i) ?? 0;
     stack.set(i, k + 1);
     const top = pg.getHeight() - 24 - k * 22;
-    const mark = n.tags.includes("bookmark");
-    const text = mark ? `Bookmark: ${n.body}` : `${n.body}${n.quote ? `\n\non: "${n.quote}"` : ""}`;
-    add(i, { Type: "Annot", Subtype: "Text", Rect: [6, top - 18, 24, top], Name: mark ? "Key" : "Comment",
+    const mark = n.tags.includes("bookmark"), hl = n.tags.includes("highlight");
+    const text = mark ? `Bookmark: ${n.body}` : hl ? `Highlight${n.body ? `: ${n.body}` : ""}${n.quote ? `\n\n"${n.quote}"` : ""}` : `${n.body}${n.quote ? `\n\non: "${n.quote}"` : ""}`;
+    // a highlight picked from the words has no shape to draw, so it is a comment in her colour on that page
+    add(i, { Type: "Annot", Subtype: "Text", Rect: [6, top - 18, 24, top], Name: mark ? "Key" : "Comment", ...(hl ? { C: rgb(n.tags.find((t) => t.startsWith("color:"))?.slice(6) ?? null) } : {}),
       Contents: PDFHexString.fromText(text), T: PDFHexString.fromText("Case Companion"), Open: false, F: 4 });
   }
   return doc.save();

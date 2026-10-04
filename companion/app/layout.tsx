@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 import Toaster from "@/components/Toast";
+import JobWatcher from "@/components/JobWatcher";
 import { A11Y_BOOT } from "@/components/A11yPrefs";
 import { signOut } from "./actions";
 import TopNav from "@/components/TopNav";
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {data.user && <TopNav email={data.user.email ?? ""} signOut={signOut} />}{/* signed out, the entry page carries its own brand */}
         <div id="main">{children}</div>
         <Toaster />
+        {data.user && <JobWatcher />}
       </body>
     </html>
   );

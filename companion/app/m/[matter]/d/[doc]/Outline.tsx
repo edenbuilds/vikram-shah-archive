@@ -1,7 +1,7 @@
 "use client";
 import { toast } from "@/components/Toast";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { deleteAnnotation } from "@/app/actions";
 import type { Note } from "./Transcript";
 import RubberSegment from "@/components/rb/RubberSegment";
@@ -15,7 +15,7 @@ const KINDS: [Kind, string][] = [["note", "Notes"], ["highlight", "Highlights"],
 export function kindOf(n: Pick<Note, "body" | "quote" | "tags">): Kind {
   if (n.body.startsWith("Pen marks in LiquidText") || n.body.startsWith("Marked in LiquidText")) return "pen";
   if (n.body.startsWith("LiquidText tag")) return "tag";
-  if (n.body === "(highlight)" || n.body.startsWith("Area highlighted") || n.body.startsWith("Highlighted in LiquidText")) return "highlight";
+  if (n.tags.includes("highlight") || n.body === "(highlight)" || n.body.startsWith("Area highlighted") || n.body.startsWith("Highlighted in LiquidText")) return "highlight";
   return "note";
 }
 
@@ -25,11 +25,20 @@ export default function Outline({ matter, doc, page, rows, marks, notes }: {
   matter: string; doc: string; page: number; rows: Row[]; marks: Note[]; notes: Note[];
 }) {
   const sheet = useRef<HTMLDialogElement>(null);
+  const inline = useRef<HTMLElement>(null);
+  const [seen, setSeen] = useState(false);  // 04-10-2026: the button sat over the Download chips while the outline was already on screen
+  useEffect(() => {
+    const el = inline.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const panel = (inSheet: boolean) => <Panel matter={matter} doc={doc} page={page} rows={rows} marks={marks} notes={notes} onGo={inSheet ? () => sheet.current?.close() : undefined} />;
   return (
     <>
-      <section className="card outline-inline">{panel(false)}</section>
-      <button type="button" className="outline-fab btn" onClick={() => sheet.current?.showModal()}>Bookmarks</button>
+      <section ref={inline} className="card outline-inline">{panel(false)}</section>
+      <button type="button" className={`outline-fab btn${seen ? " is-seen" : ""}`} onClick={() => sheet.current?.showModal()}>Bookmarks</button>
       <dialog ref={sheet} className="outline-sheet" onClick={(e) => { if (e.target === sheet.current) sheet.current?.close(); }}>
         <div className="sheet-grip" aria-hidden />
         {panel(true)}

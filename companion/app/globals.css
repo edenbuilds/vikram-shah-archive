@@ -571,9 +571,12 @@ label.check input { width: auto; }
   color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color 200ms var(--ease-out-strong), transform 160ms var(--ease-out-strong); }
 .pillnav a:active { transform: scale(.97); }
 .pillnav a[aria-current=page], .pillnav a:hover { color: var(--ink); }
+.pillnav a:hover:not([aria-current=page]) { background: color-mix(in oklab, var(--tone, var(--ink)) 8%, transparent); }
+.pillnav a svg { transition: color 300ms ease; }
+.pillnav a[aria-current=page] svg, .pillnav a:hover svg { color: var(--tone, var(--ink)); }
 .pillnav-pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; border-radius: 999px; background: var(--white);
   box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 12%, transparent), inset 0 0 0 1px var(--rule);
-  transition: transform 250ms var(--ease-smooth-out), width 250ms var(--ease-smooth-out); }
+  transition: transform 380ms cubic-bezier(.65, 0, .35, 1), width 380ms cubic-bezier(.65, 0, .35, 1); }
 .account { position: relative; }
 .account > summary { list-style: none; cursor: pointer; border-radius: 999px; }
 .account > summary::-webkit-details-marker { display: none; }
@@ -791,7 +794,7 @@ p, li, dd, .lede, .subtle { text-wrap: pretty; }
 html, body { background: var(--paper); }
 body { font-feature-settings: "tnum" on; }
 /* 4px everywhere; only true circles (avatar, brand mark, dots, icon rings) stay round */
-*:not(.avatar):not(.brand-mark):not(.dot):not(svg):not(svg *):not(.si-icon) { border-radius: 4px !important; }
+*:not(.avatar):not(.brand-mark):not(.dot):not(.swatch):not(svg):not(svg *):not(.si-icon) { border-radius: 4px !important; }
 .btn, .toast, .account-menu, .pillnav, .card, dialog { box-shadow: none !important; }
 .toast { border: 1px solid #000; }
 .account-menu { border: 1px solid var(--rule); }
@@ -936,3 +939,51 @@ html[data-a11y-links="underline"] main a:not(.btn):not(.kb-title):not(.resume-ma
 .resume-main { background: #eef0ff; border-color: #d6d9ff; }
 .resume-main:hover { background: #e2e5ff; }
 .stat b { color: var(--violet); }
+
+/* ══ 04-10-2026 (later): "add more colours than blue". The violet stays the primary action and her own layer;
+   everything that names a place or a state gets its own hue so the app stops reading as one blue wash:
+   the top nav icons and the matter tabs (one hue per section), the matter stat tiles, and the toasts
+   (green saved, violet info, amber heads-up, red failed). Reading text stays ink. ══ */
+.toast.tone-ok { background: #11694a; border-color: #11694a; } .toast.tone-ok .dot { background: #b7f5d2; }
+.toast.tone-info { background: var(--violet); border-color: var(--violet); } .toast.tone-info .dot { background: #c9ccff; }
+.toast.tone-warn { background: #9a5b00; border-color: #9a5b00; } .toast.tone-warn .dot { background: #ffe0a3; }
+.toast.tone-error { background: #b42318; border-color: #b42318; } .toast.tone-error .dot { background: #ffc9c4; }
+.toast-link { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; margin-left: .35rem; }
+.tabs a:hover, .tabs a[aria-current=page] { color: var(--tone, var(--ink)); }
+.tabs a[aria-current=page] { border-color: var(--tone, var(--ink)); }
+.tabs:has(.tabs-line) a[aria-current=page] { border-color: transparent; }  /* the sliding line draws it once it has measured */
+.tabs-line { transition: transform 380ms cubic-bezier(.65, 0, .35, 1), width 380ms cubic-bezier(.65, 0, .35, 1), background 380ms; }
+.stat[data-tone=papers] { --tone: #0007cb; } .stat[data-tone=pages] { --tone: #0e7490; }
+.stat[data-tone=notes] { --tone: #11845b; } .stat[data-tone=hearing] { --tone: #c2410c; }
+.stat[data-tone] { border-top: 3px solid var(--tone); }
+.stat[data-tone] b { color: var(--tone); }
+a.stat[data-tone]:hover { border-color: var(--tone); background: color-mix(in oklab, var(--tone) 6%, var(--white)); }
+a.stat { transition: background 200ms, border-color 200ms; }
+div.resume-log ol { padding-top: .2rem; } div.resume-log li:first-child { border-top: 0; }
+.kb-rename { display: block; width: 100%; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: text; }
+.kb-rename:hover { text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* ══ 04-10-2026: highlights inside the app. One palette (lib/highlight.ts), shown as marks over the transcript words and
+   boxes over the scan; the Bookmarks button steps aside while the outline itself is on screen. ══ */
+.outline-fab { transition: opacity 200ms ease, transform 200ms ease; }
+.outline-fab.is-seen { opacity: 0; pointer-events: none; transform: translateY(8px); }
+mark.hl { background: color-mix(in oklab, var(--hl, #ffe45c) 70%, transparent); color: inherit; padding: 0 .05em; }
+.swatch { width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50% !important; border: 1px solid rgba(0, 0, 0, .18); cursor: pointer; transition: transform 150ms var(--ease-out-strong), box-shadow 150ms; }
+.swatch:hover { transform: scale(1.15); }
+.swatch[aria-pressed=true] { box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--ink); }
+.swatch.dot { display: inline-block; width: .7rem; height: .7rem; margin-right: .4rem; vertical-align: -1px; cursor: default; }
+.sel-pop { display: flex; align-items: center; gap: .4rem; padding: .35rem .5rem !important; background: var(--white) !important; color: var(--ink) !important; border: 1px solid var(--rule-strong) !important; }
+.sel-pop .sel-note { background: var(--violet); color: #fff; border: 0; padding: .25rem .65rem; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.hl-bar { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; margin-bottom: .6rem; font-size: .8rem; color: var(--muted); }
+.hl-bar > span { margin-right: auto; }
+.scan-draw { position: absolute; inset: 0; cursor: crosshair; touch-action: none; z-index: 2; background: color-mix(in oklab, var(--violet) 4%, transparent); }
+.scan-draw .ink-mark { pointer-events: none; }
+
+/* Explainer: a sentence and its number open the paper at the page it came from */
+.explainer a.cite-line { color: inherit; text-decoration: none; }
+.explainer a.cite-line:hover { background: var(--violet-wash); }
+.explainer ol.footnotes a.fn-pdf { color: var(--violet); white-space: nowrap; }
+.explainer ol.footnotes a.fn-pdf:hover { text-decoration: underline; }
+/* Rows spaced into columns (a List of Dates): the stored text is untouched; each gap shows as a hairline between columns and the row wraps like prose */
+.b-spaced { white-space: pre-line; background: var(--paper); padding: .55rem .8rem; border-radius: 4px; line-height: 1.6; }
+.b-spaced .gap { display: inline-block; width: 0; height: 1rem; margin: 0 .65rem; font-size: 0; vertical-align: -.2rem; border-left: 1px solid #b9b3a9; }

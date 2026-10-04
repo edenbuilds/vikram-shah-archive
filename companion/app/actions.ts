@@ -8,10 +8,13 @@ import { admin, tokenFor } from "@/lib/access";
 import { sendSignInLink } from "@/lib/signin-mail";
 import { getPrefs, setPrefs } from "@/lib/prefs";
 import { db, requireUser } from "@/lib/supabase";
+import { track } from "@/lib/activity";
+import { colourTag } from "@/lib/highlight";
+import { addInk, removeInk } from "@/lib/ink";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 import { norm } from "@/lib/citations";
 import { getMatter } from "@/lib/data";
-import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins } from "@/lib/study";
+import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins, saveSectionNote as saveNote } from "@/lib/study";
 import { removeSkill, saveSkill } from "@/lib/skills";
 import { markMoved } from "@/lib/stage-suggest";
 import { editMemory, forget, remember } from "@/lib/memory";
@@ -62,7 +65,7 @@ export async function organiseMatter(f: FormData) {
   revalidatePath("/");
 }
 export async function createMatter(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const title = str(f, "title");
   const kind = TAXONOMIES[str(f, "kind")] ? str(f, "kind") : "arbitration";
   const people = ["claimant", "respondent", "arbitrator", "opposing_counsel"].flatMap((role) =>
@@ -77,6 +80,7 @@ export async function createMatter(f: FormData) {
   // invisible from her other account: create_matter only adds the creator. Share with the workspace.
   const { data: staff } = await admin().from("app_users").select("email");
   await admin().from("matter_members").upsert((staff ?? []).map((u) => ({ matter_id: id, email: u.email, role: "advocate" })), { ignoreDuplicates: true });
+  await track(user.email, { matter: id, text: `Created the matter "${title}"`, link: `/m/${id}` });
   redirect(`/m/${id}/upload`);
 }
 
@@ -107,14 +111,31 @@ export async function addAnnotation(f: FormData) {
   revalidatePath(`/m/${m}/d/${doc}`);
 }
 
+// A highlight drawn on the scan: the shape goes to ink.json (so the PDF export draws it as a real highlight, which
+// LiquidText shows), the row makes it a note she can list, edit, delete and her AI apps can read.
+export async function addHighlight(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const m = str(f, "matter"), doc = str(f, "doc"), page = Number(str(f, "page"));
+  const c = (k: string) => Math.min(Math.max(Number(str(f, k)) || 0, 0), 1);
+  const [x, y] = [c("x"), c("y")], w = Math.min(c("w"), 1 - x), h = Math.min(c("h"), 1 - y);
+  const { data: d } = await supabase.from("documents").select("id, page_count").eq("id", doc).eq("matter_id", m).maybeSingle();
+  if (!d || !(page >= 1 && page <= d.page_count) || w < 0.005 || h < 0.003) return;
+  const tag = colourTag(str(f, "color"));
+  const row = must(await supabase.from("annotations").insert({ matter_id: m, doc_id: doc, page_no: page, body: "Highlight", tags: ["highlight", "drawn", tag] }).select("id").single()) as { id: string };
+  await addInk(m, doc, { id: row.id, page, color: tag.slice(6), rects: [[x, y, w, h]], body: "Highlight", quote: null, tags: ["highlight"] });
+  await track(user.email, { matter: m, text: `Highlighted p. ${page}`, link: `/m/${m}/d/${doc}?p=${page}` });
+  revalidatePath(`/m/${m}/d/${doc}`);
+}
+
 export async function deleteAnnotation(f: FormData) {
   const { supabase } = await requireUser();
   must(await supabase.from("annotations").delete().eq("id", str(f, "id")));
+  if (str(f, "drawn")) await removeInk(str(f, "matter"), str(f, "doc"), str(f, "id")).catch(() => {});
   revalidatePath(`/m/${str(f, "matter")}/d/${str(f, "doc")}`);
 }
 
 export async function addToCollection(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const m = str(f, "matter");
   let cid = opt(f, "collection");
   if (!cid && str(f, "new_title")) {
@@ -122,16 +143,18 @@ export async function addToCollection(f: FormData) {
   }
   if (!cid) return;
   must(await supabase.from("collection_items").upsert({ collection_id: cid, doc_id: str(f, "doc"), page_no: num(f, "page"), note: opt(f, "note") }));
+  await track(user.email, { matter: m, text: `Added ${num(f, "page") ? `p. ${num(f, "page")}` : "a paper"} to a collection`, link: `/m/${m}/collections` });
   revalidatePath(`/m/${m}/collections`);
   revalidatePath(`/m/${m}/d/${str(f, "doc")}`);
 }
 
 export async function saveCollection(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const m = str(f, "matter");
   const row = { matter_id: m, title: str(f, "title"), note: opt(f, "note"), hearing_id: opt(f, "hearing") };
   const id = opt(f, "id");
   must(id ? await supabase.from("collections").update(row).eq("id", id) : await supabase.from("collections").insert(row));
+  await track(user.email, { matter: m, text: `${id ? "Edited" : "Started"} the collection "${row.title}"`, link: `/m/${m}/collections` });
   revalidatePath(`/m/${m}/collections`);
 }
 
@@ -143,7 +166,7 @@ export async function removeFromCollection(f: FormData) {
 
 // ── chronology ──────────────────────────────────────────────────────────────
 export async function saveEntry(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const m = str(f, "matter");
   const row = {
     matter_id: m, date: opt(f, "date"), date_text: opt(f, "date_text"), title: str(f, "title"), body: opt(f, "body"),
@@ -151,6 +174,7 @@ export async function saveEntry(f: FormData) {
   };
   const id = opt(f, "id");
   must(id ? await supabase.from("chronology_entries").update(row).eq("id", id) : await supabase.from("chronology_entries").insert(row));
+  await track(user.email, { matter: m, text: `${id ? "Edited" : "Added"} a chronology entry: "${row.title}"`, link: `/m/${m}/chronology` });
   revalidatePath(`/m/${m}/chronology`);
   revalidatePath(`/m/${m}/chronology/papers`);
 }
@@ -246,29 +270,31 @@ export async function confirmMinutes(f: FormData) {
 // ── renaming ────────────────────────────────────────────────────────────────
 // Matter details: members may update their matter (RLS "edit" policy).
 export async function updateMatter(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const id = str(f, "matter");
   const title = str(f, "title");
   if (!title) return;
   must(await supabase.from("matters").update({ title, short: opt(f, "short"), forum: opt(f, "forum"), cause: opt(f, "cause") }).eq("id", id));
+  await track(user.email, { matter: id, text: `Edited the matter details of "${title}"`, link: `/m/${id}` });
   revalidatePath("/", "layout");
 }
 
 // A paper's title. Documents have no update policy for members, so membership is checked
 // here and the write goes through the service role. The id (and so every link) stays the same.
 export async function renameDocument(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const id = str(f, "doc");
   const title = str(f, "title").slice(0, 300);
   const { data: visible } = await supabase.from("documents").select("matter_id").eq("id", id).maybeSingle();
   if (!visible || !title) return;
   must(await admin().from("documents").update({ title }).eq("id", id));
+  await track(user.email, { matter: visible.matter_id, text: `Renamed a paper to "${title}"`, link: `/m/${visible.matter_id}/d/${id}` });
   revalidatePath(`/m/${visible.matter_id}`, "layout");
 }
 
 // A paper moves only to one of its own matter's stages. Records whether she took the Jev suggestion.
 export async function moveDocument(f: FormData) {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const id = str(f, "doc"), to = str(f, "stage");
   const { data: visible } = await supabase.from("documents").select("matter_id").eq("id", id).maybeSingle();
   if (!visible) return;
@@ -276,6 +302,7 @@ export async function moveDocument(f: FormData) {
   if (!m.stages.some((s) => s.id === to)) return;
   must(await admin().from("documents").update({ stage: to }).eq("id", id));
   await markMoved(visible.matter_id, id, to).catch(() => {});
+  await track(user.email, { matter: visible.matter_id, text: `Moved a paper to "${m.stages.find((s) => s.id === to)?.title ?? to}"`, link: `/m/${visible.matter_id}/d/${id}` });
   revalidatePath(`/m/${visible.matter_id}`, "layout");
 }
 
@@ -291,6 +318,7 @@ export async function correctPageText(f: FormData) {
   const page = Number(str(f, "page"));
   if (!v || !(page >= 1 && page <= v.d.page_count)) return;
   await correctPage(admin(), v.d, page, String(f.get("text") ?? ""), { by: v.by, reason: opt(f, "reason"), via: "web" });
+  await track(v.by, { matter: v.d.matter_id, text: `Corrected the read text of p. ${page}`, link: `/m/${v.d.matter_id}/d/${v.d.id}?p=${page}` });
   revalidatePath(`/m/${v.d.matter_id}`, "layout");
 }
 
@@ -317,6 +345,25 @@ export async function uploadCorrectedMarkdown(f: FormData): Promise<{ ok: boolea
   for (const [n, text] of pages) if ((await correctPage(admin(), v.d, n, text, { by: v.by, reason: opt(f, "reason") ?? `uploaded ${file.name}`, via: "markdown" })) === "saved") saved++;
   revalidatePath(`/m/${v.d.matter_id}`, "layout");
   return { ok: true, message: saved ? `Saved ${saved} corrected page${saved === 1 ? "" : "s"}. The original text is kept and can be put back page by page.` : "No page text changed." };
+}
+
+// Her own note under one part of the explainer or brief: stored beside the receipted text, never inside it.
+export async function saveSectionNote(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const m = str(f, "matter"), kind = str(f, "kind") === "brief" ? "brief" : "explainer";
+  await getMatter(supabase, m);  // throws unless she can see the matter
+  await saveNote(m, kind, str(f, "key").slice(0, 40), str(f, "text").slice(0, 4000));
+  await track(user.email, { matter: m, text: `Wrote her own note on the ${kind}`, link: `/m/${m}/${kind}` });
+  revalidatePath(`/m/${m}/${kind}`);
+}
+
+export async function editAnnotation(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const m = str(f, "matter"), doc = str(f, "doc"), body = str(f, "body");
+  if (!body) return;
+  must(await supabase.from("annotations").update({ body }).eq("id", str(f, "id")));
+  await track(user.email, { matter: m, text: `Edited a note: "${body}"`, link: `/m/${m}/d/${doc}` });
+  revalidatePath(`/m/${m}/d/${doc}`);
 }
 
 // Her memory (lib/memory.ts): a matter-specific item only for a matter she can see.

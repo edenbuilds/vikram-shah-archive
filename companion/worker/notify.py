@@ -79,21 +79,21 @@ def email(subject: str, body_html: str, attachments: list[dict] | None = None, m
 
 def page(title: str, lede: str, rows_html: str, button: tuple[str, str] | None, foot: str) -> str:
     """Paper-toned email: serif title, seal-red accent, one clear button. Inline styles only."""
-    btn = (f'<a href="{button[0]}" style="display:inline-block;background:#8b2e2e;color:#fffdf8;text-decoration:none;'
-           f'font-weight:600;padding:12px 22px;border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:15px">{html.escape(button[1])}</a>') if button else ""
-    return f"""<!doctype html><html><body style="margin:0;background:#f4eee4;padding:32px 12px">
+    btn = (f'<a href="{button[0]}" style="display:inline-block;background:#0007cb;color:#ffffff;text-decoration:none;'
+           f'font-weight:600;padding:12px 22px;border-radius:4px;font-family:Helvetica,Arial,sans-serif;font-size:15px">{html.escape(button[1])}</a>') if button else ""
+    return f"""<!doctype html><html><body style="margin:0;background:#faf9f6;padding:32px 12px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fffdf8;border:1px solid #e3d9c7;border-radius:14px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #dedbd6;border-radius:4px;border-top:3px solid #0007cb">
 <tr><td style="padding:28px 32px 8px;font-family:Helvetica,Arial,sans-serif">
 <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-<td style="width:34px;height:34px;border-radius:17px;background:#8b2e2e;color:#f4eee4;text-align:center;font-family:Georgia,serif;font-size:12px">CC</td>
-<td style="padding-left:10px;font-family:Georgia,serif;font-size:15px;color:#1c1612">Case Companion</td></tr></table>
+<td style="width:34px;height:34px;border-radius:17px;background:#0007cb;color:#faf9f6;text-align:center;font-family:Georgia,serif;font-size:12px">CC</td>
+<td style="padding-left:10px;font-family:Georgia,serif;font-size:15px;color:#111111">Case Companion</td></tr></table>
 </td></tr>
-<tr><td style="padding:14px 32px 0"><h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:26px;line-height:1.25;color:#1c1612">{html.escape(title)}</h1>
-<p style="margin:10px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#5c5348">{lede}</p></td></tr>
+<tr><td style="padding:14px 32px 0"><h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.02em;font-size:26px;line-height:1.25;color:#111111">{html.escape(title)}</h1>
+<p style="margin:10px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#585858">{lede}</p></td></tr>
 <tr><td style="padding:20px 32px 4px">{rows_html}</td></tr>
 <tr><td style="padding:18px 32px 28px">{btn}</td></tr>
-<tr><td style="padding:16px 32px 24px;border-top:1px solid #e3d9c7;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#8a8073">{foot}</td></tr>
+<tr><td style="padding:16px 32px 24px;border-top:1px solid #dedbd6;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#888888">{foot}</td></tr>
 </table></td></tr></table></body></html>"""
 
 
@@ -114,14 +114,14 @@ def job_done(job: dict) -> None:
     telegram(f"<b>Ready:</b> {html.escape(job['title'])}\n{html.escape(m['title'])}: {what}\n\n{lines}{more}\n\n{ORIGIN}/m/{mid}/map", mid)
 
     rows = "".join(
-        f'<tr><td style="padding:10px 0;border-bottom:1px solid #efe7da;font-family:Georgia,serif;font-size:15px;line-height:1.35">'
-        f'<a href="{link(d)}" style="color:#1c1612;text-decoration:none">{html.escape(d["title"])}</a>'
-        f'<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#8a8073;margin-top:3px">{html.escape(stage.get(d["stage"], d["stage"]))} · {d["page_count"]} pages</div></td></tr>'
+        f'<tr><td style="padding:10px 0;border-bottom:1px solid #dedbd6;font-family:Georgia,serif;font-size:15px;line-height:1.35">'
+        f'<a href="{link(d)}" style="color:#111111;text-decoration:none">{html.escape(d["title"])}</a>'
+        f'<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin-top:3px">{html.escape(stage.get(d["stage"], d["stage"]))} · {d["page_count"]} pages</div></td></tr>'
         for d in docs)
     email(f"Ready: {job['title']} ({what})", page(
         "Your papers are ready",
-        f"<b style=\"color:#1c1612\">{html.escape(job['filename'])}</b> has been read page by page and filed in "
-        f"<b style=\"color:#1c1612\">{html.escape(m['title'])}</b>: {what}." + (" It was split into its papers using the volume's own index." if len(docs) > 1 else ""),
+        f"<b style=\"color:#111111\">{html.escape(job['filename'])}</b> has been read page by page and filed in "
+        f"<b style=\"color:#111111\">{html.escape(m['title'])}</b>: {what}." + (" It was split into its papers using the volume's own index." if len(docs) > 1 else ""),
         f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table>',
         (f"{ORIGIN}/m/{mid}/map", "Open the matter"),
         "Every page keeps its original scan beside the text. Unreadable pages are marked [ILLEGIBLE], never guessed.<br>Sent by Case Companion to the people with access to this matter."), mid=mid)
@@ -132,8 +132,8 @@ def job_failed(job: dict, error: str) -> None:
     telegram(f"<b>Couldn't file:</b> {html.escape(job['title'])}\n{html.escape(error[:500])}\n\nTry again or upload on the website: {ORIGIN}/m/{mid}/upload", mid)
     email(f"Couldn't file: {job['title']}", page(
         "An upload needs another try",
-        f"<b style=\"color:#1c1612\">{html.escape(job['filename'])}</b> could not be processed.",
-        f'<p style="margin:0;padding:12px 14px;background:#f3e3de;border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#6f2424">{html.escape(error[:800])}</p>',
+        f"<b style=\"color:#111111\">{html.escape(job['filename'])}</b> could not be processed.",
+        f'<p style="margin:0;padding:12px 14px;background:#fdf1ef;border-radius:4px;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#b42318">{html.escape(error[:800])}</p>',
         (f"{ORIGIN}/m/{mid}/upload", "Open uploads"),
         "Uploading the same file again is safe: papers already filed from it are updated, not duplicated."), mid=mid)
 
@@ -148,13 +148,13 @@ def ready_digest(files: list[tuple[str, str]]) -> None:
             docs = rest("GET", "documents", f"select=id,page_count&matter_id=eq.{urllib.parse.quote(mid)}&filename=eq.{urllib.parse.quote(fn)}", prefer="")
             p = sum(d["page_count"] for d in docs)
             total_p += p; total_d += len(docs)
-            rows += (f'<tr><td style="padding:8px 0;border-bottom:1px solid #efe7da;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#1c1612">{html.escape(fn)}'
-                     f'<div style="font-size:12px;color:#8a8073;margin-top:2px">{len(docs)} paper{"s" if len(docs) != 1 else ""} · {p} pages</div></td></tr>')
+            rows += (f'<tr><td style="padding:8px 0;border-bottom:1px solid #dedbd6;font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#111111">{html.escape(fn)}'
+                     f'<div style="font-size:12px;color:#888888;margin-top:2px">{len(docs)} paper{"s" if len(docs) != 1 else ""} · {p} pages</div></td></tr>')
             tg_lines.append(f"• {html.escape(fn)}: {len(docs)} paper{'s' if len(docs) != 1 else ''}, {p} pages")
-        blocks.append(f'<div style="margin:0 0 22px"><a href="{ORIGIN}/m/{mid}/map" style="font-family:Georgia,serif;font-size:17px;color:#8b2e2e;text-decoration:none">{html.escape(m["title"])}</a>'
-                      f'<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#8a8073;margin:3px 0 6px">{html.escape(m["cause"] or "")}</div>'
+        blocks.append(f'<div style="margin:0 0 22px"><a href="{ORIGIN}/m/{mid}/map" style="font-family:Georgia,serif;font-size:17px;color:#0007cb;text-decoration:none">{html.escape(m["title"])}</a>'
+                      f'<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin:3px 0 6px">{html.escape(m["cause"] or "")}</div>'
                       f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></div>')
-    lede = (f"{len(files)} files have been read page by page and filed as <b style=\"color:#1c1612\">{total_d} separate papers ({total_p:,} pages)</b>, "
+    lede = (f"{len(files)} files have been read page by page and filed as <b style=\"color:#111111\">{total_d} separate papers ({total_p:,} pages)</b>, "
             "each named as its volume's index lists it, with the original scan beside the text.")
     email(f"Your papers are ready: {total_d} papers, {total_p:,} pages", page(
         "Your papers are ready", lede, "".join(blocks), (f"{ORIGIN}/", "Open your workspace"),

@@ -2,7 +2,7 @@
 // every block carries its [start,end) offsets into documents.transcript, so an
 // annotation can pin to an exact span and the source is never rewritten.
 
-export type BlockKind = "heading" | "page" | "quote" | "table" | "rule" | "meta" | "para";
+export type BlockKind = "heading" | "page" | "quote" | "table" | "spaced" | "rule" | "meta" | "para";
 export type Block = { start: number; end: number; text: string; kind: BlockKind; page: number | null; pageEnd: number | null };
 
 const PAGE = /^## Page (\d+)(?: of \d+)?\s*$/;
@@ -15,6 +15,9 @@ function kindOf(text: string): BlockKind {
   if (text.startsWith("#")) return "heading";
   if (text.startsWith(">")) return "quote";
   if (text.startsWith("|")) return "table";
+  // 04-10-2026: Omkar: "confusing layout" on the List of Dates. Rows whose columns are spaced apart (a gap of 3+ spaces or
+  // a tab between words) only line up in a fixed-width face; in the serif they wrap raggedly and the columns drift.
+  if (/\S( {3,}|\t)\S/.test(text)) return "spaced";
   return "para";
 }
 

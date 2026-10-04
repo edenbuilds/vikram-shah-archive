@@ -6,13 +6,16 @@ import { Bookmark, FolderOpen, LogOut, Search, Settings2 } from "lucide-react";
 import AskButton from "@/app/AskButton";
 
 // 04-10-2026: Omkar asked for a better nav bar, after the React Bits portfolio template's floating pill
-// nav. One pill with a sliding highlight (transitions.dev "tabs sliding": 250 ms, smooth-out); on a
-// phone it floats at the bottom where the thumb is, and the top bar keeps only the brand, Ask and her menu.
+// nav. One pill with a sliding highlight; on a phone it floats at the bottom where the thumb is, and the
+// top bar keeps only the brand, Ask and her menu. Same day: "too bouncy, it should be animated". The pill used
+// to chase the mouse across the links, so it lurched on every pass; it now rests on the current page and
+// glides to the next one when the page changes, with a soft wash under the hovered link instead.
+// Each section owns a colour (--tone) so the bar is not all violet.
 const LINKS = [
-  ["/", "Workspace", FolderOpen],
-  ["/search", "Search", Search],
-  ["/pins", "Pinned", Bookmark],
-  ["/settings", "Settings", Settings2],
+  ["/", "Workspace", FolderOpen, "#0007cb"],
+  ["/search", "Search", Search, "#0e7490"],
+  ["/pins", "Pinned", Bookmark, "#b45309"],
+  ["/settings", "Settings", Settings2, "#9d174d"],
 ] as const;
 
 export default function TopNav({ email, signOut }: { email: string; signOut: () => Promise<void> }) {
@@ -20,8 +23,7 @@ export default function TopNav({ email, signOut }: { email: string; signOut: () 
   const on = (href: string) => (href === "/" ? path === "/" || path.startsWith("/m/") : path.startsWith(href));
   const bar = useRef<HTMLElement>(null);
   const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
-  const [hover, setHover] = useState<string | null>(null);
-  const target = hover ?? LINKS.find(([h]) => on(h))?.[0] ?? null;
+  const target = LINKS.find(([h]) => on(h))?.[0] ?? null;
 
   useLayoutEffect(() => {
     const place = () => {
@@ -48,10 +50,10 @@ export default function TopNav({ email, signOut }: { email: string; signOut: () 
         <span className="brand-mark" aria-hidden>CC</span>
         <span><b>Case Companion</b></span>
       </Link>
-      <nav ref={bar} className="pillnav" aria-label="Main" onMouseLeave={() => setHover(null)}>
+      <nav ref={bar} className="pillnav" aria-label="Main">
         {pill && <span className="pillnav-pill" aria-hidden style={{ transform: `translateX(${pill.x}px)`, width: pill.w }} />}
-        {LINKS.map(([href, label, Icon]) => (
-          <Link key={href} href={href} data-href={href} aria-current={on(href) ? "page" : undefined} onMouseEnter={() => setHover(href)}>
+        {LINKS.map(([href, label, Icon, tone]) => (
+          <Link key={href} href={href} data-href={href} aria-current={on(href) ? "page" : undefined} style={{ "--tone": tone } as React.CSSProperties}>
             <Icon size={16} strokeWidth={1.75} aria-hidden /><span>{label}</span>
           </Link>
         ))}

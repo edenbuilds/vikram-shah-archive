@@ -79,7 +79,10 @@ For long papers, \`get_paper\` shows the contents (sections and page ranges) so 
 
 \`add_note\` asks first: call it without \`confirm\`, show her the preview, and call it again with
 \`confirm: true\` only after she says yes. A quote attached to a note must be exact. With \`bookmark: true\`
-it saves a named bookmark to a page instead; \`get_paper\` lists the PDF's own bookmarks and hers.
+it saves a named bookmark to a page instead; \`get_paper\` lists the PDF's own bookmarks and hers. With
+\`highlight: true\`, an exact \`quote\` and a \`colour\` (yellow, green, blue, pink, orange) it highlights those words,
+shown over the words in the app and carried into the PDF with notes; she can also highlight in the app (words, or
+a box drawn on the scan), and \`get_notes\` returns those with their colour.
 Notes tagged \`from-pdf\` or \`liquidtext\` are her highlights and comments from another app, brought in from
 the uploaded PDF or LiquidText project. A LiquidText highlight's quote is the transcript's verbatim words under
 her mark; pen marks give the page only, never what they say. \`get_paper\` also gives a "PDF with notes" link
