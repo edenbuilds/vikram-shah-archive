@@ -156,6 +156,41 @@ def sectioned(title: str, texts: list[str]) -> tuple[str, list[dict]]:
     return body, sections
 
 
+def bookmarks(pdf: Path, n: int) -> list[dict]:
+    """Her own bookmarks (the PDF outline PDFGear, Acrobat or Preview saves) as contents rows, nested
+    by level; [] when the PDF has none. 04-10-2026: she asked for her bookmarks to come up on upload."""
+    try:
+        from pypdf import PdfReader
+        r = PdfReader(str(pdf))
+        out: list[dict] = []
+
+        def walk(items, level):
+            for it in items:
+                if isinstance(it, list):
+                    walk(it, level + 1)
+                    continue
+                try:
+                    pg = r.get_destination_page_number(it) + 1
+                except Exception:  # noqa: BLE001  a bookmark pointing nowhere is skipped
+                    continue
+                title = " ".join(str(getattr(it, "title", "") or "").split())[:200]
+                if title and 1 <= pg <= n:
+                    out.append({"title": title, "pageStart": pg, "level": level, "from": "bookmarks"})
+        walk(r.outline, 0)
+    except Exception as e:  # noqa: BLE001  an unreadable outline must never fail the paper
+        print(f"  bookmarks skipped: {e}", file=sys.stderr, flush=True)
+        return []
+    top = 0
+    for i, b in enumerate(out):
+        if b["level"] == 0:
+            top += 1
+        b["numeral"] = str(top) if b["level"] == 0 else ""
+        nxt = next((x["pageStart"] for x in out[i + 1:] if x["level"] <= b["level"]), n + 1)
+        b["pageEnd"] = max(b["pageStart"], nxt - 1)
+        b["pages"] = f"{b['pageStart']}-{b['pageEnd']}" if b["pageEnd"] != b["pageStart"] else str(b["pageStart"])
+    return out
+
+
 def page_count(pdf: Path) -> int:
     out = subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True, check=True).stdout
     return int(re.search(r"(?m)^Pages:\s+(\d+)", out).group(1))
@@ -360,6 +395,9 @@ def process(job: dict, ocr, force: bool = False) -> str:
             corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", (tmp / f"page-{i:03d}.jpg").read_bytes(), "image/jpeg")
 
     body, sections = sectioned(job["title"], texts)
+    # ponytail: her bookmarks replace the guessed contents for a paper filed whole; a volume split
+    # by its index keeps the index's contents per part.
+    sections = bookmarks(pdf_path, n) or sections
 
     used = {s for s in sources if s}
     corpus.write_document({

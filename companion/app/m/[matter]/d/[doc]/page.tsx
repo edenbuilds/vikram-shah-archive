@@ -11,12 +11,14 @@ import { requireUser } from "@/lib/supabase";
 import { toBlocks } from "@/lib/transcript";
 import { facts } from "@/lib/facts";
 
-type Section = { numeral?: string; title?: string; mark?: string; pages?: string; pageStart?: number };
+type Section = { numeral?: string; title?: string; mark?: string; pages?: string; pageStart?: number; level?: number; from?: "bookmarks" };
 const cleanTitle = (s: Section) => {
   const t = (s.title ?? "").trim();
   return !t || t.startsWith(">") || t.startsWith("<!--") ? (s.mark && s.mark !== "—" ? s.mark : "Opening pages") : t.replace(/^#+\s*/, "");
 };
 import Reader, { type Note } from "./Transcript";
+import Correct from "./Correct";
+import { getHistory } from "@/lib/corrections";
 
 export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
   const { matter, doc } = await params;
@@ -51,6 +53,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
     console.log(JSON.stringify({ event: "jev_stage", matter: m.id, doc: d.id, uncertain: s.uncertain, ...s.log }));
   });
   const suggested = stageMode === "on" && sug && !sug.uncertain && sug.stage !== d.stage ? m.stages.find((s) => s.id === sug.stage) : null;
+  const history = (await getHistory(d.id).catch(() => ({})) as Record<string, import("@/lib/corrections").PageHistory>)[p] ?? null;
   const blocks = toBlocks(d.transcript ?? "");
   const pageKeyed = blocks.some((b) => b.kind === "page");
 
@@ -86,11 +89,11 @@ export default async function DocPage({ params, searchParams }: { params: Promis
 
       <div className="glance">
         <section className="card">
-          <h3>Contents</h3>
+          <h3>{sections[0]?.from === "bookmarks" ? "Your bookmarks" : "Contents"}</h3>
           {d.source_path && d.source_path !== d.filename && <p className="subtle" style={{ margin: "0 0 .6rem" }}>From {d.source_path}</p>}
           <ol className="contents">
-            {(sections.length ? sections : [{ numeral: "I", title: d.title, pages: `1-${d.page_count}`, pageStart: 1 }]).map((s, i) => (
-              <li key={i}>
+            {(sections.length ? sections : [{ numeral: "I", title: d.title, pages: `1-${d.page_count}`, pageStart: 1 } as Section]).map((s, i) => (
+              <li key={i} style={s.level ? { paddingLeft: `${Math.min(s.level, 4)}rem` } : undefined}>
                 <Link href={`/m/${m.id}/d/${d.id}?p=${s.pageStart}`}>
                   <span className="num">{s.numeral ?? i + 1}</span>
                   <span className="t">{cleanTitle(s)}</span>
@@ -136,6 +139,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
         blocks={blocks} notes={(notes ?? []) as Note[]} scan={scan} textSource={pg?.text_source ?? null}
         collections={cols ?? []}
       />
+      <Correct doc={d.id} page={p} text={(texts ?? []).find((t) => t.page_no === p)?.text ?? ""} history={history} />
       <details className="subtle"><summary className="subtle">File details</summary>
         <p className="mono" style={{ marginTop: ".5rem" }}>{d.filename} · SHA-256 {d.sha256}</p>
       </details>

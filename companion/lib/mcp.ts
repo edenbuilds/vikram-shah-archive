@@ -9,6 +9,7 @@ import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/
 import { getReading, readingMarkdown } from "@/lib/reading";
 import { getSkill, listSkills } from "@/lib/skills";
 import { clean, forScope, forget, getMemory, memoryNote, remember } from "@/lib/memory";
+import { correctPage, getHistory } from "@/lib/corrections";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
@@ -261,6 +262,30 @@ export function register(server: McpServer, ctx: Ctx) {
     if (!confirm) return text(`PREVIEW (nothing removed yet). Ask the advocate if she wants this removed:\n"${x.text}"`);
     await forget(ctx.email, id);
     return text(`Removed: "${x.text}"`);
+  });
+
+  server.registerTool("correct_page", {
+    title: "Correct a page's read text (asks first)",
+    description: "Fix text the reading got wrong on one page (garbled words, broken layout, text from the wrong page), or put back the text first read (revert: true). Only what the scan of that page shows: never fill an [ILLEGIBLE] page or a gap from inference; if she types the words herself, use hers. First call WITHOUT confirm to get a preview with the scan link and the changed lines; show it to her; call again with confirm: true only after she says yes. The original text is kept and can always be put back.",
+    inputSchema: { doc_id: z.string(), page: z.number().int().min(1), text: z.string().max(60000).optional(), reason: z.string().max(200).optional(), revert: z.boolean().optional(), confirm: z.boolean().optional() },
+  }, async ({ doc_id, page, text: t, reason, revert, confirm }) => {
+    const d = await doc(doc_id);
+    if (!d) return fail(`No paper "${doc_id}" in your workspace.`);
+    if (page > d.page_count) return fail(`${d.title} has ${d.page_count} pages.`);
+    const h = (await getHistory(d.id))[page];
+    if (revert && !h) return fail(`Page ${page} of ${d.title} has never been corrected.`);
+    if (!revert && t === undefined) return fail("Give the corrected text of the whole page in `text`, or revert: true.");
+    const next = revert ? h!.original : t!;
+    const { data: cur } = await db.from("document_pages").select("text").eq("doc_id", d.id).eq("page_no", page).maybeSingle();
+    const before = new Set(String(cur?.text ?? "").split("\n").map((x: string) => x.trim()).filter(Boolean));
+    const after = new Set(next.split("\n").map((x) => x.trim()).filter(Boolean));
+    const gone = [...before].filter((x) => !after.has(x)), added = [...after].filter((x) => !before.has(x));
+    const diff = [...gone.slice(0, 20).map((x) => `- ${x}`), ...added.slice(0, 20).map((x) => `+ ${x}`)].join("\n") || "(no line changes)";
+    const where = `${d.title}, p. ${page}: ${link(d.matter_id, d.id, page)}`;
+    const past = h ? `\nCorrected ${h.versions.length} time(s) before; last by ${h.versions.at(-1)!.by}.` : "";
+    if (!confirm) return text(`PREVIEW (nothing saved yet). Ask the advocate to compare with the scan and say yes:\n${revert ? "Put back the text first read on" : "Correct"} ${where}${past}\n\n${diff}`);
+    const r = await correctPage(db, d, page, next, { by: ctx.email, reason: reason ?? (revert ? "put back the text first read" : null), via: revert ? "revert" : "ai" });
+    return r === "saved" ? text(`Saved. ${where}\nSearch, Ask and verify_quote now use this text; the original is kept (correct_page with revert: true puts it back).`) : fail(`Not saved: ${r}.`);
   });
 
   // ChatGPT connectors and deep research look for tools named exactly `search` and `fetch`.

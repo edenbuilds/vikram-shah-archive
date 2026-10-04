@@ -47,3 +47,21 @@ assert split_ocr("one\ftwo", 3) is None  # 2 pages of text for a 3-page scan: re
 assert split_ocr("Page 2\nb\nPage 1\na", 2) is None  # out of order
 assert split_ocr("just one page", 1) == ["just one page"]
 print("worker given OCR ok")
+
+# Her PDF bookmarks become the paper's contents, nested, with page ranges
+from pypdf import PdfWriter  # noqa: E402
+from worker import bookmarks  # noqa: E402
+_w = PdfWriter()
+for _ in range(6):
+    _w.add_blank_page(100, 100)
+_a = _w.add_outline_item("Petition", 0)
+_w.add_outline_item("Prayer", 2, parent=_a)
+_w.add_outline_item("Exhibit A", 4)
+_bm = Path(tempfile.mkdtemp()) / "bm.pdf"
+_w.write(str(_bm))
+_rows = bookmarks(_bm, 6)
+assert [(r["numeral"], r["title"], r["pages"], r["level"]) for r in _rows] == [("1", "Petition", "1-4", 0), ("", "Prayer", "3-4", 1), ("2", "Exhibit A", "5-6", 0)], _rows
+_plain = Path(tempfile.mkdtemp()) / "plain.pdf"
+_p = PdfWriter(); _p.add_blank_page(100, 100); _p.write(str(_plain))
+assert bookmarks(_plain, 1) == []
+print("worker bookmarks ok")

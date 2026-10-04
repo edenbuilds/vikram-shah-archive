@@ -15,6 +15,7 @@ import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins } fr
 import { removeSkill, saveSkill } from "@/lib/skills";
 import { markMoved } from "@/lib/stage-suggest";
 import { editMemory, forget, remember } from "@/lib/memory";
+import { correctPage, getHistory, splitMarkdown } from "@/lib/corrections";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const opt = (f: FormData, k: string) => str(f, k) || null;
@@ -276,6 +277,46 @@ export async function moveDocument(f: FormData) {
   must(await admin().from("documents").update({ stage: to }).eq("id", id));
   await markMoved(visible.matter_id, id, to).catch(() => {});
   revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
+
+// Corrections to the read text (lib/corrections.ts): anyone who can see the paper; the scan stays the record.
+async function visiblePaper(id: string) {
+  const { supabase, user } = await requireUser();
+  const { data: d } = await supabase.from("documents").select("id, matter_id, page_count").eq("id", id).maybeSingle();
+  return d ? { d, by: user.email!.toLowerCase() } : null;
+}
+
+export async function correctPageText(f: FormData) {
+  const v = await visiblePaper(str(f, "doc"));
+  const page = Number(str(f, "page"));
+  if (!v || !(page >= 1 && page <= v.d.page_count)) return;
+  await correctPage(admin(), v.d, page, String(f.get("text") ?? ""), { by: v.by, reason: opt(f, "reason"), via: "web" });
+  revalidatePath(`/m/${v.d.matter_id}`, "layout");
+}
+
+export async function revertPageText(f: FormData) {
+  const v = await visiblePaper(str(f, "doc"));
+  const page = Number(str(f, "page"));
+  const h = v && (await getHistory(v.d.id))[page];
+  if (!v || !h) return;
+  await correctPage(admin(), v.d, page, h.original, { by: v.by, reason: "put back the text first read", via: "revert" });
+  revalidatePath(`/m/${v.d.matter_id}`, "layout");
+}
+
+// The Markdown download, edited anywhere and uploaded back: only pages whose text changed are saved.
+export async function uploadCorrectedMarkdown(f: FormData): Promise<{ ok: boolean; message: string }> {
+  const v = await visiblePaper(str(f, "doc"));
+  const file = f.get("file");
+  if (!v || !(file instanceof File) || !file.size) return { ok: false, message: "Choose the edited Markdown file." };
+  if (file.size > 20 * 1024 * 1024) return { ok: false, message: "That file is over 20 MB." };
+  const pages = splitMarkdown(await file.text());
+  if (!pages.size) return { ok: false, message: "No \"## Page N\" headings found. Edit the Markdown download and keep its page headings." };
+  const outside = [...pages.keys()].filter((n) => n < 1 || n > v.d.page_count);
+  if (outside.length) return { ok: false, message: `This paper has ${v.d.page_count} pages; the file has page ${outside[0]}. Nothing was saved.` };
+  let saved = 0;
+  for (const [n, text] of pages) if ((await correctPage(admin(), v.d, n, text, { by: v.by, reason: opt(f, "reason") ?? `uploaded ${file.name}`, via: "markdown" })) === "saved") saved++;
+  revalidatePath(`/m/${v.d.matter_id}`, "layout");
+  return { ok: true, message: saved ? `Saved ${saved} corrected page${saved === 1 ? "" : "s"}. The original text is kept and can be put back page by page.` : "No page text changed." };
 }
 
 // Her memory (lib/memory.ts): a matter-specific item only for a matter she can see.

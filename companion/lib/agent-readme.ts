@@ -120,6 +120,7 @@ one entry per paper with its page: call \`reading_order\` rather than rebuilding
 | add_note | Save a note (preview first, then her yes) |
 | get_memory | Her standing preferences and reminders; how to work, never facts to cite |
 | remember / forget | Change her memory (preview first, then her yes) |
+| correct_page | Fix a page's read text against its scan, or put back the original (preview first, then her yes) |
 | drafting_skill | Her Maharashtra courts drafting skill: how to use it, and its files (ask her first) |
 | drafting_file | One template, forum header, case-type skill or reference note of that skill |
 | list_skills / get_skill | Her skills: the ones in the app and the ones she added (ask before using one) |
