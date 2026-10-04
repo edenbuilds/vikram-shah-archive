@@ -118,6 +118,8 @@ New, verified on the live site unless marked:
 
 ## Env vars (`companion/.env.local`, and the same set in Vercel)
 
+Added 04-10-2026: `TYPESAFE_API_KEY`, `AWS_BEARER_TOKEN_BEDROCK`, `JEV_STAGES` (off|eval|on, now on), `JEV_RERANK` (now eval), optional `LLM_BACKUPS`, `BEDROCK_REGION`.
+
 `LLM_MODEL XAI_API_KEY DEEPSEEK_API_KEY OPENAI_API_KEY SUPABASE_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY COMPANION_LINK_SECRET TELEGRAM_BOT_TOKEN TELEGRAM_USERS RESEND_API_KEY AGENTMAIL_API_KEY NOTIFY_EMAILS NOTIFY_MUTED`
 
 These keys were pasted in chat earlier, so rotate them: OpenAI, xAI, DeepSeek, Supabase service role, Telegram, Resend, LlamaParse.
@@ -174,6 +176,63 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 > - commit as omkar1sonawane@gmail.com.
 >
 > Task: <describe it here>.
+
+## 04-10-2026: corrections, bookmarks, OCR uploads, shared memory, Jev, provider chain
+
+Commits 7d33112, 95e2006, e7e38a8 on main, deployed to production.
+
+**What anyone with access to a matter can now do**
+- **Correct a page's read text** (two-way). Three ways in:
+  - on the paper page, use "Correct this page";
+  - upload the edited Markdown download back: only pages that changed are saved, and the "## Page N" headings must stay;
+  - through MCP `correct_page`, which shows a preview with changed lines and the scan link, and saves only with confirm:true.
+  
+  A correction updates `document_pages.text` (text_source becomes `corrected`), that page's chunks and the transcript. The text first read and every later version are kept in `_system/corrections/<doc>.json`, and "Put back the original" (or `revert:true`) restores both the text and its source. The scan and the PDF are never changed. Code: `lib/corrections.ts`.
+- **Her PDF bookmarks** (PDFGear, Acrobat, Preview) are read by the worker with pypdf. They become the paper's contents, nested, under the heading "Your bookmarks". This applies to papers filed whole; a volume split by its own index keeps the index. Older papers are not backfilled.
+- **Upload her own OCR text** with the scan: name it `Appeal.pdf` + `Appeal.txt`, `Appeal.ocr.txt` or `Appeal.md`. Pages are split on form feeds or on "Page N" markers. When the page count doesn't match, the worker reads the scan as before.
+- **Memory across devices**. It lives in one file per person (`_system/memory/`). It is read and written by:
+  - Settings, Memory;
+  - Telegram: /remember, /memory, /forget N;
+  - MCP: get_memory, plus remember/forget (preview first);
+  - Ask, which gets it as instructions, never as facts.
+
+**Jev (TypeSafe, pinned to jev-1.13.0)**
+- `JEV_STAGES=on`: on a paper page, when Jev's forward and reversed option orders agree and the result is not "uncertain", it shows "Suggested stage: X (model probability N%)" with a "Move here" button. Moves are recorded so the correction rate can be measured.
+- `JEV_RERANK=eval`: Jev computes the passage order and logs it (`jev_rerank`, plus `qa_messages.retrieved.jev`), but answers are unchanged. Context reduction is off.
+- Rollback: set the env var to `off` in Vercel and redeploy. With no key, or on a timeout or an invalid answer, the existing path runs.
+
+**Eval** (`scripts/jev-eval.ts`; public matter shah-v-trindade only; Jev cost USD 0.0034 for 80,540 input tokens):
+
+| Check | Result |
+|---|---|
+| Stages, n=25 | Matched the filing 21; uncertain 1; would-be corrections 3. Accuracy when suggested: 21/24. p50 319ms, p95 705ms. |
+| Rerank recall@8 | **Not measured.** Only 1 past answered question has receipts, and its gold page was not among the candidates (n=0). Rerank stays in eval. |
+| Ask, rerank off vs on | n=4 questions, but n=1 per mode effectively: off answered 1, on answered 0. Too small to conclude. |
+| Adversarial passage | The injected instruction passage ranked 8 of 11. |
+| Denied matter | 0 candidates outside the allowed papers. |
+| API failure (bad key) | Falls back ("http 401") with the order unchanged. |
+
+**Providers** (`lib/ai.ts`): primary model, then `LLM_BACKUPS` (default `deepseek-v4-pro,openai.gpt-6-luna,openai/gpt-5.4-nano`). A provider that is out of credit is skipped for 10 minutes.
+- xAI: out of credit.
+- DeepSeek: works.
+- Bedrock (`AWS_BEARER_TOKEN_BEDROCK`): returns 403 "account is being verified". **Blocked on AWS.**
+- Vercel AI Gateway: free tier, small models only, via the OIDC token. Not yet seen serving a production request.
+
+**Verified live 04-10-2026**
+- e2e: 12/12.
+- New features: 13/13 at desktop and 390px (OCR pair, bookmarks, correct and revert, memory).
+- MCP: 9/9 (correct_page preview, confirm and revert; verify_quote on corrected text; memory tools).
+- Stage-on mode renders, and a suggestion shows.
+- Unit tests 33/33; worker tests pass.
+
+**Blocked / next**
+1. AWS Agent Toolkit: needs Omkar's profile name, AWS experience level and region. Then install the AWS CLI, run `aws login` in the browser, and run the `aws configure agent-toolkit` wizard.
+2. Bedrock inference: waiting on AWS account verification.
+3. Rerank: collect live eval logs, then measure recall@8 on more receipted questions before `JEV_RERANK=on`.
+4. Optional: backfill bookmarks for papers uploaded before 04-10.
+
+**Continuation prompt**
+> Case Companion (~/vikram-shah-archive/companion). Read HANDOFF.md, section 04-10-2026. Measure Jev rerank: pull `qa_messages.retrieved.jev` logs plus receipts from answered questions, compute recall@8 for the logged order vs the original, and report n, p50/p95 and cost. Set JEV_RERANK=on only if recall is no worse. Do not change OCR or volume splitting. Commit as omkar1sonawane@gmail.com, deploy with `npx -y vercel@latest deploy --prod --yes`, and verify live at desktop and 390px.
 
 ## 02-10-2026: why it "stopped working", fixed and verified live
 
