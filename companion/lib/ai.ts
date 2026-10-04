@@ -6,10 +6,12 @@ export const LLM_MODEL = process.env.LLM_MODEL || "grok-4.3";
 // The model name picks the provider; all four serve the Responses API.
 //   deepseek-*      DeepSeek
 //   openai.*        AWS Bedrock (Mumbai), bearer API key
+//   bedrock:<id>    AWS Bedrock Converse (us-east-1), same key; Claude and Kimi live only there
 //   vendor/model    Vercel AI Gateway (the deployment's OIDC token; free tier = small models only)
 //   anything else   xAI
 const provider = (model: string) =>
   model.startsWith("deepseek") ? { url: "https://api.deepseek.com/v1", key: process.env.DEEPSEEK_API_KEY, name: "DeepSeek", console: "platform.deepseek.com" }
+  : model.startsWith("bedrock:") ? { url: `https://bedrock-runtime.${process.env.BEDROCK_CONVERSE_REGION || "us-east-1"}.amazonaws.com`, key: process.env.AWS_BEARER_TOKEN_BEDROCK, name: "Bedrock Converse", console: "the AWS console" }
   : model.startsWith("openai.") ? { url: `https://bedrock-runtime.${process.env.BEDROCK_REGION || "ap-south-1"}.amazonaws.com/openai/v1`, key: process.env.AWS_BEARER_TOKEN_BEDROCK, name: "Bedrock", console: "the AWS console" }
   : model.includes("/") ? { url: GATEWAY, key: "oidc", name: "AI Gateway", console: "vercel.com/ai" }
   : { url: "https://api.x.ai/v1", key: process.env.XAI_API_KEY, name: "xAI", console: "console.x.ai" };
@@ -33,7 +35,7 @@ async function gatewayKey(): Promise<string | undefined> {
 // 02-10-2026: the xAI account ran dry and took Ask, briefs and reading down again (OpenAI did the same
 // on 25-09-2026). When a provider is out of credit or down, the same request goes down this list.
 // 04-10-2026: Bedrock (Luna 6) and the AI Gateway joined; the gateway's free tier serves small models only.
-const BACKUPS = (process.env.LLM_BACKUPS || "deepseek-v4-pro,openai.gpt-6-luna,openai/gpt-5.4-nano").split(",").map((m) => m.trim()).filter(Boolean);
+const BACKUPS = (process.env.LLM_BACKUPS || "deepseek-v4-pro,bedrock:global.anthropic.claude-opus-4-6-v1,bedrock:global.moonshotai.kimi-k3,openai/gpt-5.4-nano").split(",").map((m) => m.trim()).filter(Boolean);
 const dryUntil: Record<string, number> = {};
 
 class Dry extends Error {}
@@ -43,10 +45,11 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
   if (p.key === "oidc") p.key = await gatewayKey();
   if (!p.key) throw new Dry(`${p.name} API key is not configured`);
   if ((dryUntil[p.name] ?? 0) > Date.now()) throw new Dry(`The ${p.name} account has no credit left`);
-  const r = await fetch(`${p.url}/${path}`, {
+  const conv = body.model.startsWith("bedrock:");
+  const r = await fetch(conv ? `${p.url}/model/${encodeURIComponent(body.model.slice(8))}/converse` : `${p.url}/${path}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${p.key}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(conv ? toConverse(body) : body),
   }).catch((e) => { throw new Dry(`${p.name} unreachable: ${(e as Error).message}`); });
   if (!r.ok) {
     const text = await r.text();
@@ -57,7 +60,48 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
     if (r.status !== 400) throw new Dry(`${p.name} ${r.status}: ${text.slice(0, 200)}`);
     throw new Error(`model ${r.status}: ${text.slice(0, 300)}`);
   }
-  return r.json() as Promise<T>;
+  return (conv ? fromConverse(await r.json(), !!(body.text as Fmt)?.format) : r.json()) as Promise<T>;
+}
+
+// Bedrock Converse <-> the Responses shape the rest of the app speaks (04-10-2026: Opus 4.6 and Kimi K3
+// are not on Bedrock's OpenAI-compatible endpoints). Covers what we send: instructions, string or item
+// input, function tools and a JSON schema. ponytail: the schema goes in the prompt, not Converse's
+// structured output; the JSON is cut from the reply and the callers still parse and check it.
+type Fmt = { format?: { schema?: object } } | undefined;
+type Msg = { role: "user" | "assistant"; content: object[] };
+export function toConverse(b: { [k: string]: unknown }) {
+  const schema = (b.text as Fmt)?.format?.schema;
+  const system = [b.instructions, schema && `Reply with only one JSON object that matches this JSON Schema, no prose and no code fences:\n${JSON.stringify(schema)}`].filter(Boolean).join("\n\n");
+  const msgs: Msg[] = [];
+  const add = (role: Msg["role"], part: object) => {
+    const last = msgs.at(-1);
+    if (last?.role === role) last.content.push(part); else msgs.push({ role, content: [part] });
+  };
+  const items = typeof b.input === "string" ? [{ role: "user", content: b.input }] : (b.input as Record<string, unknown>[]);
+  for (const it of items) {
+    if (it.type === "function_call") add("assistant", { toolUse: { toolUseId: it.call_id, name: it.name, input: JSON.parse(String(it.arguments || "{}")) } });
+    else if (it.type === "function_call_output") add("user", { toolResult: { toolUseId: it.call_id, content: [{ text: String(it.output) }] } });
+    else if (it.role === "user" || it.role === "assistant") {
+      const text = typeof it.content === "string" ? it.content : (it.content as { text?: string }[]).map((c) => c.text ?? "").join("");
+      if (text) add(it.role, { text });
+    }
+  }
+  const tools = b.tools as { name: string; description?: string; parameters: object }[] | undefined;
+  return {
+    ...(system && { system: [{ text: system }] }), messages: msgs, inferenceConfig: { maxTokens: 8000 },
+    ...(tools?.length && { toolConfig: { tools: tools.map((t) => ({ toolSpec: { name: t.name, description: t.description ?? t.name, inputSchema: { json: t.parameters } } })), toolChoice: { auto: {} } } }),
+  };
+}
+
+export function fromConverse(d: { output?: { message?: { content?: Record<string, any>[] } } }, json: boolean) {
+  const output: object[] = [];
+  for (const c of d.output?.message?.content ?? []) {
+    if (c.text) {
+      const t = json ? (c.text as string).slice(c.text.indexOf("{"), c.text.lastIndexOf("}") + 1) : c.text;
+      output.push({ type: "message", role: "assistant", content: [{ type: "output_text", text: t }] });
+    } else if (c.toolUse) output.push({ type: "function_call", call_id: c.toolUse.toolUseId, name: c.toolUse.name, arguments: JSON.stringify(c.toolUse.input ?? {}) });
+  }
+  return { output };
 }
 
 export async function llm<T = unknown>(path: "responses", body: { model: string; [k: string]: unknown }): Promise<T> {
