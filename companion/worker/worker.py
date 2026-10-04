@@ -19,6 +19,7 @@ import threading
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -34,6 +35,7 @@ from corpus import ARCHIVE_ROOT, rest
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
 from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sections  # noqa: E402
 import notify  # noqa: E402
+import local_ocr  # noqa: E402
 import pdf_notes  # noqa: E402
 import volume_index  # noqa: E402
 
@@ -222,7 +224,6 @@ def rasterize(pdf: Path, i: int, dest: Path) -> Path:
     return stem.with_suffix(".jpg")
 
 
-STORE_MAX = 48 * 1024 * 1024  # storage refuses objects over 50 MB on this plan
 
 
 def fetch_upload(path: str) -> tuple[bytes, bool]:
@@ -298,6 +299,87 @@ def is_ltproj(filename: str) -> bool:
     return filename.lower().endswith((".ltproj", ".ltproj.zip"))
 
 
+def shrink(pdf: bytes, tmp: Path) -> bytes:
+    """The same PDF, smaller, or the input unchanged. 04-10-2026: Omkar asked for smaller files only
+    where nothing is distorted. OCRmyPDF -O1 re-encodes black-and-white scans as lossless JBIG2 (generic
+    region, no symbol substitution, so no letter can be swapped) and repacks the structure; qpdf alone
+    when it is missing. Kept only if every page renders to the same pixels, the text layer is identical
+    and the bookmarks are the same. A 616-page writ petition: 28.1 MB -> 19.4 MB, all 616 pages identical."""
+    import hashlib
+    from pypdf import PdfReader
+    a, b = tmp / "shrink-in.pdf", tmp / "shrink-out.pdf"
+    a.write_bytes(pdf)
+    omp, qpdf = local_ocr.which("ocrmypdf"), which("qpdf")
+    ran = False
+    if omp:
+        ran = subprocess.run([omp, "--skip-text", "--tesseract-timeout", "0", "-O1", "--output-type", "pdf", "-q", str(a), str(b)],
+                             capture_output=True, timeout=1800).returncode == 0
+    if not ran and qpdf:
+        ran = subprocess.run([qpdf, "--recompress-flate", "--compression-level=9", "--object-streams=generate",
+                              "--remove-unreferenced-resources=yes", str(a), str(b)], capture_output=True).returncode in (0, 3)
+    if not ran or b.stat().st_size > len(pdf) * 0.95:  # under 5% saved is not worth a second copy to trust
+        return pdf
+
+    def look(f: Path):
+        text = subprocess.run(["pdftotext", "-layout", str(f), "-"], capture_output=True, text=True).stdout
+        d = tmp / f"r-{f.stem}"
+        d.mkdir(exist_ok=True)
+        subprocess.run(["pdftoppm", "-r", "72", "-gray", str(f), str(d / "p")], check=True, capture_output=True)
+        r = PdfReader(str(f))
+        marks = [(o.title, r.get_destination_page_number(o)) for o in r.outline if not isinstance(o, list)]
+        return text, marks, [hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(d.iterdir())]
+    # ponytail: 72 dpi pixel compare; a lossless rewrite matches at any dpi, a lossy one fails here
+    return b.read_bytes() if look(a) == look(b) else pdf
+
+
+def ink_words(jpg: Path, rects: list[list[float]], page_text: str) -> str | None:
+    """The words under her highlight, exactly as they stand in this page's transcript, or None.
+    Tesseract finds which words the highlight covers; the quote is then the closest span of the
+    transcript itself (at least 80% alike), so a quote is always the record's own words."""
+    import difflib
+    tsv = subprocess.run([which("tesseract") or "tesseract", str(jpg), "-", "-l", local_ocr.LANGS, "tsv"], capture_output=True, text=True).stdout
+    rows = [r.split("\t") for r in tsv.splitlines()[1:]]
+    page = next((r for r in rows if r[0] == "1"), None)
+    if not page or not page_text.strip():
+        return None
+    W, H = float(page[8]), float(page[9])
+    inside = lambda cx, cy: any(x <= cx <= x + w and y - h * .3 <= cy <= y + h * 1.3 for x, y, w, h in rects)  # noqa: E731
+    got = [r[11] for r in rows if r[0] == "5" and len(r) > 11 and r[11].strip()
+           and inside((float(r[6]) + float(r[8]) / 2) / W, (float(r[7]) + float(r[9]) / 2) / H)]
+    if not got:
+        return None
+    norm = lambda s: " ".join(s.lower().split())  # noqa: E731
+    want, toks = norm(" ".join(got)), [m.span() for m in re.finditer(r"\S+", page_text)]
+    best, span = 0.0, None
+    for size in range(max(1, len(got) - 3), len(got) + 4):
+        for i in range(len(toks) - size + 1):
+            cand = page_text[toks[i][0]:toks[i + size - 1][1]]
+            sm = difflib.SequenceMatcher(None, norm(cand), want)
+            if sm.real_quick_ratio() > best and sm.quick_ratio() > best and (r := sm.ratio()) > best:
+                best, span = r, cand
+    return " ".join(span.split()) if span and best >= 0.8 else None
+
+
+def file_notes(mid: str, doc_id: str, notes: list[dict], created_by: str, pages: dict[int, int] | None = None) -> None:
+    """Her imported notes onto a filed paper; `pages` maps volume pages to a part's pages (a split volume).
+    Highlight shapes go in a sidecar beside the page scans, for the scan overlay and the PDF export.
+    ponytail: sidecar file because annotations has no jsonb column; move to annotations.rects with a migration."""
+    keep = [{**a, "page": pages.get(a["page"]) if pages and a["page"] else a["page"]} for a in notes
+            if not pages or (a["page"] and a["page"] in pages)]
+    if not keep:
+        return
+    rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=ov.{{from-pdf,from-ltproj}}")  # a refile replaces, never doubles
+    rest("POST", "annotations", "", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
+                                      "tags": a["tags"], "created_by": created_by} for a in keep])
+    ink = [{k: a.get(k) for k in ("page", "color", "rects", "body", "quote", "tags")} for a in keep if a.get("rects")]
+    corpus.storage_put(f"{mid}/pages/{doc_id}/ink.json", json.dumps(ink).encode(), "application/json")
+    print(f"  {len(keep)} highlights/comments brought in as her notes ({len(ink)} with their shape)", flush=True)
+
+
+def which(binary: str) -> str | None:
+    return shutil.which(binary) or next((p for p in ("/opt/homebrew/bin/" + binary, "/usr/local/bin/" + binary) if Path(p).exists()), None)
+
+
 def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     """Every upload becomes a PDF: PDFs as they are, photos of pages through sips, Word/RTF/ODT through
     textutil and Chrome, Markdown and text printed as they are written (nothing rewritten), and
@@ -332,14 +414,27 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     raise RuntimeError(f"Can't read {ext or 'this'} files yet. Save it as a PDF and upload that.")
 
 
+def to_parts(mid: str, ids: list[str], parts: list[dict], notes: list[dict], marks: list[dict], created_by: str) -> None:
+    """A split volume's parts each get her notes and bookmarks that fall inside them, renumbered.
+    04-10-2026: a 628-page LiquidText project was filed in parts and every highlight was dropped."""
+    import split_volume
+    for doc_id, part in zip(ids, parts):
+        pages = {v: k for k, v in enumerate((i for a, b in split_volume.ranges(part) for i in range(a, b + 1)), 1)}
+        file_notes(mid, doc_id, notes, created_by, pages)
+        mine = [{**s, "pageStart": pages[s["pageStart"]], "pageEnd": pages.get(s.get("pageEnd") or 0, max(pages.values())),
+                 "pages": f"{pages[s['pageStart']]}-{pages.get(s.get('pageEnd') or 0, max(pages.values()))}"} for s in marks if s.get("pageStart") in pages]
+        if mine:
+            rest("PATCH", "documents", f"id=eq.{urllib.parse.quote(doc_id)}", {"sections": mine})
+
+
 def process(job: dict, ocr, force: bool = False) -> str:
     mid = job["matter_id"]
     original, joined = fetch_upload(job["storage_path"])
     sha = hashlib.sha256(original).hexdigest()
-    if len(original) <= STORE_MAX:  # kept as uploaded, for "Original file" exports
-        # 24-09-2026: Supabase rejected " 342आंधळेमुळ्शी.pdf" and a macOS "7-48\u202fpm" name as invalid keys
-        key = re.sub(r"[^\w .()-]", "_", job["filename"], flags=re.ASCII).strip() or "file"
-        corpus.storage_put(f"{mid}/originals/{key}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
+    # kept as uploaded, for "Original file" exports (stored in pieces when big)
+    # 24-09-2026: Supabase rejected " 342आंधळेमुळ्शी.pdf" and a macOS "7-48\u202fpm" name as invalid keys
+    key = re.sub(r"[^\w .()-]", "_", job["filename"], flags=re.ASCII).strip() or "file"
+    corpus.storage_put(f"{mid}/originals/{key}", original, "application/pdf" if original[:5] == b"%PDF-" else "application/octet-stream")
     dup = rest("GET", "documents", f"select=id&matter_id=eq.{urllib.parse.quote(mid)}&sha256=eq.{sha}", prefer="")
     if dup and not force:
         return dup[0]["id"]  # same bytes already filed in this matter
@@ -387,6 +482,18 @@ def process(job: dict, ocr, force: bool = False) -> str:
                 if i % 10 == 0 or i == n:
                     rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"pages_done": i, "updated_at": now()})
 
+        for a in pnotes:  # her LiquidText ink highlights: the words under them, from the transcript
+            if a.get("rects") and not a.get("quote") and a["body"].startswith("Highlighted"):
+                a["quote"] = ink_words(tmp / f"page-{a['page']:03d}.jpg", a["rects"], texts[a["page"] - 1])
+
+        ours = pdf is not original or joined or len(original) > corpus.PIECE  # we store the PDF ourselves
+        if ours:
+            small = shrink(pdf, tmp)  # the upload itself stays untouched in originals/
+            if small is not pdf:
+                print(f"  PDF {len(pdf) // 1024} KB -> {len(small) // 1024} KB, pages render identically", flush=True)
+                pdf = small
+                pdf_path.write_bytes(pdf)
+
         # A compiled volume (petition + exhibits, appeal + proceedings below) is filed as its
         # separate papers, named by the volume's own index. Anything doubtful: one paper, as before.
         try:
@@ -413,26 +520,15 @@ def process(job: dict, ocr, force: bool = False) -> str:
                     rest("DELETE", "documents", "id=in.(" + ",".join(ids) + ")")
                 raise
             print(f"  split by index into {len(ids)} papers", flush=True)
-            return ids[0]
-
-        if len(pdf) > STORE_MAX:
-            # no index to split by, and too big to store as one object: file it in page ranges
-            import split_volume  # late: split_volume imports this module
-            k = -(-len(pdf) // STORE_MAX) + 1
-            step = -(-n // k)
-            stages = {s["id"] for s in rest("GET", "matters", f"select=stages&id=eq.{urllib.parse.quote(mid)}", prefer="")[0]["stages"]}
-            ids = [split_volume.file_part(mid, stages, {"pdf": pdf_path, "cache": tmp},
-                                          {"title": f"{job['title']} (part {j + 1} of {k}, pp. {a}-{min(a + step - 1, n)})", "stage": job["stage"],
-                                           "from": a, "to": min(a + step - 1, n)}, int(time.time()) + j, filename=job["filename"], sources=sources)
-                   for j, a in enumerate(range(1, n + 1, step))]
+            to_parts(mid, ids, parts, pnotes, marks, job["created_by"])
             return ids[0]
 
         doc_id = corpus.doc_id(mid, f"{slug_tokens(job['title'])[:60].strip('-')}-{sha[:8]}")
         pdf_store = job["storage_path"]
         # 30-09-2026: a 9 MB upload arrives as .part000/.part001, so there is no whole object at
         # storage_path and its PDF download was dead. Rejoined uploads are stored whole too.
-        if pdf is not original or joined or len(original) > 45 * 1024 * 1024:
-            pdf_store = f"{mid}/pdfs/{doc_id}.pdf"  # converted or rejoined: store the PDF itself
+        if ours:
+            pdf_store = f"{mid}/pdfs/{doc_id}.pdf"  # converted, rejoined or shrunk: store the PDF itself
             corpus.storage_put(pdf_store, pdf, "application/pdf")
         for i in range(1, n + 1):
             corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", (tmp / f"page-{i:03d}.jpg").read_bytes(), "image/jpeg")
@@ -454,12 +550,8 @@ def process(job: dict, ocr, force: bool = False) -> str:
         "doc_id": doc_id, "page_no": i, "jpeg_path": f"{mid}/pages/{doc_id}/page-{i:03d}.jpg",
         "text": t or None, "text_source": sources[i - 1],
     } for i, t in enumerate(texts, 1)], corpus.chunk_units([(i, i, t) for i, t in enumerate(texts, 1) if t]))
-    # ponytail: highlights and comments come in for a paper filed whole; a volume split into parts skips them.
     if pnotes:
-        rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=ov.{{from-pdf,from-ltproj}}")  # a refile replaces, never doubles
-        rest("POST", "annotations", "", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
-                                          "tags": a["tags"], "created_by": job["created_by"]} for a in pnotes])
-        print(f"  {len(pnotes)} highlights/comments brought in as her notes", flush=True)
+        file_notes(mid, doc_id, pnotes, job["created_by"])
     return doc_id
 
 

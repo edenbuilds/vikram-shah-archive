@@ -107,8 +107,17 @@ def doc_id(mid: str, base: str) -> str:
     return f"{base}-{hashlib.sha256(mid.encode()).hexdigest()[:4]}"
 
 
+PIECE = 40 * 1024 * 1024  # this Supabase plan refuses any one object over 50 MB
+
+
 def storage_put(path: str, data: bytes, content_type: str) -> None:
-    return _retry(lambda: _storage_put(path, data, content_type))
+    """04-10-2026: Omkar asked for no 50 MB cap. A bigger file is stored as <path>.part000, .part001...
+    (the same layout the browser uploads in) and joined again on download (lib/pdf-file.ts)."""
+    if len(data) <= PIECE:
+        return _retry(lambda: _storage_put(path, data, content_type))
+    for k, at in enumerate(range(0, len(data), PIECE)):
+        piece = data[at:at + PIECE]
+        _retry(lambda: _storage_put(f"{path}.part{k:03d}", piece, "application/octet-stream"))
 
 
 def _storage_put(path: str, data: bytes, content_type: str) -> None:

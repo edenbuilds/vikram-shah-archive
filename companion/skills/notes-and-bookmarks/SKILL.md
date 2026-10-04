@@ -24,4 +24,7 @@ description: Read and save her sticky notes and page bookmarks on a paper. Use w
 ## On the website
 
 - Each page has "Bookmark page N as..." and a note box. Select words first to pin a note to them.
-- Her bookmarks appear under "Bookmarked by you" in the paper's contents, with a remove link.
+- Beside each paper (and behind the Bookmarks button on a phone) is one panel with two tabs, laid out like PDFgear:
+  - **Bookmarks**: the PDF's own bookmarks, nested, with the PDF page on the right and the current section in bold; then "Bookmarked by you", each with a remove link.
+  - **Annotations**: every note in page order, filtered by Notes, Highlights, Ink and Tags. Tapping one opens its page.
+- Highlights brought in from a PDF or LiquidText are drawn on the page scan in her colours.

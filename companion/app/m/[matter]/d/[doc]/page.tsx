@@ -20,6 +20,7 @@ import Reader, { type Note } from "./Transcript";
 import Correct from "./Correct";
 import Outline from "./Outline";
 import { getHistory } from "@/lib/corrections";
+import { readInk } from "@/lib/ink";
 
 export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
   const { matter, doc } = await params;
@@ -59,6 +60,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
   const suggested = stageMode === "on" && sug && !sug.uncertain && sug.stage !== d.stage ? m.stages.find((s) => s.id === sug.stage) : null;
   const history = (await getHistory(d.id).catch(() => ({})) as Record<string, import("@/lib/corrections").PageHistory>)[p] ?? null;
   const blocks = toBlocks(d.transcript ?? "");
+  const ink = await readInk(m.id, d.id);
   const pageKeyed = blocks.some((b) => b.kind === "page");
 
   return (
@@ -86,7 +88,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
           </div>
         </div>
         <div className="row" style={{ flex: "0 0 auto", gap: ".5rem" }}>
-          {pdf && <a className="btn ghost small" href={pdf} target="_blank" rel="noreferrer">Original PDF ↗</a>}
+          {d.pdf_path && <a className="btn ghost small" href={pdf || `/m/${m.id}/d/${d.id}/download/pdf?view`} target="_blank" rel="noreferrer">Original PDF ↗</a>}
           <Link className="btn ghost small" href={`/ask?m=${m.id}&src=${d.id}`}>Ask about this paper</Link>
         </div>
       </div>
@@ -131,7 +133,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
       <Reader
         matter={m.id} doc={d.id} pageCount={d.page_count} currentPage={p} jump={sp.p !== undefined || !!byPrinted} printed={numbers}
         blocks={blocks} notes={plain} scan={scan} textSource={pg?.text_source ?? null}
-        collections={cols ?? []}
+        collections={cols ?? []} ink={ink}
       />
       <Correct doc={d.id} page={p} text={(texts ?? []).find((t) => t.page_no === p)?.text ?? ""} history={history} />
       <details className="subtle"><summary className="subtle">File details</summary>

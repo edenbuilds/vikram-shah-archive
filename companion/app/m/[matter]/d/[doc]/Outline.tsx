@@ -6,13 +6,13 @@ import type { Note } from "./Transcript";
 
 export type Row = { title: string; page: number; level: number; pages?: string };
 type Kind = "note" | "highlight" | "pen" | "tag";
-const KINDS: [Kind, string][] = [["note", "Notes"], ["highlight", "Highlights"], ["pen", "Pen marks"], ["tag", "Tags"]];
+const KINDS: [Kind, string][] = [["note", "Notes"], ["highlight", "Highlights"], ["pen", "Ink"], ["tag", "Tags"]];
 
 // What a note is, from what the importer wrote (worker/pdf_notes.py); her own notes are "note".
 export function kindOf(n: Pick<Note, "body" | "quote" | "tags">): Kind {
-  if (n.body.startsWith("Pen marks in LiquidText")) return "pen";
+  if (n.body.startsWith("Pen marks in LiquidText") || n.body.startsWith("Marked in LiquidText")) return "pen";
   if (n.body.startsWith("LiquidText tag")) return "tag";
-  if (n.body === "(highlight)" || n.body.startsWith("Area highlighted")) return "highlight";
+  if (n.body === "(highlight)" || n.body.startsWith("Area highlighted") || n.body.startsWith("Highlighted in LiquidText")) return "highlight";
   return "note";
 }
 
@@ -86,7 +86,7 @@ function Panel({ matter, doc, page, rows, marks, notes, onGo }: {
             <ol className="olist">
               {shown.map((n) => {
                 const k = kindOf(n);
-                const text = k === "pen" ? "Pen marks" : k === "tag" ? n.body.replace(/^LiquidText tag on this document:\s*/, "") : n.quote ? `“${n.quote}”${k === "note" ? ` ${n.body}` : ""}` : n.body;
+                const text = k === "pen" ? n.body.replace(/ \(.*\)$/, "") : k === "tag" ? n.body.replace(/^LiquidText tag on this document:\s*/, "") : n.quote ? `“${n.quote}”${k === "note" ? ` ${n.body}` : ""}` : n.body;
                 return (
                   <li key={n.id} className={n.page_no === page ? "here" : undefined}>
                     <Link href={href(n.page_no ?? 1)} onClick={onGo}>

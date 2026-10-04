@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import base64
 import json
+import os
+import urllib.parse
 import re
 from pathlib import Path
 
@@ -120,7 +122,27 @@ def proven(page_text: str, evidence: str) -> bool:
     return len(e) >= 2 and e in norm(zone) and not re.search(r"(?i)translat", page_text[:150])
 
 
+def converse(system: str, user, schema: dict) -> dict:
+    """04-10-2026: x.ai credit ran out and the app moved to Bedrock (Kimi K3), so the index split never ran.
+    Same contract as the x.ai call: the schema goes in the prompt and the JSON is cut from the reply
+    (as lib/ai.ts does); callers still check every answer against the pages (proven())."""
+    model, _, tier = corpus.LLM_MODEL[len("bedrock:"):].partition("@")
+    parts = [{"text": user}] if isinstance(user, str) else [
+        {"image": {"format": "jpeg", "source": {"bytes": c["image_url"]["url"].split(",", 1)[1]}}} if c["type"] == "image_url" else {"text": c["text"]}
+        for c in user]
+    body = {"system": [{"text": f"{system}\n\nReply with only one JSON object that matches this JSON Schema, no prose and no code fences:\n{json.dumps(schema)}"}],
+            "messages": [{"role": "user", "content": parts}], "inferenceConfig": {"maxTokens": 16000},
+            **({"serviceTier": {"type": tier}} if tier else {})}
+    region = os.environ.get("BEDROCK_CONVERSE_REGION", "us-east-1")
+    out = corpus._req("POST", f"https://bedrock-runtime.{region}.amazonaws.com/model/{urllib.parse.quote(model, safe='')}/converse",
+                      json.dumps(body).encode(), {"Authorization": f"Bearer {os.environ['AWS_BEARER_TOKEN_BEDROCK']}", "Content-Type": "application/json"}, timeout=900)
+    text = "".join(c.get("text", "") for c in out["output"]["message"]["content"])
+    return json.loads(text[text.index("{"):text.rindex("}") + 1])
+
+
 def chat(system: str, user, name: str, schema: dict, effort: str = "low") -> dict:
+    if corpus.LLM_MODEL.startswith("bedrock:"):
+        return converse(system, user, schema)
     body = {"model": corpus.LLM_MODEL, "temperature": 0, "reasoning_effort": effort,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
             "response_format": {"type": "json_schema", "json_schema": {"name": name, "strict": True, "schema": schema}}}

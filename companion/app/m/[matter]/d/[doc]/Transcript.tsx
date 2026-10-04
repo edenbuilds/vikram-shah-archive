@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { addAnnotation, addToCollection, deleteAnnotation } from "@/app/actions";
 import type { Block } from "@/lib/transcript";
+import type { Ink } from "@/lib/pdf-comments";
 
 export type Note = { id: string; page_no: number | null; char_start: number | null; char_end: number | null; quote: string | null; body: string; tags: string[]; created_at: string };
 type Sel = { start: number; end: number; page: number | null; quote: string; x: number; y: number };
@@ -15,8 +16,8 @@ function offsetIn(el: Element, node: Node, off: number) {
   return r.toString().length;
 }
 
-export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections, printed }: {
-  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[]; printed: Record<number, number>;
+export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections, printed, ink = [] }: {
+  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[]; printed: Record<number, number>; ink?: Ink[];
   scan: string; textSource: string | null; collections: { id: string; title: string }[];
 }) {
   const [sel, setSel] = useState<Sel | null>(null);
@@ -95,8 +96,15 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
       <aside className="rail">
         <div className="card">
           <div className="scan-frame">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={scan} alt={`Original scan of page ${currentPage}`} loading="eager" key={scan} />
+            <div className="scan-ink">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={scan} alt={`Original scan of page ${currentPage}`} loading="eager" key={scan} />
+              {/* her highlights where she drew them, in her colour (LiquidText ink or PDF highlights) */}
+              {ink.filter((h) => h.page === currentPage).flatMap((h, i) => h.rects.map(([x, y, w, hh], k) => (
+                <span key={`${i}-${k}`} className="ink-mark" title={h.quote ?? h.body}
+                  style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, background: h.color ?? "#ffeb3b" }} />
+              )))}
+            </div>
           </div>
           <div className="pager">
             {currentPage > 1 ? <Link className="btn ghost small" href={href(currentPage - 1)} scroll={false}>←</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>←</span>}

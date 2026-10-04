@@ -32,7 +32,7 @@ def read(pdf: Path) -> tuple[list[dict], bool]:
         lt = "liquidtext" in f"{meta.get('/Producer', '')} {meta.get('/Creator', '')}".lower()
         out = []
         for i, pg in enumerate(r.pages, 1):
-            h = float(pg.mediabox.height)
+            h, w = float(pg.mediabox.height), float(pg.mediabox.width)
             for a in pg.get("/Annots") or []:
                 a = a.get_object()
                 kind, body = a.get("/Subtype"), " ".join(str(a.get("/Contents") or "").split())
@@ -42,8 +42,12 @@ def read(pdf: Path) -> tuple[list[dict], bool]:
                     q = [float(v) for v in (a.get("/QuadPoints") or [])]
                     quads = [q[k:k + 8] for k in range(0, len(q) - 7, 8)] or [[float(v) for v in a["/Rect"]] * 2]
                     quote = " ".join(filter(None, (words_under(pdf, i, [min(x[0::2]), min(x[1::2]), max(x[0::2]), max(x[1::2])], h) for x in quads)))
-                    if quote or body:
-                        out.append({"page": i, "quote": quote or None, "body": body or "(highlight)"})
+                    c = [float(v) for v in (a.get("/C") or [1, 1, 0])][:3]
+                    out.append({"page": i, "quote": quote or None, "body": body or "(highlight)",
+                                # the same top-left fractions as LiquidText ink, so the scan overlay and the export share them
+                                "rects": [[round(min(x[0::2]) / w, 4), round((h - max(x[1::2])) / h, 4), round((max(x[0::2]) - min(x[0::2])) / w, 4),
+                                           round((max(x[1::2]) - min(x[1::2])) / h, 4)] for x in quads],
+                                "color": "#" + "".join(f"{round(v * 255):02x}" for v in (c + [0, 0, 0])[:3])})
                 elif kind in COMMENT and body:
                     out.append({"page": i, "quote": None, "body": body})
         return out, lt
@@ -149,7 +153,8 @@ def ltproj_notes(data: bytes, pdf: Path) -> list[dict]:
                 continue
             seen.add(key)
             out.append({"page": page, "quote": " ".join(quote.split()) if quote else None, "body": comment or "(excerpt)"})
-    return out + lt_marks(data) + [{"page": i, "quote": None, "body": "Pen marks in LiquidText on this page"} for i in ink_pages(data)]
+    return out + lt_marks(data) + [{"page": m["page"], "quote": None, "rects": m["rects"], "color": m["color"],
+                                    "body": {True: "Highlighted in LiquidText", False: "Pen marks in LiquidText"}.get(m["highlighter"], "Marked in LiquidText (the mark's shape is not stored in the project)")} for m in ink_marks(data)]
 
 
 def ltproj_pdf(data: bytes) -> bytes:
@@ -196,14 +201,101 @@ def _page_of(corner: str) -> int | None:
     return int(struct.unpack("<d", b[i + 1:i + 9])[0]) if i >= 0 and len(b) >= i + 9 else None
 
 
-def ink_pages(data: bytes) -> list[int]:
-    """Pages (of the merged PDF) where she drew with LiquidText's pen. The strokes are drawings, not
-    text, so only the place is recorded; nothing is read into them."""
+def _pb(b: bytes) -> list[tuple[int, object]]:
+    """Protobuf wire fields as (number, raw value): varints as int, 32/64-bit and length-delimited as bytes."""
+    i, out = 0, []
+
+    def vint():
+        nonlocal i
+        r = s = 0
+        while True:
+            c = b[i]
+            i += 1
+            r |= (c & 127) << s
+            s += 7
+            if c < 128:
+                return r
+    while i < len(b):
+        k = vint()
+        fn, wt = k >> 3, k & 7
+        if wt == 0:
+            out.append((fn, vint()))
+        elif wt in (1, 5):
+            n = 8 if wt == 1 else 4
+            out.append((fn, b[i:i + n]))
+            i += n
+        elif wt == 2:
+            n = vint()
+            out.append((fn, b[i:i + n]))
+            i += n
+        else:
+            raise ValueError(f"wire type {wt}")
+    return out
+
+
+def _num(d: dict, k: int) -> float:
+    import struct
+    v = d.get(k, b"")
+    return struct.unpack("<f" if len(v) == 4 else "<d", v)[0] if len(v) in (4, 8) else 0.0
+
+
+def strokes(blob: bytes):
+    """(RGBA hex, [x, y, w, h]) per ink stroke, the box as fractions of the page from its top left.
+    04-10-2026, decoded from a real project and checked against LiquidText's own flattened export:
+    stroke field 1 = colour (fixed32 RGBA; alpha 7f = highlighter), field 2 = box {1: {x, y}, 2: {h, w}}."""
+    for fn, s in _pb(blob):
+        if fn != 1 or not isinstance(s, bytes):
+            continue
+        f = dict(_pb(s))
+        box = dict(_pb(f.get(2, b"")))
+        o, z = dict(_pb(box.get(1, b""))), dict(_pb(box.get(2, b"")))
+        x, y, h, w = _num(o, 1), _num(o, 2), _num(z, 1), _num(z, 2)
+        if w > 0 and h > 0:
+            yield dict(_pb(f.get(1, b""))).get(1, b"").hex() or "000000ff", [round(x, 4), round(y, 4), round(w, 4), round(h, 4)]
+
+
+def passages(rects: list[list[float]]) -> list[list[list[float]]]:
+    """Strokes grouped into passages: top to bottom, a new passage where the gap exceeds two lines."""
+    rs = sorted(rects, key=lambda r: (r[1], r[0]))
+    out: list[list[list[float]]] = []
+    for r in rs:
+        if out and r[1] - (out[-1][-1][1] + out[-1][-1][3]) < 2 * max(r[3], out[-1][-1][3]):
+            out[-1].append(r)
+        else:
+            out.append([r])
+    return out
+
+
+def ink_marks(data: bytes) -> list[dict]:
+    """Her LiquidText ink on the merged PDF: {page, color, highlighter, rects} per passage."""
     e, start = _project(data)
-    # AttachedToType 1 = a document page; workspace and excerpt ink (3, 107) has no page in the paper
-    return sorted({start[s["AttachedTo"].lower()] + s["OptionalPageIndex"] + 1
-                   for s in e.get("InkSurfaces", [])
-                   if s.get("AttachedToType") == 1 and s.get("OptionalPageIndex", -1) >= 0 and str(s.get("AttachedTo", "")).lower() in start})
+    if not e:
+        return []
+    z = zipfile.ZipFile(io.BytesIO(data))
+    blobs = {n.lower(): n for n in z.namelist()}
+    surf = {s["Id"].lower(): s for s in e.get("InkSurfaces", []) if s.get("Id")}
+    by: dict[tuple[int, str], list] = {}
+    for a in e.get("InkSubArchives", []):
+        s = surf.get(str(a.get("ParentInkSurface", "")).lower())
+        # AttachedToType 1 = a document page; workspace and excerpt ink (3, 107) has no page in the paper
+        if not s or s.get("AttachedToType") != 1 or s.get("OptionalPageIndex", -1) < 0 or str(s.get("AttachedTo", "")).lower() not in start:
+            continue
+        page = start[s["AttachedTo"].lower()] + s["OptionalPageIndex"] + 1
+        blob = next((n for low, n in blobs.items() if str(a.get("ObjUID", "")).lower() in low), None)
+        got = list(strokes(z.read(blob))) if blob else []
+        for color, r in got:
+            by.setdefault((page, color), []).append(r)
+        if not got:
+            # 04-10-2026: a real project listed strokes on 3 pages with no stroke data in the file (LiquidText's
+            # own export shows a highlight there). The place is kept; the shape is not invented.
+            by.setdefault((page, ""), [])
+    return [{"page": pg, "color": "#" + c[:6], "highlighter": c[6:8] != "ff", "rects": g}
+            for (pg, c), rs in sorted(by.items()) if c for g in passages(rs)] + \
+           [{"page": pg, "color": None, "highlighter": None, "rects": []} for (pg, c) in sorted(by) if not c and not any(k[0] == pg and k[1] for k in by)]
+
+
+def ink_pages(data: bytes) -> list[int]:
+    return sorted({m["page"] for m in ink_marks(data)})
 
 
 def lt_marks(data: bytes) -> list[dict]:
@@ -302,7 +394,8 @@ if __name__ == "__main__":
             z.writestr("Entities.json", json.dumps({
                 "Documents": [{"Id": ids[0][0], "Title": "Appeal memo", "ListIndex": 1, "FileContent": fc(ids[0][1])},
                               {"Id": ids[1][0], "Title": "Order", "ListIndex": 0, "FileContent": fc(ids[1][1])}],
-                "InkSurfaces": [{"AttachedTo": ids[0][0].upper(), "AttachedToType": 1, "OptionalPageIndex": 1},
+                "InkSubArchives": [{"ObjUID": "A1", "ParentInkSurface": "S1"}],
+                "InkSurfaces": [{"Id": "S1", "AttachedTo": ids[0][0].upper(), "AttachedToType": 1, "OptionalPageIndex": 1},
                                 {"AttachedTo": ids[1][0], "AttachedToType": 1, "OptionalPageIndex": -1},
                                 {"AttachedTo": "w", "AttachedToType": 3, "OptionalPageIndex": 0}],
                 "Highlights": [{"AttachedTo": ids[0][0], "AttachedToType": 1, "HighlightedString": "The tenancy  was\nterminated",
@@ -310,11 +403,15 @@ if __name__ == "__main__":
                 "Tags": [{"AttachedTo": ids[1][0], "TagCategory": "Urgent", "TagName": ""}]}))
             z.writestr(f"Blobs/filez{ids[0][0]}z{ids[0][1]}", two.read_bytes())
             z.writestr(f"Blobs/filez{ids[1][0]}z{ids[1][1]}", out.read_bytes())
-            z.writestr(f"Blobs/fobjz{ids[0][0]}z123", b"\n\x05\r\xff\xff")
+            ld = lambda fn, b: bytes([fn << 3 | 2, len(b)]) + b  # noqa: E731
+            dbl = lambda fn, v: bytes([fn << 3 | 1]) + struct.pack("<d", v)  # noqa: E731
+            stroke = ld(1, bytes([13]) + bytes.fromhex("ffff007f")) + ld(2, ld(1, dbl(1, 0.1) + dbl(2, 0.2)) + ld(2, dbl(1, 0.03) + dbl(2, 0.6)))
+            z.writestr("Blobs/fobjza1z123", ld(1, stroke))
         data = buf.getvalue()
         merged = PdfReader(io.BytesIO(ltproj_pdf(data)))
         assert len(merged.pages) == 3 and [o.title for o in merged.outline if not isinstance(o, list)] == ["Order", "Appeal memo"]
         assert ink_pages(data) == [3], ink_pages(data)  # Order is 1 page, so the memo's page index 1 is page 3
+        assert ink_marks(data) == [{"page": 3, "color": "#ffff00", "highlighter": True, "rects": [[0.1, 0.2, 0.6, 0.03]]}], ink_marks(data)
         assert lt_marks(data) == [{"page": 3, "quote": "The tenancy was terminated", "body": "(highlight)"},
                                   {"page": 1, "quote": None, "body": "LiquidText tag on this document: Urgent"}], lt_marks(data)
         assert worker.is_ltproj("Case.ltproj.zip") and worker.is_ltproj("x.LTPROJ") and not worker.is_ltproj("x.zip")

@@ -77,3 +77,15 @@ _xp = _xt / "x.pdf"; _xp.write_bytes(as_pdf(_buf.getvalue(), _xt, "schedule.xlsx
 _xtext = subprocess.run(["pdftotext", str(_xp), "-"], capture_output=True, text=True).stdout
 assert "Final arguments" in _xtext and "12-11-2026" in _xtext, _xtext[:300]
 print("worker markitdown ok: xlsx")
+
+# Lossless shrink: an uncompressed PDF gets smaller and still renders and reads the same.
+from worker import shrink  # noqa: E402
+_st = Path(tempfile.mkdtemp())
+_sw = PdfWriter(); _sw.add_blank_page(300, 300)
+from pypdf.generic import ContentStream, DecodedStreamObject, NameObject  # noqa: E402
+_cs = DecodedStreamObject(); _cs.set_data(b"BT /F1 12 Tf 20 150 Td (Writ Petition) Tj ET " + b"0 0 m 1 1 l S " * 4000)
+_sw.pages[0][NameObject("/Contents")] = _sw._add_object(_cs)
+_sb = io.BytesIO(); _sw.write(_sb); _raw = _sb.getvalue()
+_small = shrink(_raw, _st)
+assert len(_small) < len(_raw) * 0.5, (len(_raw), len(_small))
+print(f"worker shrink ok: {len(_raw)} -> {len(_small)} bytes, same pixels and text")

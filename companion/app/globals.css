@@ -552,3 +552,8 @@ label.check input { width: auto; }
   .outline-fab { display: inline-flex; position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 30; box-shadow: var(--shadow); }
   .olist a { padding: .7rem .4rem; }
 }
+.scan-ink { position: relative; line-height: 0; }
+.scan-ink img { width: 100%; display: block; }
+.ink-mark { position: absolute; opacity: .38; mix-blend-mode: multiply; border-radius: 2px; pointer-events: auto; }
+.scan-frame:has(.scan-ink) { aspect-ratio: auto; display: block; }
+.scan-ink img { height: auto; }

@@ -2,8 +2,8 @@
 import { Zip, ZipDeflate, ZipPassThrough } from "fflate";
 import { useState } from "react";
 
-type Paper = { id: string; title: string; stage: string; stageOrder: number; order: number; pages: number; source: string | null; filename: string; sha256: string; pdf: string | null; md: string; docx: string };
-type Manifest = { matter: string; originals: { name: string; url: string }[]; papers: Paper[] };
+type Paper = { id: string; title: string; stage: string; stageOrder: number; order: number; pages: number; source: string | null; filename: string; sha256: string; pdf: string | string[] | null; md: string; docx: string };
+type Manifest = { matter: string; originals: { name: string; url: string | string[] }[]; papers: Paper[] };
 
 const FORMATS = [
   ["original", "Original file, as uploaded"],
@@ -31,6 +31,7 @@ export default function ExportZip({ matter, files }: { matter: string; files: { 
       const res = await fetch(`/m/${matter}/export${only ? `?file=${encodeURIComponent(only)}` : ""}`);
       if (!res.ok) throw new Error("Couldn't prepare the download.");
       const man = (await res.json()) as Manifest;
+      const join = (ps: Uint8Array[]) => { const out = new Uint8Array(ps.reduce((n, x) => n + x.length, 0)); ps.reduce((at, x) => (out.set(x, at), at + x.length), 0); return out; };
       const get = async (url: string) => { const r = await fetch(url); if (!r.ok) throw new Error(`${r.status}`); return new Uint8Array(await r.arrayBuffer()); };
       const parts: Uint8Array[] = [];
       let failed = 0;
@@ -47,13 +48,13 @@ export default function ExportZip({ matter, files }: { matter: string; files: { 
       if (want.has("original")) {
         for (const o of man.originals) {
           setState(`Adding original: ${o.name}`);
-          try { add(`Original files/${clean(o.name)}`, await get(o.url), false); } catch { failed++; }
+          try { add(`Original files/${clean(o.name)}`, Array.isArray(o.url) ? join(await Promise.all(o.url.map(get))) : await get(o.url), false); } catch { failed++; }
         }
       }
       for (const [i, p] of man.papers.entries()) {
         setState(`Adding ${i + 1} of ${man.papers.length}: ${p.title.slice(0, 50)}`);
         try {
-          if (want.has("pdf") && p.pdf) add(`PDF/${dirOf(p)}/${nameOf(p)}.pdf`, await get(p.pdf), false);
+          if (want.has("pdf") && p.pdf?.length) add(`PDF/${dirOf(p)}/${nameOf(p)}.pdf`, Array.isArray(p.pdf) ? join(await Promise.all(p.pdf.map(get))) : await get(p.pdf), false);
           if (want.has("docx")) add(`Word/${dirOf(p)}/${nameOf(p)}.docx`, await get(p.docx), false);
           if (want.has("md")) add(`Markdown/${dirOf(p)}/${nameOf(p)}.md`, await md(p), true);
           if (want.has("whole")) await md(p);

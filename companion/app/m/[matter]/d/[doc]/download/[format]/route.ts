@@ -1,6 +1,8 @@
 import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { NextResponse } from "next/server";
 import { withComments } from "@/lib/pdf-comments";
+import { readInk } from "@/lib/ink";
+import { joinerPage, pieceUrls, putFile, readFile } from "@/lib/pdf-file";
 import { admin } from "@/lib/access";
 import { getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
@@ -10,7 +12,7 @@ import { requireUser } from "@/lib/supabase";
 // Word / Markdown / text: generated from the verbatim page text, one section per page.
 const safe = (s: string) => s.replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120) || "paper";
 
-export async function GET(_: Request, { params }: { params: Promise<{ matter: string; doc: string; format: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ matter: string; doc: string; format: string }> }) {
   const { matter, doc, format } = await params;
   const { supabase } = await requireUser();
   const m = await getMatter(supabase, matter);
@@ -18,14 +20,19 @@ export async function GET(_: Request, { params }: { params: Promise<{ matter: st
   if (!d) return new NextResponse("Not found", { status: 404 });
   const name = safe(d.title);
 
+  const view = new URL(req.url).searchParams.has("view");  // open in the browser instead of saving
+  // a stored file: one signed download, or (over 50 MB, stored in pieces) a page that joins the pieces
+  const deliver = async (db: typeof supabase, key: string, filename: string) => {
+    const { data } = await db.storage.from("companion").createSignedUrl(key, 600, view ? undefined : { download: filename });
+    if (data) return NextResponse.redirect(data.signedUrl);
+    const urls = await pieceUrls(db, key);
+    return urls.length ? new NextResponse(joinerPage(urls, filename, view), { headers: { "content-type": "text/html; charset=utf-8" } }) : new NextResponse("PDF unavailable", { status: 404 });
+  };
+
   if (format === "pdf") {
     if (!d.pdf_path) return new NextResponse("No PDF on file for this paper", { status: 404 });
-    if (d.pdf_path.startsWith(`${m.id}/`) || !m.storage_base) {
-      const { data, error } = await supabase.storage.from("companion").createSignedUrl(d.pdf_path, 600, { download: `${name}.pdf` });
-      if (error || !data) return new NextResponse("PDF unavailable", { status: 404 });
-      return NextResponse.redirect(data.signedUrl);
-    }
-    return NextResponse.redirect(`${m.storage_base}/${d.pdf_path}?download=${encodeURIComponent(`${name}.pdf`)}`);
+    if (d.pdf_path.startsWith(`${m.id}/`) || !m.storage_base) return deliver(supabase, d.pdf_path, `${name}.pdf`);
+    return NextResponse.redirect(`${m.storage_base}/${d.pdf_path}${view ? "" : `?download=${encodeURIComponent(`${name}.pdf`)}`}`);
   }
 
   // For LiquidText (no API; 04-10-2026): the paper's own PDF with her notes and bookmarks added as PDF
@@ -34,18 +41,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ matter: st
   if (format === "liquidtext") {
     if (!d.pdf_path) return new NextResponse("No PDF on file for this paper", { status: 404 });
     const own = d.pdf_path.startsWith(`${m.id}/`) || !m.storage_base;
-    const src = own ? (await supabase.storage.from("companion").download(d.pdf_path)).data?.arrayBuffer() : fetch(`${m.storage_base}/${d.pdf_path}`).then((r) => r.arrayBuffer());
-    const bytes = await src;
+    const bytes = own ? await readFile(supabase, d.pdf_path) : await fetch(`${m.storage_base}/${d.pdf_path}`).then((r) => r.arrayBuffer());
     if (!bytes) return new NextResponse("PDF unavailable", { status: 404 });
     const { data: notes } = await supabase.from("annotations").select("page_no, quote, body, tags").eq("doc_id", d.id).order("created_at");
     // notes brought in from this PDF are already inside it; adding them again would show them twice
-    const out = await withComments(new Uint8Array(bytes), (notes ?? []).filter((n) => !n.tags.includes("from-pdf")));
+    const ink = await readInk(m.id, d.id);
+    const out = await withComments(new Uint8Array(bytes), (notes ?? []).filter((n) => !n.tags.includes("from-pdf")), ink.filter((h) => !h.tags?.includes("from-pdf")));
     const key = `${m.id}/exports/${d.id}-liquidtext.pdf`;
     const db = admin();
-    const up = await db.storage.from("companion").upload(key, out, { contentType: "application/pdf", upsert: true });
-    if (up.error) return new NextResponse("Could not prepare the PDF", { status: 500 });
-    const { data } = await db.storage.from("companion").createSignedUrl(key, 600, { download: `${name} (with notes).pdf` });
-    return data ? NextResponse.redirect(data.signedUrl) : new NextResponse("PDF unavailable", { status: 500 });
+    if (await putFile(db, key, out, "application/pdf")) return new NextResponse("Could not prepare the PDF", { status: 500 });
+    return deliver(db, key, `${name} (with notes).pdf`);
   }
 
   const { data: pages } = await supabase.from("document_pages").select("page_no, text").eq("doc_id", d.id).order("page_no");

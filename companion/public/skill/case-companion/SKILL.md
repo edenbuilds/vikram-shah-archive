@@ -40,9 +40,12 @@ full guide and what is in her workspace today.
 
 - `get_notes` returns her sticky notes. Tag `from-pdf` (or `liquidtext`) means a highlight or comment
   she made in another app and uploaded inside the PDF; its quote was cut from the PDF itself.
+  Tag `from-ltproj` is from a LiquidText project: excerpts, comments, highlights (quote = the
+  transcript's verbatim words under her mark, empty if they could not be matched), pen marks (page
+  only; never say what a drawing says) and document tags.
 - `add_note` saves a sticky note, or with `bookmark: true` a named bookmark to a page. Preview first.
 - `get_paper` lists the PDF's own bookmarks, hers, and a "PDF with notes" link that opens in
-  LiquidText or any PDF reader with her notes as comments.
+  LiquidText, PDFgear or any PDF reader with her highlights and notes as real PDF annotations.
 
 ## Answer format
 
