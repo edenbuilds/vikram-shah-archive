@@ -30,6 +30,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import corpus
+import ocr_quality
 from corpus import ARCHIVE_ROOT, rest
 
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
@@ -138,14 +139,24 @@ def vision():
         return None
 
     def ocr(jpg):
-        errs = []
+        errs, best = [], None
         for name, fn in chain:
             try:
                 t = OCRText(fn(jpg))
                 t.src = name
-                return t
             except (Exception, SystemExit) as e:  # noqa: BLE001  the next engine reads the page
                 errs.append(f"{name}: {str(e)[:200]}")
+                continue
+            if not ocr_quality.poor(t):
+                return t
+            # 05-10-2026: LlamaParse filed a clean scan (Faheem complaint p.6) as ragged one-word lines and, being the
+            # first to answer, won. A poor read now tries the next engine; if none is better the best one is kept.
+            errs.append(f"{name}: read looks poor")
+            # a table or survey list is ragged by nature: the preferred engine's read stays unless a later one is clearly better
+            if best is None or ocr_quality.score(t) > ocr_quality.score(best) + 0.15:
+                best = t
+        if best is not None:
+            return best
         raise RuntimeError("every OCR engine failed: " + "; ".join(errs))
     return ocr
 

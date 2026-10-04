@@ -136,8 +136,23 @@ def converse(system: str, user, schema: dict) -> dict:
     region = os.environ.get("BEDROCK_CONVERSE_REGION", "us-east-1")
     out = corpus._req("POST", f"https://bedrock-runtime.{region}.amazonaws.com/model/{urllib.parse.quote(model, safe='')}/converse",
                       json.dumps(body).encode(), {"Authorization": f"Bearer {os.environ['AWS_BEARER_TOKEN_BEDROCK']}", "Content-Type": "application/json"}, timeout=900)
-    text = "".join(c.get("text", "") for c in out["output"]["message"]["content"])
-    return json.loads(text[text.index("{"):text.rindex("}") + 1])
+    if out.get("stopReason") == "max_tokens":  # 05-10-2026: a cut-off answer is an error, not a half-read index
+        raise RuntimeError("the model's answer was cut off at the token limit")
+    return extract_json("".join(c.get("text", "") for c in out["output"]["message"]["content"]))
+
+
+def extract_json(text: str) -> dict:
+    """The first JSON object in a model's reply. 05-10-2026: the old cut (first "{" to last "}") broke on prose braces
+    around the object; this decodes from each "{" in turn, tolerates raw line breaks inside strings and a comma before
+    a closing bracket (the slips Kimi makes). Same rules as extractJson in lib/ai.ts."""
+    dec, t = json.JSONDecoder(strict=False), re.sub(r"```(?:json)?", "", text)
+    for m in re.finditer(r"\{", t):
+        for cand in (t[m.start():], re.sub(r",(\s*[}\]])", r"\1", t[m.start():])):
+            try:
+                return dec.raw_decode(cand)[0]
+            except ValueError:
+                pass
+    raise ValueError("no complete JSON object in the reply")
 
 
 def chat(system: str, user, name: str, schema: dict, effort: str = "low") -> dict:

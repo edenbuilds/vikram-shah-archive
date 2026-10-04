@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fromConverse, toConverse } from "./ai.ts";
+import { extractJson, fromConverse, toConverse } from "./ai.ts";
 
 test("a tool-using Responses transcript becomes alternating Converse turns and back", () => {
   const c = toConverse({
@@ -60,4 +60,33 @@ test("final_answer claims sent as JSON text are read the same as an array", asyn
   assert.deepEqual(listArg(claims), claims);
   assert.deepEqual(listArg("not json"), []);
   assert.deepEqual(listArg(undefined), []);
+});
+
+test("a model's slips in JSON are repaired and prose braces around the object are ignored", () => {
+  assert.deepEqual(JSON.parse(extractJson('Per clause {7}: {"a":"x {y}","b":[1,2]} (see {note})')), { a: "x {y}", b: [1, 2] });
+  assert.deepEqual(JSON.parse(extractJson('{"q":"line one\nline two\ttab"}')), { q: "line one\nline two\ttab" });
+  assert.deepEqual(JSON.parse(extractJson('```json\n{"a":[1,2,],"b":{"c":1,},}\n```')), { a: [1, 2], b: { c: 1 } });
+  assert.equal(JSON.parse(extractJson('{"q":"say \\"hi\\" } now"}')).q, 'say "hi" } now');
+});
+
+test("an answer cut off mid-string is not passed on as a complete object", () => {
+  assert.throws(() => JSON.parse(extractJson('{"parts":[{"heading":"A","sentences":[{"text":"cut off here')));
+});
+
+test("a JSON answer that hit the token limit is asked for again with more room", async () => {
+  process.env.AWS_BEARER_TOKEN_BEDROCK = "k";
+  const { llm } = await import("./ai.ts");
+  const seen: number[] = [];
+  const real = globalThis.fetch;
+  globalThis.fetch = (async (_u: unknown, init: { body: string }) => {
+    const sent = JSON.parse(init.body);
+    seen.push(sent.inferenceConfig.maxTokens);
+    const done = sent.inferenceConfig.maxTokens > 8000;
+    return new Response(JSON.stringify({ stopReason: done ? "end_turn" : "max_tokens", output: { message: { content: [{ text: done ? '{"ok":true}' : '{"parts":[{"x":"cut' }] } } }), { status: 200 });
+  }) as typeof fetch;
+  try {
+    const out = await llm<{ output: { content: { text: string }[] }[] }>("responses", { model: "bedrock:test-model", input: "q", text: { format: { type: "json_schema", schema: { type: "object" } } } });
+    assert.equal(out.output[0].content[0].text, '{"ok":true}');
+    assert.deepEqual(seen, [8000, 32000]);
+  } finally { globalThis.fetch = real; }
 });

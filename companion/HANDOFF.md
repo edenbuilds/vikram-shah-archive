@@ -7,6 +7,14 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 05-10-2026: garbled page text and Kimi JSON
+
+- **What broke.** Faheem complaint p.6 showed ragged one-word lines. The scan was clean; LlamaParse misread it and, being the first engine to answer, won. The chain had no quality check.
+- **Gate.** `worker/ocr_quality.py` (`measure`, `score`, `poor`: share of dictionary words, share of lines of two words or fewer). `vision()` in `worker/worker.py` tries the next engine when a read is poor and keeps the preferred engine's read unless a later one scores 0.15 higher (tables and survey lists are ragged by nature). Tested in `worker/test_ocr_quality.py` and `test_worker.py`. Restart the launchd worker to pick it up.
+- **Repair.** All 11,457 pages were measured; 2,090 candidates were re-read with Google Vision (Tesseract where that was poor too). 162 pages that the gate called broken, or that had no text and now read, were replaced through `correctPage`, so each is reversible in the page's history (via "ai", by "OCR re-read"). Pages with highlights on their words were skipped (none were). About 669 candidates have no machine-readable text at all (blank, drawings, handwriting) and stay as they are. About 1,300 pages still trip the gate; nearly all are tables, survey plans and lists that Google already read.
+- **Kimi JSON.** Reproduced: long answers hit the 8,000-token ceiling and were cut mid-string, and the old first-"{"-to-last-"}" cut passed the fragment on. `lib/ai.ts` now `extractJson` (walks the object by its brackets, ignores prose braces, repairs raw line breaks in strings and trailing commas), and `call()` asks again with 32,000 tokens when a JSON answer stops at `max_tokens`, then falls to the next model. `worker/volume_index.py` has the same extractor (`extract_json`) and refuses a cut-off reply. Tests: `lib/converse.test.ts`, `worker/test_volume_index.py`. Live: a 12-part and a 25-part explainer both parse now.
+- **Not committed:** `scripts/tmp/*` (re-read driver, decisions, apply). To redo a repair: `reocr.py`, `decide.py`, then `apply.ts apply`.
+
 ## 04-10-2026 (night, later): logo, social preview, greeting, loading, share, touch
 
 Shipped (deployed to case-companion.edenbuilds.me; see DESIGN.md "Mark, greeting, loading, share, touch"):
@@ -247,7 +255,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Paste-ready prompt for the next agent
 
-"Read companion/HANDOFF.md, the section '04-10-2026 (night, later)', then DESIGN.md. Run `node scripts/polish-check.mjs https://case-companion.edenbuilds.me \"$LINK\"` (LINK is read from line 13 of ~/Downloads/case-secrets-env/case-companion-keys.md into a variable and never printed). Then re-run `scripts/liquidtext-check.mjs`, and test press and hold, the share sheet and haptics on a real iPhone and an Android phone. One task, then update the handoff."
+"Read companion/HANDOFF.md, the sections ‘05-10-2026’ and ‘04-10-2026 (night, later)’., then DESIGN.md. Run `node scripts/polish-check.mjs https://case-companion.edenbuilds.me \"$LINK\"` (LINK is read from line 13 of ~/Downloads/case-secrets-env/case-companion-keys.md into a variable and never printed). Then re-run `scripts/liquidtext-check.mjs`, and test press and hold, the share sheet and haptics on a real iPhone and an Android phone. One task, then update the handoff."
 
 
 > Work in /Users/omkar/vikram-shah-archive/companion (Case Companion, live at case-companion.edenbuilds.me). Read HANDOFF.md, then DESIGN.md for any UI work. Rules:

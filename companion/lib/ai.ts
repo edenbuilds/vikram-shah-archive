@@ -51,27 +51,39 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
   const conv = body.model.startsWith("bedrock:");
   // "bedrock:<id>@flex" asks for Bedrock's Flex tier: half price, measured ~15% slower (04-10-2026, Kimi K3).
   const [id, tier] = body.model.slice(8).split("@");
-  const r = await fetch(conv ? `${p.url}/model/${encodeURIComponent(id)}/converse` : `${p.url}/${path}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${p.key}`, "Content-Type": "application/json" },
-    body: JSON.stringify(conv ? { ...toConverse(body), ...(tier && { serviceTier: { type: tier } }) } : body),
-    // 04-10-2026: Kimi K3 thinks for up to ~70 s on a long answer; past 2 minutes the next model gets a turn
-    // inside the 300 s function limit instead of the whole request timing out.
-    signal: AbortSignal.timeout(120_000),
-  }).catch((e) => { throw new Dry(`${p.name} unreachable: ${(e as Error).message}`); });
-  if (!r.ok) {
-    const text = await r.text();
-    if (r.status === 402 || /credit|spending limit|exhausted|insufficient balance/i.test(text)) {
-      dryUntil[p.name] = Date.now() + 10 * 60_000;
-      throw new Dry(`The ${p.name} account has no credit left, so the papers can't be read right now. Add credit at ${p.console} and try again.`);
+  const wantsJson = !!(body.text as Fmt)?.format;
+  // 05-10-2026: a long explainer ran past 8,000 tokens and came back cut off mid-string; the cut text was filed as
+  // the answer and failed to parse. A cut-off JSON answer is asked for again with room, then called what it is.
+  for (const maxTokens of conv ? [8000, 32000] : [0]) {
+    const r = await fetch(conv ? `${p.url}/model/${encodeURIComponent(id)}/converse` : `${p.url}/${path}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${p.key}`, "Content-Type": "application/json" },
+      body: JSON.stringify(conv ? { ...toConverse(body, maxTokens), ...(tier && { serviceTier: { type: tier } }) } : body),
+      // 04-10-2026: Kimi K3 thinks for up to ~70 s on a long answer; past 2 minutes the next model gets a turn
+      // inside the 300 s function limit instead of the whole request timing out.
+      signal: AbortSignal.timeout(120_000),
+    }).catch((e) => { throw new Dry(`${p.name} unreachable: ${(e as Error).message}`); });
+    if (!r.ok) {
+      const text = await r.text();
+      if (r.status === 402 || /credit|spending limit|exhausted|insufficient balance/i.test(text)) {
+        dryUntil[p.name] = Date.now() + 10 * 60_000;
+        throw new Dry(`The ${p.name} account has no credit left, so the papers can't be read right now. Add credit at ${p.console} and try again.`);
+      }
+      // 04-10-2026: Bedrock answers 403 for a model the account can't use (Opus 4.6 until a card is on file);
+      // skip that model, not the provider, so Kimi on the same key still runs.
+      if (r.status === 403) dryUntil[body.model] = Date.now() + 10 * 60_000;
+      if (r.status !== 400) throw new Dry(`${p.name} ${r.status}: ${text.slice(0, 200)}`);
+      throw new Error(`model ${r.status}: ${text.slice(0, 300)}`);
     }
-    // 04-10-2026: Bedrock answers 403 for a model the account can't use (Opus 4.6 until a card is on file);
-    // skip that model, not the provider, so Kimi on the same key still runs.
-    if (r.status === 403) dryUntil[body.model] = Date.now() + 10 * 60_000;
-    if (r.status !== 400) throw new Dry(`${p.name} ${r.status}: ${text.slice(0, 200)}`);
-    throw new Error(`model ${r.status}: ${text.slice(0, 300)}`);
+    if (!conv) return r.json() as Promise<T>;
+    const d = await r.json();
+    if (wantsJson && d.stopReason === "max_tokens") {
+      if (maxTokens < 32000) continue;
+      throw new Dry(`${body.model} ran out of room before it finished the answer`);
+    }
+    return fromConverse(d, wantsJson) as T;
   }
-  return (conv ? fromConverse(await r.json(), !!(body.text as Fmt)?.format) : r.json()) as Promise<T>;
+  throw new Dry("unreachable");
 }
 
 // Bedrock Converse <-> the Responses shape the rest of the app speaks (04-10-2026: Opus 4.6 and Kimi K3
@@ -80,7 +92,7 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
 // structured output; the JSON is cut from the reply and the callers still parse and check it.
 type Fmt = { format?: { schema?: object } } | undefined;
 type Msg = { role: "user" | "assistant"; content: object[] };
-export function toConverse(b: { [k: string]: unknown }) {
+export function toConverse(b: { [k: string]: unknown }, maxTokens = 8000) {
   const schema = (b.text as Fmt)?.format?.schema;
   const system = [b.instructions, schema && `Reply with only one JSON object that matches this JSON Schema, no prose and no code fences:\n${JSON.stringify(schema)}`].filter(Boolean).join("\n\n");
   const msgs: Msg[] = [];
@@ -99,17 +111,57 @@ export function toConverse(b: { [k: string]: unknown }) {
   }
   const tools = b.tools as { name: string; description?: string; parameters: object }[] | undefined;
   return {
-    ...(system && { system: [{ text: system }] }), messages: msgs, inferenceConfig: { maxTokens: 8000 },
+    ...(system && { system: [{ text: system }] }), messages: msgs, inferenceConfig: { maxTokens },
     ...(tools?.length && { toolConfig: { tools: tools.map((t) => ({ toolSpec: { name: t.name, description: t.description ?? t.name, inputSchema: { json: t.parameters } } })), toolChoice: { auto: {} } } }),
   };
+}
+
+// 05-10-2026: the old cut (first "{" to last "}") broke on prose braces around the object and passed a truncated
+// answer on as if it were whole. This walks the object by its own brackets (strings respected), repairs the two
+// slips Kimi makes (raw line breaks inside a string, a comma before a closing bracket) and gives back the first
+// object that parses; when none does, the first balanced cut, so the caller's parse names the real fault.
+function balancedAt(t: string, i: number): string | null {
+  let depth = 0, inStr = false;
+  for (let k = i; k < t.length; k++) {
+    const ch = t[k];
+    if (inStr) { if (ch === "\\") k++; else if (ch === '"') inStr = false; }
+    else if (ch === '"') inStr = true;
+    else if (ch === "{" || ch === "[") depth++;
+    else if ((ch === "}" || ch === "]") && --depth === 0) return t.slice(i, k + 1);
+  }
+  return null;
+}
+function repairJson(s: string): string {
+  let out = "", inStr = false;
+  for (let k = 0; k < s.length; k++) {
+    const ch = s[k];
+    if (inStr) {
+      if (ch === "\\") { out += ch + (s[++k] ?? ""); continue; }
+      if (ch === '"') inStr = false;
+      out += ch === "\n" ? "\\n" : ch === "\r" ? "\\r" : ch === "\t" ? "\\t" : ch;
+    } else if (ch === '"') { inStr = true; out += ch; }
+    else if ((ch === "}" || ch === "]") && /,\s*$/.test(out)) out = out.replace(/,\s*$/, "") + ch;
+    else out += ch;
+  }
+  return out;
+}
+export function extractJson(text: string): string {
+  const t = text.replace(/```(?:json)?/gi, "");
+  let first: string | null = null;
+  for (let i = t.indexOf("{"), tries = 0; i !== -1 && tries < 20; i = t.indexOf("{", i + 1), tries++) {
+    const cut = balancedAt(t, i);
+    if (!cut) continue;
+    first ??= cut;
+    for (const c of [cut, repairJson(cut)]) { try { JSON.parse(c); return c; } catch { /* try the repaired form, then the next brace */ } }
+  }
+  return first ?? t.slice(Math.max(t.indexOf("{"), 0));
 }
 
 export function fromConverse(d: { output?: { message?: { content?: Record<string, any>[] } } }, json: boolean) {
   const output: object[] = [];
   for (const c of d.output?.message?.content ?? []) {
     if (c.text) {
-      const t = json ? (c.text as string).slice(c.text.indexOf("{"), c.text.lastIndexOf("}") + 1) : c.text;
-      output.push({ type: "message", role: "assistant", content: [{ type: "output_text", text: t }] });
+      output.push({ type: "message", role: "assistant", content: [{ type: "output_text", text: json ? extractJson(c.text) : c.text }] });
     } else if (c.toolUse) output.push({ type: "function_call", call_id: c.toolUse.toolUseId, name: c.toolUse.name, arguments: JSON.stringify(c.toolUse.input ?? {}) });
   }
   return { output };

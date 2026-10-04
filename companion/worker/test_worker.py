@@ -101,3 +101,19 @@ _corpus.post_chunks([{"i": i} for i in range(50)])
 _corpus.rest = _real
 assert [r["i"] for r in _sent] == list(range(50)), _sent
 print("worker chunk write ok: a timed-out batch is halved and retried in order")
+
+# A poor first read (ragged one-word lines, as LlamaParse gave Faheem complaint p.6) hands the page to the next engine.
+import os, sys, local_ocr
+from worker import vision
+good = "The Complainant states that the Respondent signed the Agreement for Sale dated 05.03.2024.\n" * 6
+ragged = "\n".join("fo ro tt SS lo n fl OP tin yr S fas m".split()) * 3
+reads = {"first": ragged, "second": good}
+sys.modules["google_vision_ocr"] = None  # import fails, so only the stand-in engines are in the chain
+local_ocr.available = lambda: ["first", "second"]
+local_ocr.run = lambda n, p: reads[n]
+os.environ["OCR_CHAIN"] = "first,second"; os.environ.pop("LLAMA_CLOUD_API_KEY", None)
+page = vision()("x.jpg")
+assert page.src == "second" and "Complainant" in page, page.src
+reads["second"] = ragged + " more"  # nothing better: the least bad read is kept, not a failure
+assert vision()("x.jpg").src == "first"  # no clearly better read, so the preferred engine's stays
+print("worker ocr gate ok: a poor read tries the next engine and the best one is kept")

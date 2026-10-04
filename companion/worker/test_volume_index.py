@@ -18,3 +18,14 @@ parts = v.split_by_index(texts, [None] * 30)
 got = [(p["title"], p["from"], p["to"]) for p in parts]
 assert got == [("Index", 1, 1), ("Petition", 2, 4), ("Exhibit A: Copy of receipt", 5, 11), (v.AFTER, 12, 30)], got
 print("volume index ok:", got)
+
+# The model's reply is read by its own brackets, not first "{" to last "}", and its usual slips are tolerated.
+assert v.extract_json('Per clause {7}: {"a":"x {y}","b":[1,2]} (see {note})') == {"a": "x {y}", "b": [1, 2]}
+assert v.extract_json('{"q":"line one\nline two"}') == {"q": "line one\nline two"}
+assert v.extract_json('```json\n{"a":[1,2,],"b":{"c":1,},}\n```') == {"a": [1, 2], "b": {"c": 1}}
+try:
+    v.extract_json('{"rows":[{"x":"cut off')
+    raise SystemExit("a cut-off reply must not parse")
+except ValueError:
+    pass
+print("volume index json ok")
