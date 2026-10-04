@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -45,10 +46,13 @@ def check(volumes: list[dict]) -> None:
 
 
 def slice_pdf(pdf: Path, pages: list[int], tmp: Path) -> bytes:
-    for a, b in ((pages[0], pages[-1]),) if pages == list(range(pages[0], pages[-1] + 1)) else ((i, i) for i in pages):
-        subprocess.run(["pdfseparate", "-f", str(a), "-l", str(b), str(pdf), str(tmp / "p-%d.pdf")], check=True)
+    """04-10-2026: pdfseparate + pdfunite opened one file per page and failed past ~250 pages ("Too many
+    open files") on Hazel Fernandes's 628-page project. qpdf takes the page list in one call."""
     out = tmp / "part.pdf"
-    subprocess.run(["pdfunite", *[str(tmp / f"p-{i}.pdf") for i in pages], str(out)], check=True)
+    qpdf = shutil.which("qpdf") or "/opt/homebrew/bin/qpdf"
+    r = subprocess.run([qpdf, "--empty", "--pages", str(pdf), ",".join(map(str, pages)), "--", str(out)], capture_output=True, text=True)
+    if r.returncode not in (0, 3):  # 3 = warnings only
+        raise RuntimeError(f"qpdf could not cut pages {pages[0]}-{pages[-1]}: {r.stderr[-200:]}")
     return out.read_bytes()
 
 

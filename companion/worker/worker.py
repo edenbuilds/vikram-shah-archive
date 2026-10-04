@@ -312,12 +312,16 @@ def shrink(pdf: bytes, tmp: Path) -> bytes:
     omp, qpdf = local_ocr.which("ocrmypdf"), which("qpdf")
     ran = False
     if omp:
-        ran = subprocess.run([omp, "--skip-text", "--tesseract-timeout", "0", "-O1", "--output-type", "pdf", "-q", str(a), str(b)],
-                             capture_output=True, timeout=1800).returncode == 0
+        r = subprocess.run([omp, "--skip-text", "--tesseract-timeout", "0", "-O1", "--output-type", "pdf", "-q", str(a), str(b)],
+                           capture_output=True, text=True, timeout=1800)
+        ran = r.returncode == 0
+        if not ran:
+            print(f"  shrink: ocrmypdf exit {r.returncode}: {r.stderr[-200:]}", flush=True)
     if not ran and qpdf:
         ran = subprocess.run([qpdf, "--recompress-flate", "--compression-level=9", "--object-streams=generate",
                               "--remove-unreferenced-resources=yes", str(a), str(b)], capture_output=True).returncode in (0, 3)
     if not ran or b.stat().st_size > len(pdf) * 0.95:  # under 5% saved is not worth a second copy to trust
+        print(f"  shrink: kept as is ({'no tool ran' if not ran else f'{b.stat().st_size // 1024} KB is under 5% smaller'})", flush=True)
         return pdf
 
     def look(f: Path):
@@ -329,7 +333,10 @@ def shrink(pdf: bytes, tmp: Path) -> bytes:
         marks = [(o.title, r.get_destination_page_number(o)) for o in r.outline if not isinstance(o, list)]
         return text, marks, [hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(d.iterdir())]
     # ponytail: 72 dpi pixel compare; a lossless rewrite matches at any dpi, a lossy one fails here
-    return b.read_bytes() if look(a) == look(b) else pdf
+    if look(a) == look(b):
+        return b.read_bytes()
+    print("  shrink: kept as is (the smaller file did not render or read identically)", flush=True)
+    return pdf
 
 
 def ink_words(jpg: Path, rects: list[list[float]], page_text: str) -> str | None:
@@ -487,12 +494,11 @@ def process(job: dict, ocr, force: bool = False) -> str:
                 a["quote"] = ink_words(tmp / f"page-{a['page']:03d}.jpg", a["rects"], texts[a["page"] - 1])
 
         ours = pdf is not original or joined or len(original) > corpus.PIECE  # we store the PDF ourselves
-        if ours:
-            small = shrink(pdf, tmp)  # the upload itself stays untouched in originals/
-            if small is not pdf:
-                print(f"  PDF {len(pdf) // 1024} KB -> {len(small) // 1024} KB, pages render identically", flush=True)
-                pdf = small
-                pdf_path.write_bytes(pdf)
+        small = shrink(pdf, tmp)  # every paper; the upload itself stays untouched in originals/
+        if small is not pdf:
+            print(f"  PDF {len(pdf) // 1024} KB -> {len(small) // 1024} KB, pages render identically", flush=True)
+            pdf, ours = small, True
+            pdf_path.write_bytes(pdf)
 
         # A compiled volume (petition + exhibits, appeal + proceedings below) is filed as its
         # separate papers, named by the volume's own index. Anything doubtful: one paper, as before.
