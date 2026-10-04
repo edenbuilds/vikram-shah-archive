@@ -58,7 +58,8 @@ export default function Touch() {
     };
   }, []);
   if (!menu) return null;
-  const left = Math.max(8, Math.min(menu.x - 20, innerWidth - 232)), top = Math.max(8, Math.min(menu.y + 16, innerHeight - 200));
+  const w = Math.min(256, innerWidth - 16);  // the menu is 16rem wide, or the screen less 16px (.quick-menu); it is about 240px tall
+  const left = Math.max(8, Math.min(menu.x - 20, innerWidth - w - 8)), top = Math.max(8, Math.min(menu.y + 16, innerHeight - 260));
   const copy = async () => { await navigator.clipboard.writeText(menu.href); haptic("ok"); toast("Link copied"); setMenu(null); };
   const share = async () => { setMenu(null); try { await navigator.share({ title: menu.title, url: menu.href }); } catch { /* closed */ } };
   return (

@@ -1014,7 +1014,7 @@ html[data-a11y-motion=reduce] .logo-draw .dot { animation: none; opacity: 1; tra
 .share { position: relative; flex: 0 0 auto; display: inline-block; }
 .share-menu { right: auto; left: 0; width: min(17rem, 86vw); z-index: 30; transform-origin: top left; }
 .share-menu p { margin: .4rem .6rem .1rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
-.quick-menu { position: fixed; right: auto; top: auto; z-index: 90; transform-origin: top left; }
+.quick-menu { width: min(16rem, calc(100vw - 16px)); position: fixed; right: auto; top: auto; z-index: 90; transform-origin: top left; }
 .quick-menu p { font-family: var(--serif); font-size: .95rem; color: var(--ink); }
 @media (hover: none) { a.matter-card, a.docrow, a.stat { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; } }
 @media (hover: none) { .matter-card:hover { transform: none; box-shadow: none; } .docrow:hover { background: none; } }  /* a tap must not leave a hover behind */
