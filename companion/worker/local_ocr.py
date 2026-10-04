@@ -24,11 +24,11 @@ HEAVY = threading.Semaphore(1)
 ENGINES: dict[str, tuple[str, list[str]]] = {
     "ocrmypdf": ("ocrmypdf", ["-l", LANGS, "--image-dpi", "200", "--output-type", "pdf", "--optimize", "0",
                              "--sidecar", "{out}/page.txt", "{img}", "{out}/page.pdf"]),
-    "paddleocr": ("paddleocr", ["ocr", "-i", "{img}", "--save_path", "{out}", "--lang", os.environ.get("PADDLE_LANG", "en")]),
+    "paddleocr": ("paddleocr", ["ocr", "-i", "{img}", "--save_path", "{out}", "--lang", os.environ.get("PADDLE_LANG", "mr")]),
     "surya": ("surya_ocr", ["{img}", "--output_dir", "{out}"]),
     "docling": ("docling", ["{img}", "--to", "md", "--output", "{out}"]),
     "marker": ("marker_single", ["{img}", "--output_dir", "{out}", "--output_format", "markdown"]),
-    "mineru": ("mineru", ["-p", "{img}", "-o", "{out}", "-b", "pipeline"]),
+    "mineru": ("mineru", ["parse", "{img}", "-o", "{out}/page.md", "--force", "--no-marker"]),  # 3.x CLI
 }
 LIGHT = {"ocrmypdf"}
 

@@ -6,6 +6,7 @@ when the PDF has no text there, the note keeps her comment and no quote. Also op
 from __future__ import annotations
 
 import io
+import re
 import subprocess
 import zipfile
 from pathlib import Path
@@ -50,13 +51,94 @@ def read(pdf: Path) -> tuple[list[dict], bool]:
         return [], False
 
 
+def project_pdfs(z: zipfile.ZipFile) -> list[str]:
+    return sorted(n for n in z.namelist() if n.lower().endswith(".pdf") and "__MACOSX" not in n and not Path(n).name.startswith("."))
+
+
+# Field names (lower case, Core Data's leading "z" dropped) that hold an excerpt's words or her comment.
+# 04-10-2026: no public LiquidText project was found to read the real schema from, so nothing relies on
+# where a field sits: an excerpt counts only if its exact words are on a page of the project's PDFs
+# (which also gives its page); a comment is her own words and comes in unplaced unless it sits beside one.
+EXCERPT_KEYS = {"text", "excerpt", "excerpttext", "content", "quote", "selectedtext", "highlightedtext", "string"}
+COMMENT_KEYS = {"note", "notes", "comment", "comments", "commenttext", "notetext", "annotation", "body"}
+norm = lambda t: " ".join(str(t).split()).lower()  # noqa: E731
+
+
+def _records(z: zipfile.ZipFile, tmp: Path):
+    """Every dict-like record in the project's JSON, plist and SQLite files, as {key: value}."""
+    import json
+    import plistlib
+    import sqlite3
+
+    def walk(x):
+        if isinstance(x, dict):
+            yield x
+            for v in x.values():
+                yield from walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                yield from walk(v)
+    for n in z.namelist():
+        low = n.lower()
+        if "__MACOSX" in n or low.endswith("/"):
+            continue
+        raw = z.read(n)
+        if low.endswith(".json"):
+            try:
+                yield from walk(json.loads(raw.decode("utf-8", "replace")))
+            except ValueError:
+                pass
+        elif low.endswith(".plist") or raw[:8] == b"bplist00":
+            try:
+                yield from walk(plistlib.loads(raw))
+            except Exception:  # noqa: BLE001
+                pass
+        elif raw[:16] == b"SQLite format 3\x00":
+            f = tmp / f"db{abs(hash(n))}.sqlite"
+            f.write_bytes(raw)
+            con = sqlite3.connect(f)
+            try:
+                for (t,) in con.execute("select name from sqlite_master where type='table'"):
+                    cur = con.execute(f'select * from "{t}"')
+                    cols = [c[0] for c in cur.description]
+                    for row in cur:
+                        yield dict(zip(cols, row))
+            finally:
+                con.close()
+
+
+def ltproj_notes(data: bytes, pdf: Path) -> list[dict]:
+    """Her excerpts and comments from a .ltproj, as notes on the merged PDF (see ltproj_pdf)."""
+    import tempfile
+    n = int(re.search(r"(?m)^Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True).stdout).group(1))
+    pages = [norm(subprocess.run(["pdftotext", "-f", str(i), "-l", str(i), "-layout", str(pdf), "-"], capture_output=True, text=True).stdout) for i in range(1, n + 1)]
+    out, seen = [], set()
+    with tempfile.TemporaryDirectory() as d:
+        for rec in _records(zipfile.ZipFile(io.BytesIO(data)), Path(d)):
+            fields = {k.lower().lstrip("z") if k.lower().startswith("z") and k[1:2].isupper() else k.lower(): v
+                      for k, v in rec.items() if isinstance(k, str) and isinstance(v, str)}
+            quote = next((v for k, v in fields.items() if k in EXCERPT_KEYS and len(v.split()) >= 4), None)
+            page = next((i for i, t in enumerate(pages, 1) if quote and norm(quote) in t), None)
+            if page is None:
+                quote = None
+            comment = next((v.strip() for k, v in fields.items() if k in COMMENT_KEYS and len(v.split()) >= 2 and v != quote), None)
+            if not quote and not comment:
+                continue
+            key = (norm(quote or ""), norm(comment or ""))
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append({"page": page, "quote": " ".join(quote.split()) if quote else None, "body": comment or "(excerpt)"})
+    return out
+
+
 def ltproj_pdf(data: bytes) -> bytes:
     """A LiquidText project is a zip holding its documents. One PDF: that PDF. Several: one PDF with a
-    bookmark per document, so each shows in the paper's contents. ponytail: excerpts, ink and
-    workspace links inside the project are not read; export the PDF from LiquidText to keep those."""
+    bookmark per document, so each shows in the paper's contents. Its excerpts and comments are read
+    by ltproj_notes. ponytail: ink and workspace layout are not read."""
     from pypdf import PdfReader, PdfWriter
     z = zipfile.ZipFile(io.BytesIO(data))
-    pdfs = [n for n in z.namelist() if n.lower().endswith(".pdf") and not n.startswith("__MACOSX")]
+    pdfs = project_pdfs(z)
     if not pdfs:
         raise RuntimeError("No PDF found inside this LiquidText project. In LiquidText use Export > PDF and upload that.")
     if len(pdfs) == 1:
@@ -107,4 +189,35 @@ if __name__ == "__main__":
             z.writestr("Documents/two.pdf", out.read_bytes())
         merged = PdfReader(io.BytesIO(ltproj_pdf(buf.getvalue())))
         assert len(merged.pages) == 2 and [o.title for o in merged.outline] == ["one", "two"]
-    print("pdf_notes self-check ok: highlight quote, sticky note, ltproj")
+
+        # A project whose excerpts and comments sit in JSON, a Core Data SQLite store and a plist (shapes
+        # invented for the test; the reader keys on field names and the PDF's own words, not on layout).
+        import json, plistlib, sqlite3
+        html.write_text("<p style='font:20px serif'>Page one says nothing much.</p><p style='font:20px serif;break-before:page'>The tenancy was terminated by notice dated 01-03-2024 under section 106.</p>")
+        two = Path(d) / "two.pdf"
+        worker.html_pdf(html, two)
+        db = Path(d) / "s.sqlite"
+        con = sqlite3.connect(db)
+        con.execute("create table ZEXCERPT (Z_PK int, ZTEXT text, ZNOTE text)")
+        con.execute("insert into ZEXCERPT values (1, 'terminated by notice dated 01-03-2024', 'Notice period looks short')")
+        con.commit(); con.close()
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("Case.ltproj/Documents/two.pdf", two.read_bytes())
+            z.writestr("Case.ltproj/Entities.json", json.dumps({"items": [{"type": "excerpt", "excerptText": "under section 106.", "comment": "short excerpt, kept as a comment only"},
+                                                                  {"text": "words that appear nowhere in the paper", "note": "Ask the client"}]}))
+            z.writestr("Case.ltproj/store.sqlite", db.read_bytes())
+            z.writestr("Case.ltproj/meta.plist", plistlib.dumps({"Excerpts": [{"text": "The tenancy was terminated", "comment": "Key fact"}]}, fmt=plistlib.FMT_BINARY))
+            z.writestr("Case.ltproj/LTMetadata.json", json.dumps({"title": "Legal Case Review", "liquidtext_version": "4.2.1"}))
+        data = buf.getvalue()
+        merged_pdf = Path(d) / "m.pdf"
+        merged_pdf.write_bytes(ltproj_pdf(data))
+        got = sorted(ltproj_notes(data, merged_pdf), key=lambda x: x["body"])
+        assert got == [
+            {"page": None, "quote": None, "body": "Ask the client"},
+            {"page": 2, "quote": "The tenancy was terminated", "body": "Key fact"},
+            {"page": 2, "quote": "terminated by notice dated 01-03-2024", "body": "Notice period looks short"},
+            {"page": None, "quote": None, "body": "short excerpt, kept as a comment only"},
+        ], got
+        assert worker.is_ltproj("Case.ltproj.zip") and worker.is_ltproj("x.LTPROJ") and not worker.is_ltproj("x.zip")
+    print("pdf_notes self-check ok: highlight quote, sticky note, ltproj documents, excerpts and comments")

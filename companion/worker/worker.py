@@ -293,6 +293,11 @@ def html_pdf(html: Path, out: Path) -> bytes:
     return out.read_bytes()
 
 
+def is_ltproj(filename: str) -> bool:
+    # Safari uploads a macOS package (a LiquidText project saved as a folder) as "Name.ltproj.zip"
+    return filename.lower().endswith((".ltproj", ".ltproj.zip"))
+
+
 def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     """Every upload becomes a PDF: PDFs as they are, photos of pages through sips, Word/RTF/ODT through
     textutil and Chrome, Markdown and text printed as they are written (nothing rewritten), and
@@ -303,7 +308,7 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     ext = Path(filename).suffix.lower()
     src, out = tmp / f"in{ext}", tmp / "converted.pdf"
     src.write_bytes(data)
-    if ext == ".ltproj":
+    if is_ltproj(filename):
         return pdf_notes.ltproj_pdf(data)
     if ext in IMAGES:
         subprocess.run(["sips", "-s", "format", "pdf", str(src), "--out", str(out)], check=True, capture_output=True)
@@ -346,6 +351,8 @@ def process(job: dict, ocr, force: bool = False) -> str:
         n = page_count(pdf_path)
         marks = bookmarks(pdf_path, n)  # read while the temp PDF exists
         pnotes, from_lt = pdf_notes.read(pdf_path)
+        if is_ltproj(job["filename"]):
+            pnotes, from_lt = pnotes + pdf_notes.ltproj_notes(original, pdf_path), True
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)

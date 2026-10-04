@@ -336,7 +336,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("list_skills", {
     title: "List her skills",
-    description: "The skills she can work with: the ones in the app (the chronological reading order, the Maharashtra courts drafting pack) and the ones she added herself. When a task matches a skill, tell her which one and ask whether to use it before you start.",
+    description: "The skills she can work with: the ones in the app (the chronological reading order, the Maharashtra courts drafting pack, notes-and-bookmarks, liquidtext-bridge) and the ones she added herself. When a task matches a skill, tell her which one and ask whether to use it before you start.",
     inputSchema: {},
     annotations: { readOnlyHint: true },
   }, async () => text((await listSkills()).map((s) => `- ${s.name}${s.builtIn ? " (in the app)" : ` (added on Settings${s.at ? ` on ${s.at.slice(0, 10)}` : ""})`}: ${s.description}`).join("\n") +
