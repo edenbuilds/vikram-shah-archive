@@ -314,6 +314,7 @@ def process(job: dict, ocr, force: bool = False) -> str:
         pdf_path = tmp / "in.pdf"
         pdf_path.write_bytes(pdf)
         n = page_count(pdf_path)
+        marks = bookmarks(pdf_path, n)  # read while the temp PDF exists
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)
@@ -397,7 +398,7 @@ def process(job: dict, ocr, force: bool = False) -> str:
     body, sections = sectioned(job["title"], texts)
     # ponytail: her bookmarks replace the guessed contents for a paper filed whole; a volume split
     # by its index keeps the index's contents per part.
-    sections = bookmarks(pdf_path, n) or sections
+    sections = marks or sections
 
     used = {s for s in sources if s}
     corpus.write_document({
