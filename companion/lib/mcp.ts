@@ -96,8 +96,10 @@ export function register(server: McpServer, ctx: Ctx) {
     if (!d) return fail(`No paper "${doc_id}" in your workspace.`);
     const secs = ((d.sections ?? []) as { numeral?: string; title?: string; mark?: string; pages?: string }[])
       .map((s) => `- ${s.numeral ?? ""} ${(s.mark && s.mark !== "—" ? s.mark : s.title ?? "").replace(/^[#>]+\s*/, "").slice(0, 120)} (p. ${s.pages})`);
+    const { data: marks } = await db.from("annotations").select("page_no, body").eq("doc_id", d.id).contains("tags", ["bookmark"]).order("page_no");
+    const mine = (marks ?? []).map((b) => `- ${b.body} (p. ${b.page_no}) ${link(d.matter_id, d.id, b.page_no ?? undefined)}`);
     return text([`# ${d.title}`, `id: ${d.id}`, `matter: ${d.matter_id}`, `stage: ${d.stage}`, `pages: ${d.page_count}`,
-      d.source_path && `source: ${d.source_path}`, `open: ${link(d.matter_id, d.id)}`, secs.length ? `\nContents:\n${secs.join("\n")}` : ""].filter(Boolean).join("\n"));
+      d.source_path && `source: ${d.source_path}`, `open: ${link(d.matter_id, d.id)}`, secs.length ? `\nContents:\n${secs.join("\n")}` : "", mine.length ? `\nHer bookmarks (her work product):\n${mine.join("\n")}` : ""].filter(Boolean).join("\n"));
   });
 
   server.registerTool("read_pages", {
@@ -205,10 +207,10 @@ export function register(server: McpServer, ctx: Ctx) {
   });
 
   server.registerTool("add_note", {
-    title: "Save a note on a paper (asks first)",
-    description: "Save the advocate's note on a paper page, optionally anchored to an exact quote. First call WITHOUT confirm to get a preview; show it to her; call again with confirm: true only after she says yes.",
-    inputSchema: { doc_id: z.string(), page: z.number().int().min(1), note: z.string().min(2), quote: z.string().optional(), confirm: z.boolean().optional() },
-  }, async ({ doc_id, page, note, quote, confirm }) => {
+    title: "Save a note or bookmark on a paper (asks first)",
+    description: "Save the advocate's sticky note on a paper page, optionally anchored to an exact quote. With bookmark: true it saves a named bookmark to that page instead (note = the bookmark's name), listed with the paper's contents. First call WITHOUT confirm to get a preview; show it to her; call again with confirm: true only after she says yes.",
+    inputSchema: { doc_id: z.string(), page: z.number().int().min(1), note: z.string().min(2), quote: z.string().optional(), bookmark: z.boolean().optional(), confirm: z.boolean().optional() },
+  }, async ({ doc_id, page, note, quote, bookmark, confirm }) => {
     const d = await doc(doc_id);
     if (!d) return fail(`No paper "${doc_id}" in your workspace.`);
     if (page > d.page_count) return fail(`"${d.title}" has ${d.page_count} pages.`);
@@ -220,12 +222,12 @@ export function register(server: McpServer, ctx: Ctx) {
       if (at < 0) return fail(`The quote is not in "${d.title}" exactly as written. Use read_pages and copy the words exactly, or save the note without a quote.`);
       start = at; end = at + quote.length;
     }
-    const preview = `Note on ${pin(d, page)}:\n"${note}"${quote ? `\nanchored to: "${quote}"` : ""}`;
+    const preview = `${bookmark ? "Bookmark" : "Note"} on ${pin(d, page)}:\n"${note}"${quote ? `\nanchored to: "${quote}"` : ""}`;
     if (!confirm) return text(`PREVIEW (nothing saved yet). Show this to the advocate and ask if she wants it saved:\n\n${preview}`);
     const { data: users } = await db.auth.admin.listUsers({ perPage: 1000 });
     const uid = users?.users.find((u) => u.email?.toLowerCase() === ctx.email)?.id;
     if (!uid) return fail("Could not identify the signed-in advocate; nothing saved.");
-    const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note, tags: ["via-ai"], created_by: uid });
+    const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note, tags: bookmark ? ["bookmark", "via-ai"] : ["via-ai"], created_by: uid });
     return error ? fail(`Not saved: ${error.message}`) : text(`Saved.\n${preview}`);
   });
 

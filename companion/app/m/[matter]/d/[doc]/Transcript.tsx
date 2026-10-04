@@ -23,6 +23,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
   const [pop, setPop] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const noteBox = useRef<HTMLTextAreaElement>(null);
+  const markBox = useRef<HTMLInputElement>(null);
   const href = (n: number) => `/m/${matter}/d/${doc}?p=${n}`;
 
   // Scroll only when a page was asked for (pager, search hit, citation); never on a plain open.
@@ -103,6 +104,15 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
             {currentPage < pageCount ? <Link className="btn ghost small" href={href(currentPage + 1)} scroll={false}>→</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>→</span>}
           </div>
         </div>
+
+        <form action={async (f) => { await addAnnotation(f); if (markBox.current) markBox.current.value = ""; }} className="row" style={{ gap: ".4rem" }}>
+          <input type="hidden" name="matter" value={matter} />
+          <input type="hidden" name="doc" value={doc} />
+          <input type="hidden" name="page" value={currentPage} />
+          <input type="hidden" name="tags" value="bookmark" />
+          <input ref={markBox} type="text" name="body" required maxLength={120} placeholder={`Bookmark page ${currentPage} as…`} aria-label="Bookmark name" style={{ flex: "1 1 auto", minWidth: 0 }} />
+          <button className="btn ghost small" style={{ flex: "0 0 auto" }}>Bookmark</button>
+        </form>
 
         <form action={async (f) => { await addAnnotation(f); setSel(null); window.getSelection()?.removeAllRanges(); if (noteBox.current) noteBox.current.value = ""; }} className="card stack note-form">
           <h3 style={{ margin: 0 }}>{sel ? "Note on selected text" : `Note on page ${currentPage}`}</h3>

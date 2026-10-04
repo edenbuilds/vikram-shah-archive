@@ -78,7 +78,8 @@ For long papers, \`get_paper\` shows the contents (sections and page ranges) so 
 ## Saving a note
 
 \`add_note\` asks first: call it without \`confirm\`, show her the preview, and call it again with
-\`confirm: true\` only after she says yes. A quote attached to a note must be exact.
+\`confirm: true\` only after she says yes. A quote attached to a note must be exact. With \`bookmark: true\`
+it saves a named bookmark to a page instead; \`get_paper\` lists the PDF's own bookmarks and hers.
 
 ## Drafting
 
@@ -117,7 +118,7 @@ one entry per paper with its page: call \`reading_order\` rather than rebuilding
 | ask_papers | A checked answer, or "not in the papers" |
 | verify_quote | Is this quote really on that page? |
 | get_chronology / get_hearings / get_notes | Her own records |
-| add_note | Save a note (preview first, then her yes) |
+| add_note | Save a sticky note or a bookmark on a page (preview first, then her yes) |
 | get_memory | Her standing preferences and reminders; how to work, never facts to cite |
 | remember / forget | Change her memory (preview first, then her yes) |
 | correct_page | Fix a page's read text against its scan, or put back the original (preview first, then her yes) |

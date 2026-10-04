@@ -256,3 +256,22 @@ Commits 7d33112, 95e2006, e7e38a8 on main, deployed to production.
 - Shell note: run scripts with `PATH=/opt/homebrew/bin:/usr/bin:/bin:$PATH`; the old `vercel` pnpm shim and `gh` in `/usr/local/bin` are Intel and dead. Deploy with `npx -y vercel@latest deploy --prod --yes`.
 - **Still structural:** reading uploads needs Omkar's Mac awake and online. Uploads made while it sleeps wait in the queue (nothing is lost) and are filed when it wakes.
 - Needs Omkar: top up xAI (console.x.ai) or leave DeepSeek as the main model; OpenAI credit for embeddings.
+
+## 04-10-2026 (latest): Kimi K3 on Bedrock, MarkItDown, bookmarks
+
+- **Main model:** Kimi K3 through AWS Bedrock (Converse API, `lib/ai.ts`), on the Flex tier: `LLM_MODEL=bedrock:global.moonshotai.kimi-k3@flex`. Flex is half price ($1.50 / $7.50 per M tokens) and measured about 15% slower (8.6s vs 7.4s).
+- **Fallback order** (`BACKUPS`): Kimi standard, then DeepSeek V4 Pro, then Opus 4.6 (Bedrock), then gpt-5.4-nano. A model that returns 403 is skipped for 10 minutes. `lib/converse.test.ts` covers this.
+- **AWS:** account 629496257875 (billed by AISPL), $49.66 in credits as of 04-10-2026. The bearer key is in `AWS_BEARER_TOKEN_BEDROCK`.
+- **Blocked on AWS:**
+  - Opus 4.6 and Sonnet 4.x return INVALID_PAYMENT_INSTRUMENT. Fix the card in Billing > Payment preferences.
+  - Textract returns SubscriptionRequiredException.
+  - The newest Claude and GPT models are not offered to this account.
+- **EC2:** i-01b777d29e588ede1 (eu-north-1) is stopped. Terminate it in the console; the owner does that.
+- **MarkItDown** (worker `as_pdf`) converts .pptx .xlsx .xls .epub .msg .ipynb .json .xml to text, then to PDF. The Uploader accepts these types.
+- **Bookmarks:**
+  - The PDF's own outline shows as "Your bookmarks" (worker `bookmarks()`).
+  - Her own bookmarks are `annotations` rows tagged `bookmark`, with body = name. They are listed under "Bookmarked by you" on the paper page and in MCP `get_paper`.
+  - She adds them from the reader ("Bookmark page N as...") or through MCP `add_note` with `bookmark: true`, which previews first and saves only on confirm.
+- **Sticky notes:** these are page notes (`annotations`), on the web and through MCP `add_note` / `get_notes`.
+
+Paste-ready next prompt: "Read companion/HANDOFF.md latest section. Once the AWS card is fixed, re-test Opus 4.6 and Textract with a Converse call and `aws textract detect-document-text`. If Textract works, compare its cost and accuracy with Google Vision on 5 scanned pages before switching."
