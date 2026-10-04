@@ -23,7 +23,10 @@ def patch(cid: int, vec: list) -> None:
             body = r.read()
             if r.status < 300:
                 return
-            raise RuntimeError(f"{r.status}: {body[:200]!r}")
+            # 04-10-2026: under six parallel writers Postgres hit its statement timeout (57014, a 500); retry.
+            if r.status < 500 or k == 3:
+                raise RuntimeError(f"{r.status}: {body[:200]!r}")
+            time.sleep(2 ** k)
         except (OSError, http.client.HTTPException):
             conn.close()
             conn = http.client.HTTPSConnection(host, timeout=60, context=corpus.TLS)

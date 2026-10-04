@@ -177,6 +177,20 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 >
 > Task: <describe it here>.
 
+## 04-10-2026 (later): one Vercel project, Gemini embeddings
+
+**Vercel projects** (team omkar1sonawane-2991s-projects):
+- `case-companion` (prj_gBhGtra44uibDjdJrRtK5CeyX8FZ, formerly named vikram-shah-archive): the app. It serves case-companion.edenbuilds.me and deploys from `companion/` by CLI. `companion/.vercel/project.json` points here.
+- `case-archive` (prj_j2AeSbKiohM5fWsIARsPXtyOF6Ab): the public paper archive at case-archive.edenbuilds.me. It auto-deploys from GitHub (edenbuilds/vikram-shah-archive, root `.`; `.vercelignore` drops companion/).
+- `case-companion-old` (prj_NWI1P704hFbFhhLEkeNih939UeYP): the previous app project, which no longer has a domain. Delete it only after Omkar says so. Rollback: move the domain back to it.
+- Env vars: `vercel env pull` writes sensitive values as the literal `[SENSITIVE]`. Copying env that way served a 500 ("Invalid supabaseUrl") for about a minute. Set values from `.env.local` through the API instead.
+
+**Embeddings** now run on the Vercel AI Gateway as `google/gemini-embedding-001` at 1536 dimensions, because the OpenAI account is out of credit.
+- The app authenticates with the Vercel OIDC token (the `x-vercel-oidc-token` header) or `AI_GATEWAY_API_KEY`.
+- The worker refreshes the token from `vercel env pull` into `~/.cache/case-companion/gateway.env`.
+- The free tier allows 5 embedding requests a minute per team, so `corpus.embed` waits out a 429.
+- Every stored vector was rewritten with `worker/reembed_all.py`. Vectors from OpenAI and Gemini cannot be compared.
+
 ## 04-10-2026: corrections, bookmarks, OCR uploads, shared memory, Jev, provider chain
 
 Commits 7d33112, 95e2006, e7e38a8 on main, deployed to production.

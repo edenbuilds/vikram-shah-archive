@@ -7,8 +7,9 @@ import { verify, type Chunk, type ModelAnswer, type Verified } from "./citations
 
 type Hit = Chunk & { matter_id: string; similarity: number; fts_rank: number };
 
-// ponytail: fixed floor tuned on this corpus with scripts/eval-qa.ts; re-tune per corpus if refusals look wrong.
-export const MIN_SIMILARITY = 0.3;
+// ponytail: fixed floor; re-tune with scripts/eval-qa.ts if refusals look wrong. 04-10-2026, Gemini embeddings on
+// shah-v-trindade: questions about the papers scored 0.64-0.66, off-topic ones (mercury, cricket, cake, router) 0.46-0.52.
+export const MIN_SIMILARITY = 0.55;
 const K = 12;
 
 const SYSTEM = `You are the clerk's retrieval aid for an advocate's own case papers. You are not a lawyer and you give no opinions.
