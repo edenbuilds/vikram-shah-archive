@@ -12,6 +12,7 @@ const OPTIONS = {
   weight: { label: "Text weight", choices: [["m", "Standard"], ["b", "Heavier"]] },
   contrast: { label: "Contrast", choices: [["m", "Standard"], ["high", "High"]] },
   motion: { label: "Motion", choices: [["m", "As the device"], ["reduce", "Reduced"]] },
+  haptics: { label: "Touch feedback", choices: [["m", "On"], ["off", "Off"]] },
   links: { label: "Links", choices: [["m", "Plain"], ["underline", "Always underlined"]] },
 } as const;
 type Key = keyof typeof OPTIONS;

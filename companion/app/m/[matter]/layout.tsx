@@ -3,6 +3,13 @@ import { requireUser } from "@/lib/supabase";
 import EditDialog from "@/components/EditDialog";
 import { updateMatter } from "@/app/actions";
 import Tabs from "./Tabs";
+import ShareMenu from "@/components/ShareMenu";
+
+export async function generateMetadata({ params }: { params: Promise<{ matter: string }> }) {
+  const { supabase } = await requireUser();
+  // its own template: a layout that sets a plain title would otherwise drop the root's "%s · Case Companion" for the pages under it
+  return { title: { default: `${(await getMatter(supabase, (await params).matter)).title} · Case Companion`, template: "%s · Case Companion" } };
+}
 
 export default async function MatterLayout({ children, params }: { children: React.ReactNode; params: Promise<{ matter: string }> }) {
   const { matter } = await params;
@@ -21,6 +28,7 @@ export default async function MatterLayout({ children, params }: { children: Rea
             { name: "title", label: "Case name", value: m.title }, { name: "short", label: "Short name", value: m.short },
             { name: "forum", label: "Court or forum", value: m.forum }, { name: "cause", label: "Cause", value: m.cause }]} />
           <p className="muted" style={{ margin: 0 }}>{[m.forum, m.venue, at && `Last updated ${dmyIST(last!.ingested_at)}, ${at.toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })}`].filter(Boolean).join(" · ")}</p>
+          <div style={{ margin: ".5rem 0" }}><ShareMenu title={m.title} items={[{ label: "Download the papers (.zip)", href: `/m/${m.id}#export` }]} /></div>
           <Tabs base={`/m/${m.id}`} />
         </div>
       </div>

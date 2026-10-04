@@ -235,7 +235,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
 
 function NoteCard({ n, matter, doc }: { n: Note; matter: string; doc: string }) {
   return (
-    <aside className="note">
+    <aside className="note" data-dbl>
       <span className="note-label">{isHighlight(n.tags) && <i className="swatch dot" style={{ background: colourOf(n.tags) }} aria-hidden />}{isHighlight(n.tags) ? "Highlight" : "Advocate\u2019s note"}{n.page_no ? ` · p. ${n.page_no}` : ""}</span>
       {n.quote && <blockquote>&ldquo;{n.quote.slice(0, 200)}{n.quote.length > 200 ? "…" : ""}&rdquo;</blockquote>}
       {n.body && !(isHighlight(n.tags) && n.body === "Highlight") && <div style={{ whiteSpace: "pre-wrap" }}>{n.body}</div>}

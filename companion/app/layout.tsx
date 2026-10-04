@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 import Toaster from "@/components/Toast";
 import JobWatcher from "@/components/JobWatcher";
+import Touch from "@/components/Touch";
 import { A11Y_BOOT } from "@/components/A11yPrefs";
 import { signOut } from "./actions";
 import TopNav from "@/components/TopNav";
@@ -17,9 +18,20 @@ const sans = localFont({ variable: "--sans-font", display: "swap", src: [
 ] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--mono-font" });
 
+// 04-10-2026: Omkar asked for the SEO and social details. The icons (app/icon.svg, apple-icon, pwa/), the manifest, the link
+// preview image (opengraph-image, twitter-image) and robots.txt are file conventions beside this file. Every page stays noindex:
+// these are private case papers, so the work here is how a shared link looks, not being found.
+const DESCRIPTION = "A private workspace for an advocate's case papers: search, read, ask and keep notes, with every answer tied to its page. Not a legal opinion.";
 export const metadata: Metadata = {
-  title: "Case Companion",
-  description: "The advocate's private study companion. Clerk infrastructure, not a legal opinion.",
+  metadataBase: new URL("https://case-companion.edenbuilds.me"),
+  applicationName: "Case Companion",
+  title: { default: "Case Companion", template: "%s · Case Companion" },
+  description: DESCRIPTION,
+  authors: [{ name: "Eden Builds", url: "https://edenbuilds.me" }],
+  openGraph: { type: "website", siteName: "Case Companion", title: "Case Companion", description: DESCRIPTION, locale: "en_IN" },
+  twitter: { card: "summary_large_image", title: "Case Companion", description: DESCRIPTION },
+  appleWebApp: { capable: true, title: "Case Companion", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
   robots: { index: false, follow: false },
 };
 
@@ -38,6 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div id="main">{children}</div>
         <Toaster />
         {data.user && <JobWatcher />}
+        {data.user && <Touch />}
       </body>
     </html>
   );

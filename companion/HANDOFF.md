@@ -7,6 +7,38 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 04-10-2026 (night, later): logo, social preview, greeting, loading, share, touch
+
+Shipped (deployed to case-companion.edenbuilds.me; see DESIGN.md "Mark, greeting, loading, share, touch"):
+- New mark (`components/Logo.tsx`), tab icon, `favicon.ico`, iOS and install icons, manifest, Open Graph and Twitter image, robots.txt, per-page titles ("Paper title · Case Companion"). The icon, preview and manifest routes are public in `middleware.ts` (a chat app has no session). All pages stay noindex.
+- Home greets "Hello, <first name>" (`lib/name.ts`). `app/loading.tsx` is the loading page, `error.tsx` and `not-found.tsx` carry the mark.
+- `components/ShareMenu.tsx` on matter, paper and explainer. `components/Touch.tsx` + `lib/haptic.ts`: touch ticks, press and hold menu, double-click or double-tap to edit, board column double-click. A "Touch feedback" switch sits in Settings, Display.
+- Check: `node scripts/polish-check.mjs <base> "$LINK"` (no secrets printed; it removes what it adds).
+
+Not verified: haptics on a real phone (Android uses `navigator.vibrate`; the iPhone path toggles a hidden `switch` input, iOS 17.4 and later, untested on a device); the native share sheet (the menu shows Share only where `navigator.share` exists); the OG preview inside WhatsApp or Slack; `scripts/liquidtext-check.mjs` live (the last run lost its network connection mid-run, the two uploads before it passed).
+
+## 04-10-2026 (night): everything saves itself, colour, highlights both ways, readable tables
+
+Shipped (commit `dc82bf9` and the HANDOFF commit after it; deployed to case-companion.edenbuilds.me):
+- **Board**: mouse drag and keyboard move fixed in `components/ui/kanban-board.tsx` (column under the pointer, a `live` ref so a drop never reads a stale board). Click a task title to rename it.
+- **Studies save themselves** (`app/api/study/route.ts`, `lib/jobs.ts`, `components/JobWatcher.tsx`): an explainer or brief runs under `after()`, writes a job record, and saves whoever started it and wherever they go. A toast with a link appears when it finishes (`GET /api/study/jobs`).
+- **Memory is automatic**: `track()` in `lib/activity.ts` is called from every server action and from MCP reads (get_paper, read_pages, ask_papers, search_papers). The MCP `initialize` instructions open with "Where she left off".
+- **Toasts** on every server action (the `fetch` wrapper in `components/Toast.tsx` spots `Next-Action` calls), with tones. **Colour**: per-tab and per-stat hues, nav icon hues. **Nav**: the pill rests on the current page and glides 380 ms; hover only washes.
+- **Editable**: notes (edit in place), highlights, her note under each explainer and brief part (`components/SectionNote.tsx`, `lib/study.ts` `saveSectionNote`), board task titles. Stat tiles are links.
+- **Highlights**: select words for five colours, draw on the scan; both are `annotations` rows tagged `highlight` and `color:#hex` (a drawn one also `drawn`, with its shape in `<matter>/pages/<doc>/ink.json`, `lib/ink.ts`). The PDF-with-notes export writes them as real PDF Highlight annotations; uploaded PDF and LiquidText highlights come back as the same rows. **MCP**: `add_note` takes `highlight: true`, `colour`, and `bookmark: true` (asks first, `confirm: true` saves).
+- **Explainer**: each sentence and number opens the paper at the cited page; each footnote also opens the PDF at that page (`#page=N`). A name the paper spells differently from the matter (`lib/spelling.ts`) is shown as filed with a line saying so. The Statement of Claim itself prints "Mr. Vikarm Shah" (checked on the scan), so the record is never corrected.
+- **Paper text**: a block with a gap of 3+ spaces or a tab is kind `spaced` (`lib/transcript.ts`): the stored text is untouched, each gap is drawn as a hairline, rows wrap like prose (`.b-spaced`). Pipe tables stay fixed-width.
+- **Emails** (`lib/signin-mail.ts`, `worker/notify.py`) follow the cream, violet and 4px design.
+
+Verified locally on a production build: lib tests 48/48, `tsc` clean, `scripts/inapp-check.mjs` all PASS, `scripts/mcp-annotate-check.ts` all PASS (also against production), `scripts/mcp-smoke.ts` (the two `isError` lines are the expected refusals).
+Live (04-10-2026): `inapp-check` 26 PASS, `board-check` 9 PASS, `mcp-annotate-check` all PASS, `responsive-check` no sideways scroll on 26 pages across iPhone, iPad Pro 13 (both ways) and desktop.
+
+**Open:**
+- Not tested: highlighting a selection that crosses a column gap in a `spaced` row (the offsets come from the same text nodes as before, so they should hold, but no check covers it).
+- The paper page does not yet scroll to or mark the exact quoted words when it opens from an explainer link (it opens the right page).
+- The `.ltproj` writer is still not offered (private format).
+- The scratch folder `scripts/tmp` is git-ignored: `zz-lt-project.ltproj` and `zz-lt-folder.ltproj.zip` there are the fixtures for `scripts/liquidtext-check.mjs`.
+
 ## 04-10-2026 (late): memory, sign-in, Intercom design, board, accessibility
 
 Shipped (deployed to case-companion.edenbuilds.me; build and 41/41 lib tests green):
@@ -20,7 +52,7 @@ Shipped (deployed to case-companion.edenbuilds.me; build and 41/41 lib tests gre
 
 Verified: `scripts/board-check.mjs` (system Chrome) passed for: four columns render, a dropped card does not open the matter, add a task survives a reload, hold to remove, iPad touch drag survives a reload, no sideways scroll on iPad landscape. Responsive check passed 24 pages x 4 devices before the board and the colours. The live login serves the video.
 
-**Open (fix first):**
+**Open at that time (all resolved in the night section above):**
 - `scripts/board-check.mjs`: the **mouse drag** and **keyboard move** checks FAILED (no toast, column unchanged after a reload). Debug with a mid-drag screenshot: is `.is-lifted` present, which `over` id fires? Suspects: `onDragOver` moving the card before `onDragEnd` reads `board` from a stale closure, and `closestCorners` picking the source column. Consider reading from a ref in onEnd.
 - The colour pass and the board are not re-checked on all devices: run `scripts/responsive-check.mjs` (add `/board`) and look at the phone, iPad 13" portrait and landscape screenshots.
 - Test memory end to end: open a paper, then MCP `get_memory` and `read_me_first` should list it under "Where she left off".
@@ -215,7 +247,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Paste-ready prompt for the next agent
 
-"Read companion/HANDOFF.md, the section '04-10-2026 (late)', then DESIGN.md. First fix the board's mouse drag and keyboard move: run `node scripts/board-check.mjs https://case-companion.edenbuilds.me \"$LINK\"` (LINK is read from line 13 of ~/Downloads/case-secrets-env/case-companion-keys.md into a variable, never printed) until every line says PASS. Then add /board to scripts/responsive-check.mjs, run it and look at the iPhone and iPad Pro 13 landscape screenshots of home, board, explainer and settings for colour and layout problems (no black surfaces; violet primary; kind colours). Then test the automatic memory through MCP get_memory and read_me_first. Commit as omkar1sonawane@gmail.com, push, deploy with npm_config_cache=\"$TMPDIR/npxc\" npx -y vercel@latest deploy --prod --yes, and update HANDOFF.md."
+"Read companion/HANDOFF.md, the section '04-10-2026 (night, later)', then DESIGN.md. Run `node scripts/polish-check.mjs https://case-companion.edenbuilds.me \"$LINK\"` (LINK is read from line 13 of ~/Downloads/case-secrets-env/case-companion-keys.md into a variable and never printed). Then re-run `scripts/liquidtext-check.mjs`, and test press and hold, the share sheet and haptics on a real iPhone and an Android phone. One task, then update the handoff."
 
 
 > Work in /Users/omkar/vikram-shah-archive/companion (Case Companion, live at case-companion.edenbuilds.me). Read HANDOFF.md, then DESIGN.md for any UI work. Rules:

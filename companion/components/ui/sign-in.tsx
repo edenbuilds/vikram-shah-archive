@@ -1,5 +1,6 @@
 "use client";
 import Submit from "@/app/Submit";
+import Logo from "@/components/Logo";
 
 // 04-10-2026: the 21st.dev "SignInPage" Omkar chose, ported from Tailwind to this app's plain CSS
 // (globals.css "sign-in"); adding Tailwind's reset would restyle every other screen. Kept: the two
@@ -16,7 +17,7 @@ export function SignInPage({ action, sent, error }: { action: (f: FormData) => P
     <div className="si">
       <section className="si-form">
         <div className="si-inner">
-          <div className="si-brand si-in d1"><span className="brand-mark" aria-hidden>CC</span> Case Companion</div>
+          <div className="si-brand si-in d1"><Logo size={30} /> Case Companion</div>
           {sent ? (
             <>
               <h1 className="si-in d2">Check your email</h1>

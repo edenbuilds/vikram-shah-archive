@@ -14,7 +14,8 @@ let ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); ctx.se
 await p.goto(link, { waitUntil: "networkidle" }); await p.goto(base + "/board", { waitUntil: "networkidle" });
 const cols = p.locator(".kb-col");
 ok(await cols.count() === 4, "four columns render");
-const card = cols.nth(0).locator(".kb-card").first();
+// from "Working on": the card goes right with the mouse and back left with the keyboard, so a run leaves the board as it found it
+const card = cols.nth(1).locator(".kb-card").first();
 const title = await card.locator(".kb-title").textContent();
 let s = await box(card), t = await rect(cols.nth(2).locator(".kb-list"));
 await p.mouse.move(s.x + 20, s.y + 20); await p.mouse.down();
@@ -34,7 +35,7 @@ const parked = p.locator(".kb-col").nth(3);
 await parked.getByRole("button", { name: "Add a task" }).click();
 await p.keyboard.type("zz board check task"); await p.keyboard.press("Enter");
 await settle(p); ok(await p.locator(".kb-title", { hasText: "zz board check task" }).count() === 1, "added task survives a reload");
-const hold = p.locator(".kb-card", { has: p.getByText("zz board check task") }).getByRole("button");
+const hold = p.locator(".kb-card", { has: p.getByText("zz board check task") }).getByRole("button", { name: /Hold to remove/ });
 const hb = await box(hold); await p.mouse.move(hb.x + 10, hb.y + 10); await p.mouse.down(); await p.waitForTimeout(1100); await p.mouse.up();
 await settle(p); ok(await p.locator(".kb-title", { hasText: "zz board check task" }).count() === 0, "hold to remove deletes the task");
 await ctx.close();

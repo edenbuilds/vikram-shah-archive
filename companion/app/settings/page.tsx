@@ -14,8 +14,6 @@ import A11yPrefs from "@/components/A11yPrefs";
 import Skills from "./Skills";
 import { listSkills } from "@/lib/skills";
 
-export const metadata = { title: "Settings · Case Companion" };
-
 const SECTIONS = [
   ["connections", "Connections", Plug],
   ["display", "Display", Accessibility],
@@ -26,6 +24,8 @@ const SECTIONS = [
   ["skills", "Skills", BookOpen],
   ["prompts", "Prompts and skill", ScrollText],
 ] as const;
+
+export const metadata = { title: "Settings" };
 
 export default async function Settings() {
   const { supabase, user } = await requireUser();

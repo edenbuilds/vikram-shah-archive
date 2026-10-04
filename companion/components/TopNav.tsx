@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Bookmark, FolderOpen, LogOut, Search, Settings2 } from "lucide-react";
 import AskButton from "@/app/AskButton";
+import Logo from "@/components/Logo";
 
 // 04-10-2026: Omkar asked for a better nav bar, after the React Bits portfolio template's floating pill
 // nav. One pill with a sliding highlight; on a phone it floats at the bottom where the thumb is, and the
@@ -47,7 +48,7 @@ export default function TopNav({ email, signOut }: { email: string; signOut: () 
   return (
     <header className="top">
       <Link href="/" className="brand" aria-label="Case Companion, workspace">
-        <span className="brand-mark" aria-hidden>CC</span>
+        <Logo size={30} />
         <span><b>Case Companion</b></span>
       </Link>
       <nav ref={bar} className="pillnav" aria-label="Main">

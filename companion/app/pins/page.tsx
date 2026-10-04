@@ -7,6 +7,8 @@ import { requireUser } from "@/lib/supabase";
 import Tools from "./Tools";
 
 // Her pinned receipts, by matter: a ready list of references (quote, paper, page) for a draft.
+export const metadata = { title: "Pinned" };
+
 export default async function Pins() {
   const { supabase, user } = await requireUser();
   const [pins, { data: matters }] = await Promise.all([getPins(user.email!), supabase.from("matters").select("id, title")]);

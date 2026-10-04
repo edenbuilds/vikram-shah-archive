@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { haptic } from "@/lib/haptic";
 import { useEffect, useState } from "react";
 
 // 04-10-2026: one quiet confirmation after a save that actually landed. Callers fire toast() only after
@@ -32,6 +33,7 @@ export default function Toaster() {
       const d = (e as CustomEvent<{ text: string; tone?: Tone; href?: string }>).detail;
       const t: T = { id: Date.now() + Math.random(), text: d.text, tone: d.tone ?? "ok", href: d.href };
       setItems((xs) => [...xs.slice(-2), t]);
+      haptic(t.tone === "ok" ? "ok" : t.tone === "info" ? "tick" : "warn");
       setTimeout(() => setItems((xs) => xs.filter((x) => x.id !== t.id)), d.href ? 6000 : 2800);
     };
     addEventListener("cc-toast", on);

@@ -34,5 +34,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/|favicon.svg).*)"],
+  // icons, the manifest, the link preview image and robots.txt are public: a crawler or chat app has no session
+  matcher: ["/((?!_next/|favicon|icon|apple-icon|opengraph-image|twitter-image|manifest|robots|pwa/).*)"],
 };

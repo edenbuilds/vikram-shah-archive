@@ -7,7 +7,7 @@ import PinButton from "@/components/PinButton";
 import { pageLabel, printedFor, type Printed } from "@/lib/printed";
 import { getPins, pinId } from "@/lib/study";
 
-export const metadata = { title: "Ask · Case Companion" };
+export const metadata = { title: "Ask" };
 
 type Msg = {
   id: string; role: "user" | "assistant"; content: string; status: string | null; model: string | null; citations: VerifiedClaim[];

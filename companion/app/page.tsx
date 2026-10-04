@@ -8,6 +8,8 @@ import { createMatter, organiseMatter, signIn } from "./actions";
 import { SignInPage } from "@/components/ui/sign-in";
 import { activity, lastVisits, when } from "@/lib/activity";
 import { ArrowRight } from "lucide-react";
+import Logo from "@/components/Logo";
+import { firstName } from "@/lib/name";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
@@ -95,6 +97,8 @@ export default async function Workspace() {
   return (
     <main className="wrap stack" style={{ gap: "1.5rem" }}>
       <datalist id="folders">{folderNames.map((f) => <option key={f} value={f} />)}</datalist>
+      {/* 04-10-2026: Omkar: "always greet the user - Hello Arya - like Anthropic's greeting" */}
+      <p className="greet"><Logo size={40} draw="once" />Hello{firstName(user) && `, ${firstName(user)}`}</p>
       <div className="hero view-head">
         <h1>Your matters</h1>
         <nav className="view-switch" aria-label="View"><Link href="/" aria-current="page">List</Link><Link href="/board">Board</Link></nav>

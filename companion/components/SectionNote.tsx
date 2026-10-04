@@ -24,7 +24,7 @@ export default function SectionNote({ matter, kind, sectionKey, initial }: { mat
     <aside className="note" style={{ marginTop: ".6rem" }}>
       <span className="note-label">Your note</span>
       <div style={{ whiteSpace: "pre-wrap" }}>{text}</div>
-      <button type="button" className="link subtle" onClick={() => setEditing(true)}>edit</button>
+      <button type="button" className="link subtle" data-edit onClick={() => setEditing(true)}>edit</button>
     </aside>
   ) : <button type="button" className="link subtle" style={{ marginTop: ".5rem" }} onClick={() => setEditing(true)}>Add your note</button>;
 }

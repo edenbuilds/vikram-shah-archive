@@ -5,6 +5,8 @@ import { loadBoard } from "@/lib/board-store";
 import { KanbanBoard, type MatterCard } from "@/components/ui/kanban-board";
 import { saveBoard } from "./actions";
 
+export const metadata = { title: "Board" };
+
 export default async function BoardPage() {
   const { supabase, user } = await requireUser();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });

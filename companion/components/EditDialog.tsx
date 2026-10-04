@@ -11,7 +11,7 @@ export default function EditDialog({ action, hidden, fields, label = "Edit" }: {
   const ref = useRef<HTMLDialogElement>(null);
   return (
     <>
-      <button type="button" className="link subtle" onClick={() => ref.current?.showModal()}>{label}</button>
+      <button type="button" className="link subtle" data-edit onClick={() => ref.current?.showModal()}>{label}</button>
       <dialog ref={ref} className="card edit-dialog" onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}>
         <form action={async (f) => { await action(f); ref.current?.close(); toast("Saved"); }} className="stack">
           {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}

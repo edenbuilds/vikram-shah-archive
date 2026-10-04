@@ -138,7 +138,7 @@ export default async function Papers({ params, searchParams }: { params: Promise
 
         <aside className="side">
           {!!docs?.length && (
-            <div className="card">
+            <div className="card" id="export">
               <h3>Download</h3>
               <ExportZip matter={m.id} files={[...new Set(docs.map((d) => d.filename))].map((name) => ({ name, papers: docs.filter((d) => d.filename === name).length }))
                 .filter((f) => f.papers > 1 || docs.length < 60)} />

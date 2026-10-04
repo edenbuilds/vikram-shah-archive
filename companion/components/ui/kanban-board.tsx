@@ -1,4 +1,5 @@
 "use client";
+import { haptic } from "@/lib/haptic";
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition } from "react";
 import {
@@ -55,7 +56,7 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
     try { await save(next); if (msg) toast(msg); } catch { toast("Could not save the board. Try again."); }
   });
 
-  const onStart = ({ active }: DragStartEvent) => { snap.current = live.current; setActive(String(active.id)); from.current = colOf(live.current, String(active.id))?.id ?? null; };
+  const onStart = ({ active }: DragStartEvent) => { haptic("tick"); snap.current = live.current; setActive(String(active.id)); from.current = colOf(live.current, String(active.id))?.id ?? null; };
   const onOver = ({ active, over }: DragOverEvent) => {
     if (!over) return;
     const a = String(active.id), o = String(over.id);
@@ -65,6 +66,7 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
     setBoard(moveCard(b, a, co.id, at));
   };
   const onEnd = ({ active, over }: DragEndEvent) => {
+    haptic("ok");
     setActive(null); lastDrop = Date.now();
     const a = String(active.id);
     const b = live.current, col = colOf(b, a);
@@ -127,7 +129,8 @@ function Column({ id, title, cards, onAdd, children }: { id: string; title: stri
   const [text, setText] = useState("");
   const submit = () => { if (text.trim()) onAdd(text.trim()); setText(""); setAdding(false); };
   return (
-    <section className={`kb-col${isOver ? " is-over" : ""}`} role="listitem" aria-labelledby={`kb-h-${id}`}>
+    <section className={`kb-col${isOver ? " is-over" : ""}`} role="listitem" aria-labelledby={`kb-h-${id}`}
+      onDoubleClick={(e) => { if (!(e.target as Element).closest(".kb-card, button, input")) setAdding(true); }}>{/* double-click empty space to add a task here */}
       <header className="kb-head"><h2 id={`kb-h-${id}`}>{title}</h2><span className="kb-count" aria-label={`${cards.length} cards`}>{cards.length}</span></header>
       <SortableContext id={id} items={cards} strategy={verticalListSortingStrategy}>
         <div ref={setNodeRef} className="kb-list">
@@ -169,7 +172,7 @@ function Card({ id, m, task, onRemove, onRename }: { id: string; m?: MatterCard;
         <button type="button" className="kb-title kb-rename" title="Click to rename" onKeyDown={stop.onKeyDown}
           onClick={() => { if (Date.now() - lastDrop > 300) setEditing(true); }}>{task?.title}</button>
       ) : <p className="kb-title">{task?.title}</p>}
-      {onRemove && <div className="kb-foot" {...stop}><HoldButton size="sm" holdTime={600} onHold={onRemove}>Hold to remove</HoldButton></div>}
+      {onRemove && <div className="kb-foot" {...stop}><HoldButton size="sm" holdTime={600} onHold={() => { haptic("warn"); onRemove(); }}>Hold to remove</HoldButton></div>}
     </div>
   );
   if (!m) return null;

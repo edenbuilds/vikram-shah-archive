@@ -987,3 +987,34 @@ mark.hl { background: color-mix(in oklab, var(--hl, #ffe45c) 70%, transparent); 
 /* Rows spaced into columns (a List of Dates): the stored text is untouched; each gap shows as a hairline between columns and the row wraps like prose */
 .b-spaced { white-space: pre-line; background: var(--paper); padding: .55rem .8rem; border-radius: 4px; line-height: 1.6; }
 .b-spaced .gap { display: inline-block; width: 0; height: 1rem; margin: 0 .65rem; font-size: 0; vertical-align: -.2rem; border-left: 1px solid #b9b3a9; }
+
+/* 04-10-2026: the mark, the greeting and the loading page (Omkar: logo, "Hello Arya", a nice loading animation) */
+.greet { display: flex; align-items: center; gap: .8rem; margin: .3rem 0 -.4rem; font-family: var(--serif); font-weight: 500;
+  font-size: clamp(1.9rem, 4.4vw, 2.7rem); letter-spacing: -.015em; line-height: 1.1; animation: greet-in .5s var(--ease-ui) both; }
+.greet svg { flex: 0 0 auto; }
+@keyframes greet-in { from { opacity: 0; transform: translateY(6px); } }
+/* the C is drawn on, the dot settles beside it, the loop rests a beat, then it wipes off and starts again */
+.logo-draw .arc { stroke-dasharray: 100 200; stroke-dashoffset: 110; animation: logo-draw 1.6s var(--ease-ui) infinite; }
+.logo-draw .dot { transform-box: fill-box; transform-origin: center; animation: logo-dot 1.6s var(--ease-ui) infinite; }
+@keyframes logo-draw { 0% { stroke-dashoffset: 110; } 50%, 78% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -110; } }
+@keyframes logo-dot { 0%, 38% { opacity: 0; transform: scale(.3); } 58%, 78% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.3); } }
+.logo-draw.once .arc { animation: logo-on .9s var(--ease-ui) both; }
+.logo-draw.once .dot { animation: logo-dot-on .5s .55s var(--ease-ui) both; }
+@keyframes logo-on { from { stroke-dashoffset: 110; } to { stroke-dashoffset: 0; } }
+@keyframes logo-dot-on { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: scale(1); } }
+.loading-page { display: grid; place-items: center; min-height: 55vh; opacity: 0; animation: loading-in .3s .25s var(--ease-ui) forwards; }
+.loading-page p { margin: .8rem 0 0; font-size: .85rem; color: var(--subtle); text-align: center; }
+@keyframes loading-in { to { opacity: 1; } }  /* a quick page never shows it */
+.loading-page > div { display: grid; justify-items: center; }
+@media (prefers-reduced-motion: reduce) { .logo-draw .arc, .logo-draw.once .arc { stroke-dashoffset: 0; } .logo-draw .dot, .logo-draw.once .dot { opacity: 1; transform: none; } .greet { animation: none; } .loading-page { opacity: 1; animation: none; } }
+html[data-a11y-motion=reduce] .logo-draw .arc { animation: none; stroke-dashoffset: 0; }
+html[data-a11y-motion=reduce] .logo-draw .dot { animation: none; opacity: 1; transform: none; }
+
+/* share and export menu, the press-and-hold menu, and hover states for touch and for a mouse (04-10-2026) */
+.share { position: relative; flex: 0 0 auto; display: inline-block; }
+.share-menu { right: auto; left: 0; width: min(17rem, 86vw); z-index: 30; transform-origin: top left; }
+.share-menu p { margin: .4rem .6rem .1rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+.quick-menu { position: fixed; right: auto; top: auto; z-index: 90; transform-origin: top left; }
+.quick-menu p { font-family: var(--serif); font-size: .95rem; color: var(--ink); }
+@media (hover: none) { a.matter-card, a.docrow, a.stat { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; } }
+@media (hover: none) { .matter-card:hover { transform: none; box-shadow: none; } .docrow:hover { background: none; } }  /* a tap must not leave a hover behind */

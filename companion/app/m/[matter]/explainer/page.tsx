@@ -1,6 +1,7 @@
 import Link from "next/link";
 import RunStudy from "@/components/RunStudy";
 import Tools from "@/app/pins/Tools";
+import ShareMenu from "@/components/ShareMenu";
 import { admin } from "@/lib/access";
 import { dmyIST, fileUrls, getMatter } from "@/lib/data";
 import { pageLabel, printedFor } from "@/lib/printed";
@@ -11,6 +12,12 @@ import { requireUser } from "@/lib/supabase";
 
 // The matter explained in plain English, in five parts, each sentence footnoted to the page it
 // comes from. Made on request from the papers, and remade only when she says so.
+export async function generateMetadata({ params }: { params: Promise<{ matter: string }> }) {
+  const { supabase } = await requireUser();
+  const m = await getMatter(supabase, (await params).matter);
+  return { title: `Explainer, ${m.short ?? m.title}` };
+}
+
 export default async function Explainer({ params }: { params: Promise<{ matter: string }> }) {
   const { matter } = await params;
   const { supabase } = await requireUser();
@@ -58,7 +65,7 @@ export default async function Explainer({ params }: { params: Promise<{ matter: 
           <h2 style={{ marginBottom: ".2rem" }}>Plain English explainer</h2>
           <p className="muted" style={{ margin: 0 }}>The case in five parts, every sentence with its page.{yours && <> <a href={yours} target="_blank" rel="noreferrer">Your explainer (PDF)</a></>}</p>
         </div>
-        {ex && <Tools text={md} md={md} name={`${m.id} explainer`} copyLabel="Copy explainer" />}
+        {ex && <div className="row" style={{ gap: ".5rem", flexWrap: "nowrap" }}><Tools text={md} md={md} name={`${m.id} explainer`} copyLabel="Copy explainer" /><ShareMenu title={`Explainer, ${m.short ?? m.title}`} /></div>}
       </div>
 
       {!ex && (

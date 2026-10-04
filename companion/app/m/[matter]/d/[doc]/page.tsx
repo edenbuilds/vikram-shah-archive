@@ -5,6 +5,7 @@ import { after } from "next/server";
 import { mode } from "@/lib/jev";
 import { cachedSuggestion, saveSuggestion, suggestStage } from "@/lib/stage-suggest";
 import Link from "next/link";
+import ShareMenu from "@/components/ShareMenu";
 import { printedNumbers } from "@/lib/printed";
 import { notFound } from "next/navigation";
 import { fileUrls, getMatter } from "@/lib/data";
@@ -22,6 +23,13 @@ import Correct from "./Correct";
 import Outline from "./Outline";
 import { getHistory } from "@/lib/corrections";
 import { readInk } from "@/lib/ink";
+
+export async function generateMetadata({ params }: { params: Promise<{ matter: string; doc: string }> }) {
+  const { matter, doc } = await params;
+  const { supabase } = await requireUser();
+  const { data } = await supabase.from("documents").select("title").eq("id", doc).eq("matter_id", matter).maybeSingle();
+  return { title: data?.title ?? "Paper" };
+}
 
 export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
   const { matter, doc } = await params;
@@ -93,6 +101,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
         <div className="row" style={{ flex: "0 0 auto", gap: ".5rem" }}>
           {d.pdf_path && <a className="btn ghost small" href={pdf || `/m/${m.id}/d/${d.id}/download/pdf?view`} target="_blank" rel="noreferrer">Original PDF ↗</a>}
           <Link className="btn ghost small" href={`/ask?m=${m.id}&src=${d.id}`}>Ask about this paper</Link>
+          <ShareMenu title={d.title} items={(["pdf", "liquidtext", "docx", "md", "txt"] as const).map((f) => ({ label: { pdf: "PDF", liquidtext: "PDF with notes (LiquidText)", docx: "Word", md: "Markdown", txt: "Text" }[f], href: `/m/${m.id}/d/${d.id}/download/${f}` }))} />
         </div>
       </div>
 

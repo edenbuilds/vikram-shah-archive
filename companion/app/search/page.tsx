@@ -10,6 +10,8 @@ type Hit = { id: number; doc_id: string; page_start: number; page_end: number; t
 
 // One search over every matter she can see: the same point, order or party across her files.
 // Results are passages as they stand in the papers, grouped by matter, each linked to its page.
+export const metadata = { title: "Search" };
+
 export default async function Search({ searchParams }: { searchParams: Promise<{ q?: string; exact?: string }> }) {
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().slice(0, 200);
