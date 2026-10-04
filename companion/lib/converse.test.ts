@@ -52,3 +52,12 @@ test("when the main model and the first backup fail, the next backup answers and
     assert.deepEqual(hits, ["kimi", "deepseek", "opus"]);
   } finally { globalThis.fetch = real; }
 });
+
+test("final_answer claims sent as JSON text are read the same as an array", async () => {
+  const { listArg } = await import("./agent.ts");
+  const claims = [{ text: "Filed on 12-06-2026", citations: [{ doc_id: "a", page: 2, quote: "12-06-2026" }] }];
+  assert.deepEqual(listArg(JSON.stringify(claims)), claims);
+  assert.deepEqual(listArg(claims), claims);
+  assert.deepEqual(listArg("not json"), []);
+  assert.deepEqual(listArg(undefined), []);
+});

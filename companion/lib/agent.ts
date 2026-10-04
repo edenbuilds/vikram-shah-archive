@@ -97,6 +97,14 @@ function respond(input: unknown[]) {
   });
 }
 
+// 04-10-2026: Kimi K3 on Bedrock sometimes sends final_answer's claims as JSON text instead of an
+// array, and the brief refresh failed with "claims.flatMap is not a function". Accept both.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function listArg(v: unknown): any[] {
+  if (typeof v === "string") try { v = JSON.parse(v); } catch { return []; }
+  return Array.isArray(v) ? v : [];
+}
+
 export async function runAgent(db: SupabaseClient, question: string, scope: Scope, history: { q: string; a: string }[],
   onStep: (s: Step) => void): Promise<AgentResult> {
   const { data: docList } = scope.docIds
@@ -178,7 +186,7 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
       const args = JSON.parse(call.arguments || "{}");
       let out = "";
       if (call.name === "final_answer") {
-        const ans = args as Answer;
+        const ans = { ...args, claims: listArg(args.claims).map((c) => ({ ...c, citations: listArg(c?.citations) })) } as Answer;
         // 25-09-2026: asked to fix its quotes, deepseek-flash gave up with "not_in_papers" and threw away the claims that had passed
         if (ans.status !== "answered" || !ans.claims?.length) { result = first?.claims.length ? first : { status: "not_in_corpus", claims: [], rejected: [] }; out = "received"; }
         else {

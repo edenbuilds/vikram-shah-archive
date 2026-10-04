@@ -38,7 +38,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ matter: st
     const bytes = await src;
     if (!bytes) return new NextResponse("PDF unavailable", { status: 404 });
     const { data: notes } = await supabase.from("annotations").select("page_no, quote, body, tags").eq("doc_id", d.id).order("created_at");
-    const out = await withComments(new Uint8Array(bytes), notes ?? []);
+    // notes brought in from this PDF are already inside it; adding them again would show them twice
+    const out = await withComments(new Uint8Array(bytes), (notes ?? []).filter((n) => !n.tags.includes("from-pdf")));
     const key = `${m.id}/exports/${d.id}-liquidtext.pdf`;
     const db = admin();
     const up = await db.storage.from("companion").upload(key, out, { contentType: "application/pdf", upsert: true });

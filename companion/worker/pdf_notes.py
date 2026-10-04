@@ -36,9 +36,11 @@ def read(pdf: Path) -> tuple[list[dict], bool]:
                 a = a.get_object()
                 kind, body = a.get("/Subtype"), " ".join(str(a.get("/Contents") or "").split())
                 if kind in MARKUP:
-                    q = a.get("/QuadPoints")
-                    xs, ys = (q[0::2], q[1::2]) if q else ([a["/Rect"][0], a["/Rect"][2]], [a["/Rect"][1], a["/Rect"][3]])
-                    quote = words_under(pdf, i, [float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys))], h)
+                    # one quad (8 numbers) per highlighted line; cut each line on its own so a
+                    # multi-line highlight never picks up the rest of its first and last lines
+                    q = [float(v) for v in (a.get("/QuadPoints") or [])]
+                    quads = [q[k:k + 8] for k in range(0, len(q) - 7, 8)] or [[float(v) for v in a["/Rect"]] * 2]
+                    quote = " ".join(filter(None, (words_under(pdf, i, [min(x[0::2]), min(x[1::2]), max(x[0::2]), max(x[1::2])], h) for x in quads)))
                     if quote or body:
                         out.append({"page": i, "quote": quote or None, "body": body or "(highlight)"})
                 elif kind in COMMENT and body:
