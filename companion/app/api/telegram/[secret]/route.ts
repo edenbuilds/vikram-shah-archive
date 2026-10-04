@@ -2,6 +2,7 @@ import { unzipSync } from "fflate";
 import { after } from "next/server";
 import { admin, memberMatters, tokenFor } from "@/lib/access";
 import { runAgent } from "@/lib/agent";
+import { forScope, forget, getMemory, memoryNote, remember } from "@/lib/memory";
 import { resolveScope } from "@/lib/scope";
 import { chatUser, esc, hookSecret, linkChat, say, tg } from "@/lib/telegram";
 
@@ -128,7 +129,9 @@ async function handle(u: any, chat: number, email: string, origin: string) {
       "<b>Ask:</b> type a question in plain words. Name a paper (\"the Shetty withdrawal application\") to ask only that paper. Every answer has quotes, page links and the page scans, or says it isn't in the papers. Reply to an answer to follow up.",
       "<b>Hearing note:</b> /note followed by your note adds it to that hearing's notes, ready to turn into minutes in the app.",
       "",
-      "/matters · /status · /note · /link",
+      "<b>Memory:</b> /remember followed by a preference or reminder keeps it for every app you use (this chat, the website, Claude, ChatGPT). /memory lists it; /forget 2 removes item 2.",
+      "",
+      "/matters · /status · /note · /link · /memory",
     ].join("\n\n"), { reply_markup: { keyboard: [[{ text: "My matters" }, { text: "Processing" }], [{ text: "Hearing note" }, { text: "Help" }]], resize_keyboard: true, is_persistent: true } });
   }
   if (cmd === "/matters") {
@@ -152,6 +155,23 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     return say(chat, "Which hearing is this note for?", { reply_to_message_id: m.message_id,
       reply_markup: { inline_keyboard: hs.map((h) => [{ text: `${ddmmyyyy(h.date)} · ${title(h.matter_id).slice(0, 45)}`, callback_data: `hn:${h.id}` }]) } });
   }
+  if (cmd === "/remember") {
+    const note = text.replace(/^\/remember(@\S+)?\s*/i, "").trim();
+    if (!note) return say(chat, "Send <b>/remember</b> followed by what to keep, e.g. <i>/remember Dates as DD-MM-YYYY in every draft</i>.");
+    const x = await remember(email, note, null, "telegram");
+    return say(chat, `Remembered, for every app you use:\n<i>${esc(x.text)}</i>\n\nSee or edit it all with /memory or in the app: ${origin}/settings#memory`);
+  }
+  if (cmd === "/memory") {
+    const xs = await getMemory(email);
+    return say(chat, xs.length ? `<b>Your memory</b> (the same in the app and your AI apps)\n${xs.map((x, i) => `${i + 1}. ${esc(x.text)}${x.matter ? ` <i>(${esc(title(x.matter))})</i>` : ""}`).join("\n")}\n\n/forget 2 removes item 2.` : "Nothing remembered yet. Send /remember followed by a preference or reminder.");
+  }
+  if (cmd === "/forget") {
+    const xs = await getMemory(email);
+    const x = xs[Number(text.split(/\s+/)[1]) - 1];
+    if (!x) return say(chat, "Send <b>/forget</b> with the item's number from /memory, e.g. <i>/forget 2</i>.");
+    await forget(email, x.id);
+    return say(chat, `Removed: <i>${esc(x.text)}</i>`);
+  }
   if (cmd === "/link") {
     const t = tokenFor(email);
     return say(chat, `<b>Sign in (no password)</b>\n${origin}/k/${t}\n\n<b>App connection (ChatGPT, Claude, Cursor…)</b>\n<code>${origin}/api/mcp/${t}</code>\nSetup steps: ${origin}/settings\n\nKeep both private.`);
@@ -168,7 +188,8 @@ async function handle(u: any, chat: number, email: string, origin: string) {
     // one progress line, edited as the reading goes, removed when the answer lands
     const status = (await say(chat, `<i>Looking in ${esc(scope.label.slice(0, 120))}…</i>`, { reply_to_message_id: m.message_id })).result?.message_id;
     let shown = Date.now();
-    const r = await runAgent(db, text, { matterIds: scope.matterIds, docIds: scope.docIds }, context ? [{ q: "(earlier in this chat)", a: context.slice(0, 2000) }] : [], (st) => {
+    const memory = memoryNote(forScope(await getMemory(email).catch(() => []), scope.matterIds));
+    const r = await runAgent(db, text, { matterIds: scope.matterIds, docIds: scope.docIds, memory }, context ? [{ q: "(earlier in this chat)", a: context.slice(0, 2000) }] : [], (st) => {
       if (!status || Date.now() - shown < 2500) return;
       shown = Date.now();
       tg("editMessageText", { chat_id: chat, message_id: status, parse_mode: "HTML", text: `<i>${esc(st.text.slice(0, 200))}…</i>` });

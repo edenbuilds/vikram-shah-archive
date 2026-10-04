@@ -36,3 +36,14 @@ with tempfile.TemporaryDirectory() as d:
     except RuntimeError as e:
         assert "not a readable PDF" in str(e)
 print("worker formats ok: md, txt, docx, png, pdf with a preamble")
+
+
+# her own OCR text lines up with the scan's pages, or is not used at all
+from worker import split_ocr  # noqa: E402
+assert split_ocr("one\ftwo\fthree\f", 3) == ["one", "two", "three"]
+assert split_ocr("--- Page 1 ---\nalpha\n--- Page 2 ---\nbeta", 2) == ["\nalpha\n", "\nbeta"]
+assert split_ocr("[Page 1 of 2]\na\nPage 2\nb", 2) == ["\na\n", "\nb"]
+assert split_ocr("one\ftwo", 3) is None  # 2 pages of text for a 3-page scan: read the scans instead
+assert split_ocr("Page 2\nb\nPage 1\na", 2) is None  # out of order
+assert split_ocr("just one page", 1) == ["just one page"]
+print("worker given OCR ok")

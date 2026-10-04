@@ -44,6 +44,10 @@ TOOLS = (["pdftotext", "-v"], ["pdftoppm", "-v"], ["pdfinfo", "-v"])
 
 def tools_broken() -> str | None:
     """Name of a PDF tool this Mac can't run, or None. Jobs wait in the queue rather than fail."""
+    # 04-10-2026: the disk filled to 190 MB free; rasterising a volume would have failed mid-job
+    free = __import__("shutil").disk_usage(tempfile.gettempdir()).free
+    if free < 1 << 30:
+        return f"disk nearly full ({free >> 20} MB free)"
     for cmd in TOOLS:
         try:
             subprocess.run(cmd, capture_output=True, timeout=30)
@@ -184,6 +188,36 @@ def fetch_upload(path: str) -> tuple[bytes, bool]:
         return b"".join(parts), True
 
 
+PAGE_MARK = re.compile(r"(?im)^[ \t]*[-=*#\[ ]*(?:page|pg\.?|p\.)[ \t]*(\d{1,4})(?:[ \t]*(?:of|/)[ \t]*\d+)?[ \t]*[-=*\] ]*$")
+
+
+def split_ocr(text: str, n: int) -> list[str] | None:
+    """Her own OCR text for an n-page scan, one string per page, or None if its pages can't be
+    lined up with the scan's. Page breaks: form feeds (pdftotext, Tesseract, ABBYY), or lines that
+    are only "Page 3" / "--- Page 3 ---" / "[Page 3 of 9]" numbered 1..n in order."""
+    if "\f" in text:
+        pages = text.split("\f")
+        if len(pages) == n + 1 and not pages[-1].strip():
+            pages = pages[:-1]  # a trailing form feed after the last page
+        return pages if len(pages) == n else None
+    marks = list(PAGE_MARK.finditer(text))
+    if [int(m.group(1)) for m in marks] == list(range(1, n + 1)):
+        return [text[m.end():(marks[k + 1].start() if k + 1 < n else len(text))] for k, m in enumerate(marks)]
+    return [text] if n == 1 else None
+
+
+def given_ocr(path: str, n: int) -> list[str] | None:
+    """The OCR text uploaded with this scan (<path>.ocr.txt), split into its n pages, or None."""
+    try:
+        raw = corpus.storage_get(f"{path}.ocr.txt").decode("utf-8", errors="replace")
+    except RuntimeError:
+        return None
+    pages = split_ocr(raw, n)
+    if pages is None:
+        print(f"  uploaded OCR text doesn't line up with the {n} scanned pages; reading the scans instead", flush=True)
+    return pages
+
+
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 IMAGES = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tif", ".tiff", ".gif", ".bmp", ".webp"}
 WORD = {".doc", ".docx", ".rtf", ".odt", ".wordml", ".webarchive", ".html", ".htm"}
@@ -248,11 +282,16 @@ def process(job: dict, ocr, force: bool = False) -> str:
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)
+        # 04-10-2026: Arya and Omkar asked to upload papers they have already OCR'd. Her text is used
+        # as given for each page that has some; a page it leaves empty is read as usual.
+        given = given_ocr(job["storage_path"], n)
 
         def read(i: int) -> tuple[str, str | None]:
             jpg = rasterize(pdf_path, i, tmp)  # tmp/page-NNN.jpg, kept until filed
             text, src = layer[i - 1], "pdftotext"
-            if len(text) < THIN and ocr:
+            if given and given[i - 1].strip():
+                text, src = given[i - 1].strip(), "uploaded-ocr"
+            elif len(text) < THIN and ocr:
                 r = ocr(jpg)
                 v = r.strip()
                 if len(v) > len(text):  # density pick, per page

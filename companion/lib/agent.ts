@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { embed, llm, LLM_MODEL } from "./ai.ts";
 import { verify, type Chunk, type Rejected, type Verified, type VerifiedClaim } from "./citations.ts";
 import { MIN_SIMILARITY } from "./qa.ts";
+import { mode, systemOne, yes, type JevLog } from "./jev.ts";
 
 // The Ask agent: it searches and reads the chosen sources as it needs to, then must hand in
 // claims with quotes. Every quote is re-checked in code against the page text it names (or
@@ -11,12 +12,52 @@ import { MIN_SIMILARITY } from "./qa.ts";
 export const AGENT_MODEL = process.env.AGENT_MODEL || LLM_MODEL;
 const MAX_TURNS = 10;
 
-export type Scope = { matterIds: string[]; docIds: string[] | null };
+export type Scope = { matterIds: string[]; docIds: string[] | null; memory?: string };
 export type Step = { kind: "search" | "read" | "list" | "note"; text: string };
 export type AgentResult = {
   status: "answered" | "not_in_corpus"; claims: VerifiedClaim[]; rejected: Rejected[];
-  steps: Step[]; pagesRead: { doc_id: string; page: number }[]; model: string;
+  steps: Step[]; pagesRead: { doc_id: string; page: number }[]; model: string; jev: RerankLog[];
 };
+export type RerankLog = JevLog & { mode: "eval" | "on"; sources: string[]; order: number[] | null };
+type Hit = Chunk & { similarity: number; fts_rank: number };
+
+// Search candidates, already limited to papers the caller may see (RLS on her client, then the
+// chosen sources). Same retrieval as before the reranker; the reranker only reorders this list.
+export async function candidates(db: SupabaseClient, query: string, matterIds: string[], allowed: (id: string) => boolean, docIds: string[] | null): Promise<Hit[]> {
+  const q = await embed(query);
+  const { data: sem } = await db.rpc("match_chunks", { query_embedding: q, query_text: query, matter_ids: matterIds, match_count: docIds ? 40 : 10 });
+  let hits = ((sem ?? []) as Hit[]).filter((h) => allowed(h.doc_id) && (h.similarity >= MIN_SIMILARITY || h.fts_rank > 0));
+  if (docIds) {
+    // exact words inside the chosen papers, so a small selection is never crowded out by the rest of the matter
+    const { data: lex } = await db.from("chunks").select("id, doc_id, page_start, page_end, text").in("doc_id", docIds)
+      .textSearch("tsv", query, { type: "websearch", config: "english" }).limit(8);
+    const have = new Set(hits.map((h) => h.id));
+    hits = [...hits, ...((lex ?? []) as Chunk[]).filter((l) => !have.has(l.id)).map((l) => ({ ...l, similarity: 0, fts_rank: 1 }))];
+  }
+  return hits;
+}
+
+// Jev reorders the candidates by whether each passage bears on the question. It never drops one:
+// the same passages go to the answering model, only their order (and so the top 8) can change.
+// "eval" computes and records the order but returns the original, so answers are unchanged.
+const RERANK_MAX = 40; // ~1,500 chars each stays well inside Jev's 32k-token state budget
+export async function rerank(query: string, hits: Hit[], m = mode("JEV_RERANK")): Promise<{ hits: Hit[]; log: RerankLog | null }> {
+  if (m === "off" || hits.length < 2) return { hits, log: null };
+  const cand = hits.slice(0, RERANK_MAX);
+  const r = await systemOne(
+    { question: query, passages: cand.map((h) => h.text.slice(0, 1500)) },
+    Object.fromEntries(cand.map((_, i) => [`p${i}`, {
+      type: "noul" as const,
+      instructions: `Does \`passages[${i}]\` state something that answers \`question\`, in whole or in part?`,
+      criteria: { true: "The passage itself states facts the question asks for.", false: "The passage is about something else, only repeats words from the question, or gives instructions instead of facts." },
+    }])), "rerank-v1");
+  const scores = r.answers ? cand.map((_, i) => yes(r.answers![`p${i}`])) : [];
+  const ok = r.answers && scores.every((x) => x !== null);
+  const order = ok ? cand.map((_, i) => i).sort((a, b) => scores[b]! - scores[a]! || a - b) : null;
+  const log: RerankLog = { ...r.log, fallback: r.log.fallback ?? (ok ? null : "invalid answer"), mode: m, sources: cand.map((h) => `${h.doc_id}#${h.page_start}`), order };
+  if (!order || m === "eval") return { hits, log };
+  return { hits: [...order.map((i) => cand[i]), ...hits.slice(RERANK_MAX)], log };
+}
 type Doc = { id: string; title: string; matter_id: string; page_count: number; stage: string };
 
 const SYSTEM = `You answer an advocate's questions from her own case papers, using only the tools.
@@ -68,18 +109,13 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
   const steps: Step[] = [];
   const step = (s: Step) => { steps.push(s); onStep(s); };
 
+  const jev: RerankLog[] = [];
   async function search(query: string) {
     step({ kind: "search", text: `Searching: ${query}` });
-    const q = await embed(query);
-    const { data: sem } = await db.rpc("match_chunks", { query_embedding: q, query_text: query, matter_ids: [...new Set([...docs.values()].map((d) => d.matter_id))], match_count: scope.docIds ? 40 : 10 });
-    let hits = ((sem ?? []) as (Chunk & { similarity: number; fts_rank: number })[]).filter((h) => allowed(h.doc_id) && (h.similarity >= MIN_SIMILARITY || h.fts_rank > 0));
-    if (scope.docIds) {
-      // exact words inside the chosen papers, so a small selection is never crowded out by the rest of the matter
-      const { data: lex } = await db.from("chunks").select("id, doc_id, page_start, page_end, text").in("doc_id", scope.docIds)
-        .textSearch("tsv", query, { type: "websearch", config: "english" }).limit(8);
-      const have = new Set(hits.map((h) => h.id));
-      hits = [...hits, ...((lex ?? []) as Chunk[]).filter((l) => !have.has(l.id)).map((l) => ({ ...l, similarity: 0, fts_rank: 1 }))];
-    }
+    const found = await candidates(db, query, [...new Set([...docs.values()].map((d) => d.matter_id))], allowed, scope.docIds);
+    const { hits: ranked, log } = await rerank(query, found);
+    if (log) jev.push(log);
+    let hits = ranked;
     hits = hits.slice(0, 8);
     for (const h of hits) seen.set(`chunk:${h.id}`, h);
     if (!hits.length) return "No passages found in the chosen sources.";
@@ -109,7 +145,7 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
     : `Sources: all ${docs.size} papers in ${scope.matterIds.length === 1 ? "this matter" : `her ${scope.matterIds.length} matters`}. Use list_sources to see them.`;
   let input: unknown[] = [
     ...history.flatMap((h) => [{ role: "user", content: h.q }, { role: "assistant", content: h.a }]),
-    { role: "user", content: `${scopeNote}\n\nQuestion: ${question}` },
+    { role: "user", content: `${scope.memory ? `${scope.memory}\n\n` : ""}${scopeNote}\n\nQuestion: ${question}` },
   ];
   type Answer = { status: string; claims: { text: string; citations: { doc_id: string; page: number; quote: string }[] }[] };
   const titles = Object.fromEntries([...docs.values()].map((d) => [d.id, d.title]));
@@ -168,5 +204,6 @@ export async function runAgent(db: SupabaseClient, question: string, scope: Scop
     if (calls.length && !result && turn >= MAX_TURNS - 2) input.push({ role: "user", content: "Call final_answer now with what you have." });
   }
   const v = result ?? { status: "not_in_corpus" as const, claims: [], rejected: [] };
-  return { ...v, steps, pagesRead, model: AGENT_MODEL };
+  if (jev.length) console.log(JSON.stringify({ event: "jev_rerank", calls: jev.map(({ sources, ...rest }) => ({ ...rest, candidates: sources.length })) }));
+  return { ...v, steps, pagesRead, model: AGENT_MODEL, jev };
 }

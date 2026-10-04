@@ -8,6 +8,7 @@ import { pageLabel, printedFor } from "@/lib/printed";
 import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/drafting";
 import { getReading, readingMarkdown } from "@/lib/reading";
 import { getSkill, listSkills } from "@/lib/skills";
+import { clean, forScope, forget, getMemory, memoryNote, remember } from "@/lib/memory";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
@@ -37,7 +38,10 @@ export function register(server: McpServer, ctx: Ctx) {
     description: "START HERE. The rules (no receipt, no statement; no guesses, no theories), how to work, what a receipt looks like, and what is in the advocate's workspace today (live).",
     inputSchema: {},
     annotations: { readOnlyHint: true },
-  }, async () => text(await readme(db, ctx.matters, ctx.origin)));
+  }, async () => {
+    const mem = forScope(await getMemory(ctx.email).catch(() => []), ctx.matters);
+    return text(`${await readme(db, ctx.matters, ctx.origin)}${mem.length ? `\n\n## Her memory\n${memoryNote(mem)}\n(get_memory lists them with ids; remember / forget change them, always after her yes.)` : "\n\n## Her memory\nEmpty. When she states a lasting preference or reminder, offer to remember it (remember, preview first)."}`);
+  });
   server.registerResource("readme", "case-companion://readme", { title: "Case Companion: guide for AI agents", mimeType: "text/markdown" },
     async (uri: URL) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readme(db, ctx.matters, ctx.origin) }] }));
 
@@ -135,7 +139,8 @@ export function register(server: McpServer, ctx: Ctx) {
     const ids = scope(matter_id);
     if (!ids.length) return matter_id ? noMatter(matter_id) : text("No matters in this workspace yet.");
     // same agent as the Ask button and Telegram: searches, reads, then every quote is checked
-    const r = await runAgent(db, question, { matterIds: ids, docIds: null }, [], () => {});
+    const memory = memoryNote(forScope(await getMemory(ctx.email).catch(() => []), ids));
+    const r = await runAgent(db, question, { matterIds: ids, docIds: null, memory }, [], () => {});
     if (r.status !== "answered") return text(`Not found in the papers on file.${r.rejected.length ? ` (${r.rejected.length} draft statement(s) were withheld because their quotes did not match the papers.)` : ""}`);
     const docs = new Map<string, Doc>();
     for (const c of r.claims.flatMap((c) => c.citations)) if (!docs.has(c.doc_id)) { const d = await doc(c.doc_id); if (d) docs.set(d.id, d); }
@@ -221,6 +226,41 @@ export function register(server: McpServer, ctx: Ctx) {
     if (!uid) return fail("Could not identify the signed-in advocate; nothing saved.");
     const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note, tags: ["via-ai"], created_by: uid });
     return error ? fail(`Not saved: ${error.message}`) : text(`Saved.\n${preview}`);
+  });
+
+  // Her memory, shared with the website and Telegram: what is saved here shows there and back.
+  server.registerTool("get_memory", {
+    title: "Her memory (preferences and reminders)",
+    description: "The advocate's saved preferences and reminders, the same list she sees in the app and on Telegram. Her work product, not the record: follow them as how to work, never cite them as facts.",
+    inputSchema: {},
+    annotations: { readOnlyHint: true },
+  }, async () => {
+    const xs = forScope(await getMemory(ctx.email), ctx.matters);
+    return text(xs.length ? xs.map((x) => `- [${x.id}] ${x.text}${x.matter ? ` (matter: ${x.matter})` : ""}`).join("\n") : "Nothing remembered yet.");
+  });
+
+  server.registerTool("remember", {
+    title: "Remember a preference or reminder (asks first)",
+    description: "Save a lasting preference or reminder to her memory, shared across the app, Telegram and her AI apps. Never a fact about a case. First call WITHOUT confirm to get a preview; show it; call again with confirm: true only after she says yes.",
+    inputSchema: { text: z.string().min(2).max(500), matter_id: z.string().optional(), confirm: z.boolean().optional() },
+  }, async ({ text: t, matter_id, confirm }) => {
+    if (matter_id && !scope(matter_id).length) return noMatter(matter_id);
+    const preview = `Remember${matter_id ? ` (for ${matter_id} only)` : " (for all matters)"}:\n"${clean(t)}"`;
+    if (!confirm) return text(`PREVIEW (nothing saved yet). Show this to the advocate and ask if she wants it saved:\n\n${preview}`);
+    const x = await remember(ctx.email, t, matter_id ?? null, "ai");
+    return text(`Saved as [${x.id}]. It now shows in the app (Settings, Memory) and on Telegram (/memory).\n${preview}`);
+  });
+
+  server.registerTool("forget", {
+    title: "Forget a memory item (asks first)",
+    description: "Remove one item from her memory by its id (from get_memory). First call WITHOUT confirm to get a preview; call again with confirm: true only after she says yes.",
+    inputSchema: { id: z.string(), confirm: z.boolean().optional() },
+  }, async ({ id, confirm }) => {
+    const x = (await getMemory(ctx.email)).find((m) => m.id === id);
+    if (!x) return fail(`No memory item "${id}". Call get_memory for the ids.`);
+    if (!confirm) return text(`PREVIEW (nothing removed yet). Ask the advocate if she wants this removed:\n"${x.text}"`);
+    await forget(ctx.email, id);
+    return text(`Removed: "${x.text}"`);
   });
 
   // ChatGPT connectors and deep research look for tools named exactly `search` and `fetch`.

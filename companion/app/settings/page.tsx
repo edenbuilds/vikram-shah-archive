@@ -1,4 +1,6 @@
-import { Bell, BookOpen, KeyRound, Link2, MessageCircle, Plug, ScrollText } from "lucide-react";
+import { Bell, BookOpen, KeyRound, Link2, MessageCircle, NotebookPen, Plug, ScrollText } from "lucide-react";
+import { getMemory } from "@/lib/memory";
+import Memory from "./Memory";
 import { headers } from "next/headers";
 import { tokenFor } from "@/lib/access";
 import { PROMPTS } from "@/lib/mcp";
@@ -16,6 +18,7 @@ const SECTIONS = [
   ["telegram", "Telegram", MessageCircle],
   ["signin", "Sign-in link", KeyRound],
   ["notifications", "Notifications", Bell],
+  ["memory", "Memory", NotebookPen],
   ["skills", "Skills", BookOpen],
   ["prompts", "Prompts and skill", ScrollText],
 ] as const;
@@ -30,7 +33,7 @@ export default async function Settings() {
   const signIn = `${origin}/k/${token}`;
   const tgLink = `https://t.me/arya_case_archivebot?start=${startCode(email)}`;
   const chats = Object.entries(await linkedChats()).filter(([, e]) => e === email).length;
-  const [{ data: matters }, skills] = await Promise.all([supabase.from("matters").select("id, title").order("created_at"), listSkills()]);
+  const [{ data: matters }, skills, memory] = await Promise.all([supabase.from("matters").select("id, title").order("created_at"), listSkills(), getMemory(email).catch(() => [])]);
 
   const cursor = `https://cursor.com/en/install-mcp?name=case-companion&config=${Buffer.from(JSON.stringify({ url })).toString("base64")}`;
   const vscode = `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: "case-companion", type: "http", url }))}`;
@@ -97,6 +100,14 @@ export default async function Settings() {
         <section id="notifications" className="card stack">
           <h2 style={{ margin: 0 }}>Notifications</h2>
           <p className="muted" style={{ margin: 0 }}>When an upload is read and filed, or fails, the people with access to that matter get an email{chats ? " and a Telegram message" : ""}. Emails go to {email}.</p>
+        </section>
+
+        <section id="memory" className="stack">
+          <div>
+            <h2>Memory</h2>
+            <p className="muted" style={{ margin: 0 }}>Preferences and reminders that follow you everywhere: this app, Telegram (/remember, /memory) and your connected AI apps on any device. A change made in one shows in the others. They guide how answers are written; facts still come only from the papers.</p>
+          </div>
+          <Memory items={memory} matters={matters ?? []} />
         </section>
 
         <section id="skills" className="stack">

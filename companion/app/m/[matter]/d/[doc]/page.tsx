@@ -1,5 +1,8 @@
 import EditDialog from "@/components/EditDialog";
-import { renameDocument } from "@/app/actions";
+import { moveDocument, renameDocument } from "@/app/actions";
+import { after } from "next/server";
+import { mode } from "@/lib/jev";
+import { cachedSuggestion, saveSuggestion, suggestStage } from "@/lib/stage-suggest";
 import Link from "next/link";
 import { printedNumbers } from "@/lib/printed";
 import { notFound } from "next/navigation";
@@ -38,6 +41,16 @@ export default async function DocPage({ params, searchParams }: { params: Promis
   const kinds = [["date", "Dates"], ["amount", "Amounts"], ["ref", "Case numbers"]] as const;
   const [scan, pdf] = await fileUrls(supabase, m, [pg?.jpeg_path ?? `pages/${d.id}/page-${String(p).padStart(3, "0")}.jpg`, d.pdf_path ?? ""]);
   const stage = m.stages.find((s) => s.id === d.stage);
+  // Jev stage suggestion: computed after the page is sent (never slows it), shown only in "on" mode,
+  // only when it is not "uncertain" and differs from where the paper is. She moves it herself.
+  const stageMode = mode("JEV_STAGES");
+  const sug = stageMode === "off" ? null : await cachedSuggestion(d, m.stages);
+  if (stageMode !== "off" && !sug) after(async () => {
+    const s = await suggestStage(d, (texts ?? []).slice(0, 2).map((t) => t.text ?? "").join("\n\n"), m.stages);
+    await saveSuggestion(m.id, d.id, s);
+    console.log(JSON.stringify({ event: "jev_stage", matter: m.id, doc: d.id, uncertain: s.uncertain, ...s.log }));
+  });
+  const suggested = stageMode === "on" && sug && !sug.uncertain && sug.stage !== d.stage ? m.stages.find((s) => s.id === sug.stage) : null;
   const blocks = toBlocks(d.transcript ?? "");
   const pageKeyed = blocks.some((b) => b.kind === "page");
 
@@ -47,6 +60,15 @@ export default async function DocPage({ params, searchParams }: { params: Promis
         <div style={{ minWidth: 0, flex: "1 1 32rem" }}>
           <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}`}>Papers</Link> / {stage?.title ?? d.stage}</p>
           <h1 style={{ fontSize: "clamp(1.25rem, 2.4vw, 1.6rem)", margin: 0 }}>{d.title}</h1>
+          {suggested && (
+            <form action={moveDocument} className="subtle" style={{ margin: ".2rem 0" }}>
+              <input type="hidden" name="doc" value={d.id} />
+              <input type="hidden" name="stage" value={suggested.id} />
+              Suggested stage: {suggested.title}{" "}
+              <span title="The model's own probability for this option, not a measured accuracy">(model probability {Math.round((sug!.probability ?? 0) * 100)}%)</span>{" "}
+              <button className="link">Move here</button>
+            </form>
+          )}
           <EditDialog action={renameDocument} hidden={{ doc: d.id }} label="Rename" fields={[{ name: "title", label: "Title", value: d.title }]} />
           <div className="doc-facts">
             <span className="pill">{d.page_count} pages</span>

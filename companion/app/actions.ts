@@ -13,6 +13,8 @@ import { norm } from "@/lib/citations";
 import { getMatter } from "@/lib/data";
 import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins } from "@/lib/study";
 import { removeSkill, saveSkill } from "@/lib/skills";
+import { markMoved } from "@/lib/stage-suggest";
+import { editMemory, forget, remember } from "@/lib/memory";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const opt = (f: FormData, k: string) => str(f, k) || null;
@@ -261,6 +263,37 @@ export async function renameDocument(f: FormData) {
   if (!visible || !title) return;
   must(await admin().from("documents").update({ title }).eq("id", id));
   revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
+
+// A paper moves only to one of its own matter's stages. Records whether she took the Jev suggestion.
+export async function moveDocument(f: FormData) {
+  const { supabase } = await requireUser();
+  const id = str(f, "doc"), to = str(f, "stage");
+  const { data: visible } = await supabase.from("documents").select("matter_id").eq("id", id).maybeSingle();
+  if (!visible) return;
+  const m = await getMatter(supabase, visible.matter_id);
+  if (!m.stages.some((s) => s.id === to)) return;
+  must(await admin().from("documents").update({ stage: to }).eq("id", id));
+  await markMoved(visible.matter_id, id, to).catch(() => {});
+  revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
+
+// Her memory (lib/memory.ts): a matter-specific item only for a matter she can see.
+export async function saveMemory(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const email = user.email!.toLowerCase(), id = str(f, "id"), text = str(f, "text"), matter = opt(f, "matter");
+  if (id) await editMemory(email, id, text);
+  else {
+    if (matter && !(await supabase.from("matters").select("id").eq("id", matter).maybeSingle()).data) return;
+    await remember(email, text, matter, "web");
+  }
+  revalidatePath("/settings");
+}
+
+export async function deleteMemory(id: string) {
+  const { user } = await requireUser();
+  await forget(user.email!.toLowerCase(), id);
+  revalidatePath("/settings");
 }
 
 // ── study aids: pins and the dates in the record ────────────────────────────

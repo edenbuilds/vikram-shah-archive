@@ -1,5 +1,6 @@
 import { runAgent, type Step } from "@/lib/agent";
 import { db } from "@/lib/supabase";
+import { forScope, getMemory, memoryNote } from "@/lib/memory";
 
 export const maxDuration = 300;
 
@@ -37,11 +38,12 @@ export async function POST(req: Request) {
       const send = (o: unknown) => c.enqueue(enc.encode(JSON.stringify(o) + "\n"));
       send({ type: "thread", thread });
       try {
-        const r = await runAgent(supabase, question, { matterIds, docIds: sources }, history.slice(-4), (s: Step) => send({ type: "step", ...s }));
+        const memory = memoryNote(forScope(await getMemory(auth.user!.email!).catch(() => []), matterIds));
+        const r = await runAgent(supabase, question, { matterIds, docIds: sources, memory }, history.slice(-4), (s: Step) => send({ type: "step", ...s }));
         await supabase.from("qa_messages").insert({
           thread_id: thread, role: "assistant", status: r.status, model: r.model, citations: r.claims,
           content: r.status === "answered" ? r.claims.map((x) => x.text).join("\n") : "Not found in the papers on file.",
-          retrieved: { steps: r.steps, pages: r.pagesRead, rejected: r.rejected, sources },
+          retrieved: { steps: r.steps, pages: r.pagesRead, rejected: r.rejected, sources, jev: r.jev },
         });
         send({ type: "done", thread });
       } catch (e) {

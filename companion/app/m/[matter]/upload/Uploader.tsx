@@ -5,8 +5,9 @@ import { unzip } from "fflate";
 import { useEffect, useRef, useState } from "react";
 import { queueUpload } from "@/app/actions";
 import type { Stage } from "@/lib/taxonomies";
+import { pairOcr } from "@/lib/ocr-pair";
 
-type Row = { file: File; title: string; state: string; pct?: number };
+type Row = { file: File; ocr?: File; title: string; state: string; pct?: number };
 
 // What the worker turns into a PDF (worker/worker.py as_pdf). A zip is opened here and each paper in it
 // goes up on its own, so one bad file in a zip does not hold up the rest.
@@ -42,7 +43,13 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
       else bad.push(f.name);
     }
     setSkipped(bad);
-    setRows((rs) => [...rs, ...all.map((file) => ({ file, title: file.name.replace(/\.[a-z0-9]+$/i, ""), state: "ready" }))]);
+    // re-pair everything not yet sent, so a scan and its OCR text can be added in either order
+    setRows((rs) => {
+      const sent = rs.filter((r) => r.state !== "ready");
+      const titles = new Map(rs.map((r) => [r.file, r.title]));
+      return [...sent, ...pairOcr([...rs.filter((r) => r.state === "ready").flatMap((r) => (r.ocr ? [r.file, r.ocr] : [r.file])), ...all])
+        .map(({ file, ocr }) => ({ file, ocr, title: titles.get(file) ?? file.name.replace(/\.[a-z0-9]+$/i, ""), state: "ready" }))];
+    });
   }
   // Files go up in 6 MB pieces (<path>.part000, .part001, ...), each retried on its own, and the worker
   // joins them back into the exact original. 2026-09-22: a 70 MB volume sent as 45 MB pieces failed
@@ -96,6 +103,14 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
           }
         }
       }
+      if (!failed && r.ocr) {
+        // her own OCR text, next to the scan; the worker uses it page by page (split on form feeds or "Page N" lines)
+        try {
+          const token = (await supabase.auth.getSession()).data.session?.access_token;
+          if (!token) throw new Error("signed out, please sign in again");
+          await put(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/companion/${`${path}.ocr.txt`.split("/").map(encodeURIComponent).join("/")}`, token, new Blob([await r.ocr.text()]), () => {});
+        } catch (e) { failed = `OCR text: ${(e as Error).message}`; }
+      }
       if (failed) { set(`failed: ${failed}. Press Upload to try again.`); continue; }
       try {
         await queueUpload({ matter, stage, title: r.title.trim() || r.file.name, filename: r.file.name, path });
@@ -118,7 +133,7 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
         onDrop={(e) => { e.preventDefault(); setOver(false); add(e.dataTransfer.files); }}>
         <input ref={pick} type="file" multiple accept={ACCEPT} onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
         <b>Drop files here</b>
-        <span className="subtle">or click to choose. PDF, Word, Markdown or text, photos of pages (JPG, PNG, HEIC), or a zip of any of these. A volume with an index is split into its papers.</span>
+        <span className="subtle">or click to choose. PDF, Word, Markdown or text, photos of pages (JPG, PNG, HEIC), or a zip of any of these. A volume with an index is split into its papers. Already OCR&apos;d? A searchable PDF keeps its own text; or add the scan with its OCR text file of the same name (Appeal.pdf + Appeal.txt) and that text is used, page by page.</span>
       </label>
       {!!skipped.length && <p className="err" style={{ margin: 0 }}>Not added, this kind of file can&apos;t be read yet: {skipped.join(", ")}. Save it as a PDF and add that.</p>}
 
@@ -144,7 +159,7 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
               <label style={{ flex: "4 1 18rem" }}>Title as it should appear
                 <input type="text" value={r.title} onChange={(e) => setRows((rs) => rs.map((x, k) => (k === i ? { ...x, title: e.target.value } : x)))} />
               </label>
-              <span className="subtle" style={{ flex: "1 1 8rem" }}>{(r.file.size / 1e6).toFixed(1)} MB · {r.state}{r.pct !== undefined && r.state === "uploading" ? ` ${r.pct}%` : ""}
+              <span className="subtle" style={{ flex: "1 1 8rem" }}>{(r.file.size / 1e6).toFixed(1)} MB{r.ocr ? ` · with your OCR text (${r.ocr.name})` : ""} · {r.state}{r.pct !== undefined && r.state === "uploading" ? ` ${r.pct}%` : ""}
                 {r.pct !== undefined && <span className="bar" role="progressbar" aria-valuenow={r.pct} aria-valuemin={0} aria-valuemax={100} style={{ display: "block" }}><i style={{ width: `${r.pct}%`, background: "var(--seal)" }} /></span>}
               </span>
               {!running && <button type="button" className="link subtle" style={{ flex: "0 0 auto" }} onClick={() => setRows((rs) => rs.filter((_, k) => k !== i))}>remove</button>}
