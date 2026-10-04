@@ -1,3 +1,4 @@
+import { activity, activityNote } from "@/lib/activity";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { admin } from "@/lib/access";
@@ -41,7 +42,8 @@ export function register(server: McpServer, ctx: Ctx) {
     annotations: { readOnlyHint: true },
   }, async () => {
     const mem = forScope(await getMemory(ctx.email).catch(() => []), ctx.matters);
-    return text(`${await readme(db, ctx.matters, ctx.origin)}${mem.length ? `\n\n## Her memory\n${memoryNote(mem)}\n(get_memory lists them with ids; remember / forget change them, always after her yes.)` : "\n\n## Her memory\nEmpty. When she states a lasting preference or reminder, offer to remember it (remember, preview first)."}`);
+    const recent = activityNote(await activity(db, ctx.email, ctx.matters, ctx.origin).catch(() => []), 15);
+    return text(`${await readme(db, ctx.matters, ctx.origin)}${recent ? `\n\n## ${recent}` : ""}${mem.length ? `\n\n## Her memory\n${memoryNote(mem)}\n(get_memory lists them with ids; remember / forget change them, always after her yes.)` : "\n\n## Her memory\nEmpty. When she states a lasting preference or reminder, offer to remember it (remember, preview first)."}`);
   });
   server.registerResource("readme", "case-companion://readme", { title: "Case Companion: guide for AI agents", mimeType: "text/markdown" },
     async (uri: URL) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readme(db, ctx.matters, ctx.origin) }] }));
@@ -234,13 +236,15 @@ export function register(server: McpServer, ctx: Ctx) {
 
   // Her memory, shared with the website and Telegram: what is saved here shows there and back.
   server.registerTool("get_memory", {
-    title: "Her memory (preferences and reminders)",
-    description: "The advocate's saved preferences and reminders, the same list she sees in the app and on Telegram. Her work product, not the record: follow them as how to work, never cite them as facts.",
+    title: "Her memory (preferences, reminders, and where she left off)",
+    description: "The advocate's saved preferences and reminders (the same list she sees in the app and on Telegram), then her recent activity, kept automatically: papers she opened, uploads, notes, questions, hearings, pins, each dated with a link. Her work product, not the record: follow it as context, never cite it as facts.",
     inputSchema: {},
     annotations: { readOnlyHint: true },
   }, async () => {
     const xs = forScope(await getMemory(ctx.email), ctx.matters);
-    return text(xs.length ? xs.map((x) => `- [${x.id}] ${x.text}${x.matter ? ` (matter: ${x.matter})` : ""}`).join("\n") : "Nothing remembered yet.");
+    const saved = xs.length ? xs.map((x) => `- [${x.id}] ${x.text}${x.matter ? ` (matter: ${x.matter})` : ""}`).join("\n") : "Nothing remembered yet.";
+    const recent = activityNote(await activity(db, ctx.email, ctx.matters, ctx.origin).catch(() => []), 25);
+    return text(`${saved}${recent ? `\n\n${recent}` : ""}`);
   });
 
   server.registerTool("remember", {

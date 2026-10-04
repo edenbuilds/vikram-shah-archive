@@ -4,15 +4,17 @@ import { db } from "@/lib/supabase";
 import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
 import { Archive, Folder, MoreHorizontal } from "lucide-react";
 import { getPrefs } from "@/lib/prefs";
-import { createMatter, organiseMatter } from "./actions";
-import Entry from "./Entry";
+import { createMatter, organiseMatter, signIn } from "./actions";
+import { SignInPage } from "@/components/ui/sign-in";
+import { activity, lastVisits, when } from "@/lib/activity";
+import { ArrowRight } from "lucide-react";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
 export default async function Workspace() {
   const supabase = await db();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return <Entry />;
+  if (!auth.user) return <SignInPage action={signIn} />;
   const user = auth.user;
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
   const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }, prefs] = await Promise.all([
@@ -23,6 +25,10 @@ export default async function Workspace() {
     supabase.from("hearings").select("id, matter_id, date, forum, purpose").eq("status", "upcoming").gte("date", today).order("date"),
     getPrefs(user.email!),
   ]);
+  // automatic memory (lib/activity.ts): where she left off, from her own trail and the matters' rows
+  const ids = (matters ?? []).map((m) => m.id);
+  const [visits, recent] = await Promise.all([lastVisits(user.email!).catch(() => []), activity(supabase, user.email!, ids).catch(() => [])]);
+  const resume = visits.find((v) => ids.includes(v.matter));
   const stat = (id: string) => {
     const d = (docs ?? []).filter((x) => x.matter_id === id);
     return {
@@ -48,9 +54,9 @@ export default async function Workspace() {
     const filled = m.stages.map((st) => ({ st, n: s.byStage(st.id) })).filter((x) => x.n);
     return (
       <div key={m.id} className={`matter-wrap${isArchived ? " is-archived" : ""}`}>
-        <Link href={`/m/${m.id}`} className="matter-card">
+        <Link href={`/m/${m.id}`} className="matter-card" data-kind={m.kind}>
           <div className="row" style={{ alignItems: "center", gap: ".4rem" }}>
-            <span className="pill seal" style={{ flex: "0 0 auto" }}>{m.kind}</span>
+            <span className="pill seal kind" data-kind={m.kind} style={{ flex: "0 0 auto" }}>{m.kind}</span>
             {s.next && <span className="pill warn" style={{ flex: "0 0 auto" }}>Next hearing {fmtDate(s.next)}</span>}
           </div>
           <h2>{m.title}</h2>
@@ -89,14 +95,38 @@ export default async function Workspace() {
   return (
     <main className="wrap stack" style={{ gap: "1.5rem" }}>
       <datalist id="folders">{folderNames.map((f) => <option key={f} value={f} />)}</datalist>
-      <div className="hero">
-        <p className="kicker">Workspace</p>
+      <div className="hero view-head">
         <h1>Your matters</h1>
-        <p className="muted" style={{ margin: 0 }}>Every paper on file, searchable to the page. Private to each matter&apos;s members. Signed in as {user.email}.</p>
+        <nav className="view-switch" aria-label="View"><Link href="/" aria-current="page">List</Link><Link href="/board">Board</Link></nav>
       </div>
 
+      {(resume || recent.length > 0) && (
+        <section className="resume">
+          {resume && (
+            <Link href={`/m/${resume.matter}/d/${resume.doc}?p=${resume.page}`} className="resume-main">
+              <span>
+                <span className="kicker">Pick up where you left off</span>
+                <span className="resume-title">{resume.title}</span>
+                <span className="resume-meta">p. {resume.page} · {all.find((m) => m.id === resume.matter)?.title}</span>
+              </span>
+              <ArrowRight size={16} aria-hidden />
+            </Link>
+          )}
+          {recent.length > 0 && (
+            <details className="resume-log">
+              <summary>Recent activity <span>{recent.length > 99 ? "99+" : recent.length}</span></summary>
+              <ol>
+                {recent.slice(0, 12).map((e) => (
+                  <li key={e.key}>{e.link ? <Link href={e.link}>{e.text}</Link> : e.text}<time>{when(e.at)}</time></li>
+                ))}
+              </ol>
+            </details>
+          )}
+        </section>
+      )}
+
       {soon.map((h) => (
-        <div key={h.id} className="ask-first">
+        <div key={h.id} className="ask-first hearing-soon">
           <p>Hearing <b>{h.date === today ? "today" : h.date === tomorrow ? "tomorrow" : dmy(h.date)}</b> in <b>{all.find((m) => m.id === h.matter_id)?.title}</b>{h.purpose ? `: ${h.purpose}` : ""}. Want the one-page brief?</p>
           <Link className="btn" href={`/m/${h.matter_id}/brief`}>Open the brief</Link>
         </div>

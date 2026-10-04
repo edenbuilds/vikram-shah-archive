@@ -7,6 +7,26 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 04-10-2026 (late): memory, sign-in, Intercom design, board, accessibility
+
+Shipped (deployed to case-companion.edenbuilds.me; build and 41/41 lib tests green):
+- **Automatic memory** (`lib/activity.ts`): visits, uploads, notes, questions, hearings, filed papers and pins merged into a per-person timeline (`_system/activity/*.timeline.json`, 300 kept). Shown on home ("Pick up where you left off", Recent activity), in Settings > Memory, in Ask's context, and in MCP `read_me_first` / `get_memory`, always labelled "not facts from the papers".
+- **Sign in**: `components/ui/sign-in.tsx` (21st.dev SignInPage ported to plain CSS), email link only, the supplied video on the right. `app/Entry.tsx` deleted.
+- **Design**: DESIGN.md v2 (Intercom warm cream, 4px corners, hairlines). Newsreader 500 headings, Switzer UI, IBM Plex Mono labels. Omkar then asked for colour, not black: primary buttons, toasts and the brand mark are violet `#0007cb`; matter kinds have colours (writ violet, arbitration amber, RERA green, civil terracotta) on tags and card top borders; board columns are tinted by stage; hearings this week get an amber wash.
+- **Explainer**: one sentence per row with violet receipt chips (superscripts no longer push lines apart).
+- **Board** at `/board` (List | Board switch on home): `components/ui/kanban-board.tsx` on dnd-kit (mouse, touch with a 180ms press, keyboard). State lives in `lib/board.ts` (reconcile/move, tested) and `lib/board-store.ts` (server only, `_system/board/*.json`), saved by `app/board/actions.ts`, which re-checks matter ids.
+- **Display and accessibility** in Settings (`components/A11yPrefs.tsx`): text size, line spacing, reading font, weight, contrast, motion, link underlines. Kept per device, applied before paint.
+- Phone account menu no longer sits under the nav row. Headings and prose use text-wrap balance/pretty (no widows).
+
+Verified: `scripts/board-check.mjs` (system Chrome) passed for: four columns render, a dropped card does not open the matter, add a task survives a reload, hold to remove, iPad touch drag survives a reload, no sideways scroll on iPad landscape. Responsive check passed 24 pages x 4 devices before the board and the colours. The live login serves the video.
+
+**Open (fix first):**
+- `scripts/board-check.mjs`: the **mouse drag** and **keyboard move** checks FAILED (no toast, column unchanged after a reload). Debug with a mid-drag screenshot: is `.is-lifted` present, which `over` id fires? Suspects: `onDragOver` moving the card before `onDragEnd` reads `board` from a stale closure, and `closestCorners` picking the source column. Consider reading from a ref in onEnd.
+- The colour pass and the board are not re-checked on all devices: run `scripts/responsive-check.mjs` (add `/board`) and look at the phone, iPad 13" portrait and landscape screenshots.
+- Test memory end to end: open a paper, then MCP `get_memory` and `read_me_first` should list it under "Where she left off".
+- `scripts/liquidtext-check.mjs` needs a re-run with its fixtures (the last run was queued behind Hazel).
+- The changes from this section are not committed if the commit below failed; check `git log -1`.
+
 ## 04-10-2026 (final): notes in every format, no size cap, lossless shrink, the redesign
 
 **What shipped**
@@ -194,6 +214,9 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 - **Key rotation:** see Env vars above.
 
 ## Paste-ready prompt for the next agent
+
+"Read companion/HANDOFF.md, the section '04-10-2026 (late)', then DESIGN.md. First fix the board's mouse drag and keyboard move: run `node scripts/board-check.mjs https://case-companion.edenbuilds.me \"$LINK\"` (LINK is read from line 13 of ~/Downloads/case-secrets-env/case-companion-keys.md into a variable, never printed) until every line says PASS. Then add /board to scripts/responsive-check.mjs, run it and look at the iPhone and iPad Pro 13 landscape screenshots of home, board, explainer and settings for colour and layout problems (no black surfaces; violet primary; kind colours). Then test the automatic memory through MCP get_memory and read_me_first. Commit as omkar1sonawane@gmail.com, push, deploy with npm_config_cache=\"$TMPDIR/npxc\" npx -y vercel@latest deploy --prod --yes, and update HANDOFF.md."
+
 
 > Work in /Users/omkar/vikram-shah-archive/companion (Case Companion, live at case-companion.edenbuilds.me). Read HANDOFF.md, then DESIGN.md for any UI work. Rules:
 > - Never invent data; every statement needs a receipt (paper, page, verbatim quote), and never offer theories.

@@ -1,3 +1,4 @@
+import { activity, activityNote } from "@/lib/activity";
 import { runAgent, type Step } from "@/lib/agent";
 import { db } from "@/lib/supabase";
 import { forScope, getMemory, memoryNote } from "@/lib/memory";
@@ -38,7 +39,8 @@ export async function POST(req: Request) {
       const send = (o: unknown) => c.enqueue(enc.encode(JSON.stringify(o) + "\n"));
       send({ type: "thread", thread });
       try {
-        const memory = memoryNote(forScope(await getMemory(auth.user!.email!).catch(() => []), matterIds));
+        const memory = [memoryNote(forScope(await getMemory(auth.user!.email!).catch(() => []), matterIds)),
+          activityNote(await activity(supabase, auth.user!.email!, matterIds).catch(() => []), 10)].filter(Boolean).join("\n\n");
         const r = await runAgent(supabase, question, { matterIds, docIds: sources, memory }, history.slice(-4), (s: Step) => send({ type: "step", ...s }));
         await supabase.from("qa_messages").insert({
           thread_id: thread, role: "assistant", status: r.status, model: r.model, citations: r.claims,

@@ -1,3 +1,4 @@
+import { noteVisit } from "@/lib/activity";
 import EditDialog from "@/components/EditDialog";
 import { moveDocument, renameDocument } from "@/app/actions";
 import { after } from "next/server";
@@ -25,7 +26,7 @@ import { readInk } from "@/lib/ink";
 export default async function DocPage({ params, searchParams }: { params: Promise<{ matter: string; doc: string }>; searchParams: Promise<{ p?: string; pg?: string }> }) {
   const { matter, doc } = await params;
   const sp = await searchParams;
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
   const m = await getMatter(supabase, matter);
   const { data: d } = await supabase.from("documents").select("*").eq("id", doc).eq("matter_id", m.id).maybeSingle();
   if (!d) notFound();
@@ -34,6 +35,8 @@ export default async function DocPage({ params, searchParams }: { params: Promis
   const numbers = printedNumbers(texts ?? []);
   const byPrinted = sp.pg ? Number(Object.entries(numbers).find(([, n]) => n === Number(sp.pg))?.[0]) : 0;
   const p = Math.min(Math.max(1, byPrinted || Number(sp.p) || 1), d.page_count);
+  // her trail for the automatic memory (lib/activity.ts), written after the page is sent
+  after(() => noteVisit(user.email!, { matter: m.id, doc: d.id, title: d.title, page: p }).catch(() => {}));
 
   const [{ data: pg }, { data: notes }, { data: cols }] = await Promise.all([
     supabase.from("document_pages").select("page_no, jpeg_path, text_source").eq("doc_id", d.id).eq("page_no", p).maybeSingle(),

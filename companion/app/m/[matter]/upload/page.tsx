@@ -41,7 +41,7 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
                 </span>
                 <span className="job-state">
                   <StatusMark size={18} status={j.status === "done" ? "done" : j.status === "failed" ? "failed" : j.status === "processing" ? "running" : "pending"}
-                    progress={j.status === "processing" && j.page_count ? j.pages_done / j.page_count : undefined} color="var(--ink)" doneColor="var(--lime)" errorColor="var(--seal)" />
+                    progress={j.status === "processing" && j.page_count ? j.pages_done / j.page_count : undefined} color="var(--ink)" doneColor="var(--lime)" errorColor="var(--danger)" />
                   
                   {j.status === "done" ? (papersFrom(j.filename) > 1 ? `filed as ${papersFrom(j.filename)} papers` : "filed") : j.status}{j.status === "processing" && j.page_count ? ` · ${j.pages_done}/${j.page_count} pp.` : ""}
                 </span>
