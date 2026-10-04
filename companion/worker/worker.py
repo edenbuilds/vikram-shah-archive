@@ -257,6 +257,14 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 IMAGES = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tif", ".tiff", ".gif", ".bmp", ".webp"}
 WORD = {".doc", ".docx", ".rtf", ".odt", ".wordml", ".webarchive", ".html", ".htm"}
 TEXT = {".md", ".markdown", ".txt", ".text", ".csv"}
+# 04-10-2026: Microsoft MarkItDown (github.com/microsoft/markitdown) reads these into Markdown, which is
+# then printed like a text file. Word, images and PDFs keep their own paths, which keep the page layout.
+OFFICE = {".pptx", ".xlsx", ".xls", ".epub", ".msg", ".ipynb", ".json", ".xml"}
+
+
+def markitdown_text(src: Path) -> str:
+    from markitdown import MarkItDown
+    return MarkItDown(enable_plugins=False).convert(str(src)).text_content
 
 
 def html_pdf(html: Path, out: Path) -> bytes:
@@ -268,7 +276,8 @@ def html_pdf(html: Path, out: Path) -> bytes:
 
 def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     """Every upload becomes a PDF: PDFs as they are, photos of pages through sips, Word/RTF/ODT through
-    textutil and Chrome, Markdown and text printed as they are written (nothing rewritten)."""
+    textutil and Chrome, Markdown and text printed as they are written (nothing rewritten), and
+    PowerPoint/Excel/EPUB/Outlook/JSON/XML through MarkItDown first."""
     # 2026-09-22: a .pdf with a few bytes before "%PDF-" (allowed by the spec) was refused as "Can't read .pdf"
     if b"%PDF-" in data[:1024]:
         return data[data.index(b"%PDF-"):]
@@ -285,9 +294,9 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
         else:
             html = src
         return html_pdf(html, out)
-    if ext in TEXT:
+    if ext in TEXT or ext in OFFICE:
         import html as h
-        text = data.decode("utf-8", errors="replace")
+        text = markitdown_text(src) if ext in OFFICE else data.decode("utf-8", errors="replace")
         page = tmp / "converted.html"
         page.write_text('<meta charset="utf-8"><style>body{font:11pt/1.5 Georgia,serif;margin:2cm;white-space:pre-wrap}</style>' + h.escape(text))
         return html_pdf(page, out)

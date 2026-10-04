@@ -1,8 +1,8 @@
-// Models over plain fetch. Reading, drafting and Ask run on xAI (grok-4.3: $1.25 in / $2.50 out per
-// million, the cheapest general model there). Embeddings: Gemini through the AI Gateway (below).
+// Models over plain fetch. Ask, drafting and Telegram run on Kimi K3 through Bedrock's Flex tier (04-10-2026:
+// $1.50 in / $7.50 out per million, paid from AWS credits; it passed 5/5 agent checks). Reading orders use READING_MODEL. Embeddings: Gemini through the AI Gateway (below).
 // 25-09-2026: the OpenAI account ran out of credit and took Ask, Telegram and reading orders down with it.
 
-export const LLM_MODEL = process.env.LLM_MODEL || "grok-4.3";
+export const LLM_MODEL = process.env.LLM_MODEL || "bedrock:global.moonshotai.kimi-k3@flex";
 // The model name picks the provider; all four serve the Responses API.
 //   deepseek-*      DeepSeek
 //   openai.*        AWS Bedrock (Mumbai), bearer API key
@@ -34,8 +34,10 @@ async function gatewayKey(): Promise<string | undefined> {
 
 // 02-10-2026: the xAI account ran dry and took Ask, briefs and reading down again (OpenAI did the same
 // on 25-09-2026). When a provider is out of credit or down, the same request goes down this list.
-// 04-10-2026: Bedrock (Luna 6) and the AI Gateway joined; the gateway's free tier serves small models only.
-const BACKUPS = (process.env.LLM_BACKUPS || "deepseek-v4-pro,bedrock:global.anthropic.claude-opus-4-6-v1,bedrock:global.moonshotai.kimi-k3,openai/gpt-5.4-nano").split(",").map((m) => m.trim()).filter(Boolean);
+// 04-10-2026: Kimi K3 (Bedrock) became the main model; Opus 4.6 (Bedrock) and the AI Gateway's free tier
+// (small models only) joined the list. Main: Kimi on Flex. Order after it: Kimi standard (Flex can be
+// throttled at peak), DeepSeek, Opus 4.6, gateway.
+const BACKUPS = (process.env.LLM_BACKUPS || "bedrock:global.moonshotai.kimi-k3,deepseek-v4-pro,bedrock:global.anthropic.claude-opus-4-6-v1,openai/gpt-5.4-nano").split(",").map((m) => m.trim()).filter(Boolean);
 const dryUntil: Record<string, number> = {};
 
 class Dry extends Error {}
@@ -45,11 +47,17 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
   if (p.key === "oidc") p.key = await gatewayKey();
   if (!p.key) throw new Dry(`${p.name} API key is not configured`);
   if ((dryUntil[p.name] ?? 0) > Date.now()) throw new Dry(`The ${p.name} account has no credit left`);
+  if ((dryUntil[body.model] ?? 0) > Date.now()) throw new Dry(`${body.model} is not available to this account right now`);
   const conv = body.model.startsWith("bedrock:");
-  const r = await fetch(conv ? `${p.url}/model/${encodeURIComponent(body.model.slice(8))}/converse` : `${p.url}/${path}`, {
+  // "bedrock:<id>@flex" asks for Bedrock's Flex tier: half price, measured ~15% slower (04-10-2026, Kimi K3).
+  const [id, tier] = body.model.slice(8).split("@");
+  const r = await fetch(conv ? `${p.url}/model/${encodeURIComponent(id)}/converse` : `${p.url}/${path}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${p.key}`, "Content-Type": "application/json" },
-    body: JSON.stringify(conv ? toConverse(body) : body),
+    body: JSON.stringify(conv ? { ...toConverse(body), ...(tier && { serviceTier: { type: tier } }) } : body),
+    // 04-10-2026: Kimi K3 thinks for up to ~70 s on a long answer; past 2 minutes the next model gets a turn
+    // inside the 300 s function limit instead of the whole request timing out.
+    signal: AbortSignal.timeout(120_000),
   }).catch((e) => { throw new Dry(`${p.name} unreachable: ${(e as Error).message}`); });
   if (!r.ok) {
     const text = await r.text();
@@ -57,6 +65,9 @@ async function call<T>(path: string, body: { model: string; [k: string]: unknown
       dryUntil[p.name] = Date.now() + 10 * 60_000;
       throw new Dry(`The ${p.name} account has no credit left, so the papers can't be read right now. Add credit at ${p.console} and try again.`);
     }
+    // 04-10-2026: Bedrock answers 403 for a model the account can't use (Opus 4.6 until a card is on file);
+    // skip that model, not the provider, so Kimi on the same key still runs.
+    if (r.status === 403) dryUntil[body.model] = Date.now() + 10 * 60_000;
     if (r.status !== 400) throw new Dry(`${p.name} ${r.status}: ${text.slice(0, 200)}`);
     throw new Error(`model ${r.status}: ${text.slice(0, 300)}`);
   }
@@ -105,7 +116,8 @@ export function fromConverse(d: { output?: { message?: { content?: Record<string
 }
 
 export async function llm<T = unknown>(path: "responses", body: { model: string; [k: string]: unknown }): Promise<T> {
-  const chain = [body.model, ...BACKUPS.filter((m) => provider(m).name !== provider(body.model).name)];
+  // Every backup but the model itself; a provider or model known to be dry fails fast in call().
+  const chain = [body.model, ...BACKUPS.filter((m) => m !== body.model)];
   const failed: string[] = [];
   for (const model of chain) {
     try {

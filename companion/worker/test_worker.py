@@ -65,3 +65,15 @@ _plain = Path(tempfile.mkdtemp()) / "plain.pdf"
 _p = PdfWriter(); _p.add_blank_page(100, 100); _p.write(str(_plain))
 assert bookmarks(_plain, 1) == []
 print("worker bookmarks ok")
+
+# MarkItDown formats: an Excel sheet comes out as a PDF whose text layer still has every cell.
+from openpyxl import Workbook  # noqa: E402
+import io  # noqa: E402
+_wb = Workbook(); _ws = _wb.active
+_ws.append(["Hearing", "Date"]); _ws.append(["Final arguments", "12-11-2026"])
+_buf = io.BytesIO(); _wb.save(_buf)
+_xt = Path(tempfile.mkdtemp())
+_xp = _xt / "x.pdf"; _xp.write_bytes(as_pdf(_buf.getvalue(), _xt, "schedule.xlsx"))
+_xtext = subprocess.run(["pdftotext", str(_xp), "-"], capture_output=True, text=True).stdout
+assert "Final arguments" in _xtext and "12-11-2026" in _xtext, _xtext[:300]
+print("worker markitdown ok: xlsx")
