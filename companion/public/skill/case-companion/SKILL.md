@@ -36,6 +36,14 @@ full guide and what is in her workspace today.
 
 `list_matters` → `list_papers` → `ask_papers` or `search_papers` → `read_pages` → `verify_quote` → answer.
 
+## Her notes, bookmarks and LiquidText
+
+- `get_notes` returns her sticky notes. Tag `from-pdf` (or `liquidtext`) means a highlight or comment
+  she made in another app and uploaded inside the PDF; its quote was cut from the PDF itself.
+- `add_note` saves a sticky note, or with `bookmark: true` a named bookmark to a page. Preview first.
+- `get_paper` lists the PDF's own bookmarks, hers, and a "PDF with notes" link that opens in
+  LiquidText or any PDF reader with her notes as comments.
+
 ## Answer format
 
 One short statement per line, each followed by its receipt:

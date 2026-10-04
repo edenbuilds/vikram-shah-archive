@@ -14,7 +14,7 @@
     "load-archive": "python3 worker/load_archive.py",
     "worker": "python3 worker/worker.py",
     "eval:qa": "node --env-file=.env.local --experimental-strip-types scripts/eval-qa.ts",
-    "test": "node --experimental-strip-types --test lib/*.test.ts && python3 worker/corpus.py && python3 worker/test_worker.py",
+    "test": "node --experimental-strip-types --test lib/*.test.ts && python3 worker/corpus.py && python3 worker/test_worker.py && python3 worker/local_ocr.py && python3 worker/pdf_notes.py",
     "mcp": "node --env-file=.env.local mcp/server.mjs"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "lucide-react": "^1.47.0",
     "mcp-handler": "^2.2.0",
     "next": "^15.5.25",
+    "pdf-lib": "^1.17.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zod": "^4.6.2"

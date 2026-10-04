@@ -80,6 +80,8 @@ For long papers, \`get_paper\` shows the contents (sections and page ranges) so 
 \`add_note\` asks first: call it without \`confirm\`, show her the preview, and call it again with
 \`confirm: true\` only after she says yes. A quote attached to a note must be exact. With \`bookmark: true\`
 it saves a named bookmark to a page instead; \`get_paper\` lists the PDF's own bookmarks and hers.
+Notes tagged \`from-pdf\` or \`liquidtext\` are her highlights and comments from another app, brought in from
+the uploaded PDF. \`get_paper\` also gives a "PDF with notes" link (her notes as PDF comments) for LiquidText.
 
 ## Drafting
 
@@ -132,7 +134,8 @@ one entry per paper with its page: call \`reading_order\` rather than rebuilding
 
 - Each volume was split into its papers using the volume's own index. \`source\` shows the original
   file and pages, e.g. "Sateesha Shetty.pdf, pp. 133-278".
-- Text was read from the scans (Google Vision). Quote it exactly as given, even where a word looks wrong.
+- Text was read from the scans (Google Vision, or a backup engine; each page's \`text_source\` says which). Quote it
+  exactly as given, even where a word looks wrong.
 - Some exhibits are in Marathi with an English translation bound after them. Quote the language the
   page is in; do not translate a quote yourself.
 - The PDF and the page scan are the record. The text is a reading of them.

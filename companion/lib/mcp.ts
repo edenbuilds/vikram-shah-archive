@@ -88,7 +88,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("get_paper", {
     title: "Get a paper's details",
-    description: "A paper's title, stage, page count, source volume and its contents (sections with page ranges). Use read_pages for its text.",
+    description: "A paper's title, stage, page count, source volume, its contents (the PDF's bookmarks or sections with page ranges), her own bookmarks, and a PDF-with-notes link for LiquidText. Use read_pages for its text.",
     inputSchema: { doc_id: z.string() },
     annotations: { readOnlyHint: true },
   }, async ({ doc_id }) => {
@@ -99,7 +99,8 @@ export function register(server: McpServer, ctx: Ctx) {
     const { data: marks } = await db.from("annotations").select("page_no, body").eq("doc_id", d.id).contains("tags", ["bookmark"]).order("page_no");
     const mine = (marks ?? []).map((b) => `- ${b.body} (p. ${b.page_no}) ${link(d.matter_id, d.id, b.page_no ?? undefined)}`);
     return text([`# ${d.title}`, `id: ${d.id}`, `matter: ${d.matter_id}`, `stage: ${d.stage}`, `pages: ${d.page_count}`,
-      d.source_path && `source: ${d.source_path}`, `open: ${link(d.matter_id, d.id)}`, secs.length ? `\nContents:\n${secs.join("\n")}` : "", mine.length ? `\nHer bookmarks (her work product):\n${mine.join("\n")}` : ""].filter(Boolean).join("\n"));
+      d.source_path && `source: ${d.source_path}`, `open: ${link(d.matter_id, d.id)}`,
+      `PDF with her notes as comments (opens in LiquidText): ${link(d.matter_id, d.id)}/download/liquidtext`, secs.length ? `\nContents:\n${secs.join("\n")}` : "", mine.length ? `\nHer bookmarks (her work product):\n${mine.join("\n")}` : ""].filter(Boolean).join("\n"));
   });
 
   server.registerTool("read_pages", {
@@ -194,7 +195,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("get_notes", {
     title: "Get the advocate's notes",
-    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper.",
+    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), from-pdf / liquidtext (her highlight or comment from another app, quote cut from the uploaded PDF).",
     inputSchema: { matter_id: z.string(), doc_id: z.string().optional() },
     annotations: { readOnlyHint: true },
   }, async ({ matter_id, doc_id }) => {

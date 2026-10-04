@@ -34,6 +34,7 @@ from corpus import ARCHIVE_ROOT, rest
 sys.path.insert(0, str(ARCHIVE_ROOT / "scripts"))
 from assemble import page_transcript, pdftotext_pages, slug_tokens, split_sections  # noqa: E402
 import notify  # noqa: E402
+import pdf_notes  # noqa: E402
 import volume_index  # noqa: E402
 
 # 02-10-2026: macOS 27 removed Rosetta, so the Intel poppler in /usr/local/bin stopped running
@@ -77,7 +78,7 @@ class OCRText(str):
 LLAMA = "https://api.cloud.llamaindex.ai/api/v1/parsing"
 
 
-def llamaparse(jpg) -> OCRText:
+def llamaparse(jpg) -> str:
     """One page image through LlamaParse. 30-09-2026: the backup when Google Vision is down or fails
     a page, so a scan is read rather than waiting on gcloud or failing the job."""
     key = os.environ["LLAMA_CLOUD_API_KEY"]
@@ -89,9 +90,7 @@ def llamaparse(jpg) -> OCRText:
     for _ in range(100):  # ~5 min; a page usually takes ~10 s
         st = corpus._req("GET", f"{LLAMA}/job/{job['id']}", None, auth)["status"]
         if st == "SUCCESS":
-            t = OCRText(corpus._req("GET", f"{LLAMA}/job/{job['id']}/result/text", None, auth)["text"])
-            t.src = "llamaparse"
-            return t
+            return corpus._req("GET", f"{LLAMA}/job/{job['id']}/result/text", None, auth)["text"]
         if st not in ("PENDING", "RUNNING"):
             raise RuntimeError(f"LlamaParse {st} for {Path(jpg).name}")
         time.sleep(3)
@@ -99,33 +98,53 @@ def llamaparse(jpg) -> OCRText:
 
 
 def vision():
-    """Page OCR: Google Vision via gcloud ADC, with LlamaParse as the backup. None when neither is
-    available. Refreshes the Vision token before it expires and once more on failure; a page that
-    neither engine can read fails the job (RuntimeError) rather than being filed as a silent [ILLEGIBLE]."""
-    backup = llamaparse if os.environ.get("LLAMA_CLOUD_API_KEY") else None
+    """Page OCR chain: Google Vision (gcloud ADC), then LlamaParse, then the free engines on this Mac
+    (local_ocr: OCRmyPDF/Tesseract, PaddleOCR, surya, docling, marker, MinerU), each skipped when not
+    set up. OCR_CHAIN reorders or limits it. None when nothing is available. A page that every engine
+    fails on fails the job (RuntimeError) rather than being filed as a silent [ILLEGIBLE]."""
+    import local_ocr
+    engines: dict = {}
     try:
         import google_vision_ocr as gv
         gv.load_env_google()
         tok = {"v": gv.access_token(), "at": time.time()}
+
+        def google(jpg):
+            for attempt in range(2):
+                if attempt or time.time() - tok["at"] > TOKEN_TTL:
+                    try:
+                        tok.update(v=gv.access_token(), at=time.time())
+                    except (Exception, SystemExit) as e:  # noqa: BLE001
+                        err = e
+                        continue
+                try:
+                    return gv.vision_page(tok["v"], jpg)
+                except (Exception, SystemExit) as e:  # noqa: BLE001  gv exits the process on HTTP errors
+                    err = e
+            raise RuntimeError(f"Google Vision OCR failed: {str(err)[:300]}")
+        engines["google-vision"] = google
     except (Exception, SystemExit) as e:  # noqa: BLE001
-        print(f"vision OCR unavailable ({e}); {'using LlamaParse' if backup else 'thin pages keep their text layer'}", file=sys.stderr)
-        return backup
+        print(f"vision OCR unavailable ({e})", file=sys.stderr)
+    if os.environ.get("LLAMA_CLOUD_API_KEY"):
+        engines["llamaparse"] = llamaparse
+    for n in local_ocr.available():
+        engines[n] = lambda jpg, n=n: local_ocr.run(n, Path(jpg))
+    order = [n.strip() for n in os.environ.get("OCR_CHAIN", "").split(",") if n.strip()] or list(engines)
+    chain = [(n, engines[n]) for n in order if n in engines]
+    print(f"OCR chain: {' > '.join(n for n, _ in chain) or 'none (thin pages keep their text layer)'}", file=sys.stderr)
+    if not chain:
+        return None
 
     def ocr(jpg):
-        for attempt in range(2):
-            if attempt or time.time() - tok["at"] > TOKEN_TTL:
-                try:
-                    tok.update(v=gv.access_token(), at=time.time())
-                except (Exception, SystemExit) as e:  # noqa: BLE001
-                    err = e
-                    continue
+        errs = []
+        for name, fn in chain:
             try:
-                return OCRText(gv.vision_page(tok["v"], jpg))
-            except (Exception, SystemExit) as e:  # noqa: BLE001  gv exits the process on HTTP errors
-                err = e
-        if backup:
-            return backup(jpg)
-        raise RuntimeError(f"Google Vision OCR failed: {str(err)[:300]}")
+                t = OCRText(fn(jpg))
+                t.src = name
+                return t
+            except (Exception, SystemExit) as e:  # noqa: BLE001  the next engine reads the page
+                errs.append(f"{name}: {str(e)[:200]}")
+        raise RuntimeError("every OCR engine failed: " + "; ".join(errs))
     return ocr
 
 
@@ -284,6 +303,8 @@ def as_pdf(data: bytes, tmp: Path, filename: str) -> bytes:
     ext = Path(filename).suffix.lower()
     src, out = tmp / f"in{ext}", tmp / "converted.pdf"
     src.write_bytes(data)
+    if ext == ".ltproj":
+        return pdf_notes.ltproj_pdf(data)
     if ext in IMAGES:
         subprocess.run(["sips", "-s", "format", "pdf", str(src), "--out", str(out)], check=True, capture_output=True)
         return out.read_bytes()
@@ -324,6 +345,7 @@ def process(job: dict, ocr, force: bool = False) -> str:
         pdf_path.write_bytes(pdf)
         n = page_count(pdf_path)
         marks = bookmarks(pdf_path, n)  # read while the temp PDF exists
+        pnotes, from_lt = pdf_notes.read(pdf_path)
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)
@@ -421,6 +443,13 @@ def process(job: dict, ocr, force: bool = False) -> str:
         "doc_id": doc_id, "page_no": i, "jpeg_path": f"{mid}/pages/{doc_id}/page-{i:03d}.jpg",
         "text": t or None, "text_source": sources[i - 1],
     } for i, t in enumerate(texts, 1)], corpus.chunk_units([(i, i, t) for i, t in enumerate(texts, 1) if t]))
+    # ponytail: highlights and comments come in for a paper filed whole; a volume split into parts skips them.
+    if pnotes:
+        rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=cs.{{from-pdf}}")  # a refile replaces, never doubles
+        tags = ["from-pdf", "liquidtext"] if from_lt else ["from-pdf"]
+        rest("POST", "annotations", "", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
+                                          "tags": tags, "created_by": job["created_by"]} for a in pnotes])
+        print(f"  {len(pnotes)} highlights/comments brought in as her notes", flush=True)
     return doc_id
 
 

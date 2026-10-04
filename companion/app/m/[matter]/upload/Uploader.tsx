@@ -11,8 +11,8 @@ type Row = { file: File; ocr?: File; title: string; state: string; pct?: number 
 
 // What the worker turns into a PDF (worker/worker.py as_pdf). A zip is opened here and each paper in it
 // goes up on its own, so one bad file in a zip does not hold up the rest.
-const OK = /\.(pdf|jpe?g|png|heic|heif|tiff?|gif|bmp|webp|docx?|rtf|odt|html?|md|markdown|txt|csv|pptx|xlsx?|epub|msg|ipynb|json|xml)$/i;
-const ACCEPT = ".pdf,.jpg,.jpeg,.png,.heic,.heif,.tif,.tiff,.gif,.bmp,.webp,.doc,.docx,.rtf,.odt,.html,.htm,.md,.markdown,.txt,.csv,.pptx,.xlsx,.xls,.epub,.msg,.ipynb,.json,.xml,.zip,image/*";
+const OK = /\.(pdf|jpe?g|png|heic|heif|tiff?|gif|bmp|webp|docx?|rtf|odt|html?|md|markdown|txt|csv|pptx|xlsx?|epub|msg|ipynb|json|xml|ltproj)$/i;
+const ACCEPT = ".pdf,.jpg,.jpeg,.png,.heic,.heif,.tif,.tiff,.gif,.bmp,.webp,.doc,.docx,.rtf,.odt,.html,.htm,.md,.markdown,.txt,.csv,.pptx,.xlsx,.xls,.epub,.msg,.ipynb,.json,.xml,.ltproj,.zip,image/*";
 const unzipped = (f: File) => f.arrayBuffer().then((b) => new Promise<File[]>((ok, no) =>
   unzip(new Uint8Array(b), { filter: (e) => OK.test(e.name) && !/(^|\/)(__MACOSX|\.)/.test(e.name) }, (err, out) =>
     err ? no(err) : ok(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)).map(([n, u]) => new File([u as BlobPart], n.split("/").pop()!))))));

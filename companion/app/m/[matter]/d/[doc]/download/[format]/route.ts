@@ -1,5 +1,7 @@
 import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import { NextResponse } from "next/server";
+import { withComments } from "@/lib/pdf-comments";
+import { admin } from "@/lib/access";
 import { getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 
@@ -26,6 +28,25 @@ export async function GET(_: Request, { params }: { params: Promise<{ matter: st
     return NextResponse.redirect(`${m.storage_base}/${d.pdf_path}?download=${encodeURIComponent(`${name}.pdf`)}`);
   }
 
+  // For LiquidText (no API; 04-10-2026): the paper's own PDF with her notes and bookmarks added as PDF
+  // comments, which LiquidText shows on import. Stored, then a signed download, because a serverless
+  // response tops out near 4.5 MB and court PDFs are bigger.
+  if (format === "liquidtext") {
+    if (!d.pdf_path) return new NextResponse("No PDF on file for this paper", { status: 404 });
+    const own = d.pdf_path.startsWith(`${m.id}/`) || !m.storage_base;
+    const src = own ? (await supabase.storage.from("companion").download(d.pdf_path)).data?.arrayBuffer() : fetch(`${m.storage_base}/${d.pdf_path}`).then((r) => r.arrayBuffer());
+    const bytes = await src;
+    if (!bytes) return new NextResponse("PDF unavailable", { status: 404 });
+    const { data: notes } = await supabase.from("annotations").select("page_no, quote, body, tags").eq("doc_id", d.id).order("created_at");
+    const out = await withComments(new Uint8Array(bytes), notes ?? []);
+    const key = `${m.id}/exports/${d.id}-liquidtext.pdf`;
+    const db = admin();
+    const up = await db.storage.from("companion").upload(key, out, { contentType: "application/pdf", upsert: true });
+    if (up.error) return new NextResponse("Could not prepare the PDF", { status: 500 });
+    const { data } = await db.storage.from("companion").createSignedUrl(key, 600, { download: `${name} (with notes).pdf` });
+    return data ? NextResponse.redirect(data.signedUrl) : new NextResponse("PDF unavailable", { status: 500 });
+  }
+
   const { data: pages } = await supabase.from("document_pages").select("page_no, text").eq("doc_id", d.id).order("page_no");
   const rows = (pages ?? []).map((p) => ({ n: p.page_no, text: (p.text ?? "").trim() || "[ILLEGIBLE: no text could be read from this page]" }));
   const head = [`${m.title}`, d.source_path && d.source_path !== d.title ? `Source: ${d.source_path}` : "", `${d.page_count} pages. Verbatim text as read from the scans; the PDF is the record.`].filter(Boolean);
@@ -50,5 +71,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ matter: st
     });
     return file(new Uint8Array(await Packer.toBuffer(docx)), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx");
   }
-  return new NextResponse("Unknown format. Use pdf, docx, md or txt.", { status: 400 });
+  return new NextResponse("Unknown format. Use pdf, liquidtext, docx, md or txt.", { status: 400 });
 }
+
