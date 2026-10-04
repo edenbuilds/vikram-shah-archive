@@ -1,6 +1,5 @@
 // Models over plain fetch. Reading, drafting and Ask run on xAI (grok-4.3: $1.25 in / $2.50 out per
-// million, the cheapest general model there). Embeddings stay on OpenAI text-embedding-3-small:
-// xAI has no embedding model, and every stored chunk vector is 1536-d from that model.
+// million, the cheapest general model there). Embeddings: Gemini through the AI Gateway (below).
 // 25-09-2026: the OpenAI account ran out of credit and took Ask, Telegram and reading orders down with it.
 
 export const LLM_MODEL = process.env.LLM_MODEL || "grok-4.3";
@@ -12,10 +11,24 @@ export const LLM_MODEL = process.env.LLM_MODEL || "grok-4.3";
 const provider = (model: string) =>
   model.startsWith("deepseek") ? { url: "https://api.deepseek.com/v1", key: process.env.DEEPSEEK_API_KEY, name: "DeepSeek", console: "platform.deepseek.com" }
   : model.startsWith("openai.") ? { url: `https://bedrock-runtime.${process.env.BEDROCK_REGION || "ap-south-1"}.amazonaws.com/openai/v1`, key: process.env.AWS_BEARER_TOKEN_BEDROCK, name: "Bedrock", console: "the AWS console" }
-  : model.includes("/") ? { url: "https://ai-gateway.vercel.sh/v1", key: process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN, name: "AI Gateway", console: "vercel.com/ai" }
+  : model.includes("/") ? { url: GATEWAY, key: "oidc", name: "AI Gateway", console: "vercel.com/ai" }
   : { url: "https://api.x.ai/v1", key: process.env.XAI_API_KEY, name: "xAI", console: "console.x.ai" };
 export const CHAT_MODEL = LLM_MODEL;
-export const EMBED_MODEL = "text-embedding-3-small";
+// 04-10-2026: OpenAI out of credit again, so vectors come from Gemini through the gateway (free tier
+// serves it), cut to 1536-d to fit the stored column. Every chunk was re-embedded the same day.
+export const EMBED_MODEL = "google/gemini-embedding-001";
+const GATEWAY = "https://ai-gateway.vercel.sh/v1";
+
+// On Vercel the OIDC token arrives per request in a header; locally it comes from `vercel env pull`.
+async function gatewayKey(): Promise<string | undefined> {
+  if (process.env.AI_GATEWAY_API_KEY) return process.env.AI_GATEWAY_API_KEY;
+  try {
+    const { headers } = await import("next/headers");
+    const t = (await headers()).get("x-vercel-oidc-token");
+    if (t) return t;
+  } catch { /* outside a request (scripts, after()): fall back to the env token */ }
+  return process.env.VERCEL_OIDC_TOKEN;
+}
 
 // 02-10-2026: the xAI account ran dry and took Ask, briefs and reading down again (OpenAI did the same
 // on 25-09-2026). When a provider is out of credit or down, the same request goes down this list.
@@ -27,6 +40,7 @@ class Dry extends Error {}
 
 async function call<T>(path: string, body: { model: string; [k: string]: unknown }): Promise<T> {
   const p = provider(body.model);
+  if (p.key === "oidc") p.key = await gatewayKey();
   if (!p.key) throw new Dry(`${p.name} API key is not configured`);
   if ((dryUntil[p.name] ?? 0) > Date.now()) throw new Dry(`The ${p.name} account has no credit left`);
   const r = await fetch(`${p.url}/${path}`, {
@@ -66,12 +80,13 @@ export const outputText = (o: Out) =>
 
 // Null when embeddings are unavailable: match_chunks then ranks on exact words alone.
 export async function embed(text: string): Promise<number[] | null> {
-  const key = process.env.OPENAI_API_KEY;
+  const key = await gatewayKey();
   if (!key) return null;
-  const r = await fetch("https://api.openai.com/v1/embeddings", {
+  const r = await fetch(`${GATEWAY}/embeddings`, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: EMBED_MODEL, input: text.slice(0, 8000) }),
+    body: JSON.stringify({ model: EMBED_MODEL, input: text.slice(0, 8000), dimensions: 1536 }),
+    signal: AbortSignal.timeout(8000),
   }).catch(() => null);
   return r?.ok ? (await r.json()).data[0].embedding : null;
 }

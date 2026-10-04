@@ -8,6 +8,7 @@ import json
 import os
 import re
 import ssl
+import subprocess
 import sys
 import time
 import urllib.error
@@ -39,7 +40,8 @@ load_env()
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY", "")
-EMBED_MODEL = "text-embedding-3-small"  # xAI has no embedding model; see lib/ai.ts
+EMBED_MODEL = "google/gemini-embedding-001"  # through the Vercel AI Gateway, 1536-d; see lib/ai.ts
+GW_FILE = Path.home() / ".cache" / "case-companion" / "gateway.env"
 XAI_KEY = os.environ.get("XAI_API_KEY", "")
 LLM_MODEL = os.environ.get("LLM_MODEL", "grok-4.3")
 BUCKET = "companion"
@@ -170,15 +172,38 @@ def chunk_units(units: list[tuple[int, int, str]]) -> list[dict]:
 
 # ── Embeddings ──────────────────────────────────────────────────────────────
 
+def gateway_token() -> str:
+    """The project's Vercel OIDC token (lasts 12 hours), re-pulled with the Mac's Vercel login after 10.
+    04-10-2026: chosen over minting a long-lived gateway key."""
+    if os.environ.get("AI_GATEWAY_API_KEY"):
+        return os.environ["AI_GATEWAY_API_KEY"]
+    if not GW_FILE.exists() or time.time() - GW_FILE.stat().st_mtime > 10 * 3600:
+        GW_FILE.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["npx", "-y", "vercel@latest", "env", "pull", str(GW_FILE), "--environment=development", "--yes"],
+                       cwd=Path(__file__).resolve().parent.parent, check=True, capture_output=True, timeout=180)
+        GW_FILE.chmod(0o600)
+    m = re.search(r'^VERCEL_OIDC_TOKEN="?([^"\n]+)', GW_FILE.read_text(), re.M)
+    if not m:
+        raise RuntimeError("no VERCEL_OIDC_TOKEN from vercel env pull")
+    return m.group(1)
+
+
 def embed(texts: list[str]) -> list[list[float]]:
-    if not OPENAI_KEY:
-        raise RuntimeError("OPENAI_API_KEY missing in companion/.env.local")
     out: list[list[float]] = []
     for i in range(0, len(texts), 96):
         batch = [t[:8000] for t in texts[i:i + 96]]
-        data = _req("POST", "https://api.openai.com/v1/embeddings",
-                    json.dumps({"model": EMBED_MODEL, "input": batch}).encode(),
-                    {"Authorization": f"Bearer {OPENAI_KEY}", "Content-Type": "application/json"})
+        for k in range(5):
+            try:
+                data = _req("POST", "https://ai-gateway.vercel.sh/v1/embeddings",
+                            json.dumps({"model": EMBED_MODEL, "input": batch, "dimensions": 1536}).encode(),
+                            {"Authorization": f"Bearer {gateway_token()}", "Content-Type": "application/json"})
+                break
+            except RuntimeError as e:
+                # 04-10-2026: the Gateway free tier allows 5 embedding requests a minute per team; the
+                # re-embed died on a 429. Wait out the minute instead of failing the batch.
+                if "-> 429" not in str(e) or k == 4:
+                    raise
+                time.sleep(61)
         out.extend(d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"]))
     return out
 
