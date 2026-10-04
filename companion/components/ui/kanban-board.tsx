@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition } from "react";
 import {
-  DndContext, DragOverlay, KeyboardSensor, MouseSensor, TouchSensor, closestCorners, useDroppable, useSensor, useSensors,
-  type Announcements, type DragEndEvent, type DragOverEvent, type DragStartEvent,
+  DndContext, DragOverlay, KeyboardSensor, MouseSensor, TouchSensor, pointerWithin, rectIntersection, useDroppable, useSensor, useSensors,
+  type Announcements, type CollisionDetection, type DragEndEvent, type DragOverEvent, type DragStartEvent, type KeyboardCoordinateGetter,
 } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -23,16 +23,30 @@ export type MatterCard = { id: string; title: string; kind: string; next: string
 const dmy = (iso: string) => iso.split("-").reverse().join("-");
 let lastDrop = 0;  // a drag that starts on the title must not also open the matter when it ends
 
+// 04-10-2026: closestCorners measures to the corners of each droppable, and a column stretched to the height of its
+// longest neighbour (2000px with 13 cards) has corners far from any pointer, so a drop aimed at "Ready for hearing"
+// landed in "Parked" and ArrowLeft jumped to a small card in the source column. The pointer decides for a mouse or
+// finger; rect overlap decides for the keyboard, which has no pointer.
+const collide: CollisionDetection = (args) => { const hit = pointerWithin(args); return hit.length ? hit : rectIntersection(args); };
+
 export function KanbanBoard({ initial, matters, save }: { initial: Board; matters: Record<string, MatterCard>; save: (b: Board) => Promise<void> }) {
-  const [board, setBoard] = useState(initial);
+  const [board, setBoardState] = useState(initial);
+  const live = useRef(initial);  // dnd-kit calls onDragEnd from the render that started the drag, so `board` there is stale
+  const setBoard = (b: Board) => { live.current = b; setBoardState(b); };
   const [active, setActive] = useState<string | null>(null);
   const [, start] = useTransition();
   const from = useRef<string | null>(null);
   const snap = useRef(initial);
+  const columnKeys: KeyboardCoordinateGetter = (e, args) => {  // left and right step one column; up and down stay with the default
+    if (e.code !== "ArrowLeft" && e.code !== "ArrowRight") return sortableKeyboardCoordinates(e, args);
+    const ids = new Set(live.current.cols.map((c) => c.id)), all = args.context.droppableContainers;
+    const cols = { getEnabled: () => all.getEnabled().filter((d) => ids.has(String(d.id))), get: (id: string) => all.get(id) } as unknown as typeof all;
+    return sortableKeyboardCoordinates(e, { ...args, context: { ...args.context, droppableContainers: cols } });
+  };
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),  // a short press, so a swipe still scrolls
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, { coordinateGetter: columnKeys }),
   );
 
   const colOf = (b: Board, id: string) => b.cols.find((c) => c.id === id || c.cards.includes(id));
@@ -41,22 +55,22 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
     try { await save(next); if (msg) toast(msg); } catch { toast("Could not save the board. Try again."); }
   });
 
-  const onStart = ({ active }: DragStartEvent) => { snap.current = board; setActive(String(active.id)); from.current = colOf(board, String(active.id))?.id ?? null; };
+  const onStart = ({ active }: DragStartEvent) => { snap.current = live.current; setActive(String(active.id)); from.current = colOf(live.current, String(active.id))?.id ?? null; };
   const onOver = ({ active, over }: DragOverEvent) => {
     if (!over) return;
     const a = String(active.id), o = String(over.id);
-    const ca = colOf(board, a), co = colOf(board, o);
+    const b = live.current, ca = colOf(b, a), co = colOf(b, o);
     if (!ca || !co || ca.id === co.id) return;
     const at = co.id === o ? co.cards.length : co.cards.indexOf(o);
-    setBoard((b) => moveCard(b, a, co.id, at));
+    setBoard(moveCard(b, a, co.id, at));
   };
   const onEnd = ({ active, over }: DragEndEvent) => {
     setActive(null); lastDrop = Date.now();
     const a = String(active.id);
-    const col = colOf(board, a);
+    const b = live.current, col = colOf(b, a);
     if (!over || !col) { setBoard(snap.current); return; }
     const o = String(over.id);
-    const next = o !== a && col.cards.includes(o) ? moveCard(board, a, col.id, col.cards.indexOf(o)) : board;
+    const next = o !== a && col.cards.includes(o) ? moveCard(b, a, col.id, col.cards.indexOf(o)) : b;
     setBoard(next);
     persist(next, from.current !== col.id ? `Moved to ${col.title}` : undefined);
   };
@@ -80,7 +94,7 @@ export function KanbanBoard({ initial, matters, save }: { initial: Board; matter
   }), [board]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onStart} onDragOver={onOver} onDragEnd={onEnd}
+    <DndContext id="board" sensors={sensors} collisionDetection={collide} onDragStart={onStart} onDragOver={onOver} onDragEnd={onEnd}
       onDragCancel={() => { setActive(null); setBoard(snap.current); }}
       accessibility={{ announcements, screenReaderInstructions: { draggable: "To move a card, press space or enter, use the arrow keys, then press space or enter again to drop it. Escape cancels." } }}>
       <div className="kb" role="list" aria-label="Board">
