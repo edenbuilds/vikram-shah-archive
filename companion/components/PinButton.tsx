@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { useState, useTransition } from "react";
 import { togglePin } from "@/app/actions";
@@ -11,7 +12,7 @@ export default function PinButton({ matter, doc, page, quote, on = false }: { ma
   return (
     <button type="button" className={`pin-btn${pinned ? " on" : ""}`} disabled={pending} aria-pressed={pinned}
       title={err ? "Could not pin: the quote was not found on that page" : pinned ? "Pinned to your draft list. Tap to unpin" : "Pin to your draft list"}
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); start(async () => { const r = await togglePin({ matter, doc, page, quote }); setErr(!r.ok); if (r.ok) setPinned(r.pinned); }); }}>
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); start(async () => { const r = await togglePin({ matter, doc, page, quote }); setErr(!r.ok); if (r.ok) { setPinned(r.pinned); toast(r.pinned ? "Pinned" : "Unpinned"); } }); }}>
       {pinned ? <BookmarkCheck size={15} strokeWidth={1.8} aria-hidden /> : <Bookmark size={15} strokeWidth={1.8} aria-hidden />}
       <span>{err ? "Not on page" : pinned ? "Pinned" : "Pin"}</span>
     </button>

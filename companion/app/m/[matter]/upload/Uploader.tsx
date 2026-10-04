@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import { unzip } from "fflate";
@@ -124,6 +125,7 @@ export default function Uploader({ matter, stages, busy }: { matter: string; sta
     setRunning(false);
     setRows((rs) => rs.filter((r) => r.state !== "queued"));
     setAsked(queued);
+    if (queued) toast(queued === 1 ? "1 paper queued for filing" : `${queued} papers queued for filing`);
     router.refresh();
   }
 

@@ -7,6 +7,38 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 04-10-2026 (final): notes in every format, no size cap, lossless shrink, the redesign
+
+**What shipped**
+- Her reading work comes in with the paper:
+  - PDF outline and Highlight/Text annotations.
+  - LiquidText projects: documents, highlights, tags, pen and highlighter ink, read by `worker/pdf_notes.py`.
+  - Highlighter strokes without text get the verbatim transcript words under them, or no quote at all.
+- Bookmarks | Annotations panel (PDFgear layout), ink drawn on the scan, PDF-with-notes export (Highlight, Square for pen, Text, outline) that round-trips.
+- No size cap: objects over 40 MB are pieced (`worker/corpus.py storage_put`, `lib/pdf-file.ts`), and downloads fall back to a browser joiner page.
+- Lossless shrink on every paper (OCRmyPDF -O1 + jbig2 or qpdf). It is kept only if the page pixels, the text and the outline are identical; the upload is always kept in `originals/`.
+- Index split on Bedrock Converse (`LLM_MODEL=bedrock:…kimi-k3@flex`; no temperature field, JSON in the system prompt, blank text blocks skipped). `slice_pdf` uses one qpdf call (Hazel's 628 pages hit "Too many open files").
+- Chunk writes that hit Postgres statement timeout 57014 are halved and retried (`corpus.post_chunks`; Hazel failed at 628/628 before this).
+- Redesign per `DESIGN.md`:
+  - Gleap tokens, Fraunces plus self-hosted Switzer, light only.
+  - Pill nav: a second header row on a phone, not fixed to the bottom.
+  - Sliding matter-tab underline; the Aurora entry page (sign in and front door).
+  - React Bits micro components (RubberSegment, HoldButton, StatusMark, LatticeLoader) in `components/rb`.
+  - Toasts after confirmed saves, skip link, focus rings, page entrance.
+- Docs: `docs/PRODUCT-PRD-notes-and-formats.md`, `docs/TECH-PRD-notes-and-formats.md`, skills `notes-and-bookmarks` and `liquidtext-bridge`, and the rebuilt `public/skill/case-companion.zip`.
+
+**Verified 04-10-2026**
+- tsc, 38/38 unit tests, build, worker self-checks (pdf_notes 15/15, test_worker including the chunk halving), test_volume_index.
+- responsive-check: 24 pages x 4 devices, no sideways scroll. Entry and app pages checked at 390, iPad Pro 1032 and 1440: video plays, nav never overlaps Ask.
+- mcp-smoke against live: every tool answers; verify_quote VERIFIED and NOT FOUND both right; the off-corpus question says "Not found in the papers on file" but took 69 s (the client default timeout is 60 s).
+- Juhi and WP filed with bookmarks, notes and ink; export round trip 31/31 shapes.
+
+**Open**
+- Hazel refile (628 pages, 107 MB to 83 MB lossless, index split) was still writing parts at handoff time; check the `ingest_jobs` row.
+- liquidtext-check live re-run was queued behind Hazel on the single worker.
+- Off-corpus Ask is slow (69 s). Cap the agent loop's searches if a client times out.
+- `.ltproj` writing is deliberately not offered (private format, can't be verified without LiquidText).
+
 ## State as of 22-09-2026
 
 Everything below was verified on the live site on this date.
@@ -154,7 +186,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Open items
 
-- **Supabase free plan:** each file is capped at 50 MB (project-wide; the bucket can't be raised past it, tried 30-09-2026). Uploads work around it by sending 6 MB pieces that the worker joins. Moving to Pro would remove the cap; that is Omkar's call.
+- **Supabase free plan, 50 MB per object:** no longer a limit for her. Any file over 40 MB is stored as `<path>.part000…` and joined on read or in the browser (see 04-10-2026 (final)). Pro would only simplify storage.
 - **Telegram:** files over 20 MB can't be fetched by the bot, so they need the web upload.
 - **Test matter:** `zz-upload-test` collects e2e uploads. Delete it when testing stops.
 - **OpenAI credit (about $5):** embeddings only. Until then search by meaning is off and whole-matter Ask leans on exact words. The idle worker fills the missing vectors on its own once credit is there.
@@ -163,7 +195,7 @@ Do not touch any other edenbuilds.me subdomain, or the "SHB Legal - Affiniti" Su
 
 ## Paste-ready prompt for the next agent
 
-> Work in /Users/omkar/vikram-shah-archive/companion (Case Companion, live at case-companion.edenbuilds.me). Read HANDOFF.md first. Rules:
+> Work in /Users/omkar/vikram-shah-archive/companion (Case Companion, live at case-companion.edenbuilds.me). Read HANDOFF.md, then DESIGN.md for any UI work. Rules:
 > - Never invent data; every statement needs a receipt (paper, page, verbatim quote), and never offer theories.
 > - No emojis, no em dashes, no wand or glitter icons, and never the word "AI" in the UI.
 > - Dates are DD-MM-YYYY in IST.

@@ -5,14 +5,14 @@ import { TAXONOMIES, type Stage } from "@/lib/taxonomies";
 import { Archive, Folder, MoreHorizontal } from "lucide-react";
 import { getPrefs } from "@/lib/prefs";
 import { createMatter, organiseMatter } from "./actions";
-import Landing from "./Landing";
+import Entry from "./Entry";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
 export default async function Workspace() {
   const supabase = await db();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return <Landing />;
+  if (!auth.user) return <Entry />;
   const user = auth.user;
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
   const [{ data: matters }, { data: staff }, { data: docs }, { data: notes }, { data: hearings }, prefs] = await Promise.all([

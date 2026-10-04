@@ -1,8 +1,11 @@
 "use client";
+import { toast } from "@/components/Toast";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { deleteAnnotation } from "@/app/actions";
 import type { Note } from "./Transcript";
+import RubberSegment from "@/components/rb/RubberSegment";
+import HoldButton from "@/components/rb/HoldButton";
 
 export type Row = { title: string; page: number; level: number; pages?: string };
 type Kind = "note" | "highlight" | "pen" | "tag";
@@ -49,10 +52,9 @@ function Panel({ matter, doc, page, rows, marks, notes, onGo }: {
 
   return (
     <div className="outline">
-      <div className="seg" role="tablist">
-        <button type="button" role="tab" aria-selected={tab === "bookmarks"} onClick={() => setTab("bookmarks")}>Bookmarks <span>{rows.length + marks.length}</span></button>
-        <button type="button" role="tab" aria-selected={tab === "annotations"} onClick={() => setTab("annotations")}>Annotations <span>{notes.length}</span></button>
-      </div>
+      <RubberSegment aria-label="Bookmarks or annotations" className="seg-rb" size="sm" value={tab} onChange={(v) => setTab(v as typeof tab)}
+        trackColor="var(--paper-deep)" thumbColor="var(--white)" textColor="var(--muted)" activeTextColor="var(--ink)"
+        items={[{ value: "bookmarks", label: <>Bookmarks <span>{rows.length + marks.length}</span></> }, { value: "annotations", label: <>Annotations <span>{notes.length}</span></> }]} />
 
       {tab === "bookmarks" ? (
         <ol className="olist">
@@ -65,9 +67,12 @@ function Panel({ matter, doc, page, rows, marks, notes, onGo }: {
           {marks.map((b) => (
             <li key={b.id} className={b.page_no === page ? "here" : undefined}>
               <Link href={href(b.page_no ?? 1)} onClick={onGo}><span className="t">{b.body}</span><span className="pp">{b.page_no}</span></Link>
+              {/* hold, not tap: a stray tap in a scrolling sheet used to be enough to lose a bookmark */}
               <form action={deleteAnnotation}>
                 <input type="hidden" name="id" value={b.id} /><input type="hidden" name="matter" value={matter} /><input type="hidden" name="doc" value={doc} />
-                <button className="link subtle" aria-label={`Remove bookmark ${b.body}`}>remove</button>
+                <HoldButton size="sm" className="hold-remove" holdTime={700} backgroundColor="transparent" fillColor="var(--seal)" textColor="var(--muted)" fillTextColor="var(--paper)"
+                  doneLabel="Removed" onHold={() => { document.getElementById(`rm-${b.id}`)?.click(); toast("Bookmark removed"); }}>Hold to remove</HoldButton>
+                <button id={`rm-${b.id}`} hidden aria-label={`Remove bookmark ${b.body}`} />
               </form>
             </li>
           ))}

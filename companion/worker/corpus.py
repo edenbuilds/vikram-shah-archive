@@ -248,8 +248,21 @@ def write_document(doc: dict, pages: list[dict], chunks: list[dict]) -> None:
     if chunks:
         vecs = try_embed([c["text"] for c in chunks])
         rows = [{**c, "doc_id": doc["id"], "matter_id": doc["matter_id"], "embedding": v} for c, v in zip(chunks, vecs)]
-        for i in range(0, len(rows), 100):
-            rest("POST", "chunks", "", rows[i:i + 100])
+        for i in range(0, len(rows), 50):
+            post_chunks(rows[i:i + 50])
+
+
+def post_chunks(rows: list[dict]) -> None:
+    """04-10-2026: Hazel's 628-page volume failed at 628/628 on "canceling statement due to statement
+    timeout" (57014) writing 100 embedded chunks at once into the vector index. A batch that times out
+    is halved and retried, down to one row, instead of failing the whole paper."""
+    try:
+        rest("POST", "chunks", "", rows)
+    except RuntimeError as e:
+        if "57014" not in str(e) or len(rows) == 1:
+            raise
+        post_chunks(rows[:len(rows) // 2])
+        post_chunks(rows[len(rows) // 2:])
 
 
 if __name__ == "__main__":

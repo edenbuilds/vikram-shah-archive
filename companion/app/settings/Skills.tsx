@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { unzip } from "fflate";
 import { useRef, useState } from "react";
 import { addSkill, deleteSkill } from "@/app/actions";
@@ -25,6 +26,7 @@ export default function Skills({ skills }: { skills: S[] }) {
         } else files[f.name] = await f.text();
       }
       const r = await addSkill(files);
+      if (r.ok) toast(`Skill added: ${r.name}`);
       setMsg(r.ok ? `Added "${r.name}". Your connected apps see it in list_skills.` : r.error);
     } catch (e) {
       setMsg(`Could not read that file: ${(e as Error).message}`);
@@ -40,7 +42,7 @@ export default function Skills({ skills }: { skills: S[] }) {
             <div className="row" style={{ justifyContent: "space-between", alignItems: "baseline", gap: ".5rem" }}>
               <b>{s.name}</b>
               <span className="subtle">{s.builtIn ? "In the app" : confirm === s.name ? (
-                <>Remove this skill? <button className="link" onClick={async () => { await deleteSkill(s.name); setConfirm(null); }}>Remove</button> <button className="link subtle" onClick={() => setConfirm(null)}>Keep</button></>
+                <>Remove this skill? <button className="link" onClick={async () => { await deleteSkill(s.name); setConfirm(null); toast("Skill removed"); }}>Remove</button> <button className="link subtle" onClick={() => setConfirm(null)}>Keep</button></>
               ) : <>Added {s.at ? new Date(s.at).toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata" }).replace(/\//g, "-") : ""} <button className="link subtle" onClick={() => setConfirm(s.name)}>remove</button></>}</span>
             </div>
             <p className="muted" style={{ margin: ".2rem 0 0" }}>{s.description}</p>

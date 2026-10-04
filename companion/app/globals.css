@@ -558,3 +558,173 @@ label.check input { width: auto; }
 .ink-mark.pen { background: none; opacity: .7; border: 1.5px solid var(--ink); border-radius: 4px; }
 .scan-frame:has(.scan-ink) { aspect-ratio: auto; display: block; }
 .scan-ink img { height: auto; }
+
+/* ══ Navigation (04-10-2026): floating pill nav after the React Bits portfolio template ══════
+   Motion values from transitions.dev / Emil Kowalski: ease-out curves only, UI under 300 ms,
+   menus scale from .97 at their origin, presses scale to .97. */
+:root { --ease-out-strong: cubic-bezier(.23, 1, .32, 1); --ease-smooth-out: cubic-bezier(.22, 1, .36, 1); }
+.top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; padding: .6rem var(--pad); }
+.top-actions { justify-self: end; display: flex; align-items: center; gap: .6rem; }
+.pillnav { position: relative; display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: color-mix(in oklab, var(--white) 70%, transparent);
+  border: 1px solid var(--rule); box-shadow: 0 6px 24px -14px color-mix(in oklab, var(--ink) 35%, transparent); backdrop-filter: blur(14px) saturate(1.2); }
+.pillnav a { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .4rem; padding: .42rem .9rem; border-radius: 999px;
+  color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color 200ms var(--ease-out-strong), transform 160ms var(--ease-out-strong); }
+.pillnav a:active { transform: scale(.97); }
+.pillnav a[aria-current=page], .pillnav a:hover { color: var(--ink); }
+.pillnav-pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; border-radius: 999px; background: var(--white);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 12%, transparent), inset 0 0 0 1px var(--rule);
+  transition: transform 250ms var(--ease-smooth-out), width 250ms var(--ease-smooth-out); }
+.account { position: relative; }
+.account > summary { list-style: none; cursor: pointer; border-radius: 999px; }
+.account > summary::-webkit-details-marker { display: none; }
+.avatar { display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 999px; background: var(--paper-deep); color: var(--ink);
+  border: 1px solid var(--rule-strong); font-weight: 600; font-size: .85rem; transition: transform 160ms var(--ease-out-strong), border-color 200ms; }
+.account > summary:hover .avatar { border-color: var(--ink); }
+.account > summary:active .avatar { transform: scale(.94); }
+.account-menu { position: absolute; right: 0; top: calc(100% + .5rem); width: min(16rem, 80vw); padding: .5rem; display: grid; gap: 2px;
+  background: var(--white); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); transform-origin: top right;
+  animation: menu-in 180ms var(--ease-out-strong); }
+@keyframes menu-in { from { opacity: 0; transform: scale(.97) translateY(-4px); } }
+.account-menu p { margin: .3rem .55rem .5rem; font-size: .8rem; overflow-wrap: anywhere; }
+.account-menu a, .account-menu button { display: flex; align-items: center; gap: .55rem; width: 100%; padding: .55rem .6rem; border: 0; border-radius: 9px;
+  background: none; color: var(--ink); font: inherit; font-size: .92rem; text-decoration: none; cursor: pointer; text-align: left; transition: background 150ms; }
+.account-menu a:hover, .account-menu button:hover { background: var(--paper-deep); }
+.btn:active { transform: scale(.97); }
+.btn { transition: background .25s var(--ease-ui), transform 160ms var(--ease-out-strong), border-color .25s var(--ease-ui); }
+@media (max-width: 900px) { .pillnav a span { display: none; } .pillnav a { padding: .5rem .75rem; } }
+@media (max-width: 640px) {
+  .top { grid-template-columns: 1fr auto; padding: .45rem 1rem; }
+  /* the pill floats at the bottom, within thumb reach, labels back under the icons */
+  .pillnav { position: fixed; left: 50%; bottom: calc(.75rem + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 40;
+    background: color-mix(in oklab, var(--white) 82%, transparent); }
+  .pillnav a { flex-direction: column; gap: .1rem; padding: .4rem .8rem; font-size: .66rem; }
+  .pillnav a span { display: block; }
+  body { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  .outline-fab { bottom: calc(5.4rem + env(safe-area-inset-bottom)) !important; }
+}
+.seg-rb { width: 100%; margin-bottom: .6rem; font-weight: 600; }
+.seg-rb span span { font-weight: 400; opacity: .7; margin-left: .2rem; }
+.hold-remove { font-size: .74rem !important; white-space: nowrap; }
+/* matter tabs: sliding underline, fade only where tabs are hidden */
+.tabs { position: relative; mask-image: none !important; -webkit-mask-image: none !important; }
+.tabs.fade-r { mask-image: linear-gradient(to right, #000 85%, transparent) !important; -webkit-mask-image: linear-gradient(to right, #000 85%, transparent) !important; }
+.tabs.fade-l { mask-image: linear-gradient(to left, #000 85%, transparent) !important; -webkit-mask-image: linear-gradient(to left, #000 85%, transparent) !important; }
+.tabs.fade-l.fade-r { mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important; -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important; }
+.tabs a, .tabs a[aria-current=page] { border-bottom-color: transparent !important; transition: color 200ms var(--ease-out-strong), background 200ms; }
+.tabs-line { position: absolute; left: 0; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--ink); transition: transform 250ms var(--ease-smooth-out), width 250ms var(--ease-smooth-out); }
+
+/* from the template: skip link, visible focus, a quiet page entrance */
+.skip-link { position: absolute; left: -9999px; top: .75rem; z-index: 100; padding: .6rem .9rem; border-radius: 10px; background: var(--white); color: var(--ink); border: 2px solid var(--ink); font-weight: 600; }
+.skip-link:focus { left: .75rem; }
+:where(a, button, summary, [role=radio], input, select, textarea):focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.page-in { animation: page-in 260ms var(--ease-out-strong); }
+@keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
+.job-state { display: inline-flex; align-items: center; gap: .45rem; font-size: .84rem; color: var(--muted); white-space: nowrap; }
+/* the header's backdrop-filter made it the containing block for the fixed pill, pinning the phone nav
+   to the top over Ask (seen on the 390px check, 04-10-2026); on a phone the header is opaque instead */
+@media (max-width: 640px) { .top { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--paper); } }
+
+/* ══ DESIGN.md, 04-10-2026: Gleap's warm-paper system, Fraunces as the voice, Switzer for the UI ══════
+   Linen canvas, white cards, warm-stone secondary surfaces, a matte graphite capsule for the main action.
+   One chromatic accent, Lime Pulse, and only for status (a done mark, a toast's dot). Her notes keep their
+   blue ink so they can never read as the record. Light only. */
+:root {
+  --paper: #edede8; --paper-deep: #dbdbd2; --paper-edge: #d0d0c8; --white: #ffffff;
+  --ink: #292929; --graphite: #141414; --muted: #6f6f6e; --subtle: #8f8f8e; --iron: #353535;
+  --rule: rgba(0, 0, 0, .12); --rule-strong: #c0c0c0;
+  --seal: #141414; --seal-deep: #353535; --seal-wash: #dbdbd2;
+  --lime: #4cc02b;
+  --radius: 12px; --radius-tile: 6px;
+  --shadow-sm: none; --shadow: rgba(16, 24, 40, .12) 0 18px 55px 0;
+  --pad: clamp(1rem, 4vw, 2.25rem);
+  /* type scale: Minor Third from 16px */
+  --t-small: .75rem; --t-caption: .875rem; --t-body: 1rem; --t-lg: 1.1875rem; --t-xl: 1.4375rem; --t-2xl: 1.6875rem; --t-3xl: 2rem; --t-4xl: 2.8125rem;
+}
+html { color-scheme: light; background: var(--paper); }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--t-body); line-height: 1.5; letter-spacing: 0; }
+
+/* hierarchy: one serif voice in three sizes, everything else Switzer */
+h1, h2, h3, .serif { font-family: var(--serif); font-weight: 400; font-variation-settings: "SOFT" 50; color: var(--ink); }
+h1 { font-size: clamp(var(--t-3xl), 3.6vw, var(--t-4xl)); line-height: 1.12; letter-spacing: -.01em; }
+h2 { font-size: clamp(var(--t-xl), 2.2vw, var(--t-2xl)); line-height: 1.25; letter-spacing: -.01em; }
+h3 { font-size: var(--t-lg); line-height: 1.3; font-weight: 400; letter-spacing: -.005em; }
+.lede { font-size: var(--t-lg); line-height: 1.45; color: var(--muted); }
+.muted { color: var(--muted); }
+.subtle { color: var(--muted); font-size: var(--t-caption); }
+.kicker { font-family: var(--sans); font-size: var(--t-small); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+label { font-size: var(--t-caption); font-weight: 500; color: var(--iron); }
+
+/* surfaces and controls */
+.card { background: var(--white); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: none; }
+.stat { background: var(--white); border: 1px solid var(--rule); border-radius: var(--radius); }
+.stat b { font-size: var(--t-2xl); font-variation-settings: "SOFT" 50; }
+.stat span { font-size: var(--t-small); font-weight: 500; letter-spacing: .05em; color: var(--muted); }
+.btn { border-radius: 200px; background: var(--graphite); border-color: var(--graphite); color: #fff; font-weight: 500; min-height: 2.75rem; padding-inline: 1.15rem; }
+.btn:hover { background: var(--iron); border-color: var(--iron); }
+.btn.ghost { background: var(--paper-deep); color: var(--ink); border-color: transparent; }
+.btn.ghost:hover { background: var(--paper-edge); border-color: transparent; }
+.btn.small { min-height: 2.1rem; }
+input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], input[type=search], select, textarea { border-radius: 10px; border-color: var(--rule); background: var(--white); }
+input:focus, select:focus, textarea:focus { border-color: var(--graphite); box-shadow: 0 0 0 3px rgba(20, 20, 20, .1); }
+.ask-first { background: var(--paper-deep); border: 0; border-radius: var(--radius); }
+.brand-mark { background: var(--graphite); color: #fff; font-family: var(--serif); font-style: italic; font-variation-settings: "SOFT" 100; }
+.pillnav-pill { box-shadow: 0 1px 2px rgba(0, 0, 0, .08), inset 0 0 0 1px var(--rule); }
+.top { background: color-mix(in oklab, var(--paper) 88%, transparent); box-shadow: 0 1px 0 var(--rule); }
+.tabs-line { background: var(--graphite); }
+:where(a, button, summary, [role=radio], input, select, textarea):focus-visible { outline-color: var(--graphite); }
+.hold-remove { font-size: var(--t-small) !important; }
+
+/* phone: two rows, nav full width under the brand. Not floating at the bottom: Safari's and Telegram's
+   floating toolbars sit there on iOS (Omkar's screenshots, 04-10-2026), and not sticky, so it scrolls away */
+@media (max-width: 640px) {
+  .top { position: static; grid-template-columns: 1fr auto; row-gap: .5rem; padding: .6rem 1rem .7rem; background: var(--paper); }
+  .pillnav { position: relative; left: auto; bottom: auto; transform: none; grid-column: 1 / -1; grid-row: 2; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--white); backdrop-filter: none; box-shadow: none; z-index: auto; }
+  .pillnav a { justify-content: center; flex-direction: row; gap: .35rem; font-size: .8rem; padding: .5rem .25rem; }
+  .pillnav a span { display: inline; }
+  .top-actions { grid-row: 1; grid-column: 2; }
+  body { padding-bottom: env(safe-area-inset-bottom); }
+  .outline-fab { bottom: calc(1rem + env(safe-area-inset-bottom)) !important; }
+  h1 { font-size: var(--t-2xl); }
+  .matter-head h1, .doc-head h1 { font-size: var(--t-xl) !important; line-height: 1.2; }
+}
+@media (max-width: 380px) { .pillnav a svg { display: none; } }
+
+/* toasts */
+.toasts { position: fixed; z-index: 90; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom)); transform: translateX(-50%); display: grid; gap: .5rem; justify-items: center; pointer-events: none; }
+.toast { pointer-events: auto; display: inline-flex; align-items: center; gap: .55rem; padding: .6rem 1rem; border-radius: 200px; background: var(--graphite); color: #fff;
+  font-size: var(--t-caption); font-weight: 500; box-shadow: rgba(0, 0, 0, .3) 0 18px 40px -12px; cursor: grab; touch-action: pan-y; white-space: nowrap; }
+.toast .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+
+/* entry (sign in and front door), after the Aurora layout */
+.entry { display: flex; min-height: 100dvh; padding: .5rem; gap: .5rem; background: var(--paper); }
+.entry-hero { display: none; position: relative; width: 52%; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 3rem 8rem; border-radius: 24px; overflow: hidden; background: #0b0710; color: #fff; }
+.entry-hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.entry-hero-copy { position: relative; z-index: 1; width: 100%; max-width: 21rem; display: grid; gap: 2rem; text-align: center; }
+.entry-hero h2 { color: #fff; font-size: var(--t-3xl); line-height: 1.15; margin: 0 0 .6rem; }
+.entry-hero p { margin: 0; color: rgba(255, 255, 255, .62); font-size: var(--t-caption); }
+.entry-brand { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-size: var(--t-lg); font-weight: 600; letter-spacing: -.01em; }
+.entry-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; text-align: left; }
+.entry-steps li { display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 14px; background: rgba(255, 255, 255, .08); color: #fff; font-size: var(--t-caption); font-weight: 500;
+  transition: background 250ms var(--ease-smooth-out), color 250ms var(--ease-smooth-out); }
+.entry-steps li span { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .45); font-size: var(--t-small); }
+.entry-steps li.on { background: #fff; color: var(--graphite); }
+.entry-steps li.on span { background: var(--graphite); color: #fff; }
+.entry-form { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1.25rem; }
+.entry-form-inner { width: 100%; max-width: 26rem; display: grid; gap: 1.75rem; }
+.entry-form h1 { font-size: var(--t-4xl); margin: 0 0 .4rem; }
+.entry-form header p { margin: 0; color: var(--muted); }
+.entry-field input { height: 3rem; border-radius: 12px; padding-inline: 1rem; font-size: var(--t-body); }
+.entry-submit { width: 100%; min-height: 3.25rem; font-size: var(--t-body); }
+.entry-submit:active { transform: scale(.98); }
+.entry-foot { margin: 0; color: var(--muted); font-size: var(--t-caption); }
+.entry-brand-small { justify-content: flex-start; font-size: var(--t-body); color: var(--graphite); }
+@media (min-width: 1024px) {
+  .entry { height: 100dvh; overflow: hidden; padding: 1rem; gap: 1rem; }
+  .entry-hero { display: flex; }
+  .entry-brand-small { display: none; }
+}
+@media (max-width: 640px) { .entry-form h1 { font-size: var(--t-3xl); } }
+/* hierarchy inside a matter: page titles 45, the matter 32, a paper 27 */
+.matter-head h1 { font-size: clamp(var(--t-xl), 2.6vw, var(--t-3xl)); line-height: 1.18; }
+.olist li.here .t, .olist li.here a { font-weight: 500 !important; font-variation-settings: "SOFT" 50; }

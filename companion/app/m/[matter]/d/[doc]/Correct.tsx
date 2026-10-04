@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { useActionState, useState } from "react";
 import { correctPageText, revertPageText, uploadCorrectedMarkdown } from "@/app/actions";
 import type { PageHistory } from "@/lib/corrections";
@@ -22,7 +23,7 @@ export default function Correct({ doc, page, text, history }: { doc: string; pag
         <p className="subtle" style={{ margin: 0 }}>
           Corrected {history!.versions.length === 1 ? "once" : `${history!.versions.length} times`}, last by {last.by} on {dmy(last.at)}{last.reason ? ` (${last.reason})` : ""}.{" "}
           {confirm ? (
-            <form action={async (f) => { await revertPageText(f); setConfirm(false); }} style={{ display: "inline" }}>
+            <form action={async (f) => { await revertPageText(f); setConfirm(false); toast("Original text restored"); }} style={{ display: "inline" }}>
               <input type="hidden" name="doc" value={doc} /><input type="hidden" name="page" value={page} />
               Put back the text first read? <button className="link">Put back</button> <button type="button" className="link subtle" onClick={() => setConfirm(false)}>Keep</button>
             </form>
@@ -30,7 +31,7 @@ export default function Correct({ doc, page, text, history }: { doc: string; pag
         </p>
       )}
       {open && (
-        <form action={async (f) => { await correctPageText(f); setOpen(false); }} className="stack" style={{ gap: ".5rem" }} key={`${page}-${text.length}`}>
+        <form action={async (f) => { await correctPageText(f); setOpen(false); toast("Correction saved"); }} className="stack" style={{ gap: ".5rem" }} key={`${page}-${text.length}`}>
           <input type="hidden" name="doc" value={doc} /><input type="hidden" name="page" value={page} />
           <textarea name="text" defaultValue={text} rows={14} aria-label={`Text of page ${page}`} style={{ fontFamily: "inherit" }} />
           <input name="reason" placeholder="What was wrong (optional)" maxLength={200} aria-label="What was wrong" />

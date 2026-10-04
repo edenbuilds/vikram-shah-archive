@@ -89,3 +89,15 @@ _sb = io.BytesIO(); _sw.write(_sb); _raw = _sb.getvalue()
 _small = shrink(_raw, _st)
 assert len(_small) < len(_raw) * 0.5, (len(_raw), len(_small))
 print(f"worker shrink ok: {len(_raw)} -> {len(_small)} bytes, same pixels and text")
+
+# chunk writes that hit a statement timeout are halved, in order (Hazel, 04-10-2026)
+import corpus as _corpus
+_sent, _real = [], _corpus.rest
+def _fake(method, table, q, rows, *a, **k):
+    if len(rows) > 10: raise RuntimeError("POST chunks -> 500: 57014 statement timeout")
+    _sent.extend(rows)
+_corpus.rest = _fake
+_corpus.post_chunks([{"i": i} for i in range(50)])
+_corpus.rest = _real
+assert [r["i"] for r in _sent] == list(range(50)), _sent
+print("worker chunk write ok: a timed-out batch is halved and retried in order")

@@ -1,3 +1,4 @@
+import StatusMark from "@/components/rb/StatusMark";
 import Link from "next/link";
 import { getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
@@ -38,7 +39,10 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
                   {j.status === "processing" && j.page_count ? <div className="bar"><i style={{ width: `${Math.round((100 * j.pages_done) / j.page_count)}%` }} /></div> : null}
                   {j.error && <div className="err">{j.error}</div>}
                 </span>
-                <span className={`pill ${j.status === "done" ? "ok" : j.status === "failed" ? "seal" : "warn"}`}>
+                <span className="job-state">
+                  <StatusMark size={18} status={j.status === "done" ? "done" : j.status === "failed" ? "failed" : j.status === "processing" ? "running" : "pending"}
+                    progress={j.status === "processing" && j.page_count ? j.pages_done / j.page_count : undefined} color="var(--ink)" doneColor="var(--lime)" errorColor="var(--seal)" />
+                  
                   {j.status === "done" ? (papersFrom(j.filename) > 1 ? `filed as ${papersFrom(j.filename)} papers` : "filed") : j.status}{j.status === "processing" && j.page_count ? ` · ${j.pages_done}/${j.page_count} pp.` : ""}
                 </span>
               </li>

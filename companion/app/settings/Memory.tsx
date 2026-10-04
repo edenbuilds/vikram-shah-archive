@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { useState } from "react";
 import { deleteMemory, saveMemory } from "@/app/actions";
 import type { Memory as M } from "@/lib/memory";
@@ -19,7 +20,7 @@ export default function Memory({ items, matters }: { items: M[]; matters: { id: 
           {items.map((x) => (
             <li key={x.id} className="card" style={{ padding: ".75rem 1rem" }}>
               {editing === x.id ? (
-                <form action={async (f) => { await saveMemory(f); setEditing(null); }} className="stack" style={{ gap: ".5rem" }}>
+                <form action={async (f) => { await saveMemory(f); setEditing(null); toast("Saved to memory"); }} className="stack" style={{ gap: ".5rem" }}>
                   <input type="hidden" name="id" value={x.id} />
                   <textarea name="text" defaultValue={x.text} rows={2} maxLength={500} required aria-label="Memory text" />
                   <div className="row" style={{ justifyContent: "flex-end" }}>
@@ -33,7 +34,7 @@ export default function Memory({ items, matters }: { items: M[]; matters: { id: 
                   <div className="row subtle" style={{ justifyContent: "space-between", gap: ".5rem", marginTop: ".25rem" }}>
                     <span>{title(x.matter)} · saved from {SOURCE[x.source]} · {dmy(x.at)}</span>
                     <span>{confirm === x.id ? (
-                      <>Forget this? <button className="link" onClick={async () => { await deleteMemory(x.id); setConfirm(null); }}>Forget</button> <button className="link subtle" onClick={() => setConfirm(null)}>Keep</button></>
+                      <>Forget this? <button className="link" onClick={async () => { await deleteMemory(x.id); setConfirm(null); toast("Forgotten"); }}>Forget</button> <button className="link subtle" onClick={() => setConfirm(null)}>Keep</button></>
                     ) : <><button className="link subtle" onClick={() => setEditing(x.id)}>edit</button> <button className="link subtle" onClick={() => setConfirm(x.id)}>forget</button></>}</span>
                   </div>
                 </>

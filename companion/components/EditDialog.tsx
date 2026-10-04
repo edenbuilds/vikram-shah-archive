@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import { useRef } from "react";
 
 type Field = { name: string; label: string; value: string | null };
@@ -12,7 +13,7 @@ export default function EditDialog({ action, hidden, fields, label = "Edit" }: {
     <>
       <button type="button" className="link subtle" onClick={() => ref.current?.showModal()}>{label}</button>
       <dialog ref={ref} className="card edit-dialog" onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}>
-        <form action={async (f) => { await action(f); ref.current?.close(); }} className="stack">
+        <form action={async (f) => { await action(f); ref.current?.close(); toast("Saved"); }} className="stack">
           {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
           {fields.map((x) => (
             <label key={x.name}>{x.label}

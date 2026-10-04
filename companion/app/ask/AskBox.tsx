@@ -1,4 +1,5 @@
 "use client";
+import LatticeLoader from "@/components/rb/LatticeLoader";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -99,7 +100,7 @@ export default function AskBox({ matters, papers, notebooks = [], initialMatter,
       <textarea rows={3} value={q} onChange={(e) => setQ(e.target.value)} required aria-label="Question"
         placeholder={thread ? "Ask a follow-up…" : "Ask anything. The answer comes with receipts: the exact words, the paper and the page."}
         onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) go(e as unknown as React.FormEvent); }} />
-      {busy && <ol className="agent-steps">{steps.map((s, i) => <li key={i}>{s}</li>)}<li className="subtle">Working…</li></ol>}
+      {busy && <ol className="agent-steps">{steps.map((s, i) => <li key={i}>{s}</li>)}<li className="subtle"><LatticeLoader label="Reading the papers" pattern="ripple" color="var(--seal)" cellSize={5} gap={2} fontSize={13} /></li></ol>}
       {err && <p className="err" style={{ margin: 0 }}>{err}</p>}
       <div className="row" style={{ justifyContent: "flex-end" }}><button className="btn" disabled={busy} style={{ flex: "0 0 auto" }}>{busy ? "Reading the papers…" : "Ask"}</button></div>
     </form>

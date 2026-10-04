@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@/components/Toast";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { addAnnotation, addToCollection, deleteAnnotation } from "@/app/actions";
@@ -113,7 +114,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
           </div>
         </div>
 
-        <form action={async (f) => { await addAnnotation(f); if (markBox.current) markBox.current.value = ""; }} className="row" style={{ gap: ".4rem" }}>
+        <form action={async (f) => { await addAnnotation(f); toast("Bookmarked"); if (markBox.current) markBox.current.value = ""; }} className="row" style={{ gap: ".4rem" }}>
           <input type="hidden" name="matter" value={matter} />
           <input type="hidden" name="doc" value={doc} />
           <input type="hidden" name="page" value={currentPage} />
@@ -122,7 +123,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
           <button className="btn ghost small" style={{ flex: "0 0 auto" }}>Bookmark</button>
         </form>
 
-        <form action={async (f) => { await addAnnotation(f); setSel(null); window.getSelection()?.removeAllRanges(); if (noteBox.current) noteBox.current.value = ""; }} className="card stack note-form">
+        <form action={async (f) => { await addAnnotation(f); toast("Note saved"); setSel(null); window.getSelection()?.removeAllRanges(); if (noteBox.current) noteBox.current.value = ""; }} className="card stack note-form">
           <h3 style={{ margin: 0 }}>{sel ? "Note on selected text" : `Note on page ${currentPage}`}</h3>
           {sel ? (
             <blockquote className="subtle" style={{ margin: 0, fontFamily: "var(--serif)" }}>
