@@ -48,6 +48,12 @@ def read(pdf: Path) -> tuple[list[dict], bool]:
                                 "rects": [[round(min(x[0::2]) / w, 4), round((h - max(x[1::2])) / h, 4), round((max(x[0::2]) - min(x[0::2])) / w, 4),
                                            round((max(x[1::2]) - min(x[1::2])) / h, 4)] for x in quads],
                                 "color": "#" + "".join(f"{round(v * 255):02x}" for v in (c + [0, 0, 0])[:3])})
+                elif kind == "/Square" and body:  # a pen mark's box (lib/pdf-comments.ts draws pen marks as outlines)
+                    x0, y0, x1, y1 = [float(v) for v in a["/Rect"]]
+                    c = [float(v) for v in (a.get("/C") or [0, 0, 0])][:3]
+                    out.append({"page": i, "quote": None, "body": body.split(' "')[0],
+                                "rects": [[round(x0 / w, 4), round((h - y1) / h, 4), round((x1 - x0) / w, 4), round((y1 - y0) / h, 4)]],
+                                "color": "#" + "".join(f"{round(v * 255):02x}" for v in (c + [0, 0, 0])[:3])})
                 elif kind in COMMENT and body:
                     out.append({"page": i, "quote": None, "body": body})
         return out, lt
@@ -281,8 +287,13 @@ def ink_marks(data: bytes) -> list[dict]:
         if not s or s.get("AttachedToType") != 1 or s.get("OptionalPageIndex", -1) < 0 or str(s.get("AttachedTo", "")).lower() not in start:
             continue
         page = start[s["AttachedTo"].lower()] + s["OptionalPageIndex"] + 1
-        blob = next((n for low, n in blobs.items() if str(a.get("ObjUID", "")).lower() in low), None)
-        got = list(strokes(z.read(blob))) if blob else []
+        # exact Blobs/fobjz<uid>z<n>; a substring match once picked a PDF blob whose name held the uid
+        uid = str(a.get("ObjUID", "")).lower()
+        blob = next((n for low, n in blobs.items() if uid and low.rsplit("/", 1)[-1].startswith(f"fobjz{uid}z")), None)
+        try:
+            got = list(strokes(z.read(blob))) if blob else []
+        except (ValueError, IndexError):  # not stroke data: place the page only
+            got = []
         for color, r in got:
             by.setdefault((page, color), []).append(r)
         if not got:

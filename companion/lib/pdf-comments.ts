@@ -25,8 +25,10 @@ export async function withComments(pdf: Uint8Array, notes: N[], ink: Ink[] = [])
     const W = pages[i].getWidth(), H = pages[i].getHeight();
     const quads = h.rects.flatMap(([x, y, w, hh]) => [x * W, H - y * H, (x + w) * W, H - y * H, x * W, H - (y + hh) * H, (x + w) * W, H - (y + hh) * H]);
     const xs = quads.filter((_, k) => k % 2 === 0), ys = quads.filter((_, k) => k % 2 === 1);
-    add(i, { Type: "Annot", Subtype: "Highlight", Rect: [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], QuadPoints: quads,
-      C: rgb(h.color), Contents: PDFHexString.fromText(h.quote ? `${h.body}\n\n"${h.quote}"` : h.body), T: PDFHexString.fromText("Case Companion"), F: 4 });
+    const common = { Type: "Annot", C: rgb(h.color), Contents: PDFHexString.fromText(h.quote ? `${h.body}\n\n"${h.quote}"` : h.body), T: PDFHexString.fromText("Case Companion"), F: 4 };
+    // pen strokes are an outline around where she wrote; a filled highlight would darken the words
+    if (h.body.startsWith("Pen marks")) add(i, { ...common, Subtype: "Square", Rect: [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], BS: { W: 1.5 } });
+    else add(i, { ...common, Subtype: "Highlight", Rect: [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], QuadPoints: quads });
     shaped.add(`${h.page}|${h.body}|${h.quote ?? ""}`);
   }
   for (const n of notes) {

@@ -554,6 +554,7 @@ label.check input { width: auto; }
 }
 .scan-ink { position: relative; line-height: 0; }
 .scan-ink img { width: 100%; display: block; }
-.ink-mark { position: absolute; opacity: .38; mix-blend-mode: multiply; border-radius: 2px; pointer-events: auto; }
+.ink-mark { position: absolute; background: var(--ink); opacity: .38; mix-blend-mode: multiply; border-radius: 2px; pointer-events: auto; }
+.ink-mark.pen { background: none; opacity: .7; border: 1.5px solid var(--ink); border-radius: 4px; }
 .scan-frame:has(.scan-ink) { aspect-ratio: auto; display: block; }
 .scan-ink img { height: auto; }

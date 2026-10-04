@@ -129,7 +129,7 @@ def converse(system: str, user, schema: dict) -> dict:
     model, _, tier = corpus.LLM_MODEL[len("bedrock:"):].partition("@")
     parts = [{"text": user}] if isinstance(user, str) else [
         {"image": {"format": "jpeg", "source": {"bytes": c["image_url"]["url"].split(",", 1)[1]}}} if c["type"] == "image_url" else {"text": c["text"]}
-        for c in user]
+        for c in user if c["type"] == "image_url" or c["text"].strip()]  # Bedrock refuses blank text (a blank page)
     body = {"system": [{"text": f"{system}\n\nReply with only one JSON object that matches this JSON Schema, no prose and no code fences:\n{json.dumps(schema)}"}],
             "messages": [{"role": "user", "content": parts}], "inferenceConfig": {"maxTokens": 16000},
             **({"serviceTier": {"type": tier}} if tier else {})}

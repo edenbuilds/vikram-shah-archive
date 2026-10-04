@@ -101,8 +101,8 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
               <img src={scan} alt={`Original scan of page ${currentPage}`} loading="eager" key={scan} />
               {/* her highlights where she drew them, in her colour (LiquidText ink or PDF highlights) */}
               {ink.filter((h) => h.page === currentPage).flatMap((h, i) => h.rects.map(([x, y, w, hh], k) => (
-                <span key={`${i}-${k}`} className="ink-mark" title={h.quote ?? h.body}
-                  style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, background: h.color ?? "#ffeb3b" }} />
+                <span key={`${i}-${k}`} className={h.body.startsWith("Pen marks") ? "ink-mark pen" : "ink-mark"} title={h.quote ?? h.body}
+                  style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, ["--ink" as string]: h.color ?? "#ffeb3b" }} />
               )))}
             </div>
           </div>

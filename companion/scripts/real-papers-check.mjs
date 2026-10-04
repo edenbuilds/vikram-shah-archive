@@ -55,7 +55,7 @@ for (const doc of docs) {
         const pg = Number(target.split("p=")[1]);
         ok((await p.locator(".pager .where b").first().innerText()) === String(pg), `390px ${doc}: pager shows page ${pg}`);
       }
-      if (shots) { await p.locator(".outline-fab").click(); await p.screenshot({ path: `${shots}/${doc}-390.png` }); await p.keyboard.press("Escape"); }
+      if (shots) { if (!(await sheet.isVisible())) await p.locator(".outline-fab").click(); await p.screenshot({ path: `${shots}/${doc}-390.png` }); await p.keyboard.press("Escape"); }
     }
   }
 }
