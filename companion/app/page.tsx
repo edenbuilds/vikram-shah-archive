@@ -10,6 +10,7 @@ import { activity, lastVisits, when } from "@/lib/activity";
 import { ArrowRight } from "lucide-react";
 import Logo from "@/components/Logo";
 import { firstName } from "@/lib/name";
+import { getControl, waiting } from "@/lib/mcp-control";
 
 type M = { id: string; title: string; kind: string; forum: string | null; cause: string | null; stages: Stage[] };
 
@@ -29,6 +30,7 @@ export default async function Workspace() {
   ]);
   // automatic memory (lib/activity.ts): where she left off, from her own trail and the matters' rows
   const ids = (matters ?? []).map((m) => m.id);
+  const asked = waiting(await getControl(user.email!.toLowerCase()).catch(() => ({ mode: "review" as const, proposals: [], log: [] }))).length;
   const [visits, recent] = await Promise.all([lastVisits(user.email!).catch(() => []), activity(supabase, user.email!, ids).catch(() => [])]);
   const resume = visits.find((v) => ids.includes(v.matter));
   const stat = (id: string) => {
@@ -103,6 +105,8 @@ export default async function Workspace() {
         <h1>Your matters</h1>
         <nav className="view-switch" aria-label="View"><Link href="/" aria-current="page">List</Link><Link href="/board">Board</Link></nav>
       </div>
+
+      {asked > 0 && <p className="subtle" style={{ margin: 0 }}><Link href="/settings#ai" className="link">{asked} change{asked === 1 ? "" : "s"} from your AI apps {asked === 1 ? "is" : "are"} waiting for you</Link></p>}
 
       {(resume || recent.length > 0) && (
         <section className="resume">

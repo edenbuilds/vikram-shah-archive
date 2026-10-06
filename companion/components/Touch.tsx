@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Copy, ExternalLink, Share2, ArrowUpRight } from "lucide-react";
+import { Copy, ExternalLink, Flag, Share2, ArrowUpRight } from "lucide-react";
 import { haptic } from "@/lib/haptic";
 import { toast } from "@/components/Toast";
+import { reportHere } from "@/components/Report";
 
 // 04-10-2026: Omkar: "enable 3d touch/haptic touch/double click and hover interactions wherever required". Three things, all
 // delegated from the document so no page has to opt in:
@@ -13,7 +14,7 @@ import { toast } from "@/components/Toast";
 // Hover states are plain CSS (globals.css); they are gated to devices that hover so a touch does not leave one stuck.
 const HOLD = "a.matter-card, a.docrow, a.stat";
 const TICK = "button, summary, [role=tab], [role=menuitem], .pillnav a, .tabs a, .swatch, .matter-card, .docrow";
-type Menu = { x: number; y: number; href: string; title: string };
+type Menu = { x: number; y: number; href: string; title: string; el: Element };
 
 export default function Touch() {
   const [menu, setMenu] = useState<Menu | null>(null);
@@ -31,7 +32,7 @@ export default function Touch() {
       from = { x: e.clientX, y: e.clientY };
       timer = window.setTimeout(() => {
         held = true; haptic("ok");
-        setMenu({ x: from.x, y: from.y, href: a.href, title: (a.querySelector("h2, .dt")?.textContent ?? a.textContent ?? "").trim().slice(0, 80) });
+        setMenu({ x: from.x, y: from.y, el: a, href: a.href, title: (a.querySelector("h2, .dt")?.textContent ?? a.textContent ?? "").trim().slice(0, 80) });
       }, 480);
     };
     const move = (e: PointerEvent) => { if (timer && Math.hypot(e.clientX - from.x, e.clientY - from.y) > 10) { clearTimeout(timer); timer = undefined; } };
@@ -59,7 +60,7 @@ export default function Touch() {
   }, []);
   if (!menu) return null;
   const w = Math.min(256, innerWidth - 16);  // the menu is 16rem wide, or the screen less 16px (.quick-menu); it is about 240px tall
-  const left = Math.max(8, Math.min(menu.x - 20, innerWidth - w - 8)), top = Math.max(8, Math.min(menu.y + 16, innerHeight - 260));
+  const left = Math.max(8, Math.min(menu.x - 20, innerWidth - w - 8)), top = Math.max(8, Math.min(menu.y + 16, innerHeight - 300));
   const copy = async () => { await navigator.clipboard.writeText(menu.href); haptic("ok"); toast("Link copied"); setMenu(null); };
   const share = async () => { setMenu(null); try { await navigator.share({ title: menu.title, url: menu.href }); } catch { /* closed */ } };
   return (
@@ -69,6 +70,7 @@ export default function Touch() {
       <a role="menuitem" href={menu.href} target="_blank" rel="noreferrer" onClick={() => setMenu(null)}><ExternalLink size={15} strokeWidth={1.75} aria-hidden /> Open in a new tab</a>
       <button role="menuitem" onClick={copy}><Copy size={15} strokeWidth={1.75} aria-hidden /> Copy link</button>
       {"share" in navigator && <button role="menuitem" onClick={share}><Share2 size={15} strokeWidth={1.75} aria-hidden /> Share…</button>}
+      <button role="menuitem" onClick={() => { const el = menu.el; setMenu(null); reportHere({ el, how: "hold" }); }}><Flag size={15} strokeWidth={1.75} aria-hidden /> Report a problem here</button>
     </div>
   );
 }

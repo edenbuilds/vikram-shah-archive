@@ -1,13 +1,17 @@
 // MCP check (04-10-2026): a paper opened through the tools shows under "Where she left off", and a highlight and a bookmark
 // saved through the tools are the same rows the app and the PDF export read. Removes what it saved.
 // node --env-file=.env.local --experimental-strip-types scripts/mcp-annotate-check.ts <base-url> <email>
-import { createHmac } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { admin } from "../lib/access.ts";
+import { admin, readState, writeState } from "../lib/access.ts";
+import { getControl, setMode } from "../lib/mcp-control.ts";
 
 const [base, email] = process.argv.slice(2);
 const e = email.toLowerCase();
+// 06-10-2026: writes are queued for approval by default (lib/mcp-control.ts); this check is about what a SAVED write looks like, so it runs in allow mode and puts the mode back.
+const was = (await getControl(e)).mode;
+await setMode(e, "allow");
 const token = `${Buffer.from(e).toString("base64url")}.${createHmac("sha256", process.env.COMPANION_LINK_SECRET!).update(`v1:${e}`).digest("base64url")}`;
 const client = new Client({ name: "annotate-check", version: "1" });
 await client.connect(new StreamableHTTPClientTransport(new URL(`${base}/api/mcp/${token}`)));
@@ -35,4 +39,9 @@ ok(!!bm && bm.body === "mcp check bookmark", "the bookmark is a bookmark row (li
 ok(/Highlight|highlight/.test(await call("get_notes", { matter_id: "shah-v-trindade" })), "get_notes shows the highlight to her AI app");
 for (const r of data ?? []) await admin().from("annotations").delete().eq("id", r.id);
 console.log(`removed ${(data ?? []).length} check rows`);
+// leave her real log as it was: drop what this run added (it ran in allow mode, so each save is logged with an Undo)
+const cp = `_system/mcp/${createHash("sha256").update(e).digest("hex").slice(0, 32)}.json`;
+const ctl = await readState<{ log?: { at: string }[] }>(cp, {});
+await writeState(cp, { ...ctl, log: (ctl.log ?? []).filter((x) => x.at < since) });
+await setMode(e, was);
 await client.close();

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { draftMinutes, type Item, type Minutes } from "@/lib/minutes";
 import { headers } from "next/headers";
-import { admin, tokenFor } from "@/lib/access";
+import { admin, memberMatters, tokenFor } from "@/lib/access";
 import { sendSignInLink } from "@/lib/signin-mail";
 import { getPrefs, setPrefs } from "@/lib/prefs";
 import { db, requireUser } from "@/lib/supabase";
@@ -17,8 +17,11 @@ import { getMatter } from "@/lib/data";
 import { basisOf, buildDates, getDates, getPins, pinId, saveDates, savePins, saveSectionNote as saveNote } from "@/lib/study";
 import { removeSkill, saveSkill } from "@/lib/skills";
 import { markMoved } from "@/lib/stage-suggest";
-import { editMemory, forget, remember } from "@/lib/memory";
+import { editMemory, forget, remember, restore } from "@/lib/memory";
+import { getControl, setMode, settle, withText, type Mode } from "@/lib/mcp-control";
+import { approve, undoEntry } from "@/lib/mcp-writes";
 import { correctPage, getHistory, splitMarkdown } from "@/lib/corrections";
+import { deliver, dropReport, getReports, patchReport } from "@/lib/reports";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const opt = (f: FormData, k: string) => str(f, k) || null;
@@ -448,5 +451,59 @@ export async function addSkill(files: Record<string, string>): Promise<{ ok: tru
 export async function deleteSkill(name: string) {
   await requireUser();
   await removeSkill(name);
+  revalidatePath("/settings");
+}
+
+// ── problem reports (lib/reports.ts): anyone signed in can mark one fixed, resend its mail or delete it ──
+export async function setReportFixed(id: string, fixed: boolean) {
+  await requireUser();
+  await patchReport(id, { fixed: fixed ? new Date().toISOString() : null });
+  revalidatePath("/settings");
+}
+export async function resendReport(id: string): Promise<string> {
+  await requireUser();
+  const r = (await getReports()).find((x) => x.id === id);
+  if (!r) return "failed";
+  const h = await headers(), mail = await deliver(r, `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`);
+  revalidatePath("/settings");
+  return mail;
+}
+export async function deleteReport(id: string) {
+  await requireUser();
+  await dropReport(id);
+  revalidatePath("/settings");
+}
+
+// ── what connected AI apps may do (lib/mcp-control.ts) ─────────────────────
+export async function setMcpMode(mode: Mode) {
+  const { user } = await requireUser();
+  if (mode !== "review" && mode !== "allow" && mode !== "off") return;
+  await setMode(user.email!.toLowerCase(), mode);
+  revalidatePath("/settings");
+}
+// Approve a waiting change, with her edit of its words if she made one. Returns an error line, or null when it was applied.
+export async function approveChange(id: string, edited?: string): Promise<string | null> {
+  const { user } = await requireUser();
+  const email = user.email!.toLowerCase(), c = await getControl(email), p = c.proposals.find((x) => x.id === id);
+  if (!p) return "That change is no longer waiting.";
+  if (p.w.tool !== "remember" && p.w.tool !== "forget" && !(await memberMatters(email)).includes(p.w.matter)) return "You no longer have access to that matter.";
+  const err = await approve(email, c, id, edited === undefined ? p.w : withText(p.w, edited));
+  revalidatePath("/settings");
+  return err;
+}
+export async function declineChange(id: string) {
+  const { user } = await requireUser();
+  await settle(user.email!.toLowerCase(), id, { status: "declined" });
+  revalidatePath("/settings");
+}
+export async function undoChange(id: string) {
+  const { user } = await requireUser();
+  const email = user.email!.toLowerCase(), e = (await getControl(email)).log.find((x) => x.id === id);
+  if (e) await undoEntry(email, e);
+  revalidatePath("/settings");
+}
+export async function restoreMemory(id: string) {
+  const { user } = await requireUser();
+  await restore(user.email!.toLowerCase(), id);
   revalidatePath("/settings");
 }

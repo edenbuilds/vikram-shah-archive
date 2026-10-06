@@ -2,9 +2,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Bookmark, FolderOpen, LogOut, Search, Settings2 } from "lucide-react";
+import { Bookmark, Flag, FolderOpen, LogOut, Search, Settings2 } from "lucide-react";
 import AskButton from "@/app/AskButton";
 import Logo from "@/components/Logo";
+import { reportHere } from "@/components/Report";
 
 // 04-10-2026: Omkar asked for a better nav bar, after the React Bits portfolio template's floating pill
 // nav. One pill with a sliding highlight; on a phone it floats at the bottom where the thumb is, and the
@@ -66,6 +67,7 @@ export default function TopNav({ email, signOut }: { email: string; signOut: () 
           <div className="account-menu" role="menu">
             <p className="subtle">Signed in as<br /><b>{email}</b></p>
             <Link href="/settings" role="menuitem"><Settings2 size={15} strokeWidth={1.75} aria-hidden /> Settings</Link>
+            <button type="button" role="menuitem" onClick={() => { if (menu.current) menu.current.open = false; reportHere({ how: "menu" }); }}><Flag size={15} strokeWidth={1.75} aria-hidden /> Report a problem</button>
             <form action={signOut}><button role="menuitem"><LogOut size={15} strokeWidth={1.75} aria-hidden /> Sign out</button></form>
           </div>
         </details>

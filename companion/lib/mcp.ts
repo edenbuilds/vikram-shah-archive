@@ -10,9 +10,11 @@ import { pageLabel, printedFor } from "@/lib/printed";
 import { DRAFTING_ASK, draftingFile, draftingFiles, draftingGuide } from "@/lib/drafting";
 import { getReading, readingMarkdown } from "@/lib/reading";
 import { getSkill, listSkills } from "@/lib/skills";
-import { COLOURS, colourTag, type Colour } from "@/lib/highlight";
-import { clean, forScope, forget, getMemory, memoryNote, remember } from "@/lib/memory";
-import { correctPage, getHistory } from "@/lib/corrections";
+import { COLOURS, type Colour } from "@/lib/highlight";
+import { clean, forScope, getMemory, memoryNote } from "@/lib/memory";
+import { getHistory } from "@/lib/corrections";
+import { enqueue, getControl, record, type Write } from "@/lib/mcp-control";
+import { applyWrite } from "@/lib/mcp-writes";
 
 // The companion's MCP server: read-only over the advocate's own matters, every result pinned
 // to paper + page, one checked write (a note) that needs an explicit confirm. Used by ChatGPT,
@@ -56,6 +58,23 @@ export function register(server: McpServer, ctx: Ctx) {
     return data && ctx.matters.includes(data.matter_id) ? (data as Doc) : null;
   }
   const noMatter = (m: string) => fail(`No matter "${m}" in your workspace. Call list_matters to see the ids.`);
+
+  // 06-10-2026: Omkar: "the mcp goes ahead and causes irreversible changes". The server, not the AI app, decides what a confirmed
+  // write does (Settings, AI apps; lib/mcp-control.ts): off refuses, review queues it for her approval, allow applies it and logs an Undo.
+  async function gate(w: Write, preview: string, confirm: boolean | undefined) {
+    const c = await getControl(ctx.email);
+    if (c.mode === "off") return fail("Connected apps are read-only for this advocate (Settings, AI apps). Nothing was changed. Do not try another way; tell her it is switched off.");
+    if (!confirm) return text(`PREVIEW (nothing saved yet). ${c.mode === "review" ? "Ask the advocate if she wants it suggested. If yes, call again with confirm: true: the change then WAITS for her approval in the app (she can edit it there); it is not saved by your call." : "Show this to the advocate and ask if she wants it saved."}\n\n${preview}`);
+    if (c.mode === "review") {
+      const p = await enqueue(ctx.email, w);
+      return text(`NOT SAVED YET. Queued as ${p.id}: it waits for her approval at ${ctx.origin}/settings#ai (she can edit it before approving). Nothing has changed. Tell her it is waiting; do not repeat the call.\n\n${preview}`);
+    }
+    try {
+      const undo = await applyWrite(w, ctx.email);
+      await record(ctx.email, w, undo, "ai");
+      return text(`Saved. She can undo it in Settings, AI apps.\n\n${preview}`);
+    } catch (e) { return fail(`Not saved: ${(e as Error).message}`); }
+  }
 
   server.registerTool("read_me_first", {
     title: "Read me first",
@@ -251,12 +270,7 @@ export function register(server: McpServer, ctx: Ctx) {
     }
     const kind = highlight ? `Highlight (${colour ?? "yellow"})` : bookmark ? "Bookmark" : "Note";
     const preview = `${kind} on ${pin(d, page)}:${note ? `\n"${note}"` : ""}${quote ? `\n${highlight ? "marking" : "anchored to"}: "${quote}"` : ""}`;
-    if (!confirm) return text(`PREVIEW (nothing saved yet). Show this to the advocate and ask if she wants it saved:\n\n${preview}`);
-    const { data: users } = await db.auth.admin.listUsers({ perPage: 1000 });
-    const uid = users?.users.find((u) => u.email?.toLowerCase() === ctx.email)?.id;
-    if (!uid) return fail("Could not identify the signed-in advocate; nothing saved.");
-    const { error } = await db.from("annotations").insert({ matter_id: d.matter_id, doc_id: d.id, page_no: page, char_start: start, char_end: end, quote: quote ?? null, body: note ?? "", tags: highlight ? ["highlight", colourTag(COLOURS[colour ?? "yellow"]), "via-ai"] : bookmark ? ["bookmark", "via-ai"] : ["via-ai"], created_by: uid });
-    return error ? fail(`Not saved: ${error.message}`) : text(`Saved.\n${preview}`);
+    return gate({ tool: "add_note", matter: d.matter_id, doc: d.id, title: d.title, page, note: note ?? "", quote: quote ?? null, start, end, kind: highlight ? "highlight" : bookmark ? "bookmark" : "note", colour: colour ?? "yellow" }, preview, confirm);
   });
 
   // Her memory, shared with the website and Telegram: what is saved here shows there and back.
@@ -279,9 +293,7 @@ export function register(server: McpServer, ctx: Ctx) {
   }, async ({ text: t, matter_id, confirm }) => {
     if (matter_id && !scope(matter_id).length) return noMatter(matter_id);
     const preview = `Remember${matter_id ? ` (for ${matter_id} only)` : " (for all matters)"}:\n"${clean(t)}"`;
-    if (!confirm) return text(`PREVIEW (nothing saved yet). Show this to the advocate and ask if she wants it saved:\n\n${preview}`);
-    const x = await remember(ctx.email, t, matter_id ?? null, "ai");
-    return text(`Saved as [${x.id}]. It now shows in the app (Settings, Memory) and on Telegram (/memory).\n${preview}`);
+    return gate({ tool: "remember", text: clean(t), matter: matter_id ?? null }, preview, confirm);
   });
 
   server.registerTool("forget", {
@@ -291,9 +303,7 @@ export function register(server: McpServer, ctx: Ctx) {
   }, async ({ id, confirm }) => {
     const x = (await getMemory(ctx.email)).find((m) => m.id === id);
     if (!x) return fail(`No memory item "${id}". Call get_memory for the ids.`);
-    if (!confirm) return text(`PREVIEW (nothing removed yet). Ask the advocate if she wants this removed:\n"${x.text}"`);
-    await forget(ctx.email, id);
-    return text(`Removed: "${x.text}"`);
+    return gate({ tool: "forget", id, text: x.text }, `Forget:\n"${x.text}"\n(it is kept for 30 days and can be put back in Settings)`, confirm);
   });
 
   server.registerTool("correct_page", {
@@ -315,9 +325,8 @@ export function register(server: McpServer, ctx: Ctx) {
     const diff = [...gone.slice(0, 20).map((x) => `- ${x}`), ...added.slice(0, 20).map((x) => `+ ${x}`)].join("\n") || "(no line changes)";
     const where = `${d.title}, p. ${page}: ${link(d.matter_id, d.id, page)}`;
     const past = h ? `\nCorrected ${h.versions.length} time(s) before; last by ${h.versions.at(-1)!.by}.` : "";
-    if (!confirm) return text(`PREVIEW (nothing saved yet). Ask the advocate to compare with the scan and say yes:\n${revert ? "Put back the text first read on" : "Correct"} ${where}${past}\n\n${diff}`);
-    const r = await correctPage(db, d, page, next, { by: ctx.email, reason: reason ?? (revert ? "put back the text first read" : null), via: revert ? "revert" : "ai" });
-    return r === "saved" ? text(`Saved. ${where}\nSearch, Ask and verify_quote now use this text; the original is kept (correct_page with revert: true puts it back).`) : fail(`Not saved: ${r}.`);
+    return gate({ tool: "correct_page", matter: d.matter_id, doc: d.id, title: d.title, page, text: next, reason: reason ?? (revert ? "put back the text first read" : null), revert: !!revert },
+      `${revert ? "Put back the text first read on" : "Correct"} ${where}${past}\n\n${diff}\n\n(the original is kept; she can compare with the scan and undo it in Settings)`, confirm);
   });
 
   // ChatGPT connectors and deep research look for tools named exactly `search` and `fetch`.

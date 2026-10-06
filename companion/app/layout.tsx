@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Toaster from "@/components/Toast";
 import JobWatcher from "@/components/JobWatcher";
 import Touch from "@/components/Touch";
+import Report from "@/components/Report";
 import { A11Y_BOOT } from "@/components/A11yPrefs";
 import { signOut } from "./actions";
 import TopNav from "@/components/TopNav";
@@ -51,6 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Toaster />
         {data.user && <JobWatcher />}
         {data.user && <Touch />}
+        {data.user && <Report />}
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
-import { Accessibility, Bell, BookOpen, KeyRound, Link2, MessageCircle, NotebookPen, Plug, ScrollText } from "lucide-react";
-import { getMemory } from "@/lib/memory";
+import { Accessibility, Bell, BookOpen, Flag, KeyRound, Link2, MessageCircle, NotebookPen, Plug, ScrollText, ShieldCheck } from "lucide-react";
+import { getMemory, getTrash } from "@/lib/memory";
+import { editable, getControl } from "@/lib/mcp-control";
 import { activity, when } from "@/lib/activity";
 import Link from "next/link";
 import Memory from "./Memory";
@@ -13,9 +14,13 @@ import Prompts from "./Prompts";
 import A11yPrefs from "@/components/A11yPrefs";
 import Skills from "./Skills";
 import { listSkills } from "@/lib/skills";
+import { buildPrompt, getReports, KINDS, parseUA, routeOf, shotUrls } from "@/lib/reports";
+import Reports from "./Reports";
+import Control from "./Control";
 
 const SECTIONS = [
   ["connections", "Connections", Plug],
+  ["ai", "AI apps", ShieldCheck],
   ["display", "Display", Accessibility],
   ["telegram", "Telegram", MessageCircle],
   ["signin", "Sign-in link", KeyRound],
@@ -23,6 +28,7 @@ const SECTIONS = [
   ["memory", "Memory", NotebookPen],
   ["skills", "Skills", BookOpen],
   ["prompts", "Prompts and skill", ScrollText],
+  ["reports", "Problems", Flag],
 ] as const;
 
 export const metadata = { title: "Settings" };
@@ -38,6 +44,8 @@ export default async function Settings() {
   const tgLink = `https://t.me/arya_case_archivebot?start=${startCode(email)}`;
   const chats = Object.entries(await linkedChats()).filter(([, e]) => e === email).length;
   const [{ data: matters }, skills, memory] = await Promise.all([supabase.from("matters").select("id, title").order("created_at"), listSkills(), getMemory(email).catch(() => [])]);
+  const [control, gone] = await Promise.all([getControl(email), getTrash(email).catch(() => [])]);
+  const reports = await getReports().catch(() => []), shots = await shotUrls(reports).catch(() => ({}));
   const recent = await activity(supabase, email, (matters ?? []).map((m) => m.id)).catch(() => []);
 
   const cursor = `https://cursor.com/en/install-mcp?name=case-companion&config=${Buffer.from(JSON.stringify({ url })).toString("base64")}`;
@@ -85,6 +93,18 @@ export default async function Settings() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section id="ai" className="stack">
+          <div>
+            <h2>AI apps</h2>
+            <p className="muted" style={{ margin: 0 }}>What Claude, ChatGPT, Codex and Cursor may change in your workspace.</p>
+          </div>
+          <Control mode={control.mode}
+            waiting={control.proposals.filter((p) => p.status === "waiting" || p.status === "failed").map((p) => ({ id: p.id, at: p.at, summary: p.summary, edit: editable(p.w), big: p.w.tool === "correct_page",
+              href: p.w.tool === "add_note" || p.w.tool === "correct_page" ? `/m/${p.w.matter}/d/${p.w.doc}?p=${p.w.page}` : null, failed: p.status === "failed" ? p.error ?? "unknown error" : null }))}
+            done={control.log.map((e) => ({ id: e.id, at: e.at, via: e.via, summary: e.summary, canUndo: !!e.undo, undone: e.undone }))}
+            gone={gone.map((g) => ({ id: g.id, text: g.text, gone: g.gone }))} />
         </section>
 
         <section id="display" className="card stack">
@@ -151,6 +171,18 @@ export default async function Settings() {
               <a className="btn ghost small" style={{ flex: "0 0 auto" }} href="/skill/case-companion/SKILL.md" download="AGENTS.md">AGENTS.md for Codex and Cursor</a>
             </div>
           </div>
+        </section>
+
+        <section id="reports" className="stack">
+          <div>
+            <h2>Problems</h2>
+            <p className="muted" style={{ margin: 0 }}>Everything reported from a screen, with the picture and the brief that was emailed.</p>
+          </div>
+          <Reports items={reports.map((r) => {
+            const u = parseUA(r.ctx.ua, r.ctx.touchPoints);
+            return { id: r.id, at: r.at, by: r.by, kind: KINDS[r.kind], page: routeOf(r.ctx.url).name, note: r.note, device: `${u.device}, ${u.os}, ${u.browser}`, screen: `${r.ctx.viewport.w} x ${r.ctx.viewport.h}`,
+              shotUrl: (shots as Record<string, string>)[r.id] ?? null, mail: r.mail, fixed: r.fixed, prompt: buildPrompt(r, origin) };
+          })} />
         </section>
       </div>
     </main>

@@ -1018,3 +1018,15 @@ html[data-a11y-motion=reduce] .logo-draw .dot { animation: none; opacity: 1; tra
 .quick-menu p { font-family: var(--serif); font-size: .95rem; color: var(--ink); }
 @media (hover: none) { a.matter-card, a.docrow, a.stat { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; } }
 @media (hover: none) { .matter-card:hover { transform: none; box-shadow: none; } .docrow:hover { background: none; } }  /* a tap must not leave a hover behind */
+
+/* 06-10-2026: problem reports (components/Report.tsx, app/settings/Reports.tsx).
+   touch-action: manipulation keeps a phone's double-tap from zooming, so the double-tap gesture is ours to read; pinch still zooms. */
+html { touch-action: manipulation; }
+.report-dialog { overscroll-behavior: contain; max-height: calc(100dvh - 32px); overflow: auto; }
+.report-shot { border: 1px solid var(--rule); border-radius: 4px; background: var(--paper-deep); min-height: 3.2rem; display: grid; place-items: center; padding: .5rem; }
+.report-shot img { display: block; max-width: 100%; max-height: 11rem; border-radius: 2px; }
+.report-row { display: grid; grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); gap: 1rem; align-items: start; padding: .9rem 1rem; }
+.report-row:not(:has(.report-thumb)) { grid-template-columns: minmax(0, 1fr); }
+.report-thumb img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 4px; }
+.report-brief { margin: .5rem 0 0; padding: .75rem; background: var(--paper-deep); border: 1px solid var(--rule); border-radius: 4px; font: 12px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 22rem; overflow: auto; }
+@media (max-width: 560px) { .report-row { grid-template-columns: minmax(0, 1fr); } .report-thumb { max-width: 12rem; } }
