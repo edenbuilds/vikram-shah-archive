@@ -370,7 +370,7 @@ label:has(> select) { overflow: hidden; padding: 4px; margin: -4px; }
 }
 @media (max-width: 640px) {
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stat { display: flex; align-items: baseline; gap: .45rem; }
+  .stat { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .45rem; }  /* 06-10-2026: a date plus "Next hearing" is wider than a 320px half column; the label drops under it */
   .stat b { font-size: 1.1rem; white-space: nowrap; }
 }
 

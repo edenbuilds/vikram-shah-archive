@@ -8,7 +8,7 @@ export default function Tools({ text, md, name, copyLabel = "Copy as references"
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 30000);
   };
   return (
-    <div className="row" style={{ gap: ".5rem", flex: "0 0 auto", flexWrap: "nowrap" }}>
+    <div className="row" style={{ gap: ".5rem", flex: "0 1 auto" }}>
       <CopyButton text={text} label={copyLabel} />
       <button type="button" className="btn ghost small" style={{ flex: "0 0 auto" }} onClick={save}>Save .md</button>
     </div>

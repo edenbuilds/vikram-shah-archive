@@ -98,7 +98,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
             {!pageKeyed && <span className="pill warn">Continuous OCR: page breaks follow the scans</span>}
           </div>
         </div>
-        <div className="row" style={{ flex: "0 0 auto", gap: ".5rem" }}>
+        <div className="row" style={{ flex: "0 1 auto", gap: ".5rem" }}>
           {d.pdf_path && <a className="btn ghost small" href={pdf || `/m/${m.id}/d/${d.id}/download/pdf?view`} target="_blank" rel="noreferrer">Original PDF ↗</a>}
           <Link className="btn ghost small" href={`/ask?m=${m.id}&src=${d.id}`}>Ask about this paper</Link>
           <ShareMenu title={d.title} items={(["pdf", "liquidtext", "docx", "md", "txt"] as const).map((f) => ({ label: { pdf: "PDF", liquidtext: "PDF with notes (LiquidText)", docx: "Word", md: "Markdown", txt: "Text" }[f], href: `/m/${m.id}/d/${d.id}/download/${f}` }))} />

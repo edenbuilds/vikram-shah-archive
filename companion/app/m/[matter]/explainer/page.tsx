@@ -61,11 +61,11 @@ export default async function Explainer({ params }: { params: Promise<{ matter: 
   return (
     <div className="stack explainer">
       <div className="row" style={{ justifyContent: "space-between", alignItems: "end" }}>
-        <div>
+        <div style={{ flex: "1 1 16rem" }}>
           <h2 style={{ marginBottom: ".2rem" }}>Plain English explainer</h2>
           <p className="muted" style={{ margin: 0 }}>The case in five parts, every sentence with its page.{yours && <> <a href={yours} target="_blank" rel="noreferrer">Your explainer (PDF)</a></>}</p>
         </div>
-        {ex && <div className="row" style={{ gap: ".5rem", flexWrap: "nowrap" }}><Tools text={md} md={md} name={`${m.id} explainer`} copyLabel="Copy explainer" /><ShareMenu title={`Explainer, ${m.short ?? m.title}`} /></div>}
+        {ex && <div className="row" style={{ gap: ".5rem" }}><Tools text={md} md={md} name={`${m.id} explainer`} copyLabel="Copy explainer" /><ShareMenu title={`Explainer, ${m.short ?? m.title}`} /></div>}
       </div>
 
       {!ex && (
