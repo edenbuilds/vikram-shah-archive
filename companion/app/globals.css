@@ -1030,3 +1030,16 @@ html { touch-action: manipulation; }
 .report-thumb img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 4px; }
 .report-brief { margin: .5rem 0 0; padding: .75rem; background: var(--paper-deep); border: 1px solid var(--rule); border-radius: 4px; font: 12px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 22rem; overflow: auto; }
 @media (max-width: 560px) { .report-row { grid-template-columns: minmax(0, 1fr); } .report-thumb { max-width: 12rem; } }
+
+/* choosing what is wrong in a report (components/Report.tsx): the outline follows the pointer, the bar sits above the home indicator */
+.report-ring { position: fixed; z-index: 90; display: none; pointer-events: none; border: 2px solid #d92d20; border-radius: 2px; }
+.report-pick { position: fixed; z-index: 95; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 24px);
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .6rem .8rem; }
+/* what connected apps may do (app/settings/Control.tsx): three plain choices, the chosen one outlined */
+.mode-opts { display: grid; gap: .5rem; border: 0; margin: 0; padding: 0; min-width: 0; }
+.mode-opt { display: grid; grid-template-columns: auto 1fr; column-gap: .7rem; align-items: start; padding: .7rem .85rem; border: 1px solid var(--rule); border-radius: 4px; background: var(--white); cursor: pointer; }
+.mode-opt:has(input:checked) { border-color: var(--ink); }
+.mode-opt:has(input:focus-visible) { outline: 2px solid var(--accent, #0000d6); outline-offset: 2px; }
+.mode-opt input { margin: .2rem 0 0; accent-color: var(--ink); }
+.mode-opt b { font-weight: 600; }
+.mode-opt span { grid-column: 2; color: var(--muted); }

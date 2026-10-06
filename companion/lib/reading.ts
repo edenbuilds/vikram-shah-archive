@@ -140,10 +140,10 @@ export function readingMarkdown(r: ReadingOrder, caseName: string, forum: string
   const f = (name: string, x: Field, doc: string) => `**${name}:** ${x ? `${x.text} ("${x.quote.replace(/\s+/g, " ").trim()}", ${label(doc, x.page)})` : "Not found in the papers on file."}`;
   const years = new Map<string, Entry[]>();
   for (const e of r.entries) years.set(e.iso?.slice(0, 4) ?? "Undated", [...(years.get(e.iso?.slice(0, 4) ?? "Undated") ?? []), e]);
-  const out = [`# Chronological Reading Order — ${caseName}`, forum, ""];
+  const out = [`# Chronological Reading Order: ${caseName}`, forum, ""];
   for (const [y, es] of years) {
     out.push(`## ${y}`, "");
-    for (const e of es) out.push(`### ${e.iso ? `${dots(e.iso)} — ` : ""}${e.title}`, f("What it is", e.what, e.doc), f("What it says", e.says, e.doc),
+    for (const e of es) out.push(`### ${e.iso ? `${dots(e.iso)}: ` : ""}${e.title}`, f("What it is", e.what, e.doc), f("What it says", e.says, e.doc),
       f("What it sets up", e.sets, e.doc), `**Importance:** ${e.importance}`, "", "---", "");
   }
   const ess = r.entries.filter((e) => e.importance === "Essential").map((e) => e.title);

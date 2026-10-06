@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { readState, writeState } from "./access.ts";
 
 // Her memory: standing preferences and reminders that follow her across the app, Telegram and every
-// connected AI app (Claude, ChatGPT, Cursor...) on any device. One JSON per person in the private
+// connected connected app (Claude, ChatGPT, Cursor...) on any device. One JSON per person in the private
 // bucket, so a change made anywhere is what every other surface reads next (two-way). It is her
 // work product, never the record: the Ask agent sees it as how to work, and every fact it states
 // must still be quoted from a page.
@@ -17,8 +17,8 @@ const read = (email: string) => readState<{ items?: Memory[]; trash?: Gone[] }>(
 export async function getMemory(email: string): Promise<Memory[]> {
   return (await read(email)).items ?? [];
 }
-// 06-10-2026: forgetting was a hard delete, and an AI app could do it. It now moves the item here for 30 days, so it can be put back
-// (Settings, Memory, "Recently forgotten"; Settings, AI apps, Undo).
+// 06-10-2026: forgetting was a hard delete, and a connected app could do it. It now moves the item here for 30 days, so it can be put back
+// (Settings, Memory, "Recently forgotten"; Settings, Connected apps, Undo).
 export async function getTrash(email: string): Promise<Gone[]> {
   return ((await read(email)).trash ?? []).filter((g) => Date.now() - Date.parse(g.gone) < TRASH_DAYS * 864e5);
 }

@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import RubberSegment from "@/components/rb/RubberSegment";
 import { toast } from "@/components/Toast";
 import { approveChange, declineChange, restoreMemory, setMcpMode, undoChange } from "@/app/actions";
 import type { Mode } from "@/lib/mcp-control";
@@ -10,14 +9,13 @@ export type Wait = { id: string; at: string; summary: string; edit: string | nul
 export type Done = { id: string; at: string; via: string; summary: string; canUndo: boolean; undone: string | null };
 export type Gone = { id: string; text: string; gone: string };
 const dmy = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata" }).replace(/\//g, "-");
-const MODES = [{ value: "review", label: "Ask me first" }, { value: "allow", label: "Allow, with undo" }, { value: "off", label: "Read only" }];
-const LINE: Record<Mode, string> = {
-  review: "A connected app can suggest a change. Nothing is saved until you approve it here, and you can edit it first.",
-  allow: "Connected apps save changes straight away. Each one is listed below with an Undo.",
-  off: "Connected apps can read and search your papers but cannot change anything.",
-};
+const MODES: { value: Mode; label: string; line: string; said: string }[] = [
+  { value: "review", label: "Ask me first", line: "Apps suggest a change and it waits here. Nothing is saved until you approve it, and you can edit it first.", said: "Apps will ask you first" },
+  { value: "allow", label: "Allow, with undo", line: "Apps save changes straight away. Every change is listed below with an Undo.", said: "Apps can save changes. You can undo each one" },
+  { value: "off", label: "Read only", line: "Apps can read and search your papers but cannot change anything.", said: "Apps are read only now" },
+];
 
-// What connected AI apps may do to her workspace: the mode (enforced by the server, lib/mcp-control.ts), the changes waiting for her,
+// What connected apps may do to her workspace: the mode (enforced by the server, lib/mcp-control.ts), the changes waiting for her,
 // what was changed and how to take it back, and the memories that were forgotten and can be put back.
 export default function Control({ mode, waiting, done, gone }: { mode: Mode; waiting: Wait[]; done: Done[]; gone: Gone[] }) {
   const [m, setM] = useState<Mode>(mode);
@@ -28,17 +26,32 @@ export default function Control({ mode, waiting, done, gone }: { mode: Mode; wai
     setBusy(id);
     try { const e = await f(); if (e) setErr((x) => ({ ...x, [id]: e })); else toast(ok); } finally { setBusy(null); }
   };
+  // a page correction is never approved in bulk: it has to be compared with the scan first
+  const all = async (what: "approve" | "decline") => {
+    setBusy("all");
+    try {
+      let n = 0;
+      for (const w of waiting) {
+        if (what === "approve" && w.big) continue;
+        const e = what === "approve" ? await approveChange(w.id, w.edit !== null ? text[w.id] ?? w.edit : undefined) : await declineChange(w.id);
+        if (e) setErr((x) => ({ ...x, [w.id]: e })); else n++;
+      }
+      toast(what === "approve" ? `Approved ${n}` : `Declined ${n}`);
+    } finally { setBusy(null); }
+  };
   return (
     <div className="stack" style={{ gap: "1rem" }}>
-      <div className="card stack" style={{ gap: ".6rem" }}>
-        <RubberSegment aria-label="What connected apps may do" className="seg-rb" size="sm" value={m} trackColor="var(--paper-deep)" thumbColor="var(--white)" textColor="var(--muted)" activeTextColor="var(--ink)"
-          items={MODES} onChange={(v) => { setM(v as Mode); void setMcpMode(v as Mode); }} />
-        <p className="subtle" style={{ margin: 0 }}>{LINE[m]}</p>
-      </div>
-
       {waiting.length > 0 && (
         <div className="stack" style={{ gap: ".6rem" }}>
-          <h3 style={{ margin: 0 }}>Waiting for you ({waiting.length})</h3>
+          <div className="row" style={{ justifyContent: "space-between", alignItems: "center", gap: ".5rem", flexWrap: "wrap" }}>
+            <h3 style={{ margin: 0 }}>Waiting for you ({waiting.length})</h3>
+            {waiting.length > 1 && (
+              <span className="row" style={{ gap: ".5rem" }}>
+                {waiting.some((w) => !w.big) && <button className="btn small" disabled={!!busy} onClick={() => all("approve")}>Approve all</button>}
+                <button className="btn ghost small" disabled={!!busy} onClick={() => all("decline")}>Decline all</button>
+              </span>
+            )}
+          </div>
           <ul className="plain stack" style={{ gap: ".6rem" }}>
             {waiting.map((w) => (
               <li key={w.id} className="card stack" id={`change-${w.id}`} style={{ gap: ".5rem" }}>
@@ -61,13 +74,23 @@ export default function Control({ mode, waiting, done, gone }: { mode: Mode; wai
         </div>
       )}
 
+      <fieldset className="mode-opts" aria-label="What connected apps may do">
+        {MODES.map((o) => (
+          <label key={o.value} className="mode-opt">
+            <input type="radio" name="mcp-mode" value={o.value} checked={m === o.value} onChange={() => { setM(o.value); void setMcpMode(o.value); toast(o.said, { tone: "info" }); }} />
+            <b>{o.label}</b>
+            <span>{o.line}</span>
+          </label>
+        ))}
+      </fieldset>
+
       <details className="more" open={done.length > 0 && waiting.length === 0}>
         <summary>What was changed ({done.length})</summary>
         {done.length === 0 ? <p className="subtle">Nothing yet.</p> : (
           <ul className="plain stack" style={{ gap: ".4rem", marginTop: ".5rem" }}>
             {done.map((d) => (
               <li key={d.id} className="card row" style={{ padding: ".6rem .9rem", gap: ".75rem", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ minWidth: 0, overflowWrap: "anywhere" }}>{d.summary}<span className="subtle"> · {d.via === "approved" ? "you approved" : "an AI app"} · {dmy(d.at)}{d.undone ? ` · undone ${dmy(d.undone)}` : ""}</span></span>
+                <span style={{ minWidth: 0, overflowWrap: "anywhere" }}>{d.summary}<span className="subtle"> · {d.via === "approved" ? "you approved" : "a connected app"} · {dmy(d.at)}{d.undone ? ` · undone ${dmy(d.undone)}` : ""}</span></span>
                 {d.canUndo && !d.undone && <button className="btn ghost small" style={{ flex: "0 0 auto" }} disabled={busy === d.id} onClick={() => run(d.id, () => undoChange(d.id), "Undone")}>Undo</button>}
               </li>
             ))}

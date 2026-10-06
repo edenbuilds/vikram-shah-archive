@@ -4,7 +4,7 @@ import { readState, writeState } from "./access.ts";
 // Corrections to a paper's read text, page by page, by anyone who can see the matter (web, MCP, or
 // an edited Markdown download uploaded back). The scan and the PDF are never touched. The text the
 // worker first read is kept here with every later version, so any page can be put back.
-// 04-10-2026: she asked to fix pages the OCR got wrong, and for her AI app to do so when it notices.
+// 04-10-2026: she asked to fix pages the OCR got wrong, and for her connected app to do so when it notices.
 
 export type Version = { text: string; by: string; at: string; reason: string | null; via: "web" | "markdown" | "ai" | "revert" };
 export type PageHistory = { original: string; original_source: string | null; versions: Version[] };

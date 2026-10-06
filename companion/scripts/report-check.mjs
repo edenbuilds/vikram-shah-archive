@@ -59,6 +59,21 @@ async function run(name, browserName, ctxOpts, touch) {
   // 3. the account menu entry opens the dialog with a screenshot
   await p.locator("details.account summary").click();
   await p.getByRole("menuitem", { name: "Report a problem" }).click();
+  // 06-10-2026: from the menu she first chooses what is wrong. Choosing a closed <summary> must select it without opening it.
+  const bar = p.locator(".report-pick");
+  ok(await bar.isVisible(), `${name}: the menu asks what is wrong first`);
+  const sum = p.locator("main summary").first();
+  if (await sum.count()) {
+    const was = await sum.evaluate((e) => e.parentElement.open);
+    await sum.scrollIntoViewIfNeeded(); await sum.click();
+    await p.locator("dialog.report-dialog").waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    ok((await sum.evaluate((e) => e.parentElement.open)) === was, `${name}: choosing a control selects it without pressing it`);
+    ok(/On /.test(await p.locator("dialog.report-dialog p.subtle").first().innerText()) && !/On this screen/.test(await p.locator("dialog.report-dialog p.subtle").first().innerText()), `${name}: the report says which control was chosen`);
+    await p.locator("dialog.report-dialog").getByRole("button", { name: "Cancel" }).click();
+    await p.locator("details.account summary").click();
+    await p.getByRole("menuitem", { name: "Report a problem" }).click();
+  }
+  await p.locator(".report-pick").getByRole("button", { name: "Whole screen" }).click();
   const dlg = p.locator("dialog.report-dialog");
   await p.evaluate(() => addEventListener("report:open", () => console.log("report:open fired")));
   await dlg.waitFor({ state: "visible", timeout: 5000 }).catch(async () => console.log("  dialog state", JSON.stringify(await p.evaluate(() => ({ el: !!document.querySelector("dialog.report-dialog"), open: document.querySelector("dialog.report-dialog")?.open, menus: document.querySelectorAll(".quick-menu").length, acct: document.querySelector("details.account")?.open })))));
@@ -74,6 +89,7 @@ async function run(name, browserName, ctxOpts, touch) {
   }
   const box = await dlg.boundingBox(), vs = p.viewportSize();
   ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= vs.width && box.y + box.height <= vs.height + 1, `${name}: the dialog fits the screen`);
+  ok(await dlg.getByRole("radio", { name: /^Feature$/ }).count() === 1, `${name}: a feature problem can be reported too`);
   await dlg.getByRole("radio", { name: /Looks wrong/ }).click().catch(() => {});
   await dlg.locator("textarea").fill(send ? "TEST report from scripts/report-check.mjs. Please ignore: checking that the email, the screenshot and Settings, Problems work." : "check");
   if (send) {

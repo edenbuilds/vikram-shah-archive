@@ -52,7 +52,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
     supabase.from("collections").select("id, title").eq("matter_id", m.id).order("created_at"),
   ]);
   const sections = ((d.sections ?? []) as Section[]).filter((s) => s.pageStart);
-  // Her own bookmarks are annotations tagged "bookmark" (body = name), so the web and her AI app share them.
+  // Her own bookmarks are annotations tagged "bookmark" (body = name), so the web and her connected app share them.
   const marks = ((notes ?? []) as Note[]).filter((n) => n.tags.includes("bookmark")).sort((a, b) => (a.page_no ?? 0) - (b.page_no ?? 0));
   const plain = ((notes ?? []) as Note[]).filter((n) => !n.tags.includes("bookmark"));
   const printed = facts(texts ?? []);

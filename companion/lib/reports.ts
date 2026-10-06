@@ -9,7 +9,7 @@ import { REPORT_TO, sendMail } from "./agentmail.ts";
 // into one mail whose body is a paste-ready brief for a coding agent, and keeps the record and the screenshot in the private
 // bucket. Nothing here touches a paper or a note.
 
-export type Kind = "visual" | "function" | "other";
+export type Kind = "visual" | "function" | "feature" | "other";
 export type Target = { tag: string; role: string; label: string; text: string; selector: string; rect: number[]; crumbs: string[] };
 export type Ctx = {
   url: string; title: string; how: string; viewport: { w: number; h: number; dpr: number }; scroll: number[]; touch: boolean; touchPoints: number;
@@ -20,7 +20,7 @@ export type Report = {
   mail: "sent" | "failed" | "queued"; mailError?: string; fixed: string | null;
 };
 
-export const KINDS: Record<Kind, string> = { visual: "Looks wrong", function: "Does not work", other: "Something else" };
+export const KINDS: Record<Kind, string> = { visual: "Looks wrong", function: "Does not work", feature: "Feature missing or wrong", other: "Something else" };
 const INDEX = "_system/reports/index.json";
 const MAX = 300;
 
@@ -42,7 +42,7 @@ const num = (v: unknown, d = 0) => (Number.isFinite(Number(v)) ? Math.round(Numb
 export function clean(p: { kind?: unknown; note?: unknown; ctx?: Record<string, any> }): { kind: Kind; note: string; ctx: Ctx } {
   const c = p.ctx ?? {}, t = c.target;
   return {
-    kind: p.kind === "visual" || p.kind === "function" ? p.kind : "other",
+    kind: p.kind === "visual" || p.kind === "function" || p.kind === "feature" ? p.kind : "other",
     note: String(p.note ?? "").replace(/\r/g, "").trim().slice(0, 2000),
     ctx: {
       url: s(c.url, 400), title: s(c.title, 160), how: s(c.how, 20),
@@ -64,7 +64,7 @@ const ROUTES: [RegExp, string, string[]][] = [
   [/^\/pins$/, "Pins", ["app/pins/page.tsx", "lib/study.ts"]],
   [/^\/search$/, "Search", ["app/search/page.tsx"]],
   [/^\/settings/, "Settings", ["app/settings/page.tsx", "app/settings/*.tsx"]],
-  [/^\/connect$/, "Connect an AI app", ["app/connect/page.tsx"]],
+  [/^\/connect$/, "Connect an app", ["app/connect/page.tsx"]],
   [/^\/login$/, "Sign in", ["app/login/page.tsx", "components/ui/sign-in.tsx"]],
   [/^\/m\/[^/]+$/, "Matter, Papers", ["app/m/[matter]/page.tsx", "app/m/[matter]/layout.tsx"]],
   [/^\/m\/[^/]+\/d\/[^/]+/, "Paper reader", ["app/m/[matter]/d/[doc]/page.tsx", "lib/corrections.ts", "lib/highlight.ts", "lib/citations.ts"]],
@@ -106,10 +106,11 @@ export const ist = (iso: string) => {
 };
 
 // ── the brief for the agent ──────────────────────────────────────────────
-const HOW: Record<string, string> = { hold: "press and hold", double: "double tap or double click", force: "a firm press", menu: "the Report a problem menu entry", button: "the Report a problem button" };
+const HOW: Record<string, string> = { hold: "press and hold", double: "double tap or double click", force: "a firm press", menu: "the Report a problem menu entry", picked: "the Report a problem menu entry, then choosing the element", button: "the Report a problem button" };
 const AREA: Record<Kind, string> = {
   visual: "A layout, spacing, overflow, colour, type or touch-target fault. Check the screenshot first: the red outline marks the element she pointed at.",
   function: "Something does not do what it should (a button, a save, a search, a page that fails to load). Find the server action or route behind it before touching the interface.",
+  feature: "A feature is missing, half done, or behaves differently from what she expects. Do not invent behaviour: say in your first line what she expects and what happens now, check DESIGN.md and HANDOFF.md for whether it was meant, and propose the smallest change before building anything large.",
   other: "Not classified by the reporter. Work out from her words and the screenshot whether this is visual or functional, and say which in your first line.",
 };
 

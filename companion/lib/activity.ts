@@ -17,6 +17,8 @@ const timelinePath = (email: string) => `_system/activity/${hash(email)}.timelin
 const KEEP = 300;
 
 export const when = (iso: string) => new Date(iso).toLocaleString("en-GB", { timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).replace(/\//g, "-").replace(",", "");
+// 06-10-2026: entries saved before the rename say "AI app"; she is never shown that word, so they are read as the new wording
+const said = <T extends { text: string }>(e: T): T => ({ ...e, text: e.text.replace(/^AI app\b/, "A connected app") });
 const cut = (s: string, n = 90) => { const t = (s ?? "").replace(/\s+/g, " ").trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t; };
 
 /** The paper page calls this after rendering: the last papers she opened, newest first, one row per paper. */
@@ -26,7 +28,7 @@ export async function noteVisit(email: string, v: Omit<Visit, "at">) {
 }
 export const lastVisits = (email: string) => readState<Visit[]>(visitsPath(email), []);
 
-/** Written the moment she (or an AI app on her behalf) does something, so memory never waits for a page to be
+/** Written the moment she (or a connected app on her behalf) does something, so memory never waits for a page to be
  *  opened. 04-10-2026: Omkar: "memory shouldn't be optional/manual, it should be persistent and autonomous". */
 export async function track(email: string | null | undefined, e: { matter?: string | null; text: string; link?: string }) {
   if (!email) return;
@@ -37,10 +39,10 @@ export async function track(email: string | null | undefined, e: { matter?: stri
   } catch { /* memory must never break the action it records */ }
 }
 
-/** The stored timeline only (one storage read, no database queries): for an AI app's first message. */
+/** The stored timeline only (one storage read, no database queries): for a connected app's first message. */
 export async function recentTrail(email: string, matterIds: string[], origin: string, n = 6): Promise<Event[]> {
   const xs = await readState<Event[]>(timelinePath(email), []);
-  return xs.filter((e) => !e.matter || matterIds.includes(e.matter)).slice(0, n).map((e) => ({ ...e, link: absolute(e.link, origin) }));
+  return xs.filter((e) => !e.matter || matterIds.includes(e.matter)).slice(0, n).map((e) => said({ ...e, link: absolute(e.link, origin) }));
 }
 const absolute = (l: string | undefined, origin: string) => (l?.startsWith("/") ? origin + l : l);
 
@@ -78,7 +80,7 @@ export async function activity(db: SupabaseClient, email: string, matterIds: str
   const added = fresh.filter((e) => !seen.has(e.key));
   const all = merge(stored, fresh);
   if (added.length) await writeState(timelinePath(email), all).catch(() => {});
-  return all.filter((e) => !e.matter || matterIds.includes(e.matter)).map((e) => ({ ...e, link: absolute(e.link, origin) }));
+  return all.filter((e) => !e.matter || matterIds.includes(e.matter)).map((e) => said({ ...e, link: absolute(e.link, origin) }));
 }
 
 /** Newest first, one row per key (a fresh copy replaces the stored one), capped. */
@@ -88,7 +90,7 @@ export function merge(stored: Event[], fresh: Event[]): Event[] {
   return [...byKey.values()].sort((a, b) => b.at.localeCompare(a.at)).slice(0, KEEP);
 }
 
-/** For the agent and connected AI apps: what she did last, dated, never a fact about a case. */
+/** For the agent and connected connected apps: what she did last, dated, never a fact about a case. */
 export function activityNote(events: Event[], n = 15): string {
   if (!events.length) return "";
   return "Where she left off (her recent activity, kept automatically from the app; NOT facts from the papers, never cite it):\n" +

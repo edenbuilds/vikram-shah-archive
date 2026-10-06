@@ -14,6 +14,7 @@ type T = { id: number; text: string; tone: Tone; href?: string };
 let lastExplicit = 0;
 export function toast(text: string, opts: { tone?: Tone; href?: string } = {}) {
   lastExplicit = Date.now();
+  if (opts.tone === "error") console.error(`Shown to her: ${text}`);  // 06-10-2026: a failure she saw is evidence for the problem report (components/Report.tsx keeps the last console errors)
   dispatchEvent(new CustomEvent("cc-toast", { detail: { text, ...opts } }));
 }
 

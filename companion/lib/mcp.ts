@@ -30,14 +30,14 @@ const fail = (t: string) => ({ content: [{ type: "text" as const, text: t }], is
 
 export function register(server: McpServer, ctx: Ctx) {
   const db = admin();
-  // 04-10-2026: Omkar: memory "should be persistent and autonomous". What her AI apps read lands on the same timeline
+  // 04-10-2026: Omkar: memory "should be persistent and autonomous". What her connected apps read lands on the same timeline
   // as what she does in the app, written after the answer is sent so a tool call never waits on it. Writes (a note, a
   // saved memory) already show up from their own rows; only the reads that leave no row are logged here.
   const TRAIL: Record<string, (a: Record<string, string | number | undefined>) => Promise<{ text: string; matter?: string; link?: string } | null>> = {
-    get_paper: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `AI app read "${d.title}"`, matter: d.matter_id, link: link(d.matter_id, d.id) }; },
-    read_pages: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `AI app read "${d.title}" from p. ${a.from_page}`, matter: d.matter_id, link: link(d.matter_id, d.id, Number(a.from_page)) }; },
-    ask_papers: async (a) => ({ text: `AI app asked: "${a.question}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
-    search_papers: async (a) => ({ text: `AI app searched: "${a.query}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
+    get_paper: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `A connected app read "${d.title}"`, matter: d.matter_id, link: link(d.matter_id, d.id) }; },
+    read_pages: async (a) => { const d = await doc(String(a.doc_id)); return d && { text: `A connected app read "${d.title}" from p. ${a.from_page}`, matter: d.matter_id, link: link(d.matter_id, d.id, Number(a.from_page)) }; },
+    ask_papers: async (a) => ({ text: `A connected app asked: "${a.question}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
+    search_papers: async (a) => ({ text: `A connected app searched: "${a.query}"`, matter: a.matter_id ? String(a.matter_id) : undefined }),
   };
   const registerTool = server.registerTool.bind(server) as (n: string, c: unknown, f: (a: never, x: never) => unknown) => unknown;
   server.registerTool = ((name: string, cfg: unknown, fn: (a: never, x: never) => Promise<{ isError?: boolean }>) =>
@@ -59,20 +59,20 @@ export function register(server: McpServer, ctx: Ctx) {
   }
   const noMatter = (m: string) => fail(`No matter "${m}" in your workspace. Call list_matters to see the ids.`);
 
-  // 06-10-2026: Omkar: "the mcp goes ahead and causes irreversible changes". The server, not the AI app, decides what a confirmed
-  // write does (Settings, AI apps; lib/mcp-control.ts): off refuses, review queues it for her approval, allow applies it and logs an Undo.
+  // 06-10-2026: Omkar: "the mcp goes ahead and causes irreversible changes". The server, not the connected app, decides what a confirmed
+  // write does (Settings, Connected apps; lib/mcp-control.ts): off refuses, review queues it for her approval, allow applies it and logs an Undo.
   async function gate(w: Write, preview: string, confirm: boolean | undefined) {
     const c = await getControl(ctx.email);
-    if (c.mode === "off") return fail("Connected apps are read-only for this advocate (Settings, AI apps). Nothing was changed. Do not try another way; tell her it is switched off.");
+    if (c.mode === "off") return fail("Connected apps are read-only for this advocate (Settings, Connected apps). Nothing was changed. Do not try another way; tell her it is switched off.");
     if (!confirm) return text(`PREVIEW (nothing saved yet). ${c.mode === "review" ? "Ask the advocate if she wants it suggested. If yes, call again with confirm: true: the change then WAITS for her approval in the app (she can edit it there); it is not saved by your call." : "Show this to the advocate and ask if she wants it saved."}\n\n${preview}`);
     if (c.mode === "review") {
       const p = await enqueue(ctx.email, w);
-      return text(`NOT SAVED YET. Queued as ${p.id}: it waits for her approval at ${ctx.origin}/settings#ai (she can edit it before approving). Nothing has changed. Tell her it is waiting; do not repeat the call.\n\n${preview}`);
+      return text(`NOT SAVED YET. Queued as ${p.id}: it waits for her approval at ${ctx.origin}/settings#apps (she can edit it before approving). Nothing has changed. Tell her it is waiting; do not repeat the call.\n\n${preview}`);
     }
     try {
       const undo = await applyWrite(w, ctx.email);
       await record(ctx.email, w, undo, "ai");
-      return text(`Saved. She can undo it in Settings, AI apps.\n\n${preview}`);
+      return text(`Saved. She can undo it in Settings, Connected apps.\n\n${preview}`);
     } catch (e) { return fail(`Not saved: ${(e as Error).message}`); }
   }
 
@@ -238,7 +238,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("get_notes", {
     title: "Get the advocate's notes",
-    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), highlight with color:#rrggbb (a highlight over the quoted words, made in the app or by an AI app), from-pdf (her highlight or comment from another app, quote cut from the uploaded PDF), from-ltproj (from a LiquidText project: excerpts, comments, highlights with the transcript's words under them, pen marks placed by page only, document tags), liquidtext.",
+    description: "The advocate's own notes on the papers (her work product, not the record), optionally for one paper. Tags: bookmark (a named page bookmark), highlight with color:#rrggbb (a highlight over the quoted words, made in the app or by a connected app), from-pdf (her highlight or comment from another app, quote cut from the uploaded PDF), from-ltproj (from a LiquidText project: excerpts, comments, highlights with the transcript's words under them, pen marks placed by page only, document tags), liquidtext.",
     inputSchema: { matter_id: z.string(), doc_id: z.string().optional() },
     annotations: { readOnlyHint: true },
   }, async ({ matter_id, doc_id }) => {
@@ -288,7 +288,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   server.registerTool("remember", {
     title: "Remember a preference or reminder (asks first)",
-    description: "Save a lasting preference or reminder to her memory, shared across the app, Telegram and her AI apps. Never a fact about a case. First call WITHOUT confirm to get a preview; show it; call again with confirm: true only after she says yes.",
+    description: "Save a lasting preference or reminder to her memory, shared across the app, Telegram and her connected apps. Never a fact about a case. First call WITHOUT confirm to get a preview; show it; call again with confirm: true only after she says yes.",
     inputSchema: { text: z.string().min(2).max(500), matter_id: z.string().optional(), confirm: z.boolean().optional() },
   }, async ({ text: t, matter_id, confirm }) => {
     if (matter_id && !scope(matter_id).length) return noMatter(matter_id);

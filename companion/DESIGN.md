@@ -34,7 +34,7 @@ Colour is semantic, never decoration:
 | Red `#b42318` | an error |
 | One muted hue per matter kind | writ violet, arbitration amber, RERA appeal green, civil terracotta, so the matter list scans by forum |
 | One hue per matter tab and per stat tile | the tab underline and the tile top border take the tab's colour (Papers violet, Explainer purple, Reading teal, Brief amber, Compare pink, Chronology green, Map olive, Hearings orange, Collections rose, Upload slate); the nav icons take their own |
-| Highlighter yellow, green, blue, pink, orange | her highlights on the words and on the scan; the colour is stored on the note (`color:#hex`), so the app, her AI app and the PDF export agree |
+| Highlighter yellow, green, blue, pink, orange | her highlights on the words and on the scan; the colour is stored on the note (`color:#hex`), so the app, her connected apps and the PDF export agree |
 
 Violet never fills a button.
 
@@ -66,7 +66,7 @@ Ease-out only, UI under 300ms. One library per element. `prefers-reduced-motion`
 
 - Radius above 4px (circles excepted), shadows, gradients, hard dividers between sections.
 - Large black surfaces.
-- Status pills, fake record numbers, glitter icons, emojis, em dashes. A dark theme.
+- Status pills, fake record numbers, glitter icons, emojis, em dashes. A dark theme. The word "AI" anywhere she can see: say apps or agents.
 
 ## Mark, greeting, loading, share, touch (04-10-2026)
 - **Mark** (`components/Logo.tsx`, `app/icon.svg`): a C opening to the right with one dot beside it, cream on a violet 7/32 rounded square. Same SVG draws the tab icon, `favicon.ico`, the iOS and install icons (`app/apple-icon.tsx`, `app/pwa/[size]`) and the link preview (`app/opengraph-image.tsx`, which can only use next/og's sans face). The old circle with "CC" is no longer used.

@@ -20,7 +20,7 @@ test("the reading order file groups papers by year, undated last, each field wit
     needed: [{ tier: "Critical", item: "Agreement for sale", doc: "a", page: 2, quote: "the agreement" }] };
   const md = readingMarkdown(r, "X v Y", "Tribunal", (d, p) => `${d}, p. ${p}`);
   assert.ok(md.indexOf("## 2019") < md.indexOf("## 2021") && md.indexOf("## 2021") < md.indexOf("## Undated"));
-  assert.match(md, /### 12\.03\.2019 — a/);
+  assert.match(md, /### 12\.03\.2019: a/);
   assert.match(md, /\*\*What it sets up:\*\* Not found in the papers on file\./);
   assert.match(md, /- Agreement for sale: mentioned in a, p\. 2/);
 });

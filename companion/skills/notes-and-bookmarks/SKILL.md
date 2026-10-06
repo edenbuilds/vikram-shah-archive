@@ -1,6 +1,6 @@
 ---
 name: notes-and-bookmarks
-description: Read and save her sticky notes and page bookmarks on a paper. Use when she asks to note, flag, bookmark or mark a page, or asks what she noted or bookmarked. Every save is previewed first and made only on her yes.
+description: Read and save her sticky notes and page bookmarks on a paper. Use when she asks to note, flag, bookmark or mark a page, or asks what she noted or bookmarked. Every save is previewed first, and she decides in Settings whether it waits for her approval.
 ---
 
 # Notes and bookmarks
@@ -10,7 +10,7 @@ description: Read and save her sticky notes and page bookmarks on a paper. Use w
 - `get_notes` (one paper, or the whole matter) lists her sticky notes and bookmarks.
   - Tag `bookmark`: a named page bookmark.
   - Tag `from-pdf` or `liquidtext`: brought in from an uploaded file.
-  - Tag `via-ai`: saved through an AI app.
+  - Tag `via-ai`: saved through a connected app.
 - `get_paper` lists the paper's own PDF bookmarks (its contents) and hers, each with a page link.
 - These are her work product. Say "your note" or "your bookmark", and never present one as the record.
 
@@ -20,6 +20,10 @@ description: Read and save her sticky notes and page bookmarks on a paper. Use w
    - For a bookmark, add `bookmark: true`; `note` is the bookmark's name, e.g. "Reply, para 12".
    - To pin a note to exact words, add `quote`. Copy it character for character from `read_pages`; if it is not on that page exactly, the save is refused.
 2. Show her the preview. Save only after she says yes, by calling again with `confirm: true`.
+3. Read the reply. She decides in Settings, Connected apps, what apps may change:
+   - "NOT SAVED YET" means her setting is "Ask me first": the note waits for her to approve or edit it. Tell her it is waiting and give the link. Do not call it again and do not say it is saved.
+   - "Saved" means it is done and she can undo it from Settings, Connected apps.
+   - A read-only reply means changes are switched off. Stop, tell her, and do not try another way.
 
 ## On the website
 

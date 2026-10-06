@@ -20,7 +20,7 @@ import Control from "./Control";
 
 const SECTIONS = [
   ["connections", "Connections", Plug],
-  ["ai", "AI apps", ShieldCheck],
+  ["apps", "Connected apps", ShieldCheck],
   ["display", "Display", Accessibility],
   ["telegram", "Telegram", MessageCircle],
   ["signin", "Sign-in link", KeyRound],
@@ -67,7 +67,7 @@ export default async function Settings() {
     <main className="wrap settings">
       <nav className="settings-nav" aria-label="Settings">
         <h1>Settings</h1>
-        {SECTIONS.map(([id, label, Icon]) => <a key={id} href={`#${id}`}><Icon size={16} strokeWidth={1.75} aria-hidden /> {label}</a>)}
+        {SECTIONS.map(([id, label, Icon]) => <a key={id} href={`#${id}`}><Icon size={16} strokeWidth={1.75} aria-hidden /> {label}{id === "apps" && control.proposals.some((p) => p.status === "waiting") ? ` (${control.proposals.filter((p) => p.status === "waiting").length})` : ""}</a>)}
       </nav>
 
       <div className="stack" style={{ gap: "2.25rem" }}>
@@ -95,9 +95,9 @@ export default async function Settings() {
           </div>
         </section>
 
-        <section id="ai" className="stack">
+        <section id="apps" className="stack">
           <div>
-            <h2>AI apps</h2>
+            <h2>Connected apps</h2>
             <p className="muted" style={{ margin: 0 }}>What Claude, ChatGPT, Codex and Cursor may change in your workspace.</p>
           </div>
           <Control mode={control.mode}
@@ -136,7 +136,7 @@ export default async function Settings() {
           <div>
             <h2>Memory</h2>
             <p className="muted" style={{ margin: 0 }}>Kept automatically from what you and your connected apps do. Nothing to switch on.</p>
-            <details className="more"><summary>How it works</summary><p>Every paper you open, upload, note, ask about or edit, and every paper a connected AI app reads, is written down with its date and link, and handed to the app when it connects. It guides where answers start; facts still come only from the papers. Anything you add under &ldquo;Your own reminders&rdquo; follows you to Telegram (/remember, /memory) and your apps too.</p></details>
+            <details className="more"><summary>How it works</summary><p>Every paper you open, upload, note, ask about or edit, and every paper a connected app reads, is written down with its date and link, and handed to the app when it connects. It guides where answers start; facts still come only from the papers. Anything you add under &ldquo;Your own reminders&rdquo; follows you to Telegram (/remember, /memory) and your apps too.</p></details>
           </div>
           {recent.length > 0 ? (
             <div className="card resume-log">

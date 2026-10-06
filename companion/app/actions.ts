@@ -115,7 +115,7 @@ export async function addAnnotation(f: FormData) {
 }
 
 // A highlight drawn on the scan: the shape goes to ink.json (so the PDF export draws it as a real highlight, which
-// LiquidText shows), the row makes it a note she can list, edit, delete and her AI apps can read.
+// LiquidText shows), the row makes it a note she can list, edit, delete and her connected apps can read.
 export async function addHighlight(f: FormData) {
   const { supabase, user } = await requireUser();
   const m = str(f, "matter"), doc = str(f, "doc"), page = Number(str(f, "page"));
@@ -474,7 +474,7 @@ export async function deleteReport(id: string) {
   revalidatePath("/settings");
 }
 
-// ── what connected AI apps may do (lib/mcp-control.ts) ─────────────────────
+// ── what connected connected apps may do (lib/mcp-control.ts) ─────────────────────
 export async function setMcpMode(mode: Mode) {
   const { user } = await requireUser();
   if (mode !== "review" && mode !== "allow" && mode !== "off") return;

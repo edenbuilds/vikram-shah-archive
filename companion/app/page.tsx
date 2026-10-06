@@ -106,7 +106,7 @@ export default async function Workspace() {
         <nav className="view-switch" aria-label="View"><Link href="/" aria-current="page">List</Link><Link href="/board">Board</Link></nav>
       </div>
 
-      {asked > 0 && <p className="subtle" style={{ margin: 0 }}><Link href="/settings#ai" className="link">{asked} change{asked === 1 ? "" : "s"} from your AI apps {asked === 1 ? "is" : "are"} waiting for you</Link></p>}
+      {asked > 0 && <p className="subtle" style={{ margin: 0 }}><Link href="/settings#apps" className="link">{asked} change{asked === 1 ? "" : "s"} from your connected apps {asked === 1 ? "is" : "are"} waiting for you</Link></p>}
 
       {(resume || recent.length > 0) && (
         <section className="resume">

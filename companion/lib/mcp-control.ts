@@ -2,8 +2,8 @@ import { createHash, randomUUID } from "node:crypto";
 import { readState, writeState } from "./access.ts";
 
 // 06-10-2026: Omkar: "the mcp goes ahead and causes irreversible changes ... i want the users to have more control on the mcp".
-// Until now a write tool was only advisory: the AI app asked "confirm?" and could answer itself with confirm: true, and `forget`
-// was a hard delete. Now the SERVER decides, per person, in Settings, AI apps:
+// Until now a write tool was only advisory: the connected app asked "confirm?" and could answer itself with confirm: true, and `forget`
+// was a hard delete. Now the SERVER decides, per person, in Settings, Connected apps:
 //   review (default): a confirmed call is only queued; nothing changes until she approves it there, and she can edit it first
 //   allow: it is applied, written to a log, and every entry has an Undo
 //   off: connected apps are read-only; every write tool is refused

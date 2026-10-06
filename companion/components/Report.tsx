@@ -22,7 +22,7 @@ export const reportHere = (d: Open) => dispatchEvent(new CustomEvent("report:ope
 const BLOCK = "a, button, input, textarea, select, summary, label, [contenteditable], [data-dbl], [role=button], [role=tab], [role=menuitem], [role=slider], [aria-roledescription], canvas, video, audio, dialog, .quick-menu, .account-menu, .toast, .pillnav, [data-report-ui], [data-no-report]";
 const OWNED = "a.matter-card, a.docrow, a.stat";  // Touch.tsx holds these
 const WHOLE = "button, a, input, select, textarea, summary, img, h1, h2, h3, h4, label, li, p, tr, td, th, figure, [role], .card, .stat, section, article, form";
-const KINDS = [{ value: "visual", label: "Looks wrong" }, { value: "function", label: "Does not work" }, { value: "other", label: "Something else" }];
+const KINDS = [{ value: "visual", label: "Looks wrong" }, { value: "function", label: "Does not work" }, { value: "feature", label: "Feature" }, { value: "other", label: "Other" }];
 
 const errors: string[] = [];
 const keep = (m: unknown) => { errors.push(String(m).replace(/\s+/g, " ").slice(0, 240)); if (errors.length > 8) errors.shift(); };
@@ -117,6 +117,8 @@ type Menu = { x: number; y: number; el: Element | null; how: string };
 export default function Report() {
   const [menu, setMenu] = useState<Menu | null>(null);
   const [open, setOpen] = useState(false);
+  const [pick, setPick] = useState(false);  // choosing what is wrong: the next click or tap only selects it, so a broken button can be reported without pressing it
+  const ring = useRef<HTMLDivElement>(null);
   const [kind, setKind] = useState("other");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -168,7 +170,7 @@ export default function Report() {
     const force = (e: Event) => { const m = e as MouseEvent; if (idle(e.target) && !overSelection(m.clientX, m.clientY)) show(m.clientX, m.clientY, e.target as Element, "force"); };
     const away = (e: Event) => { if (e instanceof KeyboardEvent ? e.key === "Escape" : !(e.target as Element).closest?.("[data-report-ui]")) setMenu(null); };
     const hide = () => setMenu(null);
-    const ask = (e: CustomEvent<Open>) => { const d = e.detail; requestAnimationFrame(() => start(d.el ?? null, d.how)); };
+    const ask = (e: CustomEvent<Open>) => { const d = e.detail; if (d.how === "menu" && !d.el) setPick(true); else requestAnimationFrame(() => start(d.el ?? null, d.how)); };
     document.addEventListener("pointerdown", down, true); document.addEventListener("pointermove", move, true); document.addEventListener("pointerup", up, true);
     document.addEventListener("pointercancel", cancel, true); document.addEventListener("click", click, true); document.addEventListener("contextmenu", context, true);
     document.addEventListener("dblclick", dbl); document.addEventListener("webkitmouseforcedown", force);
@@ -180,6 +182,36 @@ export default function Report() {
       document.removeEventListener("pointerdown", away); document.removeEventListener("keydown", away); removeEventListener("scroll", hide); removeEventListener("report:open", ask);
     };
   }, []);
+
+
+  // 06-10-2026: the gestures skip buttons, links and fields (a double click there must keep its own meaning), so "the Save button does
+  // nothing" could not be pointed at. From the menu she now chooses the element: every click, tap and press is swallowed at the window
+  // until she has chosen, and the choice is outlined as it is hovered.
+  useEffect(() => {
+    if (!pick) return;
+    const ui = (e: Event) => !!(e.target as Element | null)?.closest?.("[data-report-ui]");
+    const under = (x: number, y: number) => { const e = document.elementFromPoint(x, y); return e && !e.closest("[data-report-ui]") ? e : null; };
+    const stop = (e: Event) => { if (!ui(e)) e.stopImmediatePropagation(); };
+    const hover = (e: PointerEvent) => {
+      const r = pointed(under(e.clientX, e.clientY))?.r, o = ring.current; if (!o) return;
+      o.style.display = r ? "block" : "none";
+      if (r) Object.assign(o.style, { left: `${r.x - 2}px`, top: `${r.y - 2}px`, width: `${r.width + 4}px`, height: `${r.height + 4}px` });
+    };
+    const choose = (e: MouseEvent) => {
+      if (ui(e)) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      const el = under(e.clientX, e.clientY); haptic("ok"); setPick(false);
+      requestAnimationFrame(() => start(el, "picked"));
+    };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setPick(false); };
+    const swallowed = ["pointerdown", "pointerup", "mousedown", "mouseup", "dblclick", "auxclick", "contextmenu"];
+    swallowed.forEach((t) => addEventListener(t, stop, true));
+    addEventListener("pointermove", hover, true); addEventListener("click", choose, true); addEventListener("keydown", esc, true);
+    return () => {
+      swallowed.forEach((t) => removeEventListener(t, stop, true));
+      removeEventListener("pointermove", hover, true); removeEventListener("click", choose, true); removeEventListener("keydown", esc, true);
+    };
+  }, [pick]);
 
   const send = async () => {
     if (busy) return;
@@ -198,6 +230,16 @@ export default function Report() {
   const at = (m: Menu) => { const w = Math.min(256, innerWidth - 16); return { left: Math.max(8, Math.min(m.x - 20, innerWidth - w - 8)), top: Math.max(8, Math.min(m.y + 16, innerHeight - 70)) }; };
   return (
     <>
+      {pick && (
+        <>
+          <div ref={ring} className="report-ring" data-report-ui aria-hidden />
+          <div className="report-pick card" role="region" aria-label="Choose what is wrong" data-report-ui>
+            <span>Tap or click what is wrong</span>
+            <button type="button" className="btn small" onClick={() => { setPick(false); requestAnimationFrame(() => start(null, "menu")); }}>Whole screen</button>
+            <button type="button" className="btn ghost small" onClick={() => setPick(false)}>Cancel</button>
+          </div>
+        </>
+      )}
       {menu && (
         <div className="account-menu quick-menu" role="menu" aria-label="Report" data-report-ui style={at(menu)}>
           <button role="menuitem" autoFocus onClick={() => start(menu.el, menu.how)}><Flag size={15} strokeWidth={1.75} aria-hidden /> Report a problem here</button>

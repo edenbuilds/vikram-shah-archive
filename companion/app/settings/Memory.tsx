@@ -4,10 +4,10 @@ import { useState } from "react";
 import { deleteMemory, saveMemory } from "@/app/actions";
 import type { Memory as M } from "@/lib/memory";
 
-const SOURCE = { web: "here", telegram: "Telegram", ai: "an AI app" } as const;
+const SOURCE = { web: "here", telegram: "Telegram", ai: "a connected app" } as const;
 const dmy = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata" }).replace(/\//g, "-");
 
-// The same list her AI apps (get_memory / remember) and Telegram (/memory, /remember) read and write.
+// The same list her connected apps (get_memory / remember) and Telegram (/memory, /remember) read and write.
 export default function Memory({ items, matters }: { items: M[]; matters: { id: string; title: string }[] }) {
   const [editing, setEditing] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<string | null>(null);

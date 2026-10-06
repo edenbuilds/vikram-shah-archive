@@ -163,7 +163,7 @@ async function handle(u: any, chat: number, email: string, origin: string) {
   }
   if (cmd === "/memory") {
     const xs = await getMemory(email);
-    return say(chat, xs.length ? `<b>Your memory</b> (the same in the app and your AI apps)\n${xs.map((x, i) => `${i + 1}. ${esc(x.text)}${x.matter ? ` <i>(${esc(title(x.matter))})</i>` : ""}`).join("\n")}\n\n/forget 2 removes item 2.` : "Nothing remembered yet. Send /remember followed by a preference or reminder.");
+    return say(chat, xs.length ? `<b>Your memory</b> (the same in the app and your connected apps)\n${xs.map((x, i) => `${i + 1}. ${esc(x.text)}${x.matter ? ` <i>(${esc(title(x.matter))})</i>` : ""}`).join("\n")}\n\n/forget 2 removes item 2.` : "Nothing remembered yet. Send /remember followed by a preference or reminder.");
   }
   if (cmd === "/forget") {
     const xs = await getMemory(email);
