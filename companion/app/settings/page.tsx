@@ -3,20 +3,20 @@ import { getMemory, getTrash } from "@/lib/memory";
 import { editable, getControl } from "@/lib/mcp-control";
 import { activity, when } from "@/lib/activity";
 import Link from "next/link";
-import Memory from "./Memory";
+
 import { headers } from "next/headers";
 import { tokenFor } from "@/lib/access";
 import { PROMPTS } from "@/lib/mcp";
 import { requireUser } from "@/lib/supabase";
 import { linkedChats, startCode } from "@/lib/telegram";
-import CopyButton from "../CopyButton";
-import Prompts from "./Prompts";
-import A11yPrefs from "@/components/A11yPrefs";
-import Skills from "./Skills";
+
+
+
+
 import { listSkills } from "@/lib/skills";
 import { buildPrompt, getReports, KINDS, parseUA, routeOf, shotUrls } from "@/lib/reports";
-import Reports from "./Reports";
-import Control from "./Control";
+
+import { A11yPrefs, Control, CopyButton, Memory, Prompts, Reports, Skills } from "./Client";
 
 const SECTIONS = [
   ["connections", "Connections", Plug],
