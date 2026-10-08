@@ -62,6 +62,8 @@ export default function TopNav({ email, signOut }: { email: string; signOut: () 
       </nav>
       <div className="top-actions">
         <AskButton />
+        {/* 08-10-2026: Omkar: "where does the PC or Mac user report an issue". The gestures and the account menu were the only ways in, so a desktop user never found it. One visible button on every page opens the report with this screen. */}
+        <button type="button" className="btn ghost small report-btn" style={{ flex: "0 0 auto" }} title="Report a problem with this screen" aria-label="Report a problem" onClick={() => reportHere({ how: "button" })}><Flag size={16} strokeWidth={1.75} aria-hidden /><span>Report</span></button>
         <details ref={menu} className="account">
           <summary aria-label="Your account"><span className="avatar">{initial}</span></summary>
           <div className="account-menu" role="menu">

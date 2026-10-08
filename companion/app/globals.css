@@ -1043,3 +1043,5 @@ html { touch-action: manipulation; }
 .mode-opt input { margin: .2rem 0 0; accent-color: var(--ink); }
 .mode-opt b { font-weight: 600; }
 .mode-opt span { grid-column: 2; color: var(--muted); }
+@media (max-width: 480px) { .report-btn span { display: none; } }
+.top-actions .report-btn { background: transparent; color: var(--ink); border-color: var(--rule); }

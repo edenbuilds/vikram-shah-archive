@@ -131,7 +131,8 @@ export default function Report() {
   const start = (el: Element | null, how: string) => {
     setMenu(null);
     const c = capture(el, how), p = pointed(el);
-    ctx.current = c; setKind("other"); setNote(""); setPreview(undefined); setBusy(false);
+    ctx.current = c; setPreview(undefined); setBusy(false);
+    if (how !== "picked") { setKind("other"); setNote(""); }  // "Point at it" from the open dialog keeps what she already typed
     setWhere(c.target ? `On ${c.target.label || c.target.text || c.target.tag}` : "On this screen");
     shot.current = snap(p?.r ?? null); shot.current.then(setPreview);
     setOpen(true);
@@ -251,7 +252,7 @@ export default function Report() {
           <form className="stack" onSubmit={(e) => { e.preventDefault(); void send(); }}>
             <div>
               <h2 id="report-title" style={{ margin: 0 }}>Report a problem</h2>
-              <p className="subtle" style={{ margin: ".15rem 0 0" }}>{where}. This screen goes with it.</p>
+              <p className="subtle" style={{ margin: ".15rem 0 0" }}>{where}. This screen goes with it. <button type="button" className="link" onClick={() => { dlg.current?.close(); setPick(true); }}>Point at it</button></p>
             </div>
             <RubberSegment aria-label="What kind of problem" className="seg-rb" size="sm" value={kind} onChange={setKind} trackColor="var(--paper-deep)" thumbColor="var(--white)" textColor="var(--muted)" activeTextColor="var(--ink)" items={KINDS} />
             <label>What went wrong?
