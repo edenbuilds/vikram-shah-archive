@@ -7,12 +7,23 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 08-10-2026 (later): React #418 on live, fixed
+
+- **Fixed and verified live** (case-companion.edenbuilds.me, production). `scripts/report-check.mjs <base> check` passes in all four profiles (Chromium desktop, WebKit iPhone 13, WebKit iPad Pro 13, Firefox desktop), including "no page errors". Live `/settings` in Firefox and WebKit: 0/5 runs with errors (before: Firefox 3/5 to 4/4, WebKit 1/3).
+- **Cause 1, streamed pieces (commit `c966579`):** `app/loading.tsx` made every page stream as Suspense pieces (13 to 18 per page). On Vercel the browser hydrated while pieces were still arriving, which gave `$RS ... b.parentNode is null`. The file is removed, so pages arrive as one HTML body. Home went from 2/3 to 0/5 Firefox errors.
+- **Cause 2, server and client disagreement (commit after `c966579`):** Control, Memory, Prompts, Reports, Skills, CopyButton and A11yPrefs are now `next/dynamic` with `ssr: false` in `app/settings/Client.tsx`, so their panels draw after load. This is what removed the remaining Firefox #418 on Settings.
+- **Trade-off:** the branded loading screen (`loading.tsx`, Logo draw) is gone, so navigation shows no interim screen. To bring it back, restore the file from `c966579^` and check that `/settings` still passes the report check on live.
+- **Ruled out:** invalid HTML nesting (html5lib reports 0 parse errors on the live Settings HTML); dev mode (no error); local production build (no error with or without the cause fixed, so only live reproduces it).
+- **Not verified:** the report send path (`report-check.mjs <base> send`), which still needs a go-ahead because it emails one test report.
+
+Paste-ready prompt for the next agent: "Read companion/HANDOFF.md. Run `node --env-file=.env.local scripts/report-check.mjs https://case-companion.edenbuilds.me check` and confirm it passes. If you want the loading screen back, restore app/loading.tsx from c966579^ and re-run the check. Only then run `send`, and confirm the test report shows in Settings, Problems."
+
 ## 08-10-2026: one-click Report on every page
 
 - **Shipped** (commit `043c6a5`, deployed to case-companion.edenbuilds.me, production deployment `dybkwmtia`): a "Report" button in the top bar on every page (`components/TopNav.tsx`, `.report-btn` in `app/globals.css`; label hides under 480px). It opens the existing report dialog with the screen attached. Before this, the only ways in were double-click, press-and-hold on empty space, or the account menu, so a PC or Mac user could not find it.
 - **Point at it** (`components/Report.tsx`): a link in the dialog closes it and lets her click the broken part. What she already typed is kept.
 - **Checked live** after deploy: Report button visible, dialog opens, screenshot captured, "Point at it" present, no sideways scroll at 1440 and 390.
-- **Still failing:** `scripts/report-check.mjs` reports "no page errors" FAIL on Chromium desktop, Firefox desktop and WebKit iPad Pro 13. The error is React #418 hydration on /settings (`b.parentNode` null). This is the open Settings hydration bug from 06-10 and it is not fixed.
+- **Resolved later today (see the section above):** `scripts/report-check.mjs` reported "no page errors" FAIL on Chromium desktop, Firefox desktop and WebKit iPad Pro 13. The error is React #418 hydration on /settings (`b.parentNode` null). This is the open Settings hydration bug from 06-10 and it is not fixed.
 - **Not verified:** sending a real report end to end (`report-check.mjs <base> send`); the Problems list in Settings after a send.
 
 Paste-ready prompt for the next agent: "Read companion/HANDOFF.md. Fix the React #418 hydration error on /settings (Chromium, Firefox and WebKit all log it). Get `node --env-file=.env.local scripts/report-check.mjs https://case-companion.edenbuilds.me` to report no page errors, then run it with `send` and confirm the report appears in Settings, Problems. Deploy to production with the Vercel author email omkar1sonawane@gmail.com."
