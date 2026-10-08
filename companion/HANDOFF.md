@@ -7,6 +7,16 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 08-10-2026: one-click Report on every page
+
+- **Shipped** (commit `043c6a5`, deployed to case-companion.edenbuilds.me, production deployment `dybkwmtia`): a "Report" button in the top bar on every page (`components/TopNav.tsx`, `.report-btn` in `app/globals.css`; label hides under 480px). It opens the existing report dialog with the screen attached. Before this, the only ways in were double-click, press-and-hold on empty space, or the account menu, so a PC or Mac user could not find it.
+- **Point at it** (`components/Report.tsx`): a link in the dialog closes it and lets her click the broken part. What she already typed is kept.
+- **Checked live** after deploy: Report button visible, dialog opens, screenshot captured, "Point at it" present, no sideways scroll at 1440 and 390.
+- **Still failing:** `scripts/report-check.mjs` reports "no page errors" FAIL on Chromium desktop, Firefox desktop and WebKit iPad Pro 13. The error is React #418 hydration on /settings (`b.parentNode` null). This is the open Settings hydration bug from 06-10 and it is not fixed.
+- **Not verified:** sending a real report end to end (`report-check.mjs <base> send`); the Problems list in Settings after a send.
+
+Paste-ready prompt for the next agent: "Read companion/HANDOFF.md. Fix the React #418 hydration error on /settings (Chromium, Firefox and WebKit all log it). Get `node --env-file=.env.local scripts/report-check.mjs https://case-companion.edenbuilds.me` to report no page errors, then run it with `send` and confirm the report appears in Settings, Problems. Deploy to production with the Vercel author email omkar1sonawane@gmail.com."
+
 ## 06-10-2026: report a problem, and control over connected apps
 
 - **Report a problem** (`components/Report.tsx`, `lib/reports.ts`, `app/api/report/route.ts`, Settings, Problems). Double click or double tap, press and hold, or a firm press on EMPTY space shows "Report a problem here". Buttons, links and fields keep their own gestures, so the account menu's "Report a problem" first asks her to choose what is wrong (the click is swallowed, so a broken button can be pointed at without pressing it), or "Whole screen". Kinds: Looks wrong, Does not work, Feature, Other. The report keeps the page, the element, her device, the last console errors (a toast error she saw counts), failed requests, and a viewport screenshot (html2canvas-pro; the copy has animations stopped and closed `<details>` hidden, or the page came out blank). It is emailed from `accounts-eden@agentmail.to` (the plan allows 3 inboxes and all are used; that inbox only sends) to omkar1sonawane@gmail.com as a brief for Claude Code, and every report stays in Settings, Problems with the picture, Copy the brief, Mark fixed, Resend and Delete. Needs `AGENTMAIL_API_KEY` (set in Vercel production). 10 reports per hour per person.
