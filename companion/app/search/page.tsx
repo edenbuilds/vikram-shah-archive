@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PinButton from "@/components/PinButton";
 import { embed } from "@/lib/ai";
+import { matchChunks } from "@/lib/match";
 import { MIN_SIMILARITY } from "@/lib/qa";
 import { pageLabel, printedFor, type Printed } from "@/lib/printed";
 import { getPins, pinId } from "@/lib/study";
@@ -23,12 +24,9 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
   let hits: Hit[] = [];
   if (q) {
     const [sem, lex] = await Promise.all([
-      // one retry: a failed call silently left only exact-word matches (15 passages instead of 67)
-      exact ? Promise.resolve({ data: [] as Hit[] }) : embed(q).then(async (e) => {
-        const run = () => supabase.rpc("match_chunks", { query_embedding: e, query_text: q, matter_ids: ids, match_count: 60 });
-        const r = await run();
-        return r.error ? run() : r;
-      }).catch(() => ({ data: [] as Hit[] })), // no embedding (e.g. no model credit): exact words still answer
+      // matchChunks searches matter by matter and retries once: a failed call silently left only exact-word matches (15 passages instead of 67)
+      exact ? Promise.resolve({ data: [] as Hit[] }) : embed(q).then(async (e) => ({ data: await matchChunks<Hit & { similarity: number; fts_rank: number }>(supabase, { embedding: e, text: q, matterIds: ids, count: 60 }) }))
+        .catch(() => ({ data: [] as Hit[] })), // no embedding (e.g. no model credit): exact words still answer
       supabase.from("chunks").select("id, doc_id, page_start, page_end, text").in("matter_id", ids).textSearch("tsv", q, { type: "websearch", config: "english" }).limit(60),
     ]);
     const seen = new Set<number>();

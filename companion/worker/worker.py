@@ -670,9 +670,15 @@ def main() -> None:
                 # 24-09-2026: the first search after an idle spell took 8 s (cold vector index), then 0.8 s.
                 # The worker is always on, so it keeps the index in the database's memory.
                 warm = time.time()
+                # 10-10-2026: one call over all 17 matters (17k chunks) ran past Supabase's 8 s statement limit when the cache was
+                # cold, so it failed 217 times and never warmed anything, and Ask then timed out the same way. One matter at a
+                # time stays under the limit (0.5 to 3.5 s each) and still reads every vector into memory.
                 try:
-                    rest("POST", "rpc/match_chunks", "", {"query_embedding": [0.02] * 1536, "query_text": "order", "matter_ids": [
-                        m["id"] for m in rest("GET", "matters", "select=id", prefer="")], "match_count": 5}, prefer="")
+                    for m in rest("GET", "matters", "select=id", prefer=""):
+                        try:
+                            rest("POST", "rpc/match_chunks", "", {"query_embedding": [0.02] * 1536, "query_text": "order", "matter_ids": [m["id"]], "match_count": 5}, prefer="")
+                        except Exception as e:  # noqa: BLE001
+                            print(f"warm-up skipped for {m['id']}: {e}", file=sys.stderr, flush=True)
                 except Exception as e:  # noqa: BLE001
                     print(f"warm-up skipped: {e}", file=sys.stderr, flush=True)
                 if time.time() > quiet_until:

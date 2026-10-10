@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { admin } from "@/lib/access";
 import { runAgent } from "@/lib/agent";
+import { matchChunks } from "@/lib/match";
 import { isSpan, norm } from "@/lib/citations";
 import { readme } from "@/lib/agent-readme";
 import { pageLabel, printedFor } from "@/lib/printed";
@@ -423,8 +424,7 @@ export function register(server: McpServer, ctx: Ctx) {
 
   async function searchHits(query: string, ids: string[], k: number) {
     const { embed } = await import("@/lib/ai");
-    const { data } = await db.rpc("match_chunks", { query_embedding: await embed(query), query_text: query, matter_ids: ids, match_count: k });
-    const hits = (data ?? []) as { doc_id: string; matter_id: string; page_start: number; text: string; similarity: number; fts_rank: number }[];
+    const hits = await matchChunks<{ doc_id: string; matter_id: string; page_start: number; text: string; similarity: number; fts_rank: number }>(db, { embedding: await embed(query), text: query, matterIds: ids, count: k });
     const good = hits.filter((h) => h.similarity >= 0.3 || h.fts_rank > 0);
     const { data: ds } = await db.from("documents").select("id, title, matter_id").in("id", [...new Set(good.map((h) => h.doc_id))]);
     const printed = Object.assign({}, ...(await Promise.all([...new Set(good.map((h) => h.matter_id))].map((m) => printedFor(db, m))))) as Record<string, Record<number, number>>;

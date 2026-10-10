@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { embed, llm, LLM_MODEL } from "./ai.ts";
 import { verify, type Chunk, type Rejected, type Verified, type VerifiedClaim } from "./citations.ts";
+import { matchChunks } from "./match.ts";
 import { MIN_SIMILARITY } from "./qa.ts";
 import { mode, systemOne, yes, type JevLog } from "./jev.ts";
 
@@ -25,8 +26,8 @@ type Hit = Chunk & { similarity: number; fts_rank: number };
 // chosen sources). Same retrieval as before the reranker; the reranker only reorders this list.
 export async function candidates(db: SupabaseClient, query: string, matterIds: string[], allowed: (id: string) => boolean, docIds: string[] | null): Promise<Hit[]> {
   const q = await embed(query);
-  const { data: sem } = await db.rpc("match_chunks", { query_embedding: q, query_text: query, matter_ids: matterIds, match_count: docIds ? 40 : 10 });
-  let hits = ((sem ?? []) as Hit[]).filter((h) => allowed(h.doc_id) && (h.similarity >= MIN_SIMILARITY || h.fts_rank > 0));
+  const sem = await matchChunks<Hit>(db, { embedding: q, text: query, matterIds, count: docIds ? 40 : 10 });
+  let hits = sem.filter((h) => allowed(h.doc_id) && (h.similarity >= MIN_SIMILARITY || h.fts_rank > 0));
   if (docIds) {
     // exact words inside the chosen papers, so a small selection is never crowded out by the rest of the matter
     const { data: lex } = await db.from("chunks").select("id, doc_id, page_start, page_end, text").in("doc_id", docIds)

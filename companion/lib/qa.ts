@@ -4,6 +4,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { CHAT_MODEL, embed, jsonChat } from "./ai.ts";
 import { verify, type Chunk, type ModelAnswer, type Verified } from "./citations.ts";
+import { matchChunks } from "./match.ts";
 
 type Hit = Chunk & { matter_id: string; similarity: number; fts_rank: number };
 
@@ -57,14 +58,7 @@ export type QaResult = Verified & {
 };
 
 export async function answer(db: SupabaseClient, question: string, matterIds: string[]): Promise<QaResult> {
-  const { data, error } = await db.rpc("match_chunks", {
-    query_embedding: await embed(question),
-    query_text: question,
-    matter_ids: matterIds,
-    match_count: K,
-  });
-  if (error) throw error;
-  const hits = (data ?? []) as Hit[];
+  const hits = await matchChunks<Hit>(db, { embedding: await embed(question), text: question, matterIds, count: K });
   const retrieved = hits.map(({ id, doc_id, page_start, page_end, similarity, fts_rank }) => ({ id, doc_id, page_start, page_end, similarity, fts_rank }));
   const best = Math.max(0, ...hits.map((h) => h.similarity));
   if (!hits.length || (best < MIN_SIMILARITY && !hits.some((h) => h.fts_rank > 0))) {
