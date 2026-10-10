@@ -7,6 +7,15 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 10-10-2026: Ask and Telegram "not in the papers", cold search timeouts
+
+- **Cause.** `match_chunks` reads every chunk of the matters it is given (17 matters, 17,474 chunks). Supabase cancels a statement after 8 s. With the database cache cold, one call over all matters passed 8 s and returned an error. `lib/agent.ts`, `lib/mcp.ts` and the search page ignored the error, so a timeout looked like "no hits" and Ask said the papers were silent. The Mac worker's 5-minute warm-up used the same all-matters call, failed 217 times in its log and never warmed anything.
+- **Checked and not at fault.** The Telegram webhook (`getWebhookInfo`: path matches the secret, no delivery errors, 0 pending), the site (all pages 200), the Bedrock Kimi K3 model (`scripts/agent-test.ts` passed on the first two cases while the database was warm).
+- **Fix (commit b272ef3, deployed).** `lib/match.ts` `matchChunks` searches one matter at a time, six at once, retries a failed matter once and then raises "The search was too slow just now. Please ask again in a minute." instead of returning no hits. Used by `lib/agent.ts`, `lib/qa.ts`, `lib/mcp.ts` and `app/search/page.tsx`. `worker/worker.py` warm-up now goes one matter at a time; the worker was restarted at 10-10-2026 with no jobs running.
+- **Verified live.** MCP `search_papers` and `search` over every matter returned results (17 s and 22 s on a cold cache; a single call failed in the same conditions). One matter took 2.4 s. 73 TypeScript tests (5 new in `lib/match.test.ts`), typecheck and build pass.
+- **Not verified.** A real Telegram question after the fix (no test message was sent; the Telegram scripts message real chats). The first search after the cache goes cold is still slow (10 to 20 s). The cache went cold again within minutes in testing.
+- **Real fix still open (needs the Supabase SQL editor).** Make the search use the HNSW index with pgvector iterative scans, or store the vectors as halfvec, so a search stops reading all 17k vectors. Until then the worker warm-up (every 5 minutes while the Mac is on) is what keeps searches fast. `zz-upload-test` holds 2,669 of the 17,474 chunks; deleting it would help, and Omkar has not answered that question yet.
+
 ## 08-10-2026 (later): React #418 on live, fixed
 
 - **Fixed and verified live** (case-companion.edenbuilds.me, production). `scripts/report-check.mjs <base> check` passes in all four profiles (Chromium desktop, WebKit iPhone 13, WebKit iPad Pro 13, Firefox desktop), including "no page errors". Live `/settings` in Firefox and WebKit: 0/5 runs with errors (before: Firefox 3/5 to 4/4, WebKit 1/3).
