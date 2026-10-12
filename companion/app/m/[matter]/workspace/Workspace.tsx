@@ -47,6 +47,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   // on a phone the notes are a sheet over the pages, so they start closed
   const [phone, setPhone] = useState(false);
   useEffect(() => { if (matchMedia("(max-width: 760px)").matches) { setPhone(true); setPanes((x) => ({ ...x, right: false })); } }, []);
+  useEffect(() => { document.documentElement.classList.add("ws-full"); return () => document.documentElement.classList.remove("ws-full"); }, []);
   useEffect(() => { try { setSplit(localStorage.getItem("ws-papers") === "1"); } catch {} }, []);
   const pickSplit = (v: boolean) => { setSplit(v); try { localStorage.setItem("ws-papers", v ? "1" : "0"); } catch {} };
   useEffect(() => { try { const s = localStorage.getItem("ws-sort") as Sort | null; if (s && SORTS.some(([k]) => k === s)) setSort(s); } catch {} }, []);
@@ -77,6 +78,9 @@ export default function Workspace({ matter, docs, first, sources, start }: {
     reload(id);
   }, [reload]);
 
+  // her highlights imported from LiquidText carry no note id in ink.json, so those are matched on page and quote
+  const inkOf = (n?: { id: string; page_no: number | null; quote: string | null }) =>
+    n ? b?.ink.find((h) => h.id === n.id) ?? b?.ink.find((h) => !!n.quote && h.page === n.page_no && h.quote === n.quote) : undefined;
   const clamp = (p: number) => Math.min(Math.max(1, p), doc.pages);
   const go = (p: number, id = cur) => reader.current?.querySelector(at(id, p))?.scrollIntoView({ behavior: "smooth", block: "start" });
   const goDoc = (id: string) => {
@@ -168,7 +172,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
       const el = pg && reader.current?.querySelector<HTMLElement>(at(cur, pg));
       if (!n || !el) return setLine(null);
       // 13-10-2026 (Omkar): the line should land on the words the note is about, not the top of the page
-      const ink = b?.ink.find((h) => h.id === active);
+      const ink = inkOf(note);
       const [l, t, w, hh] = ink?.rects[0] ?? [];
       const a = n.getBoundingClientRect(), c = el.getBoundingClientRect(), r = reader.current!.getBoundingClientRect();
       const y = t === undefined ? c.top + 24 : c.top + (t + hh / 2) * c.height;
@@ -212,7 +216,11 @@ export default function Workspace({ matter, docs, first, sources, start }: {
           {!b && <p className="subtle">Loading this paper.</p>}
           {b && plain.length === 0 && <p className="subtle">No notes on this paper yet.</p>}
           {plain.map((n) => <NoteCard key={n.id} n={n} on={n.id === active} here={n.page_no === page} matter={matter} doc={cur}
-            hand={b?.hands?.[n.id]} onPick={() => { setActive(n.id); if (n.page_no) go(n.page_no); }} onChanged={() => reload(cur)} />)}
+            hand={b?.hands?.[n.id]} onPick={() => {
+              setActive(n.id);
+              const i = b?.ink.indexOf(inkOf(n)!) ?? -1, mark = i >= 0 && reader.current?.querySelector(`${at(cur, n.page_no ?? 0)} [data-ink="${i}"]`);
+              if (mark) mark.scrollIntoView({ behavior: "smooth", block: "center" }); else if (n.page_no) go(n.page_no);
+            }} onChanged={() => reload(cur)} />)}
         </div>
         <form className="ws-add" action={async (f) => { await addAnnotation(f); reload(cur); }}>
           <input type="hidden" name="matter" value={matter} />
@@ -346,7 +354,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
                       ? <img src={x.scans[i]} alt={`${d.title}, page ${i + 1}`} loading="lazy" width={850} height={1100} />
                       : <div className="ws-blank" />}
                     {x?.ink.filter((h) => h.page === i + 1).flatMap((h, k) => h.rects.map(([l, t, w, hh], j) => (
-                      <span key={`${k}-${j}`} className="ws-hl" style={{ left: `${l * 100}%`, top: `${t * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, background: h.color ?? undefined }} />
+                      <span key={`${k}-${j}`} data-ink={x.ink.indexOf(h)} className="ws-hl" style={{ left: `${l * 100}%`, top: `${t * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, background: h.color ?? undefined }} />
                     )))}
                     {x?.words[i] && <PageText url={x.words[i]} />}
                   </figure>
