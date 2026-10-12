@@ -409,8 +409,11 @@ def file_notes(mid: str, doc_id: str, notes: list[dict], created_by: str, pages:
     if not keep:
         return
     rest("DELETE", "annotations", f"doc_id=eq.{urllib.parse.quote(doc_id)}&tags=ov.{{from-pdf,from-ltproj}}")  # a refile replaces, never doubles
-    rest("POST", "annotations", "", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
-                                      "tags": a["tags"], "created_by": created_by} for a in keep])
+    made = rest("POST", "annotations", "select=id", [{"matter_id": mid, "doc_id": doc_id, "page_no": a["page"], "quote": a["quote"], "body": a["body"],
+                                                     "tags": a["tags"], "created_by": created_by} for a in keep], "return=representation")
+    for a, row in zip(keep, made or []):  # PostgREST returns the rows in the order sent
+        if a.get("png"):
+            corpus.storage_put(f"{mid}/pages/{doc_id}/hand-{row['id']}.png", a["png"], "image/png")
     ink = [{k: a.get(k) for k in ("page", "color", "rects", "body", "quote", "tags")} for a in keep if a.get("rects")]
     corpus.storage_put(f"{mid}/pages/{doc_id}/ink.json", json.dumps(ink).encode(), "application/json")
     print(f"  {len(keep)} highlights/comments brought in as her notes ({len(ink)} with their shape)", flush=True)
@@ -492,6 +495,9 @@ def process(job: dict, ocr, force: bool = False) -> str:
         if is_ltproj(job["filename"]):
             # not inside the PDF, so the LiquidText export (which skips from-pdf) still carries them
             pnotes += [{**a, "tags": ["from-ltproj", "liquidtext"]} for a in pdf_notes.ltproj_notes(original, pdf_path)]
+            # 13-10-2026: her links from a page to her handwriting on the LiquidText canvas; the ink comes as a picture
+            pnotes += [{"page": k["page"], "quote": None, "body": "Handwritten note in LiquidText", "png": k["png"],
+                        "tags": ["handwriting", "from-ltproj", "liquidtext"]} for k in pdf_notes.ink_links(original) if k["png"]]
         rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"page_count": n, "updated_at": now()})
 
         layer = pdftotext_pages(pdf_path, n)

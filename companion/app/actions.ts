@@ -12,6 +12,8 @@ import { track } from "@/lib/activity";
 import { colourTag } from "@/lib/highlight";
 import { addInk, removeInk } from "@/lib/ink";
 import { findSpan } from "@/lib/excerpt";
+import { docBundle } from "@/lib/workspace";
+import { readHandwriting } from "@/lib/ai";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 import { norm } from "@/lib/citations";
 import { getMatter } from "@/lib/data";
@@ -315,6 +317,52 @@ export async function renameDocument(f: FormData) {
   must(await admin().from("documents").update({ title }).eq("id", id));
   await track(user.email, { matter: visible.matter_id, text: `Renamed a paper to "${title}"`, link: `/m/${visible.matter_id}/d/${id}` });
   revalidatePath(`/m/${visible.matter_id}`, "layout");
+}
+
+// The Workspace loads each paper as it scrolls near (lib/workspace.ts); membership is checked by getMatter.
+export async function loadDoc(matter: string, id: string) {
+  const { supabase } = await requireUser();
+  return docBundle(supabase, await getMatter(supabase, matter), id);
+}
+
+// Her handwriting (a LiquidText canvas note) read into text. Only a suggestion: nothing is saved until she keeps it.
+export async function readHand(matter: string, doc: string, id: string): Promise<{ text?: string; error?: string }> {
+  const { supabase } = await requireUser();
+  const { data: n } = await supabase.from("annotations").select("id, tags").eq("id", id).eq("doc_id", doc).eq("matter_id", matter).maybeSingle();
+  if (!n?.tags?.includes("handwriting")) return { error: "That note has no handwriting to read." };
+  const { data: png } = await supabase.storage.from("companion").download(`${matter}/pages/${doc}/hand-${id}.png`);
+  if (!png) return { error: "The picture of this note is missing." };
+  try {
+    return { text: await readHandwriting(Buffer.from(await png.arrayBuffer()).toString("base64")) };
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+}
+
+// She kept the reading (as read, or after correcting it). The picture stays; the tag says the text came from it.
+export async function keepHandText(input: { matter: string; doc: string; id: string; text: string }) {
+  const { supabase, user } = await requireUser();
+  const text = input.text.trim();
+  if (!text) return;
+  const { data: n } = await supabase.from("annotations").select("tags").eq("id", input.id).eq("matter_id", input.matter).maybeSingle();
+  if (!n) return;
+  must(await supabase.from("annotations").update({ body: text, tags: [...new Set([...(n.tags ?? []), "read-from-handwriting"])] }).eq("id", input.id));
+  await track(user.email, { matter: input.matter, text: `Kept the reading of a handwritten note: "${text.slice(0, 80)}"`, link: `/m/${input.matter}/workspace?d=${input.doc}` });
+}
+
+// Up or down one place within its stage (the Workspace's continuous scroll follows stage, then this order).
+export async function moveDocOrder(id: string, dir: -1 | 1) {
+  const { supabase, user } = await requireUser();
+  const { data: d } = await supabase.from("documents").select("matter_id, stage").eq("id", id).maybeSingle();
+  if (!d) return;
+  const list = must(await supabase.from("documents").select("id").eq("matter_id", d.matter_id).eq("stage", d.stage).order("sort").order("id")) as { id: string }[];
+  const i = list.findIndex((x) => x.id === id), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  // ponytail: renumbers the stage's papers; a few hundred updates at most.
+  await Promise.all(list.map((x, k) => admin().from("documents").update({ sort: k * 10 }).eq("id", x.id)));
+  await track(user.email, { matter: d.matter_id, text: `Moved a paper ${dir < 0 ? "up" : "down"}`, link: `/m/${d.matter_id}?d=${id}` });
+  revalidatePath(`/m/${d.matter_id}`, "layout");
 }
 
 // A paper moves only to one of its own matter's stages. Records whether she took the Jev suggestion.

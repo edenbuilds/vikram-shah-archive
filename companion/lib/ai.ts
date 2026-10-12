@@ -105,8 +105,12 @@ export function toConverse(b: { [k: string]: unknown }, maxTokens = 8000) {
     if (it.type === "function_call") add("assistant", { toolUse: { toolUseId: it.call_id, name: it.name, input: JSON.parse(String(it.arguments || "{}")) } });
     else if (it.type === "function_call_output") add("user", { toolResult: { toolUseId: it.call_id, content: [{ text: String(it.output) }] } });
     else if (it.role === "user" || it.role === "assistant") {
-      const text = typeof it.content === "string" ? it.content : (it.content as { text?: string }[]).map((c) => c.text ?? "").join("");
-      if (text) add(it.role, { text });
+      if (Array.isArray(it.content)) for (const c of it.content as { type?: string; text?: string; image?: string }[]) {
+        // an input_image is a base64 PNG (handwriting, 13-10-2026); Converse takes the bytes inline
+        if (c.type === "input_image" && c.image) add(it.role, { image: { format: "png", source: { bytes: c.image } } });
+        else if (c.text) add(it.role, { text: c.text });
+      }
+      else if (it.content) add(it.role, { text: String(it.content) });
     }
   }
   const tools = b.tools as { name: string; description?: string; parameters: object }[] | undefined;
@@ -206,4 +210,26 @@ export async function jsonChat<T>(system: string, user: string, name: string, sc
     text: { format: { type: "json_schema", name, strict: true, schema } },
   });
   return JSON.parse(outputText(d)) as T;
+}
+
+// 13-10-2026: her handwritten notes (LiquidText canvas ink) read into text. Only models that see images are tried,
+// never the text-only backups, which would answer without having looked. Kimi K3 read a test card exactly; Opus 4.6
+// on Bedrock is refused until a card is on file.
+const SEEING = ["bedrock:global.moonshotai.kimi-k3", "bedrock:global.anthropic.claude-opus-4-6-v1"];
+export async function readHandwriting(png: string): Promise<string> {
+  const failed: string[] = [];
+  for (const model of SEEING) {
+    try {
+      const o = await call<Out>("responses", {
+        model,
+        instructions: "You transcribe an advocate's handwritten case notes. Write exactly what is written, line by line, keeping her abbreviations, numbers, dates and arrows (as ->). Do not expand, correct, explain or add anything. Where a word cannot be read, write [illegible]. Reply with the transcription only.",
+        input: [{ role: "user", content: [{ type: "input_image", image: png }, { type: "input_text", text: "Transcribe this note." }] }],
+      });
+      const t = outputText(o).trim();
+      if (t) return t;
+    } catch (e) {
+      failed.push((e as Error).message);
+    }
+  }
+  throw new Error(failed[0] ?? "No model could read the handwriting");
 }

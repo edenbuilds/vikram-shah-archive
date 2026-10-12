@@ -1140,3 +1140,26 @@ body:has(.ws) main.wrap { padding-top: .6rem; padding-bottom: .6rem; }
 .ws-card q { quotes: none; font-family: var(--serif, Georgia, serif); font-size: .9rem; line-height: 1.45; white-space: pre-line; }
 .ws-card.on { box-shadow: 0 0 0 2px var(--seal); }
 .ws-card.here { border-color: var(--seal); }
+
+/* 13-10-2026: the Workspace as one continuous scroll of every paper, with handwriting notes */
+.ws-find { display: flex; gap: .4rem; margin: 0 .6rem .4rem; }
+.ws-find .ws-filter { margin: 0; flex: 1; min-width: 0; }
+.ws-sort { flex: 0 0 auto; max-width: 44%; height: 36px; font: inherit; font-size: .8rem; }
+.ws-doc .ws-stage { margin: .6rem .3rem .2rem; }
+.ws-docrow { display: flex; align-items: center; }
+.ws-docrow > button { flex: 1; min-width: 0; }
+.ws-list button[aria-current=page] { background: var(--note-bg); font-weight: 600; }
+.ws-move { display: flex; flex: 0 0 auto; }
+.ws-list .ws-move button { width: 32px; min-height: 44px; padding: 0; border: 0; justify-content: center; }
+.ws-paper { display: grid; gap: 1rem; justify-items: center; width: 100%; scroll-margin-top: .5rem; }
+.ws-paperhead { position: sticky; top: -1rem; z-index: 2; display: flex; align-items: center; gap: .5rem; width: min(100%, calc(860px * var(--zoom, 1))); padding: .3rem .4rem; background: var(--paper-deep); border-bottom: 1px solid var(--rule); }
+.ws-papertitle { display: grid; flex: 1; min-width: 0; }
+.ws-papertitle strong { font-family: var(--serif-font), serif; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-blank { aspect-ratio: 850 / 1100; background: #fff; }
+.linkish { padding: 0; border: 0; background: none; color: var(--seal); font: inherit; font-size: .8rem; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; min-height: 32px; }
+.ws-cardacts { display: flex; flex-wrap: wrap; gap: .3rem .9rem; align-items: center; }
+.ws-ink { display: block; width: 100%; height: auto; border-radius: 4px; background: #fff; }
+.ws-ink.small { max-height: 90px; object-fit: contain; object-position: left; }
+.ws-script { font-family: var(--hand-font), cursive; font-size: 1.35rem; line-height: 1.15; }
+.ws-read { display: grid; gap: .35rem; cursor: auto; }
+.ws-read textarea { width: 100%; font: inherit; font-size: .88rem; }

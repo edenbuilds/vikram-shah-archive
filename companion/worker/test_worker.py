@@ -127,3 +127,14 @@ full = {"pages": [{"width": 200, "height": 100, "blocks": [{"paragraphs": [{"wor
      "symbols": [{"text": "W"}, {"text": "P"}]}]}]}]}]}
 assert vision_words(full) == [[0, 0.1, 0.3, 0.2, "WP"]], vision_words(full)
 print("worker word boxes ok")
+
+# A LiquidText link's handwriting: the strokes near the link's end on the canvas and those touching them, not the
+# note written further down the canvas.
+from pdf_notes import _cluster, _render  # noqa: E402
+note = [("0000ffff", [100, 100, 40, 12], [(100, 100), (140, 112)]), ("0000ffff", [150, 102, 30, 10], [(150, 102), (180, 112)])]
+other = [("a50800ff", [100, 600, 50, 12], [(100, 600), (150, 612)])]
+took = _cluster(note + other, (95, 98))
+assert took == note, took
+assert _cluster(note, (2000, 2000)) == []  # nothing near the end: no picture rather than a wrong one
+assert _render(took)[:4] == b"\x89PNG"
+print("worker ink links ok")

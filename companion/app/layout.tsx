@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Caveat, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 import Toaster from "@/components/Toast";
 import JobWatcher from "@/components/JobWatcher";
@@ -18,6 +18,8 @@ const sans = localFont({ variable: "--sans-font", display: "swap", src: [
   { path: "./fonts/Switzer-400.woff2", weight: "400" }, { path: "./fonts/Switzer-500.woff2", weight: "500" }, { path: "./fonts/Switzer-600.woff2", weight: "600" },
 ] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--mono-font" });
+// 13-10-2026: typed notes shown as handwriting in the Workspace (her ask: text to handwriting). Loaded on demand.
+const hand = Caveat({ subsets: ["latin"], weight: ["400", "600"], variable: "--hand-font", preload: false });
 
 // 04-10-2026: Omkar asked for the SEO and social details. The icons (app/icon.svg, apple-icon, pwa/), the manifest, the link
 // preview image (opengraph-image, twitter-image) and robots.txt are file conventions beside this file. Every page stays noindex:
@@ -43,7 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { user } = await currentUser();
   const data = { user };
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable} ${hand.variable}`} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: A11Y_BOOT }} /></head>
       <body>
         <a href="#main" className="skip-link">Skip to content</a>

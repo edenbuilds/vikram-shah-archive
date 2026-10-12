@@ -94,6 +94,15 @@ the uploaded PDF or LiquidText project. A LiquidText highlight's quote is the tr
 her mark; pen marks give the page only, never what they say. \`get_paper\` also gives a "PDF with notes" link
 (her highlights and notes as real PDF annotations) for LiquidText, PDFgear or Acrobat.
 
+The Workspace (\`/m/<matter>/workspace\`, one continuous scroll of every paper, papers in stage order and movable up
+or down) is where she makes these by hand:
+- \`excerpt\`: words she picked on the scan. The quote is cut from the page text on file, so it is verbatim; cite
+  it like any quote from the paper (and still run \`verify_quote\`).
+- \`handwriting\`: a note she wrote by hand in LiquidText, linked to that page, kept as a picture. Its text is
+  "Handwritten note in LiquidText" until she has it read: never say what an unread one says. Tagged
+  \`read-from-handwriting\`, the body is the reading she checked against the picture and kept; still her note, not
+  the record.
+
 ## Drafting
 
 When she asks you to draft anything (a petition, reply, application, affidavit, notice, deed or

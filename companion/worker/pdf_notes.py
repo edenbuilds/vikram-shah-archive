@@ -427,3 +427,114 @@ if __name__ == "__main__":
                                   {"page": 1, "quote": None, "body": "LiquidText tag on this document: Urgent"}], lt_marks(data)
         assert worker.is_ltproj("Case.ltproj.zip") and worker.is_ltproj("x.LTPROJ") and not worker.is_ltproj("x.zip")
     print("pdf_notes self-check ok: highlight quote, sticky note, ltproj documents, excerpts and comments")
+
+
+def _stroke_paths(blob: bytes):
+    """(RGBA hex, box [x, y, w, h], points [(x, y), ...]) per stroke; field 4 is the packed x,y doubles."""
+    import struct
+    for fn, s in _pb(blob):
+        if fn != 1 or not isinstance(s, bytes):
+            continue
+        f = dict(_pb(s))
+        box = dict(_pb(f.get(2, b"")))
+        o, z = dict(_pb(box.get(1, b""))), dict(_pb(box.get(2, b"")))
+        raw = f.get(4, b"")
+        v = struct.unpack(f"<{len(raw) // 8}d", raw[:len(raw) // 8 * 8]) if isinstance(raw, bytes) else ()
+        pts = list(zip(v[0::2], v[1::2]))
+        if pts:
+            yield dict(_pb(f.get(1, b""))).get(1, b"").hex() or "000000ff", [_num(o, 1), _num(o, 2), _num(z, 2), _num(z, 1)], pts
+
+
+def _cluster(strokes: list, at: tuple[float, float], reach: float = 140, gap: float = 28, cap: float = 900) -> list:
+    """The strokes of one handwritten note: seeded by the stroke nearest the link's end on the canvas, grown by
+    strokes within `gap` points of one already taken. ponytail: single-linkage on boxes; two notes written
+    closer than `gap` come out as one picture, which still shows her ink as written."""
+    def dist(b, x, y):
+        return max(b[0] - x, 0, x - b[0] - b[2]) + max(b[1] - y, 0, y - b[1] - b[3])
+    def near(a, b):
+        return (max(a[0] - b[0] - b[2], b[0] - a[0] - a[2], 0) < gap) and (max(a[1] - b[1] - b[3], b[1] - a[1] - a[3], 0) < gap)
+    seed = min(strokes, key=lambda s: dist(s[1], *at), default=None)
+    if not seed or dist(seed[1], *at) > reach:
+        return []
+    took, todo, rest = [seed], [seed], [s for s in strokes if s is not seed]
+    while todo:
+        a = todo.pop()
+        hit = [s for s in rest if near(a[1], s[1])]
+        for s in hit:
+            xs = [t[1][0] for t in took + [s]] + [t[1][0] + t[1][2] for t in took + [s]]
+            ys = [t[1][1] for t in took + [s]] + [t[1][1] + t[1][3] for t in took + [s]]
+            if max(xs) - min(xs) > cap or max(ys) - min(ys) > cap:
+                continue  # a note is a few lines, not the whole canvas
+            took.append(s)
+            todo.append(s)
+            rest.remove(s)
+    return took
+
+
+def _render(strokes: list, width: float = 2.5) -> bytes:
+    """PNG of the strokes in their own colours on white, cropped to them with a margin."""
+    from PIL import Image, ImageDraw
+    x0 = min(s[1][0] for s in strokes) - 12
+    y0 = min(s[1][1] for s in strokes) - 12
+    x1 = max(s[1][0] + s[1][2] for s in strokes) + 12
+    y1 = max(s[1][1] + s[1][3] for s in strokes) + 12
+    k = min(2.0, 1400 / max(x1 - x0, 1))
+    im = Image.new("RGB", (max(int((x1 - x0) * k), 1), max(int((y1 - y0) * k), 1)), "white")
+    d = ImageDraw.Draw(im)
+    for c, _, pts in strokes:
+        col = "#" + c[:6]
+        p = [((x - x0) * k, (y - y0) * k) for x, y in pts]
+        if len(p) > 1:
+            d.line(p, fill=col, width=max(int(width * k), 1), joint="curve")
+        else:
+            d.ellipse([p[0][0] - 1, p[0][1] - 1, p[0][0] + 1, p[0][1] + 1], fill=col)
+    out = io.BytesIO()
+    im.save(out, "PNG", optimize=True)
+    return out.getvalue()
+
+
+def ink_links(data: bytes) -> list[dict]:
+    """Her LiquidText links from a paper page to handwriting on the workspace canvas, placed on the merged PDF:
+    {page, at: [x, y] on the page (0-1), png: the handwriting at the other end}. 13-10-2026, read from her Goa
+    project: 112 links, each joining a page (stable corner y = page index + y) to a point on the canvas (points)."""
+    import base64
+    import struct
+    e, start = _project(data)
+    if not e:
+        return []
+    z = zipfile.ZipFile(io.BytesIO(data))
+    blobs = {n.rsplit("/", 1)[-1].lower(): n for n in z.namelist()}
+    surf = {str(s.get("Id", "")).lower(): s for s in e.get("InkSurfaces", [])}
+    ends = {str(x.get("Id", "")).lower(): x for x in e.get("LinkEndpoints", [])}
+    canvas: dict[str, list] = {}
+    for a in e.get("InkSubArchives", []):
+        sid = str(a.get("ParentInkSurface", "")).lower()
+        if surf.get(sid, {}).get("AttachedToType") == 1:
+            continue  # ink on a paper, not the canvas
+        uid = str(a.get("ObjUID", "")).lower()
+        blob = next((n for low, n in blobs.items() if uid and low.startswith(f"fobjz{uid}z")), None)
+        try:
+            canvas.setdefault(sid, []).extend(_stroke_paths(z.read(blob)) if blob else [])
+        except (ValueError, IndexError, struct.error):
+            pass
+
+    def xy(c):
+        f = dict(_pb(base64.b64decode(str(c) + "==")))
+        return tuple(struct.unpack("<d", f[k])[0] if len(f.get(k, b"")) == 8 else 0.0 for k in (1, 2))
+    out = []
+    for link in e.get("InkLinks", []):
+        pair = [ends.get(str(link.get(k, "")).lower()) for k in ("End1", "End2")]
+        if None in pair:
+            continue
+        side = {surf.get(str(p.get("AttachedTo", "")).lower(), {}).get("AttachedToType") == 1: p for p in pair}
+        paper, note = side.get(True), side.get(False)
+        if not paper or not note:
+            continue
+        ps = surf[str(paper["AttachedTo"]).lower()]
+        did = str(ps.get("AttachedTo", "")).lower()
+        if did not in start:
+            continue
+        x, y = xy(paper.get("StableULCorner"))
+        took = _cluster(canvas.get(str(note["AttachedTo"]).lower(), []), xy(note.get("StableULCorner")))
+        out.append({"page": start[did] + int(y) + 1, "at": [round(x, 4), round(y % 1, 4)], "png": _render(took) if took else None})
+    return out
