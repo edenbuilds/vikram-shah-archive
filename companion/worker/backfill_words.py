@@ -71,4 +71,7 @@ if __name__ == "__main__":
     for a in sys.argv[1:] or [x["id"] for x in rest("GET", "documents", "select=id&order=sort.desc")]:
         if time.time() - at > 2400:  # a gcloud token lasts an hour; the whole archive takes longer
             tok, at = gv.access_token(), time.time()
-        backfill(a, tok)
+        try:
+            backfill(a, tok)
+        except Exception as e:  # noqa: BLE001  a paper whose PDF is missing never stops the run (13-10-2026)
+            print(f"{a}: {str(e)[:150]}", flush=True)
