@@ -3,15 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { addAnnotation } from "@/app/actions";
+import { addAnnotation, addExcerpt } from "@/app/actions";
 import type { Note } from "../d/[doc]/Transcript";
 
 export type Doc = { id: string; title: string; stage: string; pages: number };
 export type Source = { key: string; file: string; when: string; status: string; doc: string | null; pages: number | null; how: string };
 type Row = { title: string; page: number; level: number };
 
-export default function Workspace({ matter, docs, doc, scans, words, outline, notes, sources, start, origin }: {
-  matter: string; docs: Doc[]; doc: { id: string; title: string; pages: number }; scans: string[]; words: string[];
+export default function Workspace({ matter, docs, doc, scans, words, ink, outline, notes, sources, start, origin }: {
+  matter: string; docs: Doc[]; doc: { id: string; title: string; pages: number }; scans: string[]; words: string[]; ink: { page: number; color: string | null; rects: number[][] }[];
   outline: Row[]; notes: Note[]; sources: Source[]; start: number; origin: string;
 }) {
   const router = useRouter();
@@ -28,6 +28,37 @@ export default function Workspace({ matter, docs, doc, scans, words, outline, no
   const [squeeze, setSqueeze] = useState(false);  // LiquidText's "highlight view": only the pages she has marked
   const marked = new Set(notes.map((n) => n.page_no).filter(Boolean));
   const [typed, setTyped] = useState<string | null>(null);
+  const [pick, setPick] = useState<{ page: number; picked: string; rects: number[][]; x: number; y: number } | null>(null);
+  const [said, setSaid] = useState<string | null>(null);
+  // Words selected on one scan become a pending excerpt; the button (or dropping the selection on the notes) files it.
+  useEffect(() => {
+    const up = () => {
+      const s = getSelection();
+      const fig = s && !s.isCollapsed && (s.anchorNode?.parentElement?.closest("figure[data-page]") as HTMLElement | null);
+      if (!s || !fig || !s.rangeCount) return setPick(null);
+      const range = s.getRangeAt(0);
+      const hit = [...fig.querySelectorAll<SVGTextElement>(".ws-text text")].filter((t) => range.intersectsNode(t));
+      if (!hit.length) return setPick(null);
+      const b = range.getBoundingClientRect();
+      setPick({
+        page: Number(fig.dataset.page), picked: hit.map((t) => t.textContent).join(" "),
+        rects: hit.map((t) => { const [x0, y0, x1, y1] = t.dataset.b!.split(",").map(Number); return [x0, y0, x1 - x0, y1 - y0]; }),
+        x: b.right, y: b.bottom,
+      });
+    };
+    document.addEventListener("mouseup", up);
+    document.addEventListener("keyup", up);
+    return () => { document.removeEventListener("mouseup", up); document.removeEventListener("keyup", up); };
+  }, []);
+  const excerpt = async () => {
+    if (!pick) return;
+    const p = pick;
+    setPick(null);
+    getSelection()?.removeAllRanges();
+    const r = await addExcerpt({ matter, doc: doc.id, page: p.page, picked: p.picked, rects: p.rects });
+    setSaid(r.error ?? null);
+    if (!r.error) router.refresh();
+  };
   const clamp = (p: number) => Math.min(Math.max(1, p), doc.pages);
   // Keyboard like a reader app: arrows / PageUp / PageDown turn pages, [ and ] hide the side panels, + and - zoom.
   useEffect(() => {
@@ -163,6 +194,9 @@ export default function Workspace({ matter, docs, doc, scans, words, outline, no
               <span className="ws-pno">P {i + 1}</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Page ${i + 1}`} loading="lazy" width={850} height={1100} />
+              {ink.filter((h) => h.page === i + 1).flatMap((h, k) => h.rects.map(([x, y, w, hh], j) => (
+                <span key={`${k}-${j}`} className="ws-hl" style={{ left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${hh * 100}%`, background: h.color ?? undefined }} />
+              )))}
               {words[i] && <PageText url={words[i]} />}
             </figure>
           ))}
@@ -171,9 +205,16 @@ export default function Workspace({ matter, docs, doc, scans, words, outline, no
 
       <aside className="ws-right">
         <p className="ws-stage">Notes · {plain.length}</p>
-        <div ref={notesBox} className="ws-notes">
+        <div ref={notesBox} className="ws-notes" onDragOver={(e) => pick && e.preventDefault()} onDrop={(e) => { e.preventDefault(); excerpt(); }}>
+          {said && <p className="ws-said" role="status">{said}</p>}
           {plain.length === 0 && <p className="subtle">No notes on this paper yet.</p>}
-          {plain.map((n) => (
+          {plain.map((n) => n.tags.includes("excerpt") ? (
+            <button key={n.id} data-note={n.id} className={`ws-card${n.id === active ? " on" : ""}${n.page_no === page ? " here" : ""}`}
+              onClick={() => { setActive(n.id); if (n.page_no) go(n.page_no); }}>
+              <q>{n.quote}</q>
+              <span className="subtle">p. {n.page_no}</span>
+            </button>
+          ) : (
             <button key={n.id} data-note={n.id} className={`ws-note${n.id === active ? " on" : ""}${n.page_no === page ? " here" : ""}`}
               onClick={() => { setActive(n.id); if (n.page_no) go(n.page_no); }}>
               <span className="subtle">p. {n.page_no ?? "?"}</span>
@@ -191,6 +232,10 @@ export default function Workspace({ matter, docs, doc, scans, words, outline, no
         </form>
       </aside>
 
+      {pick && createPortal(
+        <button className="btn small ws-pick" style={{ left: pick.x, top: pick.y + 6 }} onMouseDown={(e) => e.preventDefault()} onClick={excerpt}>Excerpt</button>,
+        document.body
+      )}
       {/* portalled: app/template.tsx animates a transform, which would make position:fixed relative to it */}
       {line && createPortal(
         <svg className="ws-link" aria-hidden>
@@ -223,7 +268,7 @@ function PageText({ url }: { url: string }) {
   return (
     <svg ref={box} className="ws-text" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden>
       {list.map(([x0, y0, x1, y1, t], k) => (
-        <text key={k} x={x0 * 1000} y={y1 * 1000 - (y1 - y0) * 180} fontSize={(y1 - y0) * 1000}
+        <text key={k} data-b={`${x0},${y0},${x1},${y1}`} x={x0 * 1000} y={y1 * 1000 - (y1 - y0) * 180} fontSize={(y1 - y0) * 1000}
           textLength={Math.max((x1 - x0) * 1000, 1)} lengthAdjust="spacingAndGlyphs">{t + " "}</text>
       ))}
     </svg>

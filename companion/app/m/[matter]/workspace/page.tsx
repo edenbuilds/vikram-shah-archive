@@ -1,5 +1,6 @@
 import { fileUrls, getMatter, dmyIST } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
+import { readInk } from "@/lib/ink";
 import Workspace, { type Doc, type Source } from "./Workspace";
 import type { Note } from "../d/[doc]/Transcript";
 
@@ -29,6 +30,7 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   const byNo = new Map((pages ?? []).map((p) => [p.page_no, p.jpeg_path]));
   const paths = Array.from({ length: d.page_count }, (_, i) => byNo.get(i + 1) ?? `pages/${d.id}/page-${String(i + 1).padStart(3, "0")}.jpg`);
   const scans = await fileUrls(supabase, m, paths);
+  const ink = (await readInk(m.id, d.id)).map(({ page, color, rects }) => ({ page, color, rects }));
   // missing for papers filed before 13-10-2026 or typed in by hand: those pages just have no text layer
   const words = await fileUrls(supabase, m, paths.map((p) => p.replace(/page-(\d+)\.jpg$/, "words-$1.json")));
 
@@ -46,7 +48,7 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   const src = sources.find((s) => s.doc === d.id);
 
   return (
-    <Workspace key={d.id} matter={m.id} docs={list} doc={{ id: d.id, title: d.title, pages: d.page_count }} scans={scans} words={words}
+    <Workspace key={d.id} matter={m.id} docs={list} doc={{ id: d.id, title: d.title, pages: d.page_count }} scans={scans} words={words} ink={ink}
       outline={outline} notes={(notes ?? []) as Note[]} sources={sources} start={Number(sp.p) || 1}
       origin={src ? `${src.how} as ${src.file} on ${src.when}` : `From ${d.source_path || d.filename}`} />
   );

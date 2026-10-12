@@ -11,6 +11,7 @@ import { db, requireUser } from "@/lib/supabase";
 import { track } from "@/lib/activity";
 import { colourTag } from "@/lib/highlight";
 import { addInk, removeInk } from "@/lib/ink";
+import { findSpan } from "@/lib/excerpt";
 import { DEFAULT_DISCLAIMER, TAXONOMIES } from "@/lib/taxonomies";
 import { norm } from "@/lib/citations";
 import { getMatter } from "@/lib/data";
@@ -112,6 +113,27 @@ export async function addAnnotation(f: FormData) {
     body: str(f, "body"), tags: str(f, "tags").split(",").map((t) => t.trim().toLowerCase()).filter(Boolean),
   }));
   revalidatePath(`/m/${m}/d/${doc}`);
+}
+
+// An excerpt card (LiquidText's): words picked on the scan in the Workspace. The quote is cut from the stored page
+// text, so it is verbatim and checkable; the word boxes go to ink.json so the excerpt shows on the scan and in the PDF.
+export async function addExcerpt(input: { matter: string; doc: string; page: number; picked: string; rects: number[][]; color?: string }): Promise<{ error?: string }> {
+  const { supabase, user } = await requireUser();
+  const { matter: m, doc, page } = input;
+  const d = must(await supabase.from("documents").select("transcript, page_count").eq("id", doc).eq("matter_id", m).single()) as { transcript: string | null; page_count: number };
+  if (!(page >= 1 && page <= d.page_count)) return { error: "That page is not in this paper." };
+  const span = findSpan(d.transcript ?? "", page, input.picked);
+  if (!span) return { error: "Those words aren't in this page's text as read. Correct the page text, or pick fewer words." };
+  const quote = (d.transcript ?? "").slice(span.start, span.end);
+  const tag = colourTag(input.color ?? "");
+  const rects = input.rects.slice(0, 400).map((r) => r.slice(0, 4).map((v) => Math.min(Math.max(Number(v) || 0, 0), 1)));
+  const row = must(await supabase.from("annotations").insert({
+    matter_id: m, doc_id: doc, page_no: page, char_start: span.start, char_end: span.end, quote, body: "Excerpt", tags: ["excerpt", "highlight", tag],
+  }).select("id").single()) as { id: string };
+  await addInk(m, doc, { id: row.id, page, color: tag.slice(6), rects, body: "Excerpt", quote, tags: ["highlight"] });
+  await track(user.email, { matter: m, text: `Excerpt from p. ${page}`, link: `/m/${m}/workspace?d=${doc}&p=${page}` });
+  revalidatePath(`/m/${m}/workspace`);
+  return {};
 }
 
 // A highlight drawn on the scan: the shape goes to ink.json (so the PDF export draws it as a real highlight, which

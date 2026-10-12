@@ -1133,3 +1133,10 @@ body:has(.ws) main.wrap { padding-top: .6rem; padding-bottom: .6rem; }
 @media (max-width: 760px) { .ws-mid { height: auto; overflow: visible; } .ws-pages { overflow: visible; } .ws-bar { position: sticky; top: 0; z-index: 2; background: var(--white); } }
 .ws-text { position: absolute; inset: 0; width: 100%; height: 100%; fill: transparent; user-select: text; cursor: text; }
 .ws-text text::selection { fill: transparent; background: color-mix(in srgb, var(--seal) 35%, transparent); }
+.ws-hl { position: absolute; mix-blend-mode: multiply; opacity: .55; pointer-events: none; }
+.ws-pick { position: fixed; z-index: 60; }
+.ws-said { margin: 0 0 .5rem; font-size: .8rem; color: var(--seal); }
+.ws-card { display: grid; gap: .35rem; text-align: left; padding: .7rem .8rem; background: #fff; color: var(--ink); font: inherit; border: 1px solid var(--rule); border-left: 3px solid var(--seal); border-radius: 8px; cursor: pointer; }
+.ws-card q { quotes: none; font-family: var(--serif, Georgia, serif); font-size: .9rem; line-height: 1.45; white-space: pre-line; }
+.ws-card.on { box-shadow: 0 0 0 2px var(--seal); }
+.ws-card.here { border-color: var(--seal); }
