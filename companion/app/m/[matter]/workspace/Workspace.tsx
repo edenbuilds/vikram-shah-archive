@@ -40,7 +40,8 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   const [moving, setMoving] = useState<string | null>(null);
 
   // on a phone the notes are a sheet over the pages, so they start closed
-  useEffect(() => { if (matchMedia("(max-width: 760px)").matches) setPanes((x) => ({ ...x, right: false })); }, []);
+  const [phone, setPhone] = useState(false);
+  useEffect(() => { if (matchMedia("(max-width: 760px)").matches) { setPhone(true); setPanes((x) => ({ ...x, right: false })); } }, []);
   useEffect(() => { try { const s = localStorage.getItem("ws-sort") as Sort | null; if (s && SORTS.some(([k]) => k === s)) setSort(s); } catch {} }, []);
   const pickSort = (s: Sort) => { setSort(s); try { localStorage.setItem("ws-sort", s); } catch {} };
 
@@ -187,6 +188,27 @@ export default function Workspace({ matter, docs, first, sources, start }: {
     </span>
   );
 
+  // portalled on a phone: app/template.tsx animates a transform, which would pin a fixed sheet to the page, not the screen
+  const notesPane = (
+      <aside className="ws-right">
+        <p className="ws-stage">Notes · {plain.length}</p>
+        <div ref={notesBox} className="ws-notes" onDragOver={(e) => pick && e.preventDefault()} onDrop={(e) => { e.preventDefault(); excerpt(); }}>
+          {said && <p className="ws-said" role="status">{said}</p>}
+          {!b && <p className="subtle">Loading this paper.</p>}
+          {b && plain.length === 0 && <p className="subtle">No notes on this paper yet.</p>}
+          {plain.map((n) => <NoteCard key={n.id} n={n} on={n.id === active} here={n.page_no === page} matter={matter} doc={cur}
+            hand={b?.hands?.[n.id]} onPick={() => { setActive(n.id); if (n.page_no) go(n.page_no); }} onChanged={() => reload(cur)} />)}
+        </div>
+        <form className="ws-add" action={async (f) => { await addAnnotation(f); reload(cur); }}>
+          <input type="hidden" name="matter" value={matter} />
+          <input type="hidden" name="doc" value={cur} />
+          <input type="hidden" name="page" value={page} />
+          <textarea name="body" required rows={2} placeholder={`Note on p. ${page}`} />
+          <button className="btn small">Add note</button>
+        </form>
+      </aside>
+  );
+
   return (
     <div className={`ws${panes.left ? "" : " no-left"}${panes.right ? "" : " no-right"}`}>
       <aside className="ws-left">
@@ -307,23 +329,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
         </div>
       </section>
 
-      <aside className="ws-right">
-        <p className="ws-stage">Notes · {plain.length}</p>
-        <div ref={notesBox} className="ws-notes" onDragOver={(e) => pick && e.preventDefault()} onDrop={(e) => { e.preventDefault(); excerpt(); }}>
-          {said && <p className="ws-said" role="status">{said}</p>}
-          {!b && <p className="subtle">Loading this paper.</p>}
-          {b && plain.length === 0 && <p className="subtle">No notes on this paper yet.</p>}
-          {plain.map((n) => <NoteCard key={n.id} n={n} on={n.id === active} here={n.page_no === page} matter={matter} doc={cur}
-            hand={b?.hands?.[n.id]} onPick={() => { setActive(n.id); if (n.page_no) go(n.page_no); }} onChanged={() => reload(cur)} />)}
-        </div>
-        <form className="ws-add" action={async (f) => { await addAnnotation(f); reload(cur); }}>
-          <input type="hidden" name="matter" value={matter} />
-          <input type="hidden" name="doc" value={cur} />
-          <input type="hidden" name="page" value={page} />
-          <textarea name="body" required rows={2} placeholder={`Note on p. ${page}`} />
-          <button className="btn small">Add note</button>
-        </form>
-      </aside>
+      {phone ? panes.right && createPortal(notesPane, document.body) : notesPane}
 
       {pick && createPortal(
         <button className="btn small ws-pick" style={{ left: pick.x, top: pick.y + 6 }} onMouseDown={(e) => e.preventDefault()} onClick={excerpt}>Excerpt</button>,
