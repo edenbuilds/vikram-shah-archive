@@ -53,7 +53,8 @@ def access_token() -> str:
     return tok
 
 
-def vision_page(token: str, jpg: Path) -> str:
+def vision_page(token: str, jpg: Path, words: list | None = None) -> str:
+    """Page text; when `words` is a list it also gets each word as [x0, y0, x1, y1, text], 0-1 of the page."""
     b64 = base64.b64encode(jpg.read_bytes()).decode()
     body = json.dumps(
         {
@@ -82,7 +83,10 @@ def vision_page(token: str, jpg: Path) -> str:
             item = (data.get("responses") or [{}])[0]
             if item.get("error"):
                 raise RuntimeError(item["error"])
-            return (item.get("fullTextAnnotation") or {}).get("text", "") or ""
+            full = item.get("fullTextAnnotation") or {}
+            if words is not None:
+                words.extend(vision_words(full))
+            return full.get("text", "") or ""
         except urllib.error.HTTPError as e:
             raw = e.read().decode("utf-8", errors="replace")
             if e.code in (429, 503, 500) and attempt < 3:
@@ -100,6 +104,23 @@ def vision_page(token: str, jpg: Path) -> str:
                 continue
             raise SystemExit(f"Vision HTTP {e.code}: {raw[:500]}") from e
     return ""
+
+
+def vision_words(full: dict) -> list:
+    """13-10-2026: the Workspace needs selectable text over the scans (LiquidText-style excerpts), and
+    Vision already returns where every word sits; until now only its text was kept."""
+    out = []
+    for pg in full.get("pages") or []:
+        w, h = pg.get("width") or 1, pg.get("height") or 1
+        for b in pg.get("blocks") or []:
+            for para in b.get("paragraphs") or []:
+                for wd in para.get("words") or []:
+                    vs = (wd.get("boundingBox") or {}).get("vertices") or []
+                    xs, ys = [v.get("x", 0) for v in vs], [v.get("y", 0) for v in vs]
+                    text = "".join(s.get("text", "") for s in wd.get("symbols") or [])
+                    if xs and text:
+                        out.append([round(min(xs) / w, 4), round(min(ys) / h, 4), round(max(xs) / w, 4), round(max(ys) / h, 4), text])
+    return out
 
 
 def thin_doc_ids() -> list[str]:

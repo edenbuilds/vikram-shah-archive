@@ -10,8 +10,8 @@ export type Doc = { id: string; title: string; stage: string; pages: number };
 export type Source = { key: string; file: string; when: string; status: string; doc: string | null; pages: number | null; how: string };
 type Row = { title: string; page: number; level: number };
 
-export default function Workspace({ matter, docs, doc, scans, outline, notes, sources, start, origin }: {
-  matter: string; docs: Doc[]; doc: { id: string; title: string; pages: number }; scans: string[];
+export default function Workspace({ matter, docs, doc, scans, words, outline, notes, sources, start, origin }: {
+  matter: string; docs: Doc[]; doc: { id: string; title: string; pages: number }; scans: string[]; words: string[];
   outline: Row[]; notes: Note[]; sources: Source[]; start: number; origin: string;
 }) {
   const router = useRouter();
@@ -163,6 +163,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
               <span className="ws-pno">P {i + 1}</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Page ${i + 1}`} loading="lazy" width={850} height={1100} />
+              {words[i] && <PageText url={words[i]} />}
             </figure>
           ))}
         </div>
@@ -198,5 +199,33 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
         </svg>, document.body
       )}
     </div>
+  );
+}
+
+type Word = [number, number, number, number, string];
+
+// 13-10-2026: the scans had no text to select, so nothing could be excerpted (the LiquidText demo). Each word is
+// drawn invisibly where OCR found it; SVG textLength stretches it to the exact box, so a selection lands on the ink.
+function PageText({ url }: { url: string }) {
+  const box = useRef<SVGSVGElement>(null);
+  const [list, setList] = useState<Word[]>([]);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      fetch(url).then((r) => (r.ok ? r.json() : [])).then(setList, () => {});
+    }, { rootMargin: "800px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [url]);
+  return (
+    <svg ref={box} className="ws-text" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden>
+      {list.map(([x0, y0, x1, y1, t], k) => (
+        <text key={k} x={x0 * 1000} y={y1 * 1000 - (y1 - y0) * 180} fontSize={(y1 - y0) * 1000}
+          textLength={Math.max((x1 - x0) * 1000, 1)} lengthAdjust="spacingAndGlyphs">{t + " "}</text>
+      ))}
+    </svg>
   );
 }

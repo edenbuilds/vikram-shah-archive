@@ -121,7 +121,10 @@ def vision():
                         err = e
                         continue
                 try:
-                    return gv.vision_page(tok["v"], jpg)
+                    w: list = []
+                    t = OCRText(gv.vision_page(tok["v"], jpg, w))
+                    t.words = w
+                    return t
                 except (Exception, SystemExit) as e:  # noqa: BLE001  gv exits the process on HTTP errors
                     err = e
             raise RuntimeError(f"Google Vision OCR failed: {str(err)[:300]}")
@@ -142,8 +145,9 @@ def vision():
         errs, best = [], None
         for name, fn in chain:
             try:
-                t = OCRText(fn(jpg))
-                t.src = name
+                raw = fn(jpg)
+                t = OCRText(raw)
+                t.src, t.words = name, getattr(raw, "words", None)
             except (Exception, SystemExit) as e:  # noqa: BLE001  the next engine reads the page
                 errs.append(f"{name}: {str(e)[:200]}")
                 continue
@@ -221,6 +225,24 @@ def bookmarks(pdf: Path, n: int) -> list[dict]:
         b["pageEnd"] = max(b["pageStart"], nxt - 1)
         b["pages"] = f"{b['pageStart']}-{b['pageEnd']}" if b["pageEnd"] != b["pageStart"] else str(b["pageStart"])
     return out
+
+
+def layer_words(pdf: Path, i: int) -> list | None:
+    """Where each word of a born-digital page sits, from its text layer: [x0, y0, x1, y1, text], 0-1 of the
+    page, the same shape as google_vision_ocr.vision_words. None when poppler can't say."""
+    import html
+    import re
+    try:
+        out = subprocess.run(["pdftotext", "-bbox", "-f", str(i), "-l", str(i), str(pdf), "-"],
+                             capture_output=True, text=True, timeout=60).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    m = re.search(r'<page width="([\d.]+)" height="([\d.]+)"', out)
+    if not m:
+        return None
+    w, h = float(m[1]), float(m[2])
+    return [[round(float(a) / w, 4), round(float(b) / h, 4), round(float(c) / w, 4), round(float(d) / h, 4), html.unescape(t)]
+            for a, b, c, d, t in re.findall(r'<word xMin="([\d.]+)" yMin="([\d.]+)" xMax="([\d.]+)" yMax="([\d.]+)">(.*?)</word>', out)] or None
 
 
 def page_count(pdf: Path) -> int:
@@ -479,14 +501,18 @@ def process(job: dict, ocr, force: bool = False) -> str:
 
         def read(i: int) -> tuple[str, str | None]:
             jpg = rasterize(pdf_path, i, tmp)  # tmp/page-NNN.jpg, kept until filed
-            text, src = layer[i - 1], "pdftotext"
+            text, src, words = layer[i - 1], "pdftotext", None
             if given and given[i - 1].strip():
                 text, src = given[i - 1].strip(), "uploaded-ocr"
             elif len(text) < THIN and ocr:
                 r = ocr(jpg)
                 v = r.strip()
                 if len(v) > len(text):  # density pick, per page
-                    text, src = v, getattr(r, "src", "google-vision")
+                    text, src, words = v, getattr(r, "src", "google-vision"), getattr(r, "words", None)
+            if src == "pdftotext" and text:
+                words = layer_words(pdf_path, i)
+            if words:
+                (tmp / f"words-{i:03d}.json").write_text(json.dumps(words))
             (tmp / f"page-{i:03d}.txt").write_text(text)
             return text, (src if text else None)
 
@@ -549,6 +575,8 @@ def process(job: dict, ocr, force: bool = False) -> str:
             corpus.storage_put(pdf_store, pdf, "application/pdf")
         for i in range(1, n + 1):
             corpus.storage_put(f"{mid}/pages/{doc_id}/page-{i:03d}.jpg", (tmp / f"page-{i:03d}.jpg").read_bytes(), "image/jpeg")
+            if (tmp / f"words-{i:03d}.json").exists():
+                corpus.storage_put(f"{mid}/pages/{doc_id}/words-{i:03d}.json", (tmp / f"words-{i:03d}.json").read_bytes(), "application/json")
 
     body, sections = sectioned(job["title"], texts)
     # ponytail: her bookmarks replace the guessed contents for a paper filed whole; a volume split

@@ -117,3 +117,13 @@ assert page.src == "second" and "Complainant" in page, page.src
 reads["second"] = ragged + " more"  # nothing better: the least bad read is kept, not a failure
 assert vision()("x.jpg").src == "first"  # no clearly better read, so the preferred engine's stays
 print("worker ocr gate ok: a poor read tries the next engine and the best one is kept")
+
+# Vision's word boxes come out as fractions of the page, in reading order, with the word's text.
+import importlib.util as _u  # the OCR-gate test above blocks the module by name
+_s = _u.spec_from_file_location("gv", Path(__file__).resolve().parents[2] / "scripts" / "google_vision_ocr.py")
+_gv = _u.module_from_spec(_s); _s.loader.exec_module(_gv); vision_words = _gv.vision_words
+full = {"pages": [{"width": 200, "height": 100, "blocks": [{"paragraphs": [{"words": [
+    {"boundingBox": {"vertices": [{"x": 20, "y": 10}, {"x": 60, "y": 10}, {"x": 60, "y": 20}, {"y": 20}]},
+     "symbols": [{"text": "W"}, {"text": "P"}]}]}]}]}]}
+assert vision_words(full) == [[0, 0.1, 0.3, 0.2, "WP"]], vision_words(full)
+print("worker word boxes ok")

@@ -29,6 +29,8 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   const byNo = new Map((pages ?? []).map((p) => [p.page_no, p.jpeg_path]));
   const paths = Array.from({ length: d.page_count }, (_, i) => byNo.get(i + 1) ?? `pages/${d.id}/page-${String(i + 1).padStart(3, "0")}.jpg`);
   const scans = await fileUrls(supabase, m, paths);
+  // missing for papers filed before 13-10-2026 or typed in by hand: those pages just have no text layer
+  const words = await fileUrls(supabase, m, paths.map((p) => p.replace(/page-(\d+)\.jpg$/, "words-$1.json")));
 
   // Every file that came in for this matter: uploads from ingest_jobs, plus papers filed without a job (the archive import).
   const viaJob = new Set((jobs ?? []).map((j) => j.doc_id).filter(Boolean));
@@ -44,7 +46,7 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   const src = sources.find((s) => s.doc === d.id);
 
   return (
-    <Workspace key={d.id} matter={m.id} docs={list} doc={{ id: d.id, title: d.title, pages: d.page_count }} scans={scans}
+    <Workspace key={d.id} matter={m.id} docs={list} doc={{ id: d.id, title: d.title, pages: d.page_count }} scans={scans} words={words}
       outline={outline} notes={(notes ?? []) as Note[]} sources={sources} start={Number(sp.p) || 1}
       origin={src ? `${src.how} as ${src.file} on ${src.when}` : `From ${d.source_path || d.filename}`} />
   );
