@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 // the third value is the tab's colour (underline and active label), so a matter is not one blue strip
 const TABS = [
   ["", "Papers", "#0007cb"],
+  ["/workspace", "Workspace", "#a16207"],
   ["/explainer", "Explainer", "#7c3aed"],
   ["/reading", "Reading order", "#0e7490"],
   ["/brief", "Brief", "#b45309"],

@@ -7,6 +7,13 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 12-10-2026 (later): Workspace tab, a LiquidText-style reading view
+
+- **New tab "Workspace"** (`/m/<matter>/workspace?d=<doc>&p=<page>`, second after Papers). Left: Documents | Outline toggle with a filter (outline = the paper's sections plus her bookmarks). Middle: the whole paper as one continuous scroll of page scans, lazy-loaded. Right: her notes as yellow cards; clicking one scrolls the paper to its page, outlines that page and draws a line from the note to the page. Notes on the page in view are marked. "Add note" writes to the current page through `addAnnotation`. Works with or without LiquidText imports (the imported notes are ordinary annotations).
+- **Source of every paper.** The bar above the paper says "Uploaded as <file> on DD-MM-YYYY" (from `ingest_jobs`) or "Imported as <source_path>" (archive papers with no job). The left column's "Source files N" lists every file that came in for the matter, with date, pages, status and an Open link.
+- **Verified locally** (`scripts/ws-check.mjs`, Chromium 1440 and 390): shah-v-trindade 166 papers, 33-page paper scrolls, outline 10 rows; zz-upload-test note-to-page line drawn; no page errors, no sideways scroll. **Not verified live** until the Vercel deploy finishes; not checked on Safari/iPad.
+- Prompt: "Read companion/HANDOFF.md. Run `node --env-file=.env.local scripts/ws-check.mjs https://case-companion.edenbuilds.me <outdir>` and check the screenshots at 1440 and 390."
+
 ## 12-10-2026: four reports from Arya and Omkar, and the upload queue
 
 - **CC-689411 (fixed, live).** The reader's pager only had arrows. "Page 2 of 88" is now "Page [box] of 88": type a number and press Enter (`lib/pager.ts` `goToPage`: whole numbers only, clamped to 1..count, anything else does nothing). The scan, bookmark box and notes follow the page. Papers whose OCR has no "## Page N" markers (the Written Synopsis is one: "Continuous OCR") cannot scroll the text to a page, as with the arrows; the scan does change. Pager buttons and the box are 44px on touch.
