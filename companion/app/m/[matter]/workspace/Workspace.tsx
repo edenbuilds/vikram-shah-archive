@@ -39,6 +39,8 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   const [said, setSaid] = useState<string | null>(null);
   const [moving, setMoving] = useState<string | null>(null);
 
+  // on a phone the notes are a sheet over the pages, so they start closed
+  useEffect(() => { if (matchMedia("(max-width: 760px)").matches) setPanes((x) => ({ ...x, right: false })); }, []);
   useEffect(() => { try { const s = localStorage.getItem("ws-sort") as Sort | null; if (s && SORTS.some(([k]) => k === s)) setSort(s); } catch {} }, []);
   const pickSort = (s: Sort) => { setSort(s); try { localStorage.setItem("ws-sort", s); } catch {} };
 
