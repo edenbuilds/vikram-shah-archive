@@ -1129,3 +1129,5 @@ body:has(.ws) main.wrap { padding-top: .6rem; padding-bottom: .6rem; }
   .ws.no-left .ws-left, .ws.no-right .ws-right { display: none; }
   .ws-title .subtle, .ws-sep, .ws-zoom, .ws-tools > .ws-icon[title^="Zoom"] { display: none; }
 }
+/* 13-10-2026 phones: the pages scroll with the page itself, not in a box inside it */
+@media (max-width: 760px) { .ws-mid { height: auto; overflow: visible; } .ws-pages { overflow: visible; } .ws-bar { position: sticky; top: 0; z-index: 2; background: var(--white); } }

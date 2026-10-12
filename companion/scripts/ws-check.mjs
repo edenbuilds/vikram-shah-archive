@@ -11,13 +11,14 @@ for (const [w, h] of [[1440, 900], [390, 844]]) {
   await p.goto(link); await p.goto(base + "/");
   const href = await p.locator('a[href^="/m/"]').first().getAttribute("href");
   const m = process.env.WS_M ?? href.split("/")[2];
-  await p.goto(`${base}/m/${m}/workspace${process.env.WS_D ? "?d=" + process.env.WS_D : ""}`, { timeout: 90000 }); await p.waitForTimeout(2500);
+  await p.goto(`${base}/m/${m}${process.env.WS_D ? "?d=" + process.env.WS_D : ""}`, { timeout: 90000 }); await p.waitForTimeout(2500);
   const v = await p.evaluate(() => ({ docs: document.querySelectorAll(".ws-list a").length, pages: document.querySelectorAll(".ws-pages figure").length,
     loaded: [...document.querySelectorAll(".ws-pages img")].filter((i) => i.complete && i.naturalWidth).length,
     notes: document.querySelectorAll(".ws-note").length, sources: document.querySelectorAll(".ws-sources li").length, hscroll: document.documentElement.scrollWidth > innerWidth }));
   if (v.notes) { await p.locator(".ws-note").first().click(); await p.waitForTimeout(900); v.line = await p.locator(".ws-link path").count(); }
   await p.locator(".ws-toggle button", { hasText: "Outline" }).click(); v.outline = await p.locator(".ws-list li").count();
   await p.locator(".ws-toggle button", { hasText: "Documents" }).click(); await p.keyboard.press("ArrowDown"); await p.waitForTimeout(800); v.afterKey = await p.locator(".ws-page input").inputValue();
+  v.papers = await p.request.get(`${base}/m/${m}/papers`).then((r) => r.status()); if (await p.locator(".ws-icon[aria-pressed]:not(:disabled)").nth(1).count()) { await p.locator("button[title^=\"Only the\"]").click().catch(() => {}); v.squeezed = await p.locator(".ws-pages figure:not([hidden])").count(); }
   await p.screenshot({ path: `${out}/ws-${w}.png` });
   console.log(w, m, JSON.stringify(v), errs.slice(0, 2));
 }

@@ -5,8 +5,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 // the third value is the tab's colour (underline and active label), so a matter is not one blue strip
 const TABS = [
-  ["", "Papers", "#0007cb"],
-  ["/workspace", "Workspace", "#a16207"],
+  ["", "Workspace", "#a16207"],
+  ["/papers", "Papers", "#0007cb"],
   ["/explainer", "Explainer", "#7c3aed"],
   ["/reading", "Reading order", "#0e7490"],
   ["/brief", "Brief", "#b45309"],
@@ -22,7 +22,8 @@ const TABS = [
 // the active tab is scrolled into view on a phone, and the edge fade shows only while more tabs hide.
 export default function Tabs({ base }: { base: string }) {
   const path = usePathname();
-  const active = (suffix: string) => (suffix ? path.startsWith(base + suffix) : path === base || path.startsWith(`${base}/d/`));
+  const active = (suffix: string) => suffix === "/papers" ? path.startsWith(base + suffix) || path.startsWith(`${base}/d/`)
+    : suffix ? path.startsWith(base + suffix) : path === base || path.startsWith(`${base}/workspace`);
   const bar = useRef<HTMLElement>(null);
   const [line, setLine] = useState<{ x: number; w: number } | null>(null);
   const [fade, setFade] = useState({ l: false, r: false });

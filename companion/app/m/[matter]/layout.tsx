@@ -28,7 +28,7 @@ export default async function MatterLayout({ children, params }: { children: Rea
             { name: "title", label: "Case name", value: m.title }, { name: "short", label: "Short name", value: m.short },
             { name: "forum", label: "Court or forum", value: m.forum }, { name: "cause", label: "Cause", value: m.cause }]} />
           <p className="muted" style={{ margin: 0 }}>{[m.forum, m.venue, at && `Last updated ${dmyIST(last!.ingested_at)}, ${at.toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })}`].filter(Boolean).join(" · ")}</p>
-          <div style={{ margin: ".5rem 0" }}><ShareMenu title={m.title} items={[{ label: "Download the papers (.zip)", href: `/m/${m.id}#export` }]} /></div>
+          <div style={{ margin: ".5rem 0" }}><ShareMenu title={m.title} items={[{ label: "Download the papers (.zip)", href: `/m/${m.id}/papers#export` }]} /></div>
           <Tabs base={`/m/${m.id}`} />
         </div>
       </div>

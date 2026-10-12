@@ -78,7 +78,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
     <div className="stack" style={{ gap: "1.1rem" }}>
       <div className="doc-head">
         <div style={{ minWidth: 0, flex: "1 1 32rem" }}>
-          <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}`}>Papers</Link> / {stage?.title ?? d.stage}</p>
+          <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}/papers`}>Papers</Link> / {stage?.title ?? d.stage}</p>
           <h1 style={{ fontSize: "clamp(1.25rem, 2.4vw, 1.6rem)", margin: 0 }}>{d.title}</h1>
           {suggested && (
             <form action={moveDocument} className="subtle" style={{ margin: ".2rem 0" }}>

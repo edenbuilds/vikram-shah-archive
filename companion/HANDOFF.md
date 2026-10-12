@@ -7,6 +7,15 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 13-10-2026: Workspace is the default view of a matter
+
+- `/m/<matter>` now opens the Workspace (`app/m/[matter]/page.tsx` re-exports `workspace/page.tsx`); the old list of papers moved to `/m/<matter>/papers` (Papers tab, also lit on `/d/` pages; reader crumb and "Download the papers" link updated). Old `/m/<matter>/workspace` links still work.
+- Pages scroll in both layouts: on desktop inside the middle column, on a phone with the screen itself (sticky toolbar). The page counter now watches the viewport, so it works in both.
+- "Marked pages only" toolbar button (LiquidText's highlight view): hides every page without a note, highlight or bookmark.
+- REA (`morluto/rea`) skill copied to `~/.claude/skills/reverse-engineer-anything` and its MCP registered for Claude Code (`npx rea-agents setup --client claude_code`); analysis providers (Hopper etc.) not configured.
+- Not done from the LiquidText demo: drag an excerpt out as a card, links between two papers, side-by-side pages, conflict finder, Notes Outline export to Word. The scans have no text layer in this view, so excerpts would need the OCR text placed on the page first.
+- The reader (`d/[doc]`) still shows one page at a time; another session has uncommitted work in `Transcript.tsx` and `d/[doc]/page.tsx` (page marks), left untouched.
+
 ## 12-10-2026 (later): Workspace tab, a LiquidText-style reading view
 
 - **New tab "Workspace"** (`/m/<matter>/workspace?d=<doc>&p=<page>`, second after Papers). Left: Documents | Outline toggle with a filter (outline = the paper's sections plus her bookmarks). Middle: the whole paper as one continuous scroll of page scans, lazy-loaded. Right: her notes as yellow cards; clicking one scrolls the paper to its page, outlines that page and draws a line from the note to the page. Notes on the page in view are marked. "Add note" writes to the current page through `addAnnotation`. Works with or without LiquidText imports (the imported notes are ordinary annotations).

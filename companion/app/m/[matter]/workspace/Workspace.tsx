@@ -25,6 +25,8 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
 
   const [panes, setPanes] = useState({ left: true, right: true });
   const [zoom, setZoom] = useState(100);
+  const [squeeze, setSqueeze] = useState(false);  // LiquidText's "highlight view": only the pages she has marked
+  const marked = new Set(notes.map((n) => n.page_no).filter(Boolean));
   const [typed, setTyped] = useState<string | null>(null);
   const clamp = (p: number) => Math.min(Math.max(1, p), doc.pages);
   // Keyboard like a reader app: arrows / PageUp / PageDown turn pages, [ and ] hide the side panels, + and - zoom.
@@ -50,7 +52,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
     const io = new IntersectionObserver((es) => {
       const top = es.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
       if (top) setPage(Number((top.target as HTMLElement).dataset.page));
-    }, { root: reader.current, threshold: [0.25, 0.5, 0.75] });
+    }, { threshold: [0.25, 0.5, 0.75] });
     reader.current?.querySelectorAll("[data-page]").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
@@ -94,7 +96,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
             {shownDocs.map((d, i) => (
               <li key={d.id}>
                 {(i === 0 || shownDocs[i - 1].stage !== d.stage) && <p className="ws-stage">{d.stage}</p>}
-                <Link href={`/m/${matter}/workspace?d=${d.id}`} aria-current={d.id === doc.id ? "page" : undefined}>
+                <Link href={`/m/${matter}?d=${d.id}`} aria-current={d.id === doc.id ? "page" : undefined}>
                   <span>{d.title}</span><span className="subtle">{d.pages} pp.</span>
                 </Link>
               </li>
@@ -116,7 +118,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
               <li key={s.key}>
                 <span>{s.file}</span>
                 <span className="subtle">{s.how} {s.when}{s.pages ? ` · ${s.pages} pp.` : ""}{s.status !== "done" ? ` · ${s.status}` : ""}</span>
-                {s.doc && <Link className="subtle" href={`/m/${matter}/workspace?d=${s.doc}`}>Open</Link>}
+                {s.doc && <Link className="subtle" href={`/m/${matter}?d=${s.doc}`}>Open</Link>}
               </li>
             ))}
           </ul>
@@ -147,6 +149,8 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
             <button className="ws-icon" title="Zoom in  +" onClick={() => setZoom((z) => Math.min(z + 15, 200))}>
               <svg viewBox="0 0 20 20" aria-hidden><path d="M5 10h10M10 5v10" /></svg></button>
             <span className="ws-sep" />
+            <button className="ws-icon" aria-pressed={squeeze} disabled={!marked.size} title={marked.size ? `Only the ${marked.size} marked page${marked.size === 1 ? "" : "s"}` : "No marked pages yet"} onClick={() => setSqueeze(!squeeze)}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M4 3.5h12M4 16.5h12M10 6v3M10 14v-3M7.5 7.5 10 9.5l2.5-2M7.5 12.5 10 10.5l2.5 2" /></svg></button>
             <Link className="ws-icon" title="Open this page in the reader" href={`/m/${matter}/d/${doc.id}?p=${page}`}>
               <svg viewBox="0 0 20 20" aria-hidden><path d="M8 4H4.5v11.5H16V12M11 4h5v5M16 4l-7 7" /></svg></Link>
           </div>
@@ -155,7 +159,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
         </header>
         <div ref={reader} className="ws-pages" style={{ "--zoom": zoom / 100 } as React.CSSProperties}>
           {scans.map((src, i) => (
-            <figure key={i} id={`ws-p${i + 1}`} data-page={i + 1} className={notes.some((n) => n.id === active && n.page_no === i + 1) ? "lit" : ""}>
+            <figure key={i} hidden={squeeze && !marked.has(i + 1)} id={`ws-p${i + 1}`} data-page={i + 1} className={notes.some((n) => n.id === active && n.page_no === i + 1) ? "lit" : ""}>
               <span className="ws-pno">P {i + 1}</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Page ${i + 1}`} loading="lazy" width={850} height={1100} />
