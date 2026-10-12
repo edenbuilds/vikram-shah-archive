@@ -154,3 +154,22 @@ export function readingMarkdown(r: ReadingOrder, caseName: string, forum: string
   }
   return out.join("\n");
 }
+
+// CC-8690DE (13-10-2026, Arya): one tab in date order, newest or oldest first, and one by how much each paper matters to
+// the case (the importance the reading already gives every paper, from its own words); undated papers go last either way.
+export const LEVELS = ["Essential", "High", "Medium", "Skim"] as const;
+export function arrange(entries: Entry[], by: "date" | "importance", newest: boolean): [string, Entry[]][] {
+  const when = (e: Entry) => e.iso ?? (newest ? "" : "9999");
+  const dated = [...entries].sort((a, b) => (newest ? when(b).localeCompare(when(a)) : when(a).localeCompare(when(b))));
+  const groups: [string, Entry[]][] = [];
+  if (by === "importance") {
+    for (const l of LEVELS) { const xs = dated.filter((e) => e.importance === l); if (xs.length) groups.push([l, xs]); }
+    return groups;
+  }
+  for (const e of dated) {
+    const y = e.iso?.slice(0, 4) ?? "Undated";
+    if (groups.at(-1)?.[0] !== y) groups.push([y, []]);
+    groups.at(-1)![1].push(e);
+  }
+  return groups;
+}

@@ -3,15 +3,17 @@ import RunStudy from "@/components/RunStudy";
 import Tools from "@/app/pins/Tools";
 import { dmy, dmyIST, getMatter } from "@/lib/data";
 import { pageLabel, printedFor } from "@/lib/printed";
-import { getReading, readingMarkdown, TIERS, type Field } from "@/lib/reading";
+import { arrange, getReading, readingMarkdown, TIERS, type Field } from "@/lib/reading";
 import { basisOf, newSince } from "@/lib/study";
 import { requireUser } from "@/lib/supabase";
 
 // Every paper in the order of its own date, grouped by year, with what it is, what it says and
 // what it sets up, each with its page; then the papers the record mentions that are not on file.
 // Arya's reading-order-chronological-md skill, kept to receipts.
-export default async function Reading({ params }: { params: Promise<{ matter: string }> }) {
+export default async function Reading({ params, searchParams }: { params: Promise<{ matter: string }>; searchParams: Promise<{ by?: string; order?: string }> }) {
   const { matter } = await params;
+  const sp = await searchParams;
+  const by = sp.by === "importance" ? "importance" : "date", newest = sp.order === "newest";
   const { supabase } = await requireUser();
   const m = await getMatter(supabase, matter);
   const [r, now, printed] = await Promise.all([getReading(matter), basisOf(supabase, matter), printedFor(supabase, matter)]);
@@ -19,12 +21,8 @@ export default async function Reading({ params }: { params: Promise<{ matter: st
   const titles = new Map((r?.entries ?? []).map((e) => [e.doc, e.title]));
   const label = (doc: string, page: number) => `${doc ? `${titles.get(doc) ?? doc}, ` : ""}${pageLabel(page, printed[doc]?.[page])}`;
   const md = r ? readingMarkdown(r, m.title, [m.forum, m.cause].filter(Boolean).join(", "), label) : "";
-  const years: [string, NonNullable<typeof r>["entries"]][] = [];
-  for (const e of r?.entries ?? []) {
-    const y = e.iso?.slice(0, 4) ?? "Undated";
-    if (years.at(-1)?.[0] !== y) years.push([y, []]);
-    years.at(-1)![1].push(e);
-  }
+  const years = arrange(r?.entries ?? [], by, newest);
+  const href = (b: string, o: boolean) => `?by=${b}${o ? "&order=newest" : ""}`;
   const line = (name: string, f: Field, doc: string) => (
     <p style={{ margin: ".25rem 0" }}><b>{name}:</b>{" "}
       {f ? <>{f.text} <Link href={`/m/${matter}/d/${doc}?p=${f.page}`} className="subtle"><q>{f.quote.replace(/\s+/g, " ").trim()}</q> {pageLabel(f.page, printed[doc]?.[f.page])}</Link></>
@@ -37,11 +35,25 @@ export default async function Reading({ params }: { params: Promise<{ matter: st
       <div className="row" style={{ justifyContent: "space-between", alignItems: "end" }}>
         <div>
           <h2 style={{ marginBottom: ".2rem" }}>Reading order</h2>
-          <p className="muted" style={{ margin: 0 }}>Every paper by its own date, oldest first, and what the papers mention that is not on file.</p>
+          <p className="muted" style={{ margin: 0 }}>{by === "date" ? `Every paper by its own date, ${newest ? "newest" : "oldest"} first` : "Every paper by how much it matters to the case, the papers that carry it first"}, and what the papers mention that is not on file.</p>
         </div>
         {r && !r.left && <Tools text={md} md={md} name={`Chronological Reading Order - ${m.short ?? m.title}`} copyLabel="Copy reading order" />}
       </div>
 
+      {r && (
+        <div className="row" style={{ gap: ".5rem", flexWrap: "wrap" }}>
+          <nav className="order-toggle" aria-label="Order">
+            <Link role="tab" aria-selected={by === "date"} href={href("date", newest)}>By date</Link>
+            <Link role="tab" aria-selected={by === "importance"} href={href("importance", newest)}>By importance</Link>
+          </nav>
+          {by === "date" && (
+            <nav className="order-toggle" aria-label="Date order">
+              <Link role="tab" aria-selected={!newest} href={href("date", false)}>Oldest first</Link>
+              <Link role="tab" aria-selected={newest} href={href("date", true)}>Newest first</Link>
+            </nav>
+          )}
+        </div>
+      )}
       {!r && (
         <div className="empty">
           <h3>Read the file in date order</h3>

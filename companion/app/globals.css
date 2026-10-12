@@ -1174,3 +1174,7 @@ html.ws-full header.top, html.ws-full footer.disclaimer, html.ws-full .matter-he
 html.ws-full .matter-head, html.ws-full main.wrap { padding-block: 0; margin-block: 0; }
 html.ws-full .ws { height: calc(100dvh - 3.25rem); }
 @media (max-width: 760px) { html.ws-full .ws { height: auto; } }
+/* CC-8690DE: reading order by date or by importance, and oldest or newest first */
+.order-toggle { display: inline-flex; padding: 2px; border: 1px solid var(--rule-strong); border-radius: 4px; background: var(--paper); }
+.order-toggle a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .9rem; border-radius: 3px; color: var(--muted); font-weight: 600; text-decoration: none; }
+.order-toggle a[aria-selected=true] { background: var(--white); color: var(--ink); outline: 1px solid var(--rule); }
