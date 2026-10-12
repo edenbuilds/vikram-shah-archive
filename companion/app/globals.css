@@ -1168,3 +1168,4 @@ body:has(.ws) main.wrap { padding-top: .6rem; padding-bottom: .6rem; }
 @media (max-width: 760px) {
   .ws-right { position: fixed; inset: auto 0 0 0; z-index: 30; max-height: 60dvh; background: var(--white); border-top: 1px solid var(--rule); border-radius: 12px 12px 0 0; box-shadow: 0 -8px 24px rgb(0 0 0 / .12); padding-bottom: env(safe-area-inset-bottom); }
 }
+.ws-split { display: flex; align-items: center; gap: .45rem; padding: .55rem .7rem; font-size: .85rem; min-height: 40px; cursor: pointer; border-bottom: 1px solid var(--rule); }

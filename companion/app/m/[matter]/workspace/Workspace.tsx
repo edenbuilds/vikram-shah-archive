@@ -7,7 +7,7 @@ import { addAnnotation, addExcerpt, keepHandText, loadDoc, moveDocOrder, readHan
 import type { Note } from "@/app/m/[matter]/d/[doc]/Transcript";
 import type { Bundle } from "@/lib/workspace";
 
-export type Doc = { id: string; title: string; stage: string; pages: number; added: string; origin: string };
+export type Doc = { id: string; title: string; file: string; from: number; stage: string; pages: number; added: string; origin: string };
 export type Source = { key: string; file: string; when: string; status: string; doc: string | null; pages: number | null; how: string };
 type Sort = "order" | "title" | "newest" | "oldest";
 const SORTS: [Sort, string][] = [["order", "Stage and order"], ["title", "Title"], ["newest", "Newest first"], ["oldest", "Oldest first"]];
@@ -25,7 +25,12 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   const [side, setSide] = useState<"docs" | "outline">("docs");
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState<Sort>("order");
-  const [folded, setFolded] = useState<Set<string>>(new Set());
+  // 13-10-2026 (Omkar): rendering every paper made it slow, and she wants to read each source file as it is. By default
+  // the left lists source files and the middle shows only the chosen file; "Papers and filters" brings back the split
+  // papers with filter, sort and moves, each folded until she opens it.
+  const [split, setSplit] = useState(false);
+  const [file, setFile] = useState(docs.find((d) => d.id === first.id)?.file ?? docs[0].file);
+  const [open, setOpen] = useState<Set<string>>(new Set([first.id]));
   const [page, setPage] = useState(start);
   const [active, setActive] = useState<string | null>(null);
   const [line, setLine] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
@@ -42,6 +47,8 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   // on a phone the notes are a sheet over the pages, so they start closed
   const [phone, setPhone] = useState(false);
   useEffect(() => { if (matchMedia("(max-width: 760px)").matches) { setPhone(true); setPanes((x) => ({ ...x, right: false })); } }, []);
+  useEffect(() => { try { setSplit(localStorage.getItem("ws-papers") === "1"); } catch {} }, []);
+  const pickSplit = (v: boolean) => { setSplit(v); try { localStorage.setItem("ws-papers", v ? "1" : "0"); } catch {} };
   useEffect(() => { try { const s = localStorage.getItem("ws-sort") as Sort | null; if (s && SORTS.some(([k]) => k === s)) setSort(s); } catch {} }, []);
   const pickSort = (s: Sort) => { setSort(s); try { localStorage.setItem("ws-sort", s); } catch {} };
 
@@ -50,8 +57,10 @@ export default function Workspace({ matter, docs, first, sources, start }: {
     if (sort === "title") by.sort((a, b) => a.title.localeCompare(b.title, "en", { numeric: true }));
     else if (sort === "newest") by.sort((a, b) => b.added.localeCompare(a.added));
     else if (sort === "oldest") by.sort((a, b) => a.added.localeCompare(b.added));
-    return by;
-  }, [docs, sort]);
+    return split ? by : by.filter((d) => d.file === file).sort((a, c) => a.from - c.from);
+  }, [docs, sort, split, file]);
+  const files = useMemo(() => [...new Map(docs.map((d) => [d.file, docs.filter((x) => x.file === d.file)])).entries()], [docs]);
+  const shut = (id: string) => split && !open.has(id);
   const doc = docs.find((d) => d.id === cur) ?? docs[0];
   const b = cache[cur];
   const notes = b?.notes ?? [];
@@ -71,7 +80,9 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   const clamp = (p: number) => Math.min(Math.max(1, p), doc.pages);
   const go = (p: number, id = cur) => reader.current?.querySelector(at(id, p))?.scrollIntoView({ behavior: "smooth", block: "start" });
   const goDoc = (id: string) => {
-    setFolded((f) => { const n = new Set(f); n.delete(id); return n; });
+    setOpen((f) => new Set(f).add(id));
+    const f = docs.find((d) => d.id === id)?.file;
+    if (!split && f) setFile(f);
     requestAnimationFrame(() => reader.current?.querySelector(`section[data-doc="${id}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
   const move = async (id: string, dir: -1 | 1) => {
@@ -99,7 +110,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   useEffect(() => { reader.current?.querySelector(at(first.id, start))?.scrollIntoView({ block: "start" }); }, [first.id, start]);
 
   // The page most in view is the current page of the current paper; that paper's notes and outline show at the sides.
-  const order = ordered.map((d) => d.id).join() + [...folded].join();
+  const order = ordered.map((d) => d.id).join() + [...open].join() + split;
   useEffect(() => {
     const io = new IntersectionObserver((es) => {
       const top = es.filter((e) => e.isIntersecting).sort((a, c) => c.intersectionRatio - a.intersectionRatio)[0];
@@ -114,7 +125,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   // Papers load as they come within a couple of screens.
   useEffect(() => {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && need((e.target as HTMLElement).dataset.doc!)), { rootMargin: "1500px 0px" });
-    reader.current?.querySelectorAll("section[data-doc]").forEach((el) => io.observe(el));
+    reader.current?.querySelectorAll("section[data-doc][data-open]").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [order, need]);
   useEffect(() => { history.replaceState(history.state, "", `?d=${cur}&p=${page}`); }, [cur, page]);
@@ -153,11 +164,15 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   useLayoutEffect(() => {
     const draw = () => {
       const n = active && notesBox.current?.querySelector<HTMLElement>(`[data-note="${active}"]`);
-      const pg = notes.find((x) => x.id === active)?.page_no;
+      const note = notes.find((x) => x.id === active), pg = note?.page_no;
       const el = pg && reader.current?.querySelector<HTMLElement>(at(cur, pg));
       if (!n || !el) return setLine(null);
+      // 13-10-2026 (Omkar): the line should land on the words the note is about, not the top of the page
+      const ink = b?.ink.find((h) => h.id === active);
+      const [l, t, w, hh] = ink?.rects[0] ?? [];
       const a = n.getBoundingClientRect(), c = el.getBoundingClientRect(), r = reader.current!.getBoundingClientRect();
-      setLine({ x1: a.left, y1: a.top + 18, x2: c.right, y2: Math.min(Math.max(c.top + 24, r.top + 8), r.bottom - 8) });
+      const y = t === undefined ? c.top + 24 : c.top + (t + hh / 2) * c.height;
+      setLine({ x1: a.left, y1: a.top + 18, x2: l === undefined ? c.right : Math.min(c.left + (l + w) * c.width, c.right), y2: Math.min(Math.max(y, r.top + 8), r.bottom - 8) });
     };
     draw();
     const opts = { passive: true } as const;
@@ -165,7 +180,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
     notesBox.current?.addEventListener("scroll", draw, opts);
     addEventListener("resize", draw);
     return () => { reader.current?.removeEventListener("scroll", draw); notesBox.current?.removeEventListener("scroll", draw); removeEventListener("resize", draw); };
-  }, [active, notes, cur]);
+  }, [active, notes, cur, b]);
 
   const q = filter.trim().toLowerCase();
   const shownDocs = ordered.filter((d) => !q || d.title.toLowerCase().includes(q));
@@ -212,6 +227,18 @@ export default function Workspace({ matter, docs, first, sources, start }: {
   return (
     <div className={`ws${panes.left ? "" : " no-left"}${panes.right ? "" : " no-right"}`}>
       <aside className="ws-left">
+        <label className="ws-split"><input type="checkbox" checked={split} onChange={(e) => pickSplit(e.target.checked)} /> Papers and filters</label>
+        {!split ? (
+          <ul className="ws-list">
+            {files.map(([f, ds]) => (
+              <li key={f} className="ws-doc"><div className="ws-docrow">
+                <button aria-current={f === file ? "page" : undefined} onClick={() => goDoc(ds.reduce((a, c) => (c.from < a.from ? c : a)).id)}>
+                  <span>{f}</span><span className="subtle">{ds.reduce((n, d) => n + d.pages, 0)} pp.</span>
+                </button>
+              </div></li>
+            ))}
+          </ul>
+        ) : <>
         <div className="ws-toggle" role="tablist">
           <button role="tab" aria-selected={side === "docs"} onClick={() => setSide("docs")}>Documents</button>
           <button role="tab" aria-selected={side === "outline"} onClick={() => setSide("outline")}>Outline</button>
@@ -259,6 +286,7 @@ export default function Workspace({ matter, docs, first, sources, start }: {
             ))}
           </ul>
         </details>
+        </>}
       </aside>
 
       <section className="ws-mid">
@@ -299,17 +327,17 @@ export default function Workspace({ matter, docs, first, sources, start }: {
         </header>
         <div ref={reader} className="ws-pages" style={{ "--zoom": zoom / 100 } as React.CSSProperties}>
           {ordered.map((d) => {
-            const x = cache[d.id], shut = folded.has(d.id), mk = markedOf(x);
+            const x = cache[d.id], folded = shut(d.id), mk = markedOf(x);
             return (
-              <section key={d.id} data-doc={d.id} className="ws-paper">
+              <section key={d.id} data-doc={d.id} data-open={folded ? undefined : ""} className="ws-paper">
                 <header className="ws-paperhead">
-                  <button className="ws-icon" aria-expanded={!shut} title={shut ? "Show pages" : "Fold pages"}
-                    onClick={() => setFolded((f) => { const n = new Set(f); if (shut) n.delete(d.id); else n.add(d.id); return n; })}>
-                    <svg viewBox="0 0 20 20" aria-hidden><path d={shut ? "M7.5 5 13 10l-5.5 5" : "M5 7.5 10 13l5-5.5"} /></svg></button>
+                  {split && <button className="ws-icon" aria-expanded={!folded} title={folded ? "Show pages" : "Fold pages"}
+                    onClick={() => setOpen((f) => { const n = new Set(f); if (folded) n.add(d.id); else n.delete(d.id); return n; })}>
+                    <svg viewBox="0 0 20 20" aria-hidden><path d={folded ? "M7.5 5 13 10l-5.5 5" : "M5 7.5 10 13l5-5.5"} /></svg></button>}
                   <span className="ws-papertitle"><strong>{d.title}</strong><span className="subtle">{d.stage} · {d.pages} pp.</span></span>
-                  {mover(d)}
+                  {split && mover(d)}
                 </header>
-                {!shut && Array.from({ length: d.pages }, (_, i) => (
+                {!folded && Array.from({ length: d.pages }, (_, i) => (
                   <figure key={i} hidden={squeeze && !!x && !mk.has(i + 1)} data-page={i + 1}
                     className={d.id === cur && notes.some((n) => n.id === active && n.page_no === i + 1) ? "lit" : ""}>
                     <span className="ws-pno">P {i + 1}</span>

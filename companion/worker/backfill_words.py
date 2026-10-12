@@ -1,7 +1,8 @@
 """python3 worker/backfill_words.py [<doc_id> ...]   (no ids: every paper; pages already done are skipped) - word boxes for papers filed before 13-10-2026.
 
 Text-layer pages are read from the stored PDF (free); OCR'd pages go through Google Vision again
-(paid per page). Pages typed in by hand (uploaded-ocr) are skipped. Writes <mid>/pages/<doc>/words-NNN.json
+(paid per page), as are pages whose text was typed in or came from a transcript (13-10-2026: those had no text
+layer, so words on them could not be picked). Writes <mid>/pages/<doc>/words-NNN.json
 beside each scan; the page text in document_pages is left exactly as it is.
 """
 import json
@@ -40,7 +41,7 @@ def backfill(doc: str, token: str) -> None:
             pdf.write_bytes(corpus.storage_get(d["pdf_path"]))
         def one(p):
             out = p["jpeg_path"].replace(".jpg", ".json").replace("/page-", "/words-")
-            if p["text_source"] in (None, "uploaded-ocr", "transcript-page") or out in done:
+            if not p["jpeg_path"] or out in done:
                 return
             words = None
             if p["text_source"] == "pdftotext":

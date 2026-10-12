@@ -23,6 +23,7 @@ import Correct from "./Correct";
 import Outline from "./Outline";
 import { getHistory } from "@/lib/corrections";
 import { readInk } from "@/lib/ink";
+import { getMarks } from "@/lib/marks-store";
 
 export async function generateMetadata({ params }: { params: Promise<{ matter: string; doc: string }> }) {
   const { matter, doc } = await params;
@@ -72,13 +73,14 @@ export default async function DocPage({ params, searchParams }: { params: Promis
   const history = (await getHistory(d.id).catch(() => ({})) as Record<string, import("@/lib/corrections").PageHistory>)[p] ?? null;
   const blocks = toBlocks(d.transcript ?? "");
   const ink = await readInk(m.id, d.id);
+  const pageMarks = (await getMarks(d.id))[p] ?? null;
   const pageKeyed = blocks.some((b) => b.kind === "page");
 
   return (
     <div className="stack" style={{ gap: "1.1rem" }}>
       <div className="doc-head">
         <div style={{ minWidth: 0, flex: "1 1 32rem" }}>
-          <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}/papers`}>Papers</Link> / {stage?.title ?? d.stage}</p>
+          <p className="crumbs" style={{ margin: "0 0 .35rem" }}><Link href={`/m/${m.id}`}>Papers</Link> / {stage?.title ?? d.stage}</p>
           <h1 style={{ fontSize: "clamp(1.25rem, 2.4vw, 1.6rem)", margin: 0 }}>{d.title}</h1>
           {suggested && (
             <form action={moveDocument} className="subtle" style={{ margin: ".2rem 0" }}>
@@ -145,7 +147,7 @@ export default async function DocPage({ params, searchParams }: { params: Promis
       <Reader
         matter={m.id} doc={d.id} pageCount={d.page_count} currentPage={p} jump={sp.p !== undefined || !!byPrinted} printed={numbers}
         blocks={blocks} notes={plain} scan={scan} textSource={pg?.text_source ?? null}
-        collections={cols ?? []} ink={ink}
+        collections={cols ?? []} ink={ink} marks={pageMarks}
       />
       <Correct doc={d.id} page={p} text={(texts ?? []).find((t) => t.page_no === p)?.text ?? ""} history={history} />
       <details className="subtle"><summary className="subtle">File details</summary>

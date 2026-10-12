@@ -8,7 +8,7 @@ export type Row = { title: string; page: number; level: number };
 export type Bundle = {
   scans: string[]; words: string[]; notes: Note[]; outline: Row[];
   hands: Record<string, string>;  // note id -> picture of her handwriting (LiquidText canvas ink)
-  ink: { page: number; color: string | null; rects: number[][] }[];
+  ink: { id?: string; page: number; color: string | null; rects: number[][] }[];
 };
 
 // One paper's pages, word layers, highlights, notes and outline for the Workspace. 13-10-2026: the Workspace became one
@@ -32,7 +32,7 @@ export async function docBundle(supabase: SupabaseClient, m: Matter, id: string)
   const pics = await fileUrls(supabase, m, inked.map((n) => `${m.id}/pages/${d.id}/hand-${n.id}.png`));
   return {
     scans, words, notes: (notes ?? []) as Note[], hands: Object.fromEntries(inked.map((n, i) => [n.id, pics[i]])),
-    ink: ink.map(({ page, color, rects }) => ({ page, color, rects })),
+    ink: ink.map(({ id, page, color, rects }) => ({ id, page, color, rects })),
     outline: ((d.sections ?? []) as Section[]).filter((s) => s.pageStart).map((s) => ({
       title: (s.title ?? "").replace(/^#+\s*/, "").trim() || s.mark || "Opening pages", page: s.pageStart!, level: s.level ?? 0,
     })),

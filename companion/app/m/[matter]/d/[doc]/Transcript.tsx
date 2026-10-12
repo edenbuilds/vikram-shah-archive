@@ -6,7 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import { addAnnotation, addHighlight, addToCollection, deleteAnnotation, editAnnotation } from "@/app/actions";
 import { COLOURS, colourOf, isHighlight } from "@/lib/highlight";
 import EditDialog from "@/components/EditDialog";
+import Marks from "./Marks";
 import { goToPage } from "@/lib/pager";
+import type { PageMarks } from "@/lib/marks";
 import type { Block } from "@/lib/transcript";
 import type { Ink } from "@/lib/pdf-comments";
 
@@ -41,8 +43,8 @@ function Marked({ text, base, hls, gaps = false }: { text: string; base: number;
   return <>{out}</>;
 }
 
-export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections, printed, ink = [] }: {
-  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[]; printed: Record<number, number>; ink?: Ink[];
+export default function Reader({ matter, doc, pageCount, currentPage, jump, blocks, notes, scan, textSource, collections, printed, ink = [], marks = null }: {
+  matter: string; doc: string; pageCount: number; currentPage: number; jump: boolean; blocks: Block[]; notes: Note[]; printed: Record<number, number>; ink?: Ink[]; marks?: PageMarks | null;
   scan: string; textSource: string | null; collections: { id: string; title: string }[];
 }) {
   const [sel, setSel] = useState<Sel | null>(null);
@@ -182,6 +184,8 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
             {currentPage < pageCount ? <Link className="btn ghost small" href={href(currentPage + 1)} scroll={false}>→</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>→</span>}
           </div>
         </div>
+
+        <Marks key={currentPage} matter={matter} doc={doc} page={currentPage} initial={marks} />
 
         <form action={async (f) => { await addAnnotation(f); toast("Bookmarked"); if (markBox.current) markBox.current.value = ""; }} className="row" style={{ gap: ".4rem" }}>
           <input type="hidden" name="matter" value={matter} />

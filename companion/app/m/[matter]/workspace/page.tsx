@@ -32,7 +32,7 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   const list: Doc[] = all.map((x) => {
     const src = sources.find((s) => s.doc === x.id);
     return {
-      id: x.id, title: x.title, stage: m.stages.find((s) => s.id === x.stage)?.title ?? x.stage, pages: x.page_count, added: x.ingested_at ?? "",
+      id: x.id, title: x.title, file: x.filename || x.source_path || x.title, from: Number(/pp\. (\d+)/.exec(x.source_path ?? "")?.[1]) || 0, stage: m.stages.find((s) => s.id === x.stage)?.title ?? x.stage, pages: x.page_count, added: x.ingested_at ?? "",
       origin: src ? `${src.how} as ${src.file} on ${src.when}` : `From ${x.source_path || x.filename}`,
     };
   });
