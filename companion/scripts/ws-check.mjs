@@ -17,7 +17,7 @@ for (const [w, h] of [[1440, 900], [390, 844]]) {
     notes: document.querySelectorAll(".ws-note").length, sources: document.querySelectorAll(".ws-sources li").length, hscroll: document.documentElement.scrollWidth > innerWidth }));
   if (v.notes) { await p.locator(".ws-note").first().click(); await p.waitForTimeout(900); v.line = await p.locator(".ws-link path").count(); }
   await p.locator(".ws-toggle button", { hasText: "Outline" }).click(); v.outline = await p.locator(".ws-list li").count();
-  await p.locator(".ws-toggle button", { hasText: "Documents" }).click();
+  await p.locator(".ws-toggle button", { hasText: "Documents" }).click(); await p.keyboard.press("ArrowDown"); await p.waitForTimeout(800); v.afterKey = await p.locator(".ws-page input").inputValue();
   await p.screenshot({ path: `${out}/ws-${w}.png` });
   console.log(w, m, JSON.stringify(v), errs.slice(0, 2));
 }

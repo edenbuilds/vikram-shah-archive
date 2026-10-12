@@ -23,6 +23,25 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
   const reader = useRef<HTMLDivElement>(null);
   const notesBox = useRef<HTMLDivElement>(null);
 
+  const [panes, setPanes] = useState({ left: true, right: true });
+  const [zoom, setZoom] = useState(100);
+  const [typed, setTyped] = useState<string | null>(null);
+  const clamp = (p: number) => Math.min(Math.max(1, p), doc.pages);
+  // Keyboard like a reader app: arrows / PageUp / PageDown turn pages, [ and ] hide the side panels, + and - zoom.
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement).closest("input, textarea, select")) return;
+      const k = e.key;
+      if (k === "ArrowDown" || k === "ArrowRight" || k === "PageDown") { e.preventDefault(); go(clamp(page + 1)); }
+      else if (k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); go(clamp(page - 1)); }
+      else if (k === "[") setPanes((x) => ({ ...x, left: !x.left }));
+      else if (k === "]") setPanes((x) => ({ ...x, right: !x.right }));
+      else if (k === "+" || k === "=") setZoom((z) => Math.min(z + 15, 200));
+      else if (k === "-") setZoom((z) => Math.max(z - 15, 55));
+    };
+    addEventListener("keydown", key);
+    return () => removeEventListener("keydown", key);
+  });
   const go = (p: number) => reader.current?.querySelector(`#ws-p${p}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   useEffect(() => { if (start > 1) reader.current?.querySelector(`#ws-p${start}`)?.scrollIntoView({ block: "start" }); }, [start]);
 
@@ -63,7 +82,7 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
   const files = sources.length;
 
   return (
-    <div className="ws">
+    <div className={`ws${panes.left ? "" : " no-left"}${panes.right ? "" : " no-right"}`}>
       <aside className="ws-left">
         <div className="ws-toggle" role="tablist">
           <button role="tab" aria-selected={side === "docs"} onClick={() => setSide("docs")}>Documents</button>
@@ -106,11 +125,35 @@ export default function Workspace({ matter, docs, doc, scans, outline, notes, so
 
       <section className="ws-mid">
         <header className="ws-bar">
-          <strong>{doc.title}</strong>
-          <span className="subtle">{origin} · Page {page} of {doc.pages}</span>
-          <Link className="subtle" href={`/m/${matter}/d/${doc.id}?p=${page}`}>Open in reader</Link>
+          <button className="ws-icon" aria-pressed={panes.left} title="Documents and outline  [" onClick={() => setPanes((x) => ({ ...x, left: !x.left }))}>
+            <svg viewBox="0 0 20 20" aria-hidden><rect x="2.5" y="3.5" width="15" height="13" rx="2" /><path d="M7.5 3.5v13" /></svg></button>
+          <div className="ws-title">
+            <strong>{doc.title}</strong>
+            <span className="subtle" title={origin}>{origin}</span>
+          </div>
+          <div className="ws-tools">
+            <button className="ws-icon" title="Previous page" disabled={page <= 1} onClick={() => go(clamp(page - 1))}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M12.5 4.5 7 10l5.5 5.5" /></svg></button>
+            <label className="ws-page"><input inputMode="numeric" aria-label="Page" value={typed ?? page}
+              onChange={(e) => setTyped(e.target.value)} onBlur={() => setTyped(null)}
+              onKeyDown={(e) => { if (e.key === "Enter") { const n = Number(typed); if (Number.isInteger(n)) go(clamp(n)); setTyped(null); (e.target as HTMLInputElement).blur(); } }} />
+              <span className="subtle">of {doc.pages}</span></label>
+            <button className="ws-icon" title="Next page" disabled={page >= doc.pages} onClick={() => go(clamp(page + 1))}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M7.5 4.5 13 10l-5.5 5.5" /></svg></button>
+            <span className="ws-sep" />
+            <button className="ws-icon" title="Zoom out  -" onClick={() => setZoom((z) => Math.max(z - 15, 55))}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M5 10h10" /></svg></button>
+            <button className="ws-zoom" title="Fit width" onClick={() => setZoom(100)}>{zoom}%</button>
+            <button className="ws-icon" title="Zoom in  +" onClick={() => setZoom((z) => Math.min(z + 15, 200))}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M5 10h10M10 5v10" /></svg></button>
+            <span className="ws-sep" />
+            <Link className="ws-icon" title="Open this page in the reader" href={`/m/${matter}/d/${doc.id}?p=${page}`}>
+              <svg viewBox="0 0 20 20" aria-hidden><path d="M8 4H4.5v11.5H16V12M11 4h5v5M16 4l-7 7" /></svg></Link>
+          </div>
+          <button className="ws-icon" aria-pressed={panes.right} title="Notes  ]" onClick={() => setPanes((x) => ({ ...x, right: !x.right }))}>
+            <svg viewBox="0 0 20 20" aria-hidden><rect x="2.5" y="3.5" width="15" height="13" rx="2" /><path d="M12.5 3.5v13" /></svg></button>
         </header>
-        <div ref={reader} className="ws-pages">
+        <div ref={reader} className="ws-pages" style={{ "--zoom": zoom / 100 } as React.CSSProperties}>
           {scans.map((src, i) => (
             <figure key={i} id={`ws-p${i + 1}`} data-page={i + 1} className={notes.some((n) => n.id === active && n.page_no === i + 1) ? "lit" : ""}>
               <span className="ws-pno">P {i + 1}</span>

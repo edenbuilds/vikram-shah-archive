@@ -1079,8 +1079,8 @@ html { touch-action: manipulation; }
 .ws-sources summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .ws-sources li { display: grid; gap: .1rem; padding: .35rem 0; border-bottom: 1px solid var(--rule); word-break: break-word; }
 .ws-bar { display: flex; flex-wrap: wrap; gap: .3rem .9rem; align-items: baseline; padding: .55rem .9rem; border-bottom: 1px solid var(--rule); font-size: .9rem; }
-.ws-pages { overflow: auto; flex: 1; padding: 1rem; background: var(--paper-deep); display: grid; gap: 1rem; justify-items: center; align-content: start; }
-.ws-pages figure { position: relative; margin: 0; width: min(100%, 860px); background: #fff; box-shadow: var(--shadow); outline: 2px solid transparent; transition: outline-color .2s; scroll-margin-top: .5rem; }
+.ws-pages { overflow: auto; flex: 1; overscroll-behavior: contain; padding: 1rem; background: var(--paper-deep); display: grid; gap: 1rem; justify-items: center; align-content: start; }
+.ws-pages figure { position: relative; margin: 0; width: min(100%, calc(860px * var(--zoom, 1))); background: #fff; box-shadow: var(--shadow); outline: 2px solid transparent; transition: outline-color .2s; scroll-margin-top: .5rem; }
 .ws-pages figure.lit { outline-color: var(--seal); }
 .ws-pages img { display: block; width: 100%; height: auto; }
 .ws-pno { position: absolute; top: .4rem; left: .5rem; font-size: .75rem; color: var(--muted); }
@@ -1099,3 +1099,33 @@ html { touch-action: manipulation; }
   .ws-left { max-height: 45vh; } .ws-mid { height: 80dvh; } .ws-pages { padding: .5rem; } .ws-link { display: none; }
 }
 .ws-list a > .subtle { white-space: nowrap; }
+
+/* app-like: the matter header folds to crumbs + tabs while the Workspace is open, and the view fills the window */
+body:has(.ws) .matter-head .kicker, body:has(.ws) .matter-head h1, body:has(.ws) .matter-head .muted,
+body:has(.ws) .matter-head > .wrap > :is(div, button):not(.tabs), body:has(.ws) footer.disclaimer { display: none; }
+body:has(.ws) main.wrap { padding-top: .6rem; padding-bottom: .6rem; }
+.ws { height: calc(100dvh - 10.5rem); transition: grid-template-columns .25s cubic-bezier(.2,.8,.2,1); }
+.ws.no-left { grid-template-columns: 0 minmax(0, 1fr) 320px; } .ws.no-right { grid-template-columns: 300px minmax(0, 1fr) 0; }
+.ws.no-left.no-right { grid-template-columns: 0 minmax(0, 1fr) 0; }
+.ws.no-left .ws-left, .ws.no-right .ws-right { visibility: hidden; border: 0; }
+.ws.no-left, .ws.no-right { column-gap: 0; }
+.ws-bar { flex-wrap: nowrap; align-items: center; gap: .5rem; padding: .4rem .5rem; }
+.ws-title { display: grid; min-width: 0; flex: 1; line-height: 1.25; }
+.ws-title > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-title .subtle { font-size: .78rem; }
+.ws-tools { display: flex; align-items: center; gap: .15rem; flex: 0 0 auto; }
+.ws-icon { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: none; color: var(--ink); cursor: pointer; flex: 0 0 auto; }
+.ws-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ws-icon:hover { background: var(--paper); } .ws-icon[aria-pressed=true] { background: var(--paper-deep); }
+.ws-icon:disabled { opacity: .35; cursor: default; }
+.ws-page { display: flex; align-items: center; gap: .3rem; font-size: .85rem; }
+.ws-page input { width: 3.2rem; height: 32px; text-align: center; padding: 0; }
+.ws-zoom { min-width: 3.4rem; height: 32px; border: 0; border-radius: 8px; background: none; font: inherit; font-size: .85rem; color: var(--muted); cursor: pointer; }
+.ws-zoom:hover { background: var(--paper); }
+.ws-sep { width: 1px; height: 20px; background: var(--rule); margin: 0 .25rem; }
+@media (max-width: 1100px) { .ws.no-right, .ws.no-left.no-right { grid-template-columns: 0 minmax(0,1fr); } }
+@media (max-width: 760px) {
+  .ws, .ws.no-left, .ws.no-right, .ws.no-left.no-right { grid-template-columns: 1fr; height: auto; }
+  .ws.no-left .ws-left, .ws.no-right .ws-right { display: none; }
+  .ws-title .subtle, .ws-sep, .ws-zoom, .ws-tools > .ws-icon[title^="Zoom"] { display: none; }
+}
