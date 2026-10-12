@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { VerifiedClaim } from "@/lib/citations";
-import { fileUrls, getMatter } from "@/lib/data";
+import { dmyIST, fileUrls, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import AskBox from "./AskBox";
 import PinButton from "@/components/PinButton";
@@ -133,10 +133,10 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
         <div className="card">
           <h3>Threads</h3>
           <p style={{ margin: "0 0 .6rem" }}><Link className="btn ghost small" href="/ask">＋ New question</Link></p>
-          <ul className="plain">
+          <ul className="plain threads">
             {(threads ?? []).map((x) => (
-              <li key={x.id} style={{ padding: ".35rem 0", borderBottom: "1px solid var(--rule)" }}>
-                <Link href={`/ask?t=${x.id}`} style={{ fontWeight: x.id === sp.t ? 700 : 400, textDecoration: "none" }}>{x.title}</Link>
+              <li key={x.id}>
+                <Link href={`/ask?t=${x.id}`} style={{ fontWeight: x.id === sp.t ? 700 : 400 }}>{x.title}<small className="subtle">{dmyIST(x.created_at)}</small></Link>
               </li>
             ))}
           </ul>

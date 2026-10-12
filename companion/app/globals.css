@@ -1045,3 +1045,14 @@ html { touch-action: manipulation; }
 .mode-opt span { grid-column: 2; color: var(--muted); }
 @media (max-width: 480px) { .report-btn span { display: none; } }
 .top-actions .report-btn { background: transparent; color: var(--ink); border-color: var(--rule); }
+/* 12-10-2026 CC-58F7C5: the Threads card grew with every question (19 rows, 913px in a 779px window), so the New question button
+   and the first rows scrolled under the top bar and ten rows read the same. The list now scrolls inside the card, each row is a
+   44px target and carries the day it was asked. */
+.threads { max-height: calc(100dvh - 13rem); overflow-y: auto; }
+.threads li { border-bottom: 1px solid var(--rule); }
+.threads a { display: block; min-height: 44px; padding: .45rem 0; text-decoration: none; }
+.threads small { display: block; }
+/* 12-10-2026 CC-689411: she could only step one page at a time; the page number is now a box she can type into. */
+.pager form.where { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.pager .goto { width: 4.2rem; border-radius: 4px; min-height: 2rem; padding: .1rem .4rem; text-align: center; font: inherit; font-weight: 700; }
+@media (pointer: coarse) { .pager .btn, .pager .goto { min-height: 44px; min-width: 44px; } }

@@ -1,10 +1,12 @@
 "use client";
 import { toast } from "@/components/Toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { addAnnotation, addHighlight, addToCollection, deleteAnnotation, editAnnotation } from "@/app/actions";
 import { COLOURS, colourOf, isHighlight } from "@/lib/highlight";
 import EditDialog from "@/components/EditDialog";
+import { goToPage } from "@/lib/pager";
 import type { Block } from "@/lib/transcript";
 import type { Ink } from "@/lib/pdf-comments";
 
@@ -52,6 +54,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
   const noteBox = useRef<HTMLTextAreaElement>(null);
   const markBox = useRef<HTMLInputElement>(null);
   const href = (n: number) => `/m/${matter}/d/${doc}?p=${n}`;
+  const router = useRouter();
 
   // Scroll only when a page was asked for (pager, search hit, citation); never on a plain open.
   useEffect(() => {
@@ -175,7 +178,7 @@ export default function Reader({ matter, doc, pageCount, currentPage, jump, bloc
           </div>
           <div className="pager">
             {currentPage > 1 ? <Link className="btn ghost small" href={href(currentPage - 1)} scroll={false}>←</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>←</span>}
-            <span className="where">Page <b>{currentPage}</b> of {pageCount}{printed[currentPage] && printed[currentPage] !== currentPage ? <>, printed <b>{printed[currentPage]}</b></> : ""}{textSource ? ` · ${textSource}` : ""}</span>
+            <form className="where" onSubmit={(e) => { e.preventDefault(); const n = goToPage(new FormData(e.currentTarget).get("p"), pageCount); if (n) router.push(href(n), { scroll: false }); }}>Page <input className="goto" key={currentPage} name="p" type="text" inputMode="numeric" pattern="[0-9]*" defaultValue={currentPage} aria-label={`Go to page, 1 to ${pageCount}`} onFocus={(e) => e.currentTarget.select()} /> of {pageCount}{printed[currentPage] && printed[currentPage] !== currentPage ? <>, printed <b>{printed[currentPage]}</b></> : ""}{textSource ? ` · ${textSource}` : ""}</form>
             {currentPage < pageCount ? <Link className="btn ghost small" href={href(currentPage + 1)} scroll={false}>→</Link> : <span className="btn ghost small" aria-hidden style={{ visibility: "hidden" }}>→</span>}
           </div>
         </div>
