@@ -26,7 +26,8 @@ export async function docBundle(supabase: SupabaseClient, m: Matter, id: string)
   const [scans, words] = await Promise.all([
     fileUrls(supabase, m, paths),
     // missing for pages typed in by hand or never read: those pages just have no text layer
-    fileUrls(supabase, m, paths.map((p) => p.replace(/page-(\d+)\.jpg$/, "words-$1.json"))),
+    // word layers always sit under the matter, also for archive papers whose scans live on the archive site
+    fileUrls(supabase, m, paths.map((_, i) => `${m.id}/pages/${d.id}/words-${String(i + 1).padStart(3, "0")}.json`)),
   ]);
   const inked = (notes ?? []).filter((n) => n.tags?.includes("handwriting"));
   const pics = await fileUrls(supabase, m, inked.map((n) => `${m.id}/pages/${d.id}/hand-${n.id}.png`));

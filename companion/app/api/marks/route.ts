@@ -16,7 +16,11 @@ export async function POST(req: Request) {
   // her own client: row-level security decides whether she may see this paper
   const { data: pg } = await supabase.from("document_pages").select("jpeg_path, documents!inner(matter_id)").eq("doc_id", String(doc)).eq("page_no", Number(page)).eq("documents.matter_id", String(matter)).maybeSingle();
   if (!pg?.jpeg_path) return Response.json({ error: "That page has no scan on file." }, { status: 404 });
-  const { data: jpg } = await supabase.storage.from("companion").download(pg.jpeg_path);
+  // archive papers keep their scans on the archive site (matters.storage_base), as the reader shows them
+  const { data: m } = await supabase.from("matters").select("storage_base").eq("id", String(matter)).single();
+  const jpg = pg.jpeg_path.startsWith(`${matter}/`) || !m?.storage_base
+    ? (await supabase.storage.from("companion").download(pg.jpeg_path)).data
+    : await fetch(`${m.storage_base}/${pg.jpeg_path}`).then((r) => (r.ok ? r.blob() : null)).catch(() => null);
   if (!jpg) return Response.json({ error: "The scan of this page could not be opened." }, { status: 404 });
   try {
     const raw = await see(Buffer.from(await jpg.arrayBuffer()).toString("base64"), "jpeg",

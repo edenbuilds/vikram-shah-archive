@@ -23,3 +23,11 @@ test("ordinary prose is not taken for a table", () => {
   const prose = Array.from({ length: 8 }, (_, i) => line(0.2 + i * 0.03)).flat();
   assert.equal(looksLikeTable(prose), false);
 });
+
+test("a page scanned at a tilt still keeps each row together", () => {
+  const tilt = (w: Word): Word => { const d = 0.04 * (w[0] + w[2]) / 2; return [w[0], w[1] - d, w[2], w[3] - d, w[4]]; };
+  // in reading order, as Vision lists them, so the slope can be read from neighbours
+  const rowsIn = [0, 1, 2, 3, 4, 5].flatMap((i) => [index[i], index[6 + i], index[12 + i], index[18 + i]]);
+  const lines = tableText(rowsIn.map(tilt)).split("\n").map((l) => l.trim().split(/\s{3,}/));
+  assert.deepEqual(lines[2], ["2.", "Writ", "B", "27"]);
+});

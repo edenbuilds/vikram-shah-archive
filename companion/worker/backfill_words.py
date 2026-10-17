@@ -34,13 +34,18 @@ def backfill(doc: str, token: str) -> None:
     pages = rest("GET", "document_pages", f"doc_id=eq.{doc}&select=page_no,jpeg_path,text_source&order=page_no")
     if not pages:
         return
-    done = listed(pages[0]["jpeg_path"].rsplit("/", 1)[0] + "/")
+    # 17-10-2026: archive papers keep their scans and PDF on the public archive site (public/ in the repo), not in storage,
+    # so 1,960 pages failed with "not found". Read those from the local copy; word layers always go under the matter.
+    local = corpus.ARCHIVE_ROOT / "public"
+    get = lambda p: (local / p).read_bytes() if (local / p).exists() else corpus.storage_get(p)
+    mid = d["matter_id"]
+    done = listed(f"{mid}/pages/{doc}/")
     with tempfile.TemporaryDirectory() as tmp:
         pdf = Path(tmp) / "p.pdf"
         if d["pdf_path"] and any(p["text_source"] == "pdftotext" for p in pages):
-            pdf.write_bytes(corpus.storage_get(d["pdf_path"]))
+            pdf.write_bytes(get(d["pdf_path"]))
         def one(p):
-            out = p["jpeg_path"].replace(".jpg", ".json").replace("/page-", "/words-")
+            out = f"{mid}/pages/{doc}/words-{p['page_no']:03d}.json"
             if not p["jpeg_path"] or out in done:
                 return
             words = None
@@ -48,7 +53,7 @@ def backfill(doc: str, token: str) -> None:
                 words = layer_words(pdf, p["page_no"])
             else:
                 jpg = Path(tmp) / f"p{p['page_no']}.jpg"
-                jpg.write_bytes(corpus.storage_get(p["jpeg_path"]))
+                jpg.write_bytes(get(p["jpeg_path"]))
                 words = []
                 gv.vision_page(token, jpg, words)
             if words:
