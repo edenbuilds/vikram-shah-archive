@@ -38,8 +38,13 @@ const gapOf = (words: Word[]) => 2 * (median(words.map((w) => w[3] - w[1])) || 0
 // detector from the scan would catch one-column-gap tables too, add it if a table page is missed.
 export function looksLikeTable(words: Word[]): boolean {
   const g = gapOf(words), ls = rows(words);
-  const multi = ls.filter((l) => l.filter((w, i) => i && w[0] - l[i - 1][2] > g).length >= 2).length;
-  return ls.length >= 6 && multi / ls.length >= 0.2;
+  const cuts = ls.map((l) => l.filter((w, i) => i && w[0] - l[i - 1][2] > g).map((w) => Math.round(w[0] / 0.02)));
+  const multi = cuts.filter((c) => c.length >= 2).length;
+  // 17-10-2026: justified prose also has wide gaps, at random places; a table's cells start at the same places line after line
+  const at = new Map<number, number>();
+  for (const c of cuts) for (const x of new Set(c)) at.set(x, (at.get(x) ?? 0) + 1);
+  const columns = [...at.values()].filter((n) => n >= 3).length;
+  return ls.length >= 6 && multi / ls.length >= 0.2 && columns >= 2;
 }
 
 export function tableText(words: Word[]): string {

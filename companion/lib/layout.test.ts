@@ -31,3 +31,8 @@ test("a page scanned at a tilt still keeps each row together", () => {
   const lines = tableText(rowsIn.map(tilt)).split("\n").map((l) => l.trim().split(/\s{3,}/));
   assert.deepEqual(lines[2], ["2.", "Writ", "B", "27"]);
 });
+
+test("justified prose with wide gaps in different places is not taken for a table", () => {
+  const line = (y: number, k: number) => [cell(0.1, y, "The"), cell(0.2 + k * 0.05, y, "appellants"), cell(0.55 + k * 0.03, y, "state")];
+  assert.equal(looksLikeTable(Array.from({ length: 8 }, (_, k) => line(0.2 + k * 0.03, k)).flat()), false);
+});
