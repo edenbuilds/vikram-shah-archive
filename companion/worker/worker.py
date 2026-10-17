@@ -470,6 +470,20 @@ def to_parts(mid: str, ids: list[str], parts: list[dict], notes: list[dict], mar
             rest("PATCH", "documents", f"id=eq.{urllib.parse.quote(doc_id)}", {"sections": mine})
 
 
+def tables(doc_id: str) -> None:
+    """CC-80741E (13-10-2026): Vision reads a table cell by cell, so an index came out jumbled and her connected app paired
+    the wrong cells. Table pages are rebuilt row by row from the word positions through correctPage (scripts/table-pages.ts),
+    which keeps the first read so any page can be put back. A failure here never fails the upload."""
+    app = Path(__file__).resolve().parent.parent
+    node = shutil.which("node") or "/opt/homebrew/bin/node"  # launchd runs without the shell PATH
+    try:
+        r = subprocess.run([node, "--env-file=.env.local", "--experimental-strip-types", "scripts/table-pages.ts", doc_id],
+                           cwd=app, capture_output=True, text=True, timeout=300)
+        print("  tables: " + " | ".join(l.split(" ", 1)[1] for l in r.stdout.split("\n") if l.strip()) + (r.stderr[-200:] if r.returncode else ""), flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"  tables skipped: {str(e)[:160]}", flush=True)
+
+
 def process(job: dict, ocr, force: bool = False) -> str:
     mid = job["matter_id"]
     original, joined = fetch_upload(job["storage_path"])
@@ -728,6 +742,7 @@ def main() -> None:
         print(f"job {job['id']} {job['filename']}", flush=True)
         try:
             doc_id = process(job, ocr)
+            tables(doc_id)
             rest("PATCH", "ingest_jobs", f"id=eq.{job['id']}", {"status": "done", "doc_id": doc_id, "error": None, "updated_at": now()})
             print(f"  -> {doc_id}", flush=True)
             notify.job_done({**job, "doc_id": doc_id})
