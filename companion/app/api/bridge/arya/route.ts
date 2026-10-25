@@ -15,6 +15,8 @@ export async function POST(req: Request) {
   if (!(Math.abs(Date.now() - Date.parse(t.at)) < 5 * 60_000)) return Response.json({ error: "Stale request" }, { status: 401 });
   const files = (Array.isArray(t.files) ? t.files : []).filter((f: BridgeFile) =>
     typeof f?.url === "string" && f.url.startsWith(`${ARYA}/dl/`) && /^[0-9a-f]{64}$/.test(f.sha256) && Number.isFinite(f.size) && typeof f.name === "string");
+  // Her OCR text link must come from Arya Files too, or it is dropped (the file is then read as usual).
+  for (const f of files) if (f.ocr_url && !f.ocr_url.startsWith(`${ARYA}/dl/`)) delete f.ocr_url;
   if (!files.length) return Response.json({ error: "No files" }, { status: 400 });
   const id = randomUUID();
   await writeState(ticketAt(id), { id, folder_id: t.folder_id ?? null, folder: String(t.folder ?? "Arya Files"), by: String(t.by ?? ""), at: t.at, files } satisfies Ticket);

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bridgeable, pathFor, signBody, signedOk } from "./bridge.ts";
+import { bridgeable, pathFor, signBody, signedOk, spans } from "./bridge.ts";
 
 test("a request signed with the shared secret passes and a tampered body or wrong secret does not", () => {
   const body = JSON.stringify({ folder: "Matter A", at: "2026-10-25T10:00:00Z" });
@@ -22,4 +22,11 @@ test("the same bytes land on the same path inside the matter's uploads, so sendi
 test("only kinds the worker can turn into a PDF come over", () => {
   assert.ok(bridgeable({ name: "Order.PDF" }));
   assert.ok(!bridgeable({ name: "Arya Files.zip" }));
+});
+
+test("a split paper's source path gives back where its pages sit in the volume", () => {
+  assert.deepEqual(spans("Appeal.pdf, pp. 3-5, p. 9", "Appeal.pdf"), [3, 4, 5, 9]);
+  assert.deepEqual(spans("Appeal.pdf, p. 2", "Appeal.pdf"), [2]);
+  assert.equal(spans("Other.pdf, pp. 1-2", "Appeal.pdf"), null);
+  assert.equal(spans("Appeal.pdf", "Appeal.pdf"), null);
 });

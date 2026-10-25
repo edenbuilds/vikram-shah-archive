@@ -32,7 +32,7 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
           are marked [ILLEGIBLE]; nothing is guessed. Files stay private to this matter.
         </p>
       </div>
-      {!!held.length && <Held matter={m.id} stages={m.stages} rows={held.map((h, i) => ({ path: h.path, name: h.name, size: h.size, at: dmyIST(h.at), view: views[i]?.signedUrl ?? null }))} />}
+      {!!held.length && <Held matter={m.id} stages={m.stages} rows={held.map((h, i) => ({ path: h.path, name: h.name, size: h.size, at: dmyIST(h.at), view: views[i]?.signedUrl ?? null, ocr: !!h.ocr }))} />}
       <Uploader matter={m.id} stages={m.stages} busy={busy} />
       {!!jobs?.length && (
         <section className="card">

@@ -7,6 +7,11 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 25-10-2026 (later): text sync with Arya Files (no double OCR)
+- **Route.** `app/api/bridge/arya/sync/route.ts`, same HMAC and 5-minute rule as the folder bridge. Actions: `matters` (hers, by email), `text` (page text for up to 10 SHA-256s; whole documents by `documents.sha256`, split volumes by the `arya-{sha12}-` upload path plus `pp. a-b` spans in `source_path`, missing pages stay gaps), `ocr` (her click on "Read with OCR" in Arya Files: holds the file, then queues one ingest job in the matter she picked; returns `state: filed` if it is already read).
+- **Her OCR here.** The folder bridge and `ocr` carry an optional `ocr_url` (must start with `ARYA_FILES_URL/dl/`). It is saved as `<path>.ocr.txt`, which `worker.py` reads as given OCR, so her own text is used without credits. The held row says so.
+- **Tests.** `lib/bridge.test.ts` covers span parsing. Nothing in Arya Files calls `ocr` except her click.
+
 ## 25-10-2026: Arya Files bridge (open a folder as a matter, no automatic OCR)
 
 - **Flow.** In Arya Files (arya-files.tryklint.workers.dev), "Open in Case Companion" on a folder or on selected files posts signed 1-hour download links to `app/api/bridge/arya/route.ts` (HMAC-SHA256 of the body with `BRIDGE_SECRET`, set in Vercel production and as a Worker secret; links must start with `ARYA_FILES_URL/dl/`; requests older than 5 minutes are refused). That only parks a ticket in `_system/bridge/tickets/`. She lands on `/bridge/[ticket]`, picks a matter or makes a new one, and `acceptBridge` (app/actions.ts) copies the files to `{matter}/uploads/arya-{sha12}-{name}`, checking size and SHA-256.

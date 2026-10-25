@@ -5,7 +5,7 @@ import { readHeld } from "@/app/actions";
 import { toast } from "@/components/Toast";
 import type { Stage } from "@/lib/taxonomies";
 
-type Row = { path: string; name: string; size: number; at: string; view: string | null };
+type Row = { path: string; name: string; size: number; at: string; view: string | null; ocr?: boolean };
 
 // Files brought over from Arya Files. They are not read (no OCR, no summaries) until she presses Read.
 export default function Held({ matter, stages, rows }: { matter: string; stages: Stage[]; rows: Row[] }) {
@@ -25,7 +25,7 @@ export default function Held({ matter, stages, rows }: { matter: string; stages:
           <li key={r.path}>
             <span style={{ minWidth: 0 }}>
               {r.view ? <a href={r.view} target="_blank" rel="noreferrer" style={{ fontFamily: "var(--serif)" }}>{r.name}</a> : <span style={{ fontFamily: "var(--serif)" }}>{r.name}</span>}
-              <div className="subtle">{(r.size / 1048576).toFixed(1)} MB · brought over {r.at}</div>
+              <div className="subtle">{(r.size / 1048576).toFixed(1)} MB · brought over {r.at}{r.ocr ? " · her text from Arya Files, read without OCR credits" : ""}</div>
             </span>
             <button type="button" className="btn ghost" disabled={busy} onClick={() => read([r.path])}>Read</button>
           </li>
