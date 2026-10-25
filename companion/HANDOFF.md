@@ -7,6 +7,14 @@ This is a private workspace for Arya (an advocate) and her case papers. Every an
 - **Repo:** `edenbuilds/vikram-shah-archive`, folder `companion/`, branch main.
 - **Keys and links:** kept outside the repo in `~/Downloads/case-secrets-env/case-companion-keys.md`. That file holds the MCP URLs and each person's sign-in link.
 
+## 25-10-2026: Arya Files bridge (open a folder as a matter, no automatic OCR)
+
+- **Flow.** In Arya Files (arya-files.tryklint.workers.dev), "Open in Case Companion" on a folder or on selected files posts signed 1-hour download links to `app/api/bridge/arya/route.ts` (HMAC-SHA256 of the body with `BRIDGE_SECRET`, set in Vercel production and as a Worker secret; links must start with `ARYA_FILES_URL/dl/`; requests older than 5 minutes are refused). That only parks a ticket in `_system/bridge/tickets/`. She lands on `/bridge/[ticket]`, picks a matter or makes a new one, and `acceptBridge` (app/actions.ts) copies the files to `{matter}/uploads/arya-{sha12}-{name}`, checking size and SHA-256.
+- **No OCR until she asks.** Bridged files are listed in `_system/bridge/held/{matter}.json`, not in `ingest_jobs` (the worker claims every queued job). The Upload page shows them under "From Arya Files, not read yet" with View, Read and Read all (`upload/Held.tsx`); `readHeld` inserts the jobs with her own client, so RLS still checks membership. No schema change.
+- **Linking.** Folder id to matter id in `_system/bridge/arya-folders.json`, never by name. A second Open of a linked folder with nothing new goes straight to the matter. `createMatter` now shares `newMatter` with the bridge.
+- **Verified live** 25-10-2026: the 43 MB Prashant Hingorani PDF into "zz Upload test": held with no job, View opened the PDF, second Open redirected, Read queued it. The test link and ticket were removed afterwards. `lib/bridge.test.ts` 3/3.
+- **Limits (ponytail).** Files are buffered whole in the 300 s function (fine for folders of a few hundred MB); unused tickets are not swept; signing in mid-flow lands on / and she clicks Open again.
+
 ## 17-10-2026: Workspace rework, table pages, page marks, reports closed
 
 - **Workspace** (`app/m/[matter]/workspace/Workspace.tsx`). Opens on one source file read as it is (left lists source files; the papers of that file show in page order). The "Papers and filters" checkbox (localStorage `ws-papers`) brings back the split papers with filter, sort and moves; each paper is folded until opened, and only open papers load. The Workspace takes the whole screen (`html.ws-full` hides the top bar, case header and footer; matter tabs stay). Clicking a note scrolls to and points the line at that note's own words (ink matched by note id, or page and quote for LiquidText imports).
