@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { draftMinutes, type Item, type Minutes } from "@/lib/minutes";
 import { headers } from "next/headers";
-import { admin, memberMatters, tokenFor } from "@/lib/access";
+import { admin, memberMatters, readState, tokenFor, writeState } from "@/lib/access";
+import { bridgeable, heldAt, type Held, holdFiles, LINKS, type Ticket, ticketAt } from "@/lib/bridge";
 import { sendSignInLink } from "@/lib/signin-mail";
 import { getPrefs, setPrefs } from "@/lib/prefs";
 import { db, requireUser } from "@/lib/supabase";
@@ -77,17 +78,54 @@ export async function createMatter(f: FormData) {
   const people = ["claimant", "respondent", "arbitrator", "opposing_counsel"].flatMap((role) =>
     str(f, role).split(/\n|;/).map((n) => n.trim()).filter(Boolean).map((name) => ({ name, role })),
   );
-  const id = `${slug(title)}-${Date.now().toString(36).slice(-4)}`;
+  const id = await newMatter(supabase, user.email, { title, kind, forum: opt(f, "forum"), cause: opt(f, "cause"), people });
+  redirect(`/m/${id}/upload`);
+}
+
+async function newMatter(supabase: Awaited<ReturnType<typeof requireUser>>["supabase"], email: string | undefined,
+  m: { title: string; kind: string; forum?: string | null; cause?: string | null; people?: { name: string; role: string }[] }) {
+  const kind = TAXONOMIES[m.kind] ? m.kind : "arbitration";
+  const id = `${slug(m.title)}-${Date.now().toString(36).slice(-4)}`;
   must(await supabase.rpc("create_matter", {
-    m_id: id, m_title: title, m_kind: kind, m_forum: opt(f, "forum"), m_cause: opt(f, "cause"),
-    m_stages: TAXONOMIES[kind], m_disclaimer: DEFAULT_DISCLAIMER, m_people: people,
+    m_id: id, m_title: m.title, m_kind: kind, m_forum: m.forum ?? null, m_cause: m.cause ?? null,
+    m_stages: TAXONOMIES[kind], m_disclaimer: DEFAULT_DISCLAIMER, m_people: m.people ?? [],
   }));
   // 2026-09-23: Arya created "Agile Real Estate v. Vikram Singh" from one account and it was
   // invisible from her other account: create_matter only adds the creator. Share with the workspace.
   const { data: staff } = await admin().from("app_users").select("email");
   await admin().from("matter_members").upsert((staff ?? []).map((u) => ({ matter_id: id, email: u.email, role: "advocate" })), { ignoreDuplicates: true });
-  await track(user.email, { matter: id, text: `Created the matter "${title}"`, link: `/m/${id}` });
-  redirect(`/m/${id}/upload`);
+  await track(email, { matter: id, text: `Created the matter "${m.title}"`, link: `/m/${id}` });
+  return id;
+}
+
+// ── Arya Files bridge (lib/bridge.ts) ───────────────────────────────────────
+// She picks the matter on /bridge/[ticket]; the files are copied in and held. Nothing is read until readHeld.
+export async function acceptBridge(f: FormData) {
+  const { supabase, user } = await requireUser();
+  const t = await readState<Ticket | null>(ticketAt(str(f, "ticket")), null);
+  if (!t) redirect("/");
+  let matter = str(f, "matter");
+  if (matter === "new") matter = await newMatter(supabase, user.email, { title: str(f, "title") || t.folder, kind: str(f, "kind") });
+  else if (!(await memberMatters(user.email ?? "")).includes(matter)) throw new Error("Not a member of that matter");
+  const n = await holdFiles(matter, { ...t, files: t.files.filter(bridgeable) }, user.email ?? "");
+  if (t.folder_id) await writeState(LINKS, { ...(await readState<Record<string, string>>(LINKS, {})), [t.folder_id]: matter });
+  await admin().storage.from("companion").remove([ticketAt(t.id)]);
+  await track(user.email, { matter, text: `Brought ${n} file${n === 1 ? "" : "s"} from Arya Files ("${t.folder}"), not read yet`, link: `/m/${matter}/upload` });
+  redirect(`/m/${matter}/upload`);
+}
+
+export async function readHeld(input: { matter: string; stage: string; paths: string[] }) {
+  const { supabase } = await requireUser();
+  const held = await readState<Held[]>(heldAt(input.matter), []);
+  const pick = held.filter((h) => input.paths.includes(h.path));
+  if (!pick.length) return;
+  // The user's own client: the ingest_jobs insert policy checks she is a member of the matter.
+  must(await supabase.from("ingest_jobs").insert(pick.map((h) => ({
+    matter_id: input.matter, stage: input.stage, title: h.name.replace(/\.[^.]+$/, ""), filename: h.name, storage_path: h.path,
+  }))));
+  // ponytail: read-then-write on one small JSON file; two windows pressing Read at once could re-list a file.
+  await writeState(heldAt(input.matter), held.filter((h) => !input.paths.includes(h.path)));
+  revalidatePath(`/m/${input.matter}/upload`);
 }
 
 export async function queueUpload(input: { matter: string; stage: string; title: string; filename: string; path: string }) {

@@ -19,7 +19,7 @@ export default async function WorkspacePage({ params, searchParams }: { params: 
   // stage order as the matter lists its stages, then her order within a stage (moveDocOrder)
   const at = (st: string) => { const i = m.stages.findIndex((s) => s.id === st); return i < 0 ? m.stages.length : i; };
   const all = (docs ?? []).sort((a, b) => at(a.stage) - at(b.stage));
-  if (!all.length) return <p className="muted">No papers in this matter yet. Add them under Upload.</p>;
+  if (!all.length) return <p className="muted">No papers read in this matter yet. Add them under Upload; files from Arya Files wait there until you choose Read.</p>;
   const d = all.find((x) => x.id === sp.d) ?? all[0];
   const first = (await docBundle(supabase, m, d.id))!;
 

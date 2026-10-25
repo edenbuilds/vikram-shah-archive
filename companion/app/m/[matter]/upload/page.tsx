@@ -1,8 +1,11 @@
 import StatusMark from "@/components/rb/StatusMark";
 import Link from "next/link";
-import { getMatter } from "@/lib/data";
+import { dmyIST, getMatter } from "@/lib/data";
 import { requireUser } from "@/lib/supabase";
 import Uploader from "./Uploader";
+import Held from "./Held";
+import { admin, readState } from "@/lib/access";
+import { heldAt, type Held as HeldFile } from "@/lib/bridge";
 
 export default async function Upload({ params }: { params: Promise<{ matter: string }> }) {
   const { matter } = await params;
@@ -14,6 +17,9 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
   // A compiled volume is filed as several papers, all carrying the upload's filename.
   const { data: filed } = await supabase.from("documents").select("filename").eq("matter_id", matter);
   const papersFrom = (fn: string) => (filed ?? []).filter((d) => d.filename === fn).length;
+  // Brought over from Arya Files and held unread (lib/bridge.ts). getMatter above has already checked membership.
+  const held = await readState<HeldFile[]>(heldAt(m.id), []);
+  const views = held.length ? (await admin().storage.from("companion").createSignedUrls(held.map((h) => h.path), 3600)).data ?? [] : [];
 
   return (
     <div className="stack">
@@ -26,6 +32,7 @@ export default async function Upload({ params }: { params: Promise<{ matter: str
           are marked [ILLEGIBLE]; nothing is guessed. Files stay private to this matter.
         </p>
       </div>
+      {!!held.length && <Held matter={m.id} stages={m.stages} rows={held.map((h, i) => ({ path: h.path, name: h.name, size: h.size, at: dmyIST(h.at), view: views[i]?.signedUrl ?? null }))} />}
       <Uploader matter={m.id} stages={m.stages} busy={busy} />
       {!!jobs?.length && (
         <section className="card">
